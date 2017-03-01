@@ -1,0 +1,20 @@
+.bottle {
+  border-top: thin solid $black;
+
+  h4 {
+    background-color: $header-color;
+    border-bottom: thin solid $gray;
+    padding: $pad-size;
+  }
+
+  p {
+    padding-left: $pad-size;
+  }
+
+  &:nth-child(odd) {
+    background: $odd-row;
+  }
+}
+
+.action-sheets-basic-page {
+}

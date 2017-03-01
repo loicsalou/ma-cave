@@ -1,0 +1,55 @@
+// http://ionicframework.com/docs/v2/theming/
+@import "../../node_modules/ionicons/dist/scss/ionicons.scss";
+
+// App Global Sass
+// --------------------------------------------------
+// Put style rules here that you want to apply globally. These
+// styles are for the entire app and not just one component.
+// Additionally, this file can be also used as an entry point
+// to import other Sass files to be included in the output CSS.
+//
+// Shared Sass variables, which can be used to adjust Ionic's
+// default Sass variables, belong in "theme/variables.scss".
+//
+// To declare rules for a specific mode, create a child rule
+// for the .md, .ios, or .wp mode classes. The mode class is
+// automatically applied to the <body> element in the app.
+$pad-size: 5px;
+$gray: gray;
+$odd-row: #ebeced;
+$black: black;
+$header-color: rgba(76, 158, 217, .8);
+$header-color2: rgba(51, 51, 51, .8);
+
+.flex-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
+
+.flex-rigid {
+  flex-grow: 0;
+}
+
+// ICONS
+
+.ion-ios-planete:before,
+.ion-ios-planete-circle:before,
+.ion-ios-planete-circle-outline:before,
+.ion-ios-planete-outline:before,
+.ion-md-planete:before,
+.ion-md-planete-circle:before,
+.ion-md-planete-circle-outline:before,
+.ion-md-planete-outline:before {
+  @extend .ion;
+}
+
+.ion-ios-planete:before,
+.ion-ios-planete-outline:before,
+.ion-md-planete:before,
+.ion-md-planete-outline:before {
+  content: '../assets/icon/planete-512.png';
+}
