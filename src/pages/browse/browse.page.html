@@ -1,7 +1,7 @@
-<ion-header>
+<ion-header class="browse-page header">
 
   <ion-navbar>
-    <ion-title>Home</ion-title>
+    <ion-title>Recherche</ion-title>
   </ion-navbar>
 
   <ion-fab top right>
@@ -24,9 +24,10 @@
 
 </ion-header>
 
-<ion-content padding class="action-sheets-basic-page">
-  <div class="wrapper" *ngIf="isFilterCountryShown" style="height:250px">
+<ion-content padding class="browse-page page">
+  <div *ngIf="isFilterCountryShown" class="wrapper popover">
     <france-component (areaChosen)="areaChosen($event)"></france-component>
+    <color-chooser-component></color-chooser-component>
   </div>
 
   <div class="list list-inset">

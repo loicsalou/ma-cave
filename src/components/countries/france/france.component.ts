@@ -14,16 +14,18 @@ import {Component, EventEmitter, Output} from '@angular/core';
   ]
 })
 export class FranceComponent {
-  text: string;
   @Output()
   areaChosen: EventEmitter<string>=new EventEmitter();
 
   constructor() {
   }
 
-  onclick(event: string) {
-    console.info('zone '+event+' cliquée');
+  showArea(event: string) {
     this.areaChosen.emit(event);
+  }
+
+  showAll(event: string) {
+    this.areaChosen.emit('*');
   }
 
 }

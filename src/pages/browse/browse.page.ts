@@ -28,6 +28,7 @@ export class BrowsePage {
   areaChosen(area: string) {
     this.isFilterCountryShown = false;
     console.info("filtering on " + area);
+
     this.bottles=this.bottlesService.getBottles({region: area});
   }
 
