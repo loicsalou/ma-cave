@@ -21,14 +21,14 @@ export class BottleService {
     //Bottle.showDistinctRegions();
 
     let filtered = this.bottles;
-    if (searchParams.regions) {
+    if (searchParams.regions && searchParams.regions.length>0) {
       filtered = filtered.filter((bottle) => {
         let regionCode = Bottle.regions2[bottle.subregion_label];
         return searchParams.regions.indexOf(regionCode) != -1;
       })
     }
 
-    if (searchParams.colors) {
+    if (searchParams.colors && searchParams.colors.length>0) {
       filtered = filtered.filter((bottle) => {
         let colorCode = Bottle.colors2[bottle.label];
         return searchParams.colors.indexOf(colorCode) != -1;
