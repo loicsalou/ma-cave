@@ -10,7 +10,7 @@
     </button>
 
     <ion-fab-list>
-      <button ion-fab (click)="filterCountry()">
+      <button ion-fab (click)="filter()">
         <ion-icon name="planet"></ion-icon>
       </button>
       <button ion-fab>
@@ -25,9 +25,8 @@
 </ion-header>
 
 <ion-content padding class="browse-page page">
-  <div *ngIf="isFilterCountryShown" class="wrapper popover">
-    <france-component (areaChosen)="areaChosen($event)"></france-component>
-    <color-chooser-component></color-chooser-component>
+  <div *ngIf="isFilterPanelShown" class="wrapper popover">
+    <filter-panel (filterOn)="filterOn($event)"></filter-panel>
   </div>
 
   <div class="list list-inset">

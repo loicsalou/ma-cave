@@ -4,11 +4,17 @@ color-chooser-component .color-chooser-component {
   flex-direction: row;
   //border: thin solid red;
   height: 27px;
+  padding: 0 3px 0 15px;
   width: 100%;
 
   div {
     height: 27px;
     width: 27px;
+
+    &.color {
+      flex-grow: 0;
+      padding: 0 5px;
+    }
 
     &.red {
       background: no-repeat url('/assets/img/bottle-color/bouteille-rouge.png');
@@ -39,5 +45,9 @@ color-chooser-component .color-chooser-component {
       background: no-repeat url('/assets/img/bottle-color/bouteille-rose.png');
       background-size: 25px 25px;
     }
+  }
+
+  .align-right {
+    margin-left: auto;
   }
 }

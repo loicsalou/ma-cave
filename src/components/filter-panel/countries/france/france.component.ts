@@ -10,7 +10,7 @@ import {Component, EventEmitter, Output} from '@angular/core';
   selector: 'france-component',
   templateUrl: 'france.component.html',
   styleUrls: [
-    '/france.component.scss'
+    '/src/components/filter-panel/countries/france/france.component.scss'
   ]
 })
 export class FranceComponent {
@@ -20,11 +20,11 @@ export class FranceComponent {
   constructor() {
   }
 
-  showArea(event: string) {
+  chooseArea(event: string) {
     this.areaChosen.emit(event);
   }
 
-  showAll(event: string) {
+  chooseAll(event?: string) {
     this.areaChosen.emit('*');
   }
 

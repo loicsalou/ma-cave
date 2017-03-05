@@ -17,10 +17,22 @@ export class BottleService {
     if (!searchParams) {
       return this.bottles;
     }
+    //Bottle.showDistinctColors();
+    //Bottle.showDistinctRegions();
 
     let filtered = this.bottles;
-    if (searchParams.region) {
-      filtered = filtered.filter((bottle) => bottle.subregion_label === Bottle.regions[searchParams.region])
+    if (searchParams.regions) {
+      filtered = filtered.filter((bottle) => {
+        let regionCode = Bottle.regions2[bottle.subregion_label];
+        return searchParams.regions.indexOf(regionCode) != -1;
+      })
+    }
+
+    if (searchParams.colors) {
+      filtered = filtered.filter((bottle) => {
+        let colorCode = Bottle.colors2[bottle.label];
+        return searchParams.colors.indexOf(colorCode) != -1;
+      })
     }
 
     return filtered;

@@ -1,0 +1,23 @@
+<!--
+  Generated template for the FilterPanel component.
+
+  See https://angular.io/docs/ts/latest/api/core/index/ComponentMetadata-class.html
+  for more info on Angular 2 Components.
+-->
+<div class="filter-panel">
+  <france-component (areaChosen)="chooseArea($event)"></france-component>
+  <hr>
+  <color-chooser-component (colorChosen)="chooseColor($event)"></color-chooser-component>
+  <hr>
+  <div class="force-left">
+    <ul>
+      <li>Régions: {{filters.regions.length==0 ? 'toutes' : filters.regions}}</li>
+      <li>Couleurs: {{filters.colors.length==0 ? 'toutes' : filters.colors}}</li>
+    </ul>
+  </div>
+  <hr>
+  <div class="center">
+    <button ion-button outline item-right icon-left (click)="applyFilters()">
+      <ion-icon name="checkmark"></ion-icon>Appliquer</button>
+  </div>
+</div>

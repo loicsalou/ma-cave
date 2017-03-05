@@ -9,7 +9,7 @@ import {BottleService} from "./bottle.service";
 })
 export class BrowsePage {
 
-  isFilterCountryShown = false;
+  isFilterPanelShown = false;
   bottles;
 
   constructor(public navCtrl: NavController, public platform: Platform,
@@ -17,19 +17,19 @@ export class BrowsePage {
     this.bottles=bottlesService.getBottles();
   }
 
-  filterCountry() {
-    this.isFilterCountryShown = true;
+  filter() {
+    this.isFilterPanelShown = true;
   }
 
   clicked(event:any) {
     console.info("carte de France cliquée !");
   }
 
-  areaChosen(area: string) {
-    this.isFilterCountryShown = false;
-    console.info("filtering on " + area);
+  filterOn(filters: string) {
+    this.isFilterPanelShown = false;
+    console.info("filtering on " + filters);
 
-    this.bottles=this.bottlesService.getBottles({region: area});
+    this.bottles=this.bottlesService.getBottles(filters);
   }
 
   openMenu() {

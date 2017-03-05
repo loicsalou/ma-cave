@@ -10,7 +10,7 @@ import {Component, Output, EventEmitter} from "@angular/core";
   selector: 'color-chooser-component',
   templateUrl: 'color-chooser.component.html',
   styleUrls: [
-    '/color-chooser.component.scss'
+    '/src/components/filter-panel/color-chooser/color-chooser.component.scss'
   ]
 })
 export class ColorChooserComponent {
@@ -20,7 +20,11 @@ export class ColorChooserComponent {
   constructor() {
   }
 
-  onclick(event: string) {
+  chooseColor(event: string) {
     this.colorChosen.emit(event);
+  }
+
+  chooseAll(event?: string) {
+    this.colorChosen.emit('*');
   }
 }
