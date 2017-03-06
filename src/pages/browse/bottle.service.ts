@@ -13,6 +13,13 @@ import {Bottle} from "./bottle";
 export class BottleService {
   bottles = require('../../assets/json/ma-cave.json');
 
+  getBottlesByKeywords(keywords: string[]): any {
+    return this.bottles.filter((bottle) => {
+      let lab=bottle.label;
+      return lab.indexOf(keywords[0])!=-1;
+    });
+  }
+
   getBottles(searchParams?: any): any {
     if (!searchParams) {
       return this.bottles;
@@ -21,14 +28,14 @@ export class BottleService {
     //Bottle.showDistinctRegions();
 
     let filtered = this.bottles;
-    if (searchParams.regions && searchParams.regions.length>0) {
+    if (searchParams.regions && searchParams.regions.length > 0) {
       filtered = filtered.filter((bottle) => {
         let regionCode = Bottle.regions2[bottle.subregion_label];
         return searchParams.regions.indexOf(regionCode) != -1;
       })
     }
 
-    if (searchParams.colors && searchParams.colors.length>0) {
+    if (searchParams.colors && searchParams.colors.length > 0) {
       filtered = filtered.filter((bottle) => {
         let colorCode = Bottle.colors2[bottle.label];
         return searchParams.colors.indexOf(colorCode) != -1;

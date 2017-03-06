@@ -1,0 +1,15 @@
+<ion-header class="browse-page header">
+
+  <ion-searchbar [placeholder]="Chercher" [autocomplete]="on" [autocorrect]="on" [animated]="true" (ionInput)="filterOn($event)"></ion-searchbar>
+
+</ion-header>
+
+<ion-content padding class="browse-page page">
+
+  <div class="list list-inset">
+    <div *ngFor="let btl of bottles" class="item bottle item-button-right">
+      <bottle-item [bottle]="btl"></bottle-item>
+    </div>
+  </div>
+
+</ion-content>

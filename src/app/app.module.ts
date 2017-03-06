@@ -11,6 +11,7 @@ import {BottleService} from "../pages/browse/bottle.service";
 import {BottleItemComponent} from "../components/list/bottle-item-component/bottle-item.component";
 import {ColorChooserComponent} from "../components/filter-panel/color-chooser/color-chooser.component";
 import {FilterPanelComponent} from "../components/filter-panel/filter-panel";
+import {Browse2Page} from "../pages/browse2/browse2.page";
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import {FilterPanelComponent} from "../components/filter-panel/filter-panel";
     ContactPage,
     HomePage,
     BrowsePage,
+    Browse2Page,
     ColorChooserComponent,
     FilterPanelComponent,
     FranceComponent,
@@ -35,6 +37,7 @@ import {FilterPanelComponent} from "../components/filter-panel/filter-panel";
     ContactPage,
     HomePage,
     BrowsePage,
+    Browse2Page,
     TabsPage
   ],
   providers: [
