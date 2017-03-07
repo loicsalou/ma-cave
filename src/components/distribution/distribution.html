@@ -1,0 +1,14 @@
+<!--
+  Generated template for the Distribution component.
+
+  See https://angular.io/docs/ts/latest/api/core/index/ComponentMetadata-class.html
+  for more info on Angular 2 Components.
+-->
+
+<div class="distribution">
+  <div *ngFor="let dimension of distribution">
+    <ul>
+      <li *ngFor="let axis of dimension">{{axis.key}}: {{axis.value}}</li>
+    </ul>
+  </div>
+</div>
