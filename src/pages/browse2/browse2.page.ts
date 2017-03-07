@@ -1,6 +1,7 @@
 import {Component} from "@angular/core";
-import {Platform, NavController, ActionSheetController} from "ionic-angular";
+import {Platform, NavController, ActionSheetController, ToastController} from "ionic-angular";
 import {BottleService} from "../browse/bottle.service";
+import {DistributeService} from "../../components/distribution/distribute.service";
 
 @Component({
   selector: 'page-browse',
@@ -10,61 +11,32 @@ import {BottleService} from "../browse/bottle.service";
 export class Browse2Page {
 
   bottles;
+  distribution; //distribution de la sélection selon plusieurs colonnes pour avoir le compte
 
-  constructor(public navCtrl: NavController, public platform: Platform,
-              public actionsheetCtrl: ActionSheetController, private bottlesService: BottleService) {
+  constructor(private toastCtrl: ToastController, public navCtrl: NavController, public platform: Platform,
+              private bottlesService: BottleService, private distributionService: DistributeService) {
     this.bottles=bottlesService.getBottles();
   }
 
   filterOn(event: any) {
     let filter=event.target.value
     this.bottles=this.bottlesService.getBottlesByKeywords([filter]);
+    this.distribution=this.distributionService.distributeBy(this.bottles,['label', 'subregion_label']);
+    this.presentToast();
   }
 
-  openMenu() {
-    let actionSheet = this.actionsheetCtrl.create({
-      title: 'Filter',
-      cssClass: 'action-sheets-basic-page',
-      buttons: [
-        {
-          text: 'Delete',
-          role: 'destructive',
-          icon: !this.platform.is('ios') ? 'trash' : null,
-          handler: () => {
-            console.log('Delete clicked');
-          }
-        },
-        {
-          text: 'Share',
-          icon: !this.platform.is('ios') ? 'share' : null,
-          handler: () => {
-            console.log('Share clicked');
-          }
-        },
-        {
-          text: 'Play',
-          icon: !this.platform.is('ios') ? 'arrow-dropright-circle' : null,
-          handler: () => {
-            console.log('Play clicked');
-          }
-        },
-        {
-          text: 'Favorite',
-          icon: !this.platform.is('ios') ? 'heart-outline' : null,
-          handler: () => {
-            console.log('Favorite clicked');
-          }
-        },
-        {
-          text: 'Cancel',
-          role: 'cancel', // will always sort to be on the bottom
-          icon: !this.platform.is('ios') ? 'close' : null,
-          handler: () => {
-            console.log('Cancel clicked');
-          }
-        }
-      ]
+  presentToast() {
+    let toast = this.toastCtrl.create({
+      message: (this.bottles && this.bottles.length > 0) ? this.bottles.length+' bouteilles trouvées' : 'Aucune bouteille ne correspond',
+      duration: 3000,
+      position: 'bottom',
+      showCloseButton: true
     });
-    actionSheet.present();
+
+    toast.onDidDismiss(() => {
+      console.log('Dismissed toast');
+    });
+
+    toast.present();
   }
 }

@@ -14,10 +14,23 @@ export class BottleService {
   bottles = require('../../assets/json/ma-cave.json');
 
   getBottlesByKeywords(keywords: string[]): any {
+    let search=keywords[0].toLowerCase();
     return this.bottles.filter((bottle) => {
-      let lab=bottle.label;
-      return lab.indexOf(keywords[0])!=-1;
+      let ret = false;
+      for (var key in bottle) {
+        var attrName = key;
+        var attrValue = bottle[key].toString().toLocaleLowerCase();
+
+        if (attrValue && attrValue.indexOf(search) != -1) {
+          ret = true;
+          break;
+        }
+      }
+
+      return ret;
     });
+
+
   }
 
   getBottles(searchParams?: any): any {
@@ -46,3 +59,8 @@ export class BottleService {
   }
 
 }
+
+
+
+// WEBPACK FOOTER //
+// ./src/pages/browse/bottle.service.ts

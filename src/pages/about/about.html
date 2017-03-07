@@ -8,7 +8,7 @@
 
 <ion-content padding class="flex-container page">
   <div class="flex-grow">
-    <img src="assets/img/vins-tranquilles.png"/>
+    <img src="assets/img/vins-tranquilles.png" (click)="onclick($event)"/>
     <img src="assets/img/carte-vignobles.png" alt="" usemap="#Map" />
     <map name="Map" id="Map">
       <area alt="Corse" (click)="onclick($event)" title="Corse" href="#" shape="poly" coords="213,224,219,236,213,247,226,261,236,240,238,215" />

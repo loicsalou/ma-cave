@@ -12,6 +12,8 @@ import {BottleItemComponent} from "../components/list/bottle-item-component/bott
 import {ColorChooserComponent} from "../components/filter-panel/color-chooser/color-chooser.component";
 import {FilterPanelComponent} from "../components/filter-panel/filter-panel";
 import {Browse2Page} from "../pages/browse2/browse2.page";
+import {DistributeService} from "../components/distribution/distribute.service";
+import {DistributionComponent} from "../components/distribution/distribution";
 
 @NgModule({
   declarations: [
@@ -24,6 +26,7 @@ import {Browse2Page} from "../pages/browse2/browse2.page";
     ColorChooserComponent,
     FilterPanelComponent,
     FranceComponent,
+    DistributionComponent,
     BottleItemComponent,
     TabsPage
   ],
@@ -42,7 +45,7 @@ import {Browse2Page} from "../pages/browse2/browse2.page";
   ],
   providers: [
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    BottleService]
+    BottleService, DistributeService]
 })
 export class AppModule {
 }
