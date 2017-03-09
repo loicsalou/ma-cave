@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, EventEmitter} from '@angular/core';
 
 /*
   Generated class for the Distribution component.
@@ -14,8 +14,20 @@ export class DistributionComponent {
 
   @Input()
   distribution;
+  badgeClicked: EventEmitter<string> = new EventEmitter();
 
   constructor() {
   }
 
+  valueClicked($event) {
+    console.info("filter clicked: "+$event.currentTarget.textContent);
+    let value=$event.currentTarget.textContent.split(':')[0];
+    this.badgeClicked.emit(value);
+  }
+
 }
+
+
+
+// WEBPACK FOOTER //
+// ./src/components/distribution/distribution.ts

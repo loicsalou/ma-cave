@@ -21,8 +21,14 @@ export class Browse2Page {
   filterOn(event: any) {
     let filter=event.target.value
     this.bottles=this.bottlesService.getBottlesByKeywords([filter]);
-    this.distribution=this.distributionService.distributeBy(this.bottles,['label', 'subregion_label']);
-    this.presentToast();
+    this.distribution=this.distributionService.distributeBy(this.bottles,['label', 'subregion_label', 'area_label', 'millesime']);
+    //this.presentToast();
+  }
+
+  refine($event) {
+    let by='label';
+    let value=$event;
+    this.bottles=this.bottlesService.getBottlesBy(this.bottles, by, value);
   }
 
   presentToast() {

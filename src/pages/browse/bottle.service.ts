@@ -3,6 +3,8 @@
  */
 import {Injectable} from "@angular/core";
 import {Bottle} from "./bottle";
+import * as _ from "lodash";
+import {Configuration} from "../../components/config/Configuration";
 
 /**
  * Services related to the bottles in the cellar.
@@ -14,11 +16,13 @@ export class BottleService {
   bottles = require('../../assets/json/ma-cave.json');
 
   getBottlesByKeywords(keywords: string[]): any {
-    let search=keywords[0].toLowerCase();
+    if (!keywords || keywords.length == 0 || !keywords[0])
+      return this.bottles;
+
+    let search = keywords[0].toLowerCase();
     return this.bottles.filter((bottle) => {
       let ret = false;
       for (var key in bottle) {
-        var attrName = key;
         var attrValue = bottle[key].toString().toLocaleLowerCase();
 
         if (attrValue && attrValue.indexOf(search) != -1) {
@@ -43,14 +47,14 @@ export class BottleService {
     let filtered = this.bottles;
     if (searchParams.regions && searchParams.regions.length > 0) {
       filtered = filtered.filter((bottle) => {
-        let regionCode = Bottle.regions2[bottle.subregion_label];
+        let regionCode = Configuration.regionsText2Code[bottle.subregion_label];
         return searchParams.regions.indexOf(regionCode) != -1;
       })
     }
 
     if (searchParams.colors && searchParams.colors.length > 0) {
       filtered = filtered.filter((bottle) => {
-        let colorCode = Bottle.colors2[bottle.label];
+        let colorCode = Configuration.colorsText2Code[bottle.label];
         return searchParams.colors.indexOf(colorCode) != -1;
       })
     }
@@ -58,8 +62,17 @@ export class BottleService {
     return filtered;
   }
 
-}
+  static isEmpty(array: any[], index: number): boolean {
+    return _.isEmpty(array, index);
+  }
 
+  getBottlesBy(bottles: Bottle[], by: string, value: any) {
+
+    let filtered = bottles.filter(bottle => bottle[by] === value);
+    return filtered;
+
+  }
+}
 
 
 // WEBPACK FOOTER //

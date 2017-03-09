@@ -1,8 +1,28 @@
 distribution {
   div {
-    border: thin solid #000;
-    background: #0c60ee;
+    background: transparent;
     color: #FFF;
-    border-radius: 5px;
+
+    h3 {
+      color: black;
+    }
+
+    ion-badge {
+      margin: 3px;
+      box-shadow: 2px 2px 2px black;
+      &:active {
+        box-shadow: 0 0 0 black;
+        transition: box-shadow 200ms;
+      }
+    }
+
+    .slide {
+      padding: 5px;
+      background: darken(white,8%);
+      border: thin solid dodgerblue;
+      border-radius: 5px;
+      width: 91vw;
+      box-shadow: grey 7px 7px 11px 1px;
+    }
   }
 }

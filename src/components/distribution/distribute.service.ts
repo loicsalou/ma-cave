@@ -16,7 +16,7 @@ export class DistributeService {
 
     byCols.forEach(col => {
       let r = this.reduceToCount(rows, col);
-      distribution.push(r);
+      distribution.push({axis: col, values: r});
     });
 
     return distribution;
@@ -29,29 +29,29 @@ export class DistributeService {
     }, {});
 
     var result = Object.keys(occurences).map(function (key) {
-      return { key: key, value: occurences[key] };
+      return {key: key, value: occurences[key]};
     });
 
     console.log(result);
     return result;
   }
 
-/*  distributeBy(collection: any[], byCols: string[]): any[] {
-    let distribution = [];
+  /*  distributeBy(collection: any[], byCols: string[]): any[] {
+   let distribution = [];
 
-    return byCols.map(col => {
-      let r = this.reduceToCount(collection, col);
-      return r;
-    });
-  }
+   return byCols.map(col => {
+   let r = this.reduceToCount(collection, col);
+   return r;
+   });
+   }
 
-  private reduceToCount(collection: any[], col: string): any {
-    let counts = {};
-    return collection.forEach(item => {
-      let colValue = item[col];
-      counts[colValue] = ++counts[colValue] || 1;
-    })
-    return counts;
-  }
-  */
+   private reduceToCount(collection: any[], col: string): any {
+   let counts = {};
+   return collection.forEach(item => {
+   let colValue = item[col];
+   counts[colValue] = ++counts[colValue] || 1;
+   })
+   return counts;
+   }
+   */
 }
