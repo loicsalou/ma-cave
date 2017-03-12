@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header class="header">
   <ion-navbar>
     <ion-title>
       About
@@ -6,26 +6,15 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content padding class="flex-container">
-  <p class="flex-rigid">Une application écrite en quelques heures avec Ionic-2.</p>
+<ion-content padding class="flex-container page">
   <div class="flex-grow">
-    <img src="assets/img/vins-tranquilles.png"/>
-    <img src="assets/img/carte-vignobles.png" alt="" usemap="#Map" />
-    <map name="Map" id="Map">
-      <area alt="Corse" (click)="onclick($event)" title="Corse" href="#" shape="poly" coords="213,224,219,236,213,247,226,261,236,240,238,215" />
-      <area alt="Alsace" (click)="onclick($event)" title="Alsace" href="#" shape="poly" coords="218,61,205,68,197,82,207,96,221,100,231,93,231,78,226,67" />
-      <area alt="Champagne" (click)="onclick($event)" title="Champagne" href="#" shape="poly" coords="153,31,143,32,136,38,135,48,136,55,143,64,152,67,162,65,169,53,168,42,164,35" />
-      <area alt="Bourgogne" (click)="onclick($event)" title="Bourgogne" href="#" shape="poly" coords="167,95,157,96,149,102,149,116,158,122,170,117,173,110,174,108" />
-      <area alt="Beaujolais" (click)="onclick($event)" title="Beaujolais" href="#" shape="poly" coords="158,124,152,131,150,139,156,146,164,147,173,141,175,133,174,127,167,123" />
-      <area alt="Vallée du Rhône" (click)="onclick($event)" title="Vallée du Rhône" href="#" shape="poly" coords="168,154,161,153,154,159,152,165,157,173,166,178,176,175,179,163" />
-      <area alt="Provence" (click)="onclick($event)" title="Provence" href="#" shape="poly" coords="179,189,170,188,163,196,165,204,168,212,181,215,189,208,188,195" />
-      <area alt="Languedoc Roussillon" (click)="onclick($event)" title="Languedoc Roussillon" href="#" shape="poly" coords="143,184,133,187,127,195,127,206,129,215,137,222,146,221,154,215,161,204,157,190" />
-      <area alt="Sud-ouest" (click)="onclick($event)" title="Sud-ouest" href="#" shape="poly" coords="92,185,82,187,76,198,83,212,100,209,103,196" />
-      <area alt="Bordeaux" (click)="onclick($event)" title="Bordeaux" href="#" shape="poly" coords="82,152,77,141,68,136,57,135,46,147,49,164,65,172,78,164" />
-      <area alt="Val de Loire" (click)="onclick($event)" title="Val de Loire" href="#" shape="poly" coords="123,81,84,66,64,73,62,89,72,103,91,99,100,96,124,87,125,83" />
-      <area alt="Cognac" (click)="onclick($event)" title="Cognac" href="#" shape="poly" coords="72,107,63,111,59,128,71,135,87,138,96,123,89,112" />
-      <area alt="Jura & Savoie" (click)="onclick($event)" title="Jura & Savoie" href="#" shape="poly" coords="187,158,194,155,197,146,188,140,181,140,175,149,181,159,194,159" />
-    </map>
-
+    <h2>version: {{name}}:{{version}}</h2>
+    <h2 *ngIf="message">{{message}}</h2>
+    <img src="assets/img/vins-tranquilles.png" (click)="onclick($event)"/>
+    <img src="assets/img/carte-vignobles.png" (click)="choosePicture($event)"/>
+    <div *ngIf="imagePath">
+      <p>{{imagePath}}</p>
+      <img [src]="imagePath" (click)="removePicture($event)"/>
+    </div>
   </div>
 </ion-content>

@@ -1,0 +1,22 @@
+.page-browse2 {
+  ion-fab[top] {
+    top: 0;
+  }
+
+  div.report {
+    background-color: transparent;
+    color: #0c60ee;
+    font-size: 1.2rem;
+    position: absolute;
+    top: 0;
+    z-index: 9;
+  }
+
+  .popover {
+    background-color: beige;
+    border-radius: 5px;
+    box-shadow: 5px 5px 2px 1px rgba(0, 0, 0, 0.8);
+    opacity: 1;
+    z-index: 999;
+  }
+}

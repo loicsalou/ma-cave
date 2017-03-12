@@ -1,7 +1,7 @@
-<ion-header>
+<ion-header class="page-browse header">
 
   <ion-navbar>
-    <ion-title>Home</ion-title>
+    <ion-title>Recherche</ion-title>
   </ion-navbar>
 
   <ion-fab top right>
@@ -10,7 +10,7 @@
     </button>
 
     <ion-fab-list>
-      <button ion-fab (click)="filterCountry()">
+      <button ion-fab (click)="filter()">
         <ion-icon name="planet"></ion-icon>
       </button>
       <button ion-fab>
@@ -24,15 +24,10 @@
 
 </ion-header>
 
-<ion-content padding class="action-sheets-basic-page">
-  <div class="wrapper" *ngIf="isFilterCountryShown" style="height:250px">
-    <france-component (areaChosen)="areaChosen($event)"></france-component>
+<ion-content class="page-browse page">
+  <div *ngIf="isFilterPanelShown" class="wrapper popover">
+    <filter-panel (filterOn)="filterOn($event)"></filter-panel>
   </div>
 
-  <div class="list list-inset">
-    <div *ngFor="let btl of bottles" class="item bottle item-button-right">
-      <bottle-item [bottle]="btl"></bottle-item>
-    </div>
-  </div>
-
+  <bottle-list [bottles]="bottles"></bottle-list>
 </ion-content>

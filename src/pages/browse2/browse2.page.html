@@ -1,0 +1,15 @@
+<ion-header class="page-browse2 header">
+
+  <ion-searchbar [placeholder]="Chercher" [autocomplete]="on" [autocorrect]="on" [animated]="true" (ionInput)="filterOn($event)"></ion-searchbar>
+
+</ion-header>
+
+<ion-content class="page-browse2 page">
+
+  <div class="report" *ngIf="! bottles.empty">
+    <distribution [distribution]="distribution"></distribution>
+  </div>
+
+  <bottle-list [bottles]="bottles"></bottle-list>
+
+</ion-content>

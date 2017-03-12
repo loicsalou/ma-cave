@@ -10,20 +10,22 @@ import {Component, EventEmitter, Output} from '@angular/core';
   selector: 'france-component',
   templateUrl: 'france.component.html',
   styleUrls: [
-    '/france.component.scss'
+    '/src/components/filter-panel/countries/france/france.component.scss'
   ]
 })
 export class FranceComponent {
-  text: string;
   @Output()
   areaChosen: EventEmitter<string>=new EventEmitter();
 
   constructor() {
   }
 
-  onclick(event: string) {
-    console.info('zone '+event+' cliquée');
+  chooseArea(event: string) {
     this.areaChosen.emit(event);
+  }
+
+  chooseAll(event?: string) {
+    this.areaChosen.emit('*');
   }
 
 }
