@@ -1,13 +1,19 @@
 <ion-header class="page-browse2 header">
 
-  <ion-searchbar [placeholder]="Chercher" [autocomplete]="on" [autocorrect]="on" [animated]="true" (ionInput)="filterOn($event)"></ion-searchbar>
+  <ion-searchbar [placeholder]="Chercher" [autocomplete]="on" [autocorrect]="on" [animated]="true"
+                 (ionInput)="filterOnText($event)"></ion-searchbar>
+  <ion-fab bottom right edge *ngIf="distribution" (click)="switchDistribution()">
+    <button ion-fab mini>
+      <ion-icon name="add"></ion-icon>
+    </button>
+  </ion-fab>
 
 </ion-header>
 
 <ion-content class="page-browse2 page">
 
-  <div class="report" *ngIf="! bottles.empty">
-    <distribution [distribution]="distribution"></distribution>
+  <div class="report" *ngIf="distribution">
+    <distribution [distribution]="distribution" [opened]="isDistributionOpened" (badgeClicked)="refineFilter($event)"></distribution>
   </div>
 
   <bottle-list [bottles]="bottles"></bottle-list>
