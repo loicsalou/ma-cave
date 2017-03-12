@@ -6,13 +6,17 @@
 -->
 
 <div class="distribution">
-  <ion-slides>
-    <ion-slide *ngFor="let dimension of distribution">
-      <div class="slide">
-        <h3>{{dimension.axis}}</h3>
-        <hr>
-        <ion-badge (click)="valueClicked($event)" item-right *ngFor="let value of dimension.values">{{value.key}}: {{value.value}}</ion-badge>
-      </div>
-    </ion-slide>
-  </ion-slides>
+  <div>
+    <ion-slides>
+      <ion-slide *ngFor="let dimension of distribution">
+        <div class="slide">
+          <h3>{{dimension.axis}}</h3>
+          <hr>
+          <ion-badge (click)="valueClicked($event)" item-right *ngFor="let value of dimension.values">{{value.key}}:
+            {{value.value}}
+          </ion-badge>
+        </div>
+      </ion-slide>
+    </ion-slides>
+  </div>
 </div>

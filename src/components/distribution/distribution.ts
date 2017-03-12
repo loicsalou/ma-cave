@@ -8,7 +8,8 @@ import {Component, Input, EventEmitter} from '@angular/core';
 */
 @Component({
   selector: 'distribution',
-  templateUrl: 'distribution.html'
+  templateUrl: 'distribution.html',
+  styleUrls: ['/src/components/distribution/distribution.scss']
 })
 export class DistributionComponent {
 
