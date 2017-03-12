@@ -1,12 +1,13 @@
 {
-  "label": "Couleur",
-  "subregion_label": "Région",
   "area_label": "Appellation",
-  "millesime": "Millésime",
+  "bottle-detail": "Informations détaillées",
   "classe_age": "Classe d'âge",
-  "young": "Jeune",
+  "label": "Couleur",
   "middle": "Age moyen",
-  "old": "Vieux",
+  "millesime": "Millésime",
   "no-age": "Non millésimé",
-  "very-old": "Très vieux"
+  "old": "Vieux",
+  "subregion_label": "Région",
+  "very-old": "Très vieux",
+  "young": "Jeune"
 }

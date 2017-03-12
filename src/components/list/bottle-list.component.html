@@ -5,7 +5,7 @@
 
   <div class="list list-inset">
     <div *ngFor="let btl of bottles" class="item bottle item-button-right">
-      <bottle-item [bottle]="btl"></bottle-item>
+      <bottle-item [bottle]="btl" (showDetail)="triggerDetail($event)"></bottle-item>
     </div>
   </div>
 </div>

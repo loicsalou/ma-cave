@@ -3,6 +3,8 @@ import {Platform, NavController, ToastController} from "ionic-angular";
 import {BottleService} from "../../components/bottle/bottle.service";
 import {DistributeService} from "../../components/distribution/distribute.service";
 import * as _ from "lodash";
+import {Bottle} from "../../components/bottle/bottle";
+import {BottleDetailPage} from "../bottle-detail/bottle-detail";
 
 @Component({
   selector: 'page-browse',
@@ -76,5 +78,10 @@ export class Browse2Page {
     });
 
     toast.present();
+  }
+
+  triggerDetail(bottle: Bottle) {
+    console.info("show detail "+bottle['nomCru']);
+    this.navCtrl.push(BottleDetailPage, {bottle: bottle});
   }
 }

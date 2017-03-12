@@ -1,6 +1,7 @@
-import {Component, Input} from "@angular/core";
+import {Component, Input, Output, EventEmitter} from "@angular/core";
 import {Platform, NavController, ActionSheetController} from "ionic-angular";
 import {BottleService} from "../../components/bottle/bottle.service";
+import {Bottle} from "../bottle/bottle";
 
 @Component({
   selector: 'bottle-list',
@@ -12,6 +13,9 @@ export class BottleListComponent {
   isFilterPanelShown = false;
   @Input()
   bottles;
+
+  @Output()
+  showDetail: EventEmitter<Bottle> = new EventEmitter();
 
   constructor(private bottlesService: BottleService) {
   }
@@ -29,5 +33,9 @@ export class BottleListComponent {
     console.info("filtering on " + filters);
 
     this.bottles=this.bottlesService.getBottles(filters);
+  }
+
+  triggerDetail(bottle: Bottle) {
+    this.showDetail.emit(bottle);
   }
 }

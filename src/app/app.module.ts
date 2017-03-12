@@ -19,6 +19,7 @@ import {BottleListComponent} from "../components/list/bottle-list.component";
 import {TranslateModule, TranslateLoader} from "@ngx-translate/core";
 import {TranslateHttpLoader} from "@ngx-translate/http-loader";
 import {HttpModule, Http} from "@angular/http";
+import {BottleDetailPage} from "../pages/bottle-detail/bottle-detail";
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import {HttpModule, Http} from "@angular/http";
     HomePage,
     BrowsePage,
     Browse2Page,
+    BottleDetailPage,
     ColorChooserComponent,
     FilterPanelComponent,
     FranceComponent,
@@ -56,7 +58,8 @@ import {HttpModule, Http} from "@angular/http";
     HomePage,
     BrowsePage,
     Browse2Page,
-    TabsPage
+    TabsPage,
+    BottleDetailPage
   ],
   providers: [
     {provide: ErrorHandler, useClass: IonicErrorHandler},
