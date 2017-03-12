@@ -2,6 +2,7 @@ import {Component} from "@angular/core";
 import {Platform, NavController, ToastController} from "ionic-angular";
 import {BottleService} from "../../components/bottle/bottle.service";
 import {DistributeService} from "../../components/distribution/distribute.service";
+import * as _ from "lodash";
 
 @Component({
   selector: 'page-browse',
@@ -12,6 +13,7 @@ export class Browse2Page {
 
   bottles;
   distribution; //distribution de la sélection selon plusieurs colonnes pour avoir le compte
+  currentDistributionAxis: string[]; //axes de distribution de la distribution courante
   isDistributionOpened = false;
 
   constructor(private toastCtrl: ToastController, public navCtrl: NavController, public platform: Platform,
@@ -34,7 +36,7 @@ export class Browse2Page {
   filterOnText(event: any) {
     let filter = event.target.value
     this.bottles = this.bottlesService.getBottlesByKeywords([filter]);
-    this.distribute(['label', 'subregion_label', 'millesime']);
+    this.distribute(['label', 'subregion_label', 'classe_age']);
     //this.presentToast();
   }
 
@@ -42,14 +44,21 @@ export class Browse2Page {
     let by = jsonFilter.axis;
     let value = jsonFilter.value;
     this.bottles = this.bottlesService.getBottlesBy(this.bottles, by, value);
-    if (by==='subregion_label') {
-      this.distribute(['label', 'area_label', 'millesime'])
+    if (by === 'subregion_label') {
+      let targetDistribution=_.without(this.currentDistributionAxis, 'subregion_label');
+      targetDistribution.push('area_label');
+      this.distribute(targetDistribution);
+    } else if (by === 'classe_age') {
+      let targetDistribution=_.without(this.currentDistributionAxis, 'classe_age');
+      targetDistribution.push('millesime');
+      this.distribute(targetDistribution);
     } else {
-      this.distribute(['label', 'subregion_label', 'millesime']);
+      this.distribute(this.currentDistributionAxis);
     }
   }
 
   distribute(axis: string[]) {
+    this.currentDistributionAxis = axis;
     this.distribution = this.distributionService.distributeBy(this.bottles, axis);
   }
 

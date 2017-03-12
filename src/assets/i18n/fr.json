@@ -2,5 +2,11 @@
   "label": "Couleur",
   "subregion_label": "Région",
   "area_label": "Appellation",
-  "millesime": "Millésime"
+  "millesime": "Millésime",
+  "classe_age": "Classe d'âge",
+  "young": "Jeune",
+  "middle": "Age moyen",
+  "old": "Vieux",
+  "no-age": "Non millésimé",
+  "very-old": "Très vieux"
 }
