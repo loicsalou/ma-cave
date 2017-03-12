@@ -10,9 +10,10 @@
     <ion-slides>
       <ion-slide *ngFor="let dimension of distribution">
         <div class="slide">
-          <h3>{{dimension.axis}}</h3>
+          <h3>{{dimension.axis | translate}}</h3>
           <hr>
-          <ion-badge (click)="valueClicked($event, dimension.axis)" item-right *ngFor="let value of dimension.values">{{value.key}}:
+          <ion-badge (click)="valueClicked($event, dimension.axis)" item-right *ngFor="let value of dimension.values">
+            {{value.key}}:
             {{value.value}}
           </ion-badge>
         </div>

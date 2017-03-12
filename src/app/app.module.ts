@@ -16,6 +16,9 @@ import {DistributeService} from "../components/distribution/distribute.service";
 import {DistributionComponent} from "../components/distribution/distribution";
 import {BottleIconPipe} from "../components/list/bottle-item-component/bottle-icon.pipe";
 import {BottleListComponent} from "../components/list/bottle-list.component";
+import {TranslateModule, TranslateLoader} from "@ngx-translate/core";
+import {TranslateHttpLoader} from "@ngx-translate/http-loader";
+import {HttpModule, Http} from "@angular/http";
 
 @NgModule({
   declarations: [
@@ -35,7 +38,15 @@ import {BottleListComponent} from "../components/list/bottle-list.component";
     TabsPage
   ],
   imports: [
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: (createTranslateLoader),
+        deps: [Http]
+      }
+    }),
+    HttpModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -52,4 +63,8 @@ import {BottleListComponent} from "../components/list/bottle-list.component";
     BottleService, DistributeService]
 })
 export class AppModule {
+}
+
+export function createTranslateLoader(http: Http) {
+  return new TranslateHttpLoader(http, '/assets/i18n/', '.json');
 }
