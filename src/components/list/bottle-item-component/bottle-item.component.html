@@ -7,7 +7,14 @@
 
 <div class="bottle-item-component">
   <h4>{{bottle.nomCru}}</h4>
-  <p>{{bottle.country_label}} - {{bottle.subregion_label}} - {{bottle.area_label}}</p>
-  <p>{{bottle.label}}, {{bottle.millesime}}</p>
-  <p>stock: {{bottle.quantite_courante}}</p>
+  <div class="bottle">
+    <div class="icon">
+      <img src="{{ bottle.label | bottleIcon }}">
+    </div>
+    <div class="description">
+      <p>{{bottle.country_label}} - {{bottle.subregion_label}} - {{bottle.area_label}}</p>
+      <p>{{bottle.label}}, {{bottle.millesime}}</p>
+      <p>stock: {{bottle.quantite_courante}}</p>
+    </div>
+  </div>
 </div>

@@ -1,0 +1,22 @@
+<!--
+  Generated template for the Distribution component.
+
+  See https://angular.io/docs/ts/latest/api/core/index/ComponentMetadata-class.html
+  for more info on Angular 2 Components.
+-->
+
+<div class="distribution">
+  <div>
+    <ion-slides>
+      <ion-slide *ngFor="let dimension of distribution">
+        <div class="slide">
+          <h3>{{dimension.axis}}</h3>
+          <hr>
+          <ion-badge (click)="valueClicked($event)" item-right *ngFor="let value of dimension.values">{{value.key}}:
+            {{value.value}}
+          </ion-badge>
+        </div>
+      </ion-slide>
+    </ion-slides>
+  </div>
+</div>

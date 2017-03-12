@@ -1,3 +1,13 @@
-bottle-item-component {
+.bottle-item-component {
+  div.bottle {
+    display: flex;
+    flex-direction: row;
+    padding: 5px 5px;
 
+    .icon {
+      margin: auto 0;
+      height:100%;
+      max-width: 20vw;
+    }
+  }
 }

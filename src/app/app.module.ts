@@ -6,9 +6,16 @@ import {ContactPage} from "../pages/contact/contact";
 import {HomePage} from "../pages/home/home";
 import {TabsPage} from "../pages/tabs/tabs";
 import {BrowsePage} from "../pages/browse/browse.page";
-import {FranceComponent} from "../components/france/france.component";
-import {BottleService} from "../pages/browse/bottle.service";
+import {FranceComponent} from "../components/filter-panel/countries/france/france.component";
+import {BottleService} from "../components/bottle/bottle.service";
 import {BottleItemComponent} from "../components/list/bottle-item-component/bottle-item.component";
+import {ColorChooserComponent} from "../components/filter-panel/color-chooser/color-chooser.component";
+import {FilterPanelComponent} from "../components/filter-panel/filter-panel";
+import {Browse2Page} from "../pages/browse2/browse2.page";
+import {DistributeService} from "../components/distribution/distribute.service";
+import {DistributionComponent} from "../components/distribution/distribution";
+import {BottleIconPipe} from "../components/list/bottle-item-component/bottle-icon.pipe";
+import {BottleListComponent} from "../components/list/bottle-list.component";
 
 @NgModule({
   declarations: [
@@ -17,8 +24,14 @@ import {BottleItemComponent} from "../components/list/bottle-item-component/bott
     ContactPage,
     HomePage,
     BrowsePage,
+    Browse2Page,
+    ColorChooserComponent,
+    FilterPanelComponent,
     FranceComponent,
+    DistributionComponent,
     BottleItemComponent,
+    BottleIconPipe,
+    BottleListComponent,
     TabsPage
   ],
   imports: [
@@ -31,11 +44,12 @@ import {BottleItemComponent} from "../components/list/bottle-item-component/bott
     ContactPage,
     HomePage,
     BrowsePage,
+    Browse2Page,
     TabsPage
   ],
   providers: [
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    BottleService]
+    BottleService, DistributeService]
 })
 export class AppModule {
 }
