@@ -1,10 +1,9 @@
-color-chooser-component .color-chooser-component {
+.color-chooser-component {
 
   display: flex;
   flex-direction: row;
-  //border: thin solid red;
   height: 27px;
-  padding: 0 3px 0 15px;
+  padding: 0 15px 0 0;
   width: 100%;
 
   div {
@@ -17,27 +16,27 @@ color-chooser-component .color-chooser-component {
     }
 
     &.red {
-      background: no-repeat url('../assets/img/bottle-color/bouteille-rouge.png');
+      background: no-repeat url('../assets/img/bottle-color/bouteille-red.png');
       background-size: 25px 25px;
     }
 
     &.white {
-      background: no-repeat url('../assets/img/bottle-color/bouteille-blanc.png');
+      background: no-repeat url('../assets/img/bottle-color/bouteille-white.png');
       background-size: 25px 25px;
     }
 
     &.bubbles {
-      background: no-repeat url('../assets/img/bottle-color/bouteille-bulles.png');
+      background: no-repeat url('../assets/img/bottle-color/bouteille-bubbles.png');
       background-size: 25px 25px;
     }
 
     &.yellow {
-      background: no-repeat url('../assets/img/bottle-color/bouteille-jaune.png');
+      background: no-repeat url('../assets/img/bottle-color/bouteille-yellow.png');
       background-size: 25px 25px;
     }
 
     &.liquorous {
-      background: no-repeat url('../assets/img/bottle-color/bouteille-liquoreux.png');
+      background: no-repeat url('../assets/img/bottle-color/bouteille-liquorous.png');
       background-size: 25px 25px;
     }
 
@@ -47,7 +46,7 @@ color-chooser-component .color-chooser-component {
     }
   }
 
-  .align-right {
-    margin-left: auto;
+  .align-left {
+    margin-right: auto;
   }
 }

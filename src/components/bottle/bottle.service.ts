@@ -4,7 +4,7 @@
 import {Injectable} from "@angular/core";
 import {Bottle} from "./bottle";
 import * as _ from "lodash";
-import {Configuration} from "../../components/config/Configuration";
+import {Configuration} from "../config/Configuration";
 
 /**
  * Services related to the bottles in the cellar.

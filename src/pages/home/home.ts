@@ -1,5 +1,6 @@
 import {Component} from "@angular/core";
 import {Platform, NavController, ActionSheetController} from "ionic-angular";
+import {BrowsePage} from "../browse/browse.page";
 
 @Component({
   selector: 'page-home',
@@ -9,6 +10,10 @@ import {Platform, NavController, ActionSheetController} from "ionic-angular";
 export class HomePage {
   constructor(public navCtrl: NavController, public platform: Platform,
               public actionsheetCtrl: ActionSheetController) {
+  }
+
+  manageCellar() {
+    this.navCtrl.push(BrowsePage);
   }
 
   openMenu() {

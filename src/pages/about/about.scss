@@ -12,4 +12,11 @@ page-about {
   p {
     color: blue;
   }
+
+  h2 {
+    border:thin solid black;
+    background: rgba(255,255,255,.9);
+    border-radius: 5px;
+    padding: 3px;
+  }
 }

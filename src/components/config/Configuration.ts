@@ -9,7 +9,7 @@ export class Configuration {
     'Alsace et Lorraine': 'alsace',
     'Beaujolais': 'beaujolais',
     'Bordeaux': 'bordeaux',
-    'Bourgogne': 'Bourgogne',
+    'Bourgogne': 'bourgogne',
     'Champagne': 'champagne',
     'Cognac': 'cognac',
     'Provence-Corse': 'corse',

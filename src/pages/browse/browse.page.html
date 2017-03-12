@@ -1,4 +1,4 @@
-<ion-header class="browse-page header">
+<ion-header class="page-browse header">
 
   <ion-navbar>
     <ion-title>Recherche</ion-title>
@@ -24,15 +24,10 @@
 
 </ion-header>
 
-<ion-content padding class="browse-page page">
+<ion-content class="page-browse page">
   <div *ngIf="isFilterPanelShown" class="wrapper popover">
     <filter-panel (filterOn)="filterOn($event)"></filter-panel>
   </div>
 
-  <div class="list list-inset">
-    <div *ngFor="let btl of bottles" class="item bottle item-button-right">
-      <bottle-item [bottle]="btl"></bottle-item>
-    </div>
-  </div>
-
+  <bottle-list [bottles]="bottles"></bottle-list>
 </ion-content>

@@ -1,4 +1,4 @@
-.browse-page {
+.page-browse2 {
   ion-fab[top] {
     top: 0;
   }
@@ -10,30 +10,6 @@
     position: absolute;
     top: 0;
     z-index: 9;
-  }
-
-  .bottle {
-    background-color: #e9e9e9;
-    border-top: thin solid $black;
-    opacity: .9;
-
-    h4 {
-      background-color: $header-color;
-      border-bottom: thin solid $gray;
-      padding: $pad-size;
-    }
-
-    p {
-      padding-left: $pad-size;
-    }
-  }
-
-  .wrapper {
-    display: inline-block;
-    left: 10px;
-    padding: 7px;
-    width: 80%;
-    position: fixed;
   }
 
   .popover {

@@ -1,6 +1,6 @@
 import {Component} from "@angular/core";
 import {Platform, NavController, ActionSheetController, ToastController} from "ionic-angular";
-import {BottleService} from "../browse/bottle.service";
+import {BottleService} from "../../components/bottle/bottle.service";
 import {DistributeService} from "../../components/distribution/distribute.service";
 
 @Component({

@@ -1,6 +1,6 @@
 import {Component} from "@angular/core";
 import {Platform, NavController, ActionSheetController} from "ionic-angular";
-import {BottleService} from "./bottle.service";
+import {BottleService} from "../../components/bottle/bottle.service";
 
 @Component({
   selector: 'page-browse',

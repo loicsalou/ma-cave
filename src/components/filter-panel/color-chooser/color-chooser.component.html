@@ -6,15 +6,15 @@
 -->
 
 <div class="color-chooser-component flex-container">
+  <div class="align-left">
+    <ion-badge item-left (click)="chooseAll()">
+      <ion-icon name="close" item-right></ion-icon>
+    </ion-badge>
+  </div>
   <div name="red" class="color red" (click)="chooseColor('red')"></div>
   <div name="white" class="color white" (click)="chooseColor('white')"></div>
   <div name="bubbles" class="color bubbles" (click)="chooseColor('bubbles')"></div>
   <div name="liquorous" class="color liquorous" (click)="chooseColor('liquorous')"></div>
   <div name="yellow" class="color yellow" (click)="chooseColor('yellow')"></div>
   <div name="rose" class="color rose" (click)="chooseColor('rose')"></div>
-  <div class="align-right">
-    <ion-badge item-right (click)="chooseAll()">
-      <ion-icon name="close" item-right></ion-icon>
-    </ion-badge>
-  </div>
 </div>

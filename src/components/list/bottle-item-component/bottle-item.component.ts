@@ -1,5 +1,7 @@
 import {Component, Input} from "@angular/core";
-import {Bottle} from "../../../pages/browse/bottle";
+import {Bottle} from "../../bottle/bottle";
+import {Bottles} from "../../config/Bottles";
+import {Configuration} from "../../config/Configuration";
 
 /*
  Generated class for the BottleItemComponent component.
@@ -9,7 +11,8 @@ import {Bottle} from "../../../pages/browse/bottle";
  */
 @Component({
   selector: 'bottle-item',
-  templateUrl: 'bottle-item.component.html'
+  templateUrl: 'bottle-item.component.html',
+  styleUrls: ['/scr/components/list/bottle-item-component/bottle-item.component.scss']
 })
 export class BottleItemComponent {
   @Input()
@@ -18,4 +21,9 @@ export class BottleItemComponent {
   constructor() {
   }
 
+  setClasses(): string {
+    return Configuration.colorsText2Code[this.bottle['label']];
+  }
+
+  botttle
 }

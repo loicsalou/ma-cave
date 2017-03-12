@@ -7,7 +7,12 @@
   This components uses constants that must nbe declared in BottleService class (bottle.service.ts file)
 -->
 <div class="france-component flex-container">
-  <div>
+  <div class="align-bottom-left">
+    <ion-badge item-right (click)="chooseAll()">
+      <ion-icon name="close" item-right></ion-icon>
+    </ion-badge>
+  </div>
+  <div class="map">
     <img src="assets/img/carte-vignobles.png" alt="" usemap="#Map"/>
     <map name="Map" id="Map">
       <area alt="Corse" (click)="chooseArea('corse')" title="Corse" href="#" shape="poly"
@@ -39,10 +44,5 @@
       <area alt="Jura & Savoie" (click)="chooseArea('jura-savoie')" title="Jura & Savoie" href="#" shape="poly"
             coords="187,158,194,155,197,146,188,140,181,140,175,149,181,159,194,159"/>
     </map>
-  </div>
-  <div class="align-bottom-right">
-    <ion-badge item-right (click)="chooseAll()">
-      <ion-icon name="close" item-right></ion-icon>
-    </ion-badge>
   </div>
 </div>
