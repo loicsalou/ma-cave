@@ -5,6 +5,8 @@ import {Injectable} from "@angular/core";
 import {Bottle} from "./bottle";
 import * as _ from "lodash";
 import {Configuration} from "../config/Configuration";
+import {TranslateService} from "@ngx-translate/core";
+
 
 /**
  * Services related to the bottles in the cellar.
@@ -14,6 +16,27 @@ import {Configuration} from "../config/Configuration";
 @Injectable()
 export class BottleService {
   bottles = require('../../assets/json/ma-cave.json');
+  currentYear = new Date().getFullYear();
+
+  constructor(private i18n: TranslateService) {
+    this.bottles.map((btl: Bottle) => btl['classe_age'] = this.setClasseAge(btl['millesime']));
+  }
+
+  setClasseAge(millesime: any) {
+    if (millesime==='-') {
+      return this.i18n.instant('no-age');
+    }
+    if (millesime + 4 > this.currentYear) {
+      return this.i18n.instant('young');
+    }
+    if (millesime + 10 > this.currentYear) {
+      return this.i18n.instant('middle');
+    }
+    if (millesime + 15 > this.currentYear) {
+      return this.i18n.instant('old');
+    }
+    return this.i18n.instant('very-old');
+  }
 
   getBottlesByKeywords(keywords: string[]): any {
     if (!keywords || keywords.length == 0 || !keywords[0])
@@ -68,7 +91,14 @@ export class BottleService {
 
   getBottlesBy(bottles: Bottle[], by: string, value: any) {
 
-    let filtered = bottles.filter(bottle => bottle[by] === value);
+    let filtered = bottles.filter(bottle => {
+      let field = bottle[by];
+      if (typeof field === 'number') {
+        return field === +value;
+      } else {
+        return field === value;
+      }
+    });
     return filtered;
 
   }
