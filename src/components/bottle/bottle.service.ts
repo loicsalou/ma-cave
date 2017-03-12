@@ -68,7 +68,14 @@ export class BottleService {
 
   getBottlesBy(bottles: Bottle[], by: string, value: any) {
 
-    let filtered = bottles.filter(bottle => bottle[by] === value);
+    let filtered = bottles.filter(bottle => {
+      let field = bottle[by];
+      if (typeof field === 'number') {
+        return field === +value;
+      } else {
+        return field === value;
+      }
+    });
     return filtered;
 
   }
