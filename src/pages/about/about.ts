@@ -2,6 +2,7 @@
 import {Component, OnInit} from "@angular/core";
 import {NavController} from "ionic-angular";
 import {Camera, ImagePicker, FilePath} from "ionic-native";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'page-about',
@@ -15,9 +16,10 @@ export class AboutPage implements OnInit {
   version: string;
   name: string;
   message: string;
+  trad: string;
   private imagePath: string;
 
-  constructor(public navCtrl: NavController) {
+  constructor(public navCtrl: NavController, public i18n: TranslateService) {
   }
 
   ngOnInit() {
@@ -45,7 +47,6 @@ export class AboutPage implements OnInit {
     });
   }
 
-
   choosePicture(event) {
     event.stopPropagation();
     /*
@@ -60,26 +61,25 @@ export class AboutPage implements OnInit {
      });
      */
     ImagePicker.getPictures({maximumImagesCount: 3}).then((results) => {
-      for (var i = 0; i < results.length; i++) {
-        FilePath.resolveNativePath(results[i])
-          .then(filePath => {
-            console.log("Chemin résolu " + filePath);
-            this.message = this.imagePath;
-          })
-          .catch(err => this.message = err);
+        for (var i = 0; i < results.length; i++) {
+          this.imagePath=results[i];
+          this.message = this.imagePath;
+        }
+      }
+      ,
+      (err) => {
+        this.message = "Erreur d'accès à la photo ! " + err;
+      }
+    )
+    ;
   }
-}
-,
-(err) => {
-  this.message = "Erreur d'accès à la photo ! " + err;
-}
-)
-;
-}
 
-removePicture(event)
-{
-  event.stopPropagation();
-  this.imagePath = null;
-}
+  showTrads() {
+    this.trad=this.i18n.instant('area_label');
+  }
+
+  removePicture(event) {
+    event.stopPropagation();
+    this.imagePath = null;
+  }
 }
