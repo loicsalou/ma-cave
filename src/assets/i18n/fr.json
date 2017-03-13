@@ -1,4 +1,6 @@
 {
+  "achetes": "achetés",
+  "ans": "ans",
   "area_label": "Appellation",
   "bottle-detail": "Informations détaillées",
   "classe_age": "Classe d'âge",
@@ -9,5 +11,21 @@
   "old": "Vieux",
   "subregion_label": "Région",
   "very-old": "Très vieux",
-  "young": "Jeune"
+  "young": "Jeune",
+  "volume": "Format",
+  "date_achat": "Acheté le",
+  "prix": "Prix",
+  "cote": "Quote",
+  "quantite_courante": "Stock",
+  "quantite_achat": "Quantité achatée",
+  "garde": "Garde",
+  "garde_min": "Garde minimale",
+  "garde_max": "Garder maximale",
+  "garde_optimum": "Apogée",
+  "suggestion": "Suggestions",
+  "comment": "Commentaires",
+  "lieu_achat": "Lieu d'achat",
+  "canal_vente": "Canal d'achat",
+  "nom": "Casier"
+
 }
