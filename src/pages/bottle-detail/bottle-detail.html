@@ -15,7 +15,7 @@
 <ion-content padding>
   
   <div class="page-bottle-detail">
-    <h4>{{bottle.nomCru}}</h4>
+    <h2>{{bottle.nomCru}}</h2>
     <div class="bottle">
       <div class="icon" style="display: block">
         <img src="{{ bottle.label | bottleIcon }}">
@@ -29,6 +29,7 @@
       </div>
     </div>
     <hr>
+    <h3>{{"details" | translate}}</h3>
     <div>
       <p>{{ "date_achat" | translate }} {{ bottle.date_achat }}, {{ bottle.lieu_achat }}</p>
       <p>{{ "prix" | translate }} {{ bottle.prix }} € / {{ bottle.cote }} €</p>
@@ -36,6 +37,7 @@
       <p>{{ "garde_optimum" | translate }} {{ bottle.garde_min }} {{ "ans" | translate }}</p>
     </div>
     <hr>
+    <h3>{{"infos" | translate}}</h3>
     <div>
       <p *ngIf="!bottle.suggestion && ! bottle.comment">Aucune information complémentaire</p>
       <p *ngIf="bottle.suggestion">{{ "suggestion" | translate }}: {{bottle.suggestion}}</p>

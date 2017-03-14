@@ -31,16 +31,16 @@ export class AboutPage implements OnInit {
   onclick(event: any) {
     console.info('zone ' + event.currentTarget.title + ' cliquée');
     let options = {
-      destinationType: Camera.DestinationType.DATA_URL,
-      encodingType: Camera.EncodingType.JPEG,
+      destinationType: Camera.DestinationType.FILE_URI,
+      encodingType: Camera.EncodingType.PNG,
       mediaType: Camera.MediaType.PICTURE,
-      sourceType: 1,
-      saveToPhotoAlbum: false,
+      sourceType: Camera.PictureSourceType.CAMERA,
+      saveToPhotoAlbum: true,
       correctOrientation: true
     };
     Camera.getPicture(options).then((imageData) => {
       let base64Image = 'data:image/jpeg;base64,' + imageData;
-      this.message = 'image capturée !';
+      this.message = 'image capturée ! ' +imageData;
     }, (err) => {
       console.error('Erreur lors de la prise de la photo !');
       this.message = 'Erreur lors de la prise de la photo ! ' + err;

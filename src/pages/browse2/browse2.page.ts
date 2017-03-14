@@ -1,4 +1,4 @@
-import {Component} from "@angular/core";
+import {Component, OnInit} from "@angular/core";
 import {Platform, NavController, ToastController} from "ionic-angular";
 import {BottleService} from "../../components/bottle/bottle.service";
 import {DistributeService} from "../../components/distribution/distribute.service";
@@ -11,16 +11,32 @@ import {BottleDetailPage} from "../bottle-detail/bottle-detail";
   templateUrl: 'browse2.page.html',
   styleUrls: ['/src/pages/browse2/browse2.page.scss']
 })
-export class Browse2Page {
+export class Browse2Page implements OnInit {
 
-  bottles;
+  bottles: Bottle[];
   distribution; //distribution de la sélection selon plusieurs colonnes pour avoir le compte
   currentDistributionAxis: string[]; //axes de distribution de la distribution courante
   isDistributionOpened = false;
+  message: string;
 
   constructor(private toastCtrl: ToastController, public navCtrl: NavController, public platform: Platform,
               private bottlesService: BottleService, private distributionService: DistributeService) {
-    this.bottles = bottlesService.getBottles();
+
+  }
+
+  setBottles(bottles: Bottle[]) {
+    this.bottles=bottles;
+  }
+
+  ngOnInit() {
+    this.bottles=this.bottlesService.getBottles();
+    /*
+    this.bottlesService.getBottles().subscribe(
+      bottles => this.setBottles(bottles),
+      error => this.message="ERROR !",
+      () => this.message="complete"
+    );
+    */
   }
 
   switchDistribution() {
