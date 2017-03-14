@@ -19,7 +19,8 @@ import {BottleListComponent} from "../components/list/bottle-list.component";
 import {TranslateModule, TranslateLoader} from "@ngx-translate/core";
 import {TranslateHttpLoader} from "@ngx-translate/http-loader";
 import {HttpModule, Http} from "@angular/http";
-import {BottleDetailPage} from "../pages/bottle-detail/bottle-detail";
+import {BottleDetailPage} from "../pages/bottle-detail/page-bottle-detail";
+import {BottleDetailSlide} from "../pages/bottle-detail/slide-bottle-detail";
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import {BottleDetailPage} from "../pages/bottle-detail/bottle-detail";
     BrowsePage,
     Browse2Page,
     BottleDetailPage,
+    BottleDetailSlide,
     ColorChooserComponent,
     FilterPanelComponent,
     FranceComponent,

@@ -10,8 +10,7 @@ import {Bottle} from "../../components/bottle/bottle";
  */
 @Component({
   selector: 'page-bottle-detail',
-  templateUrl: 'bottle-detail.html',
-  styleUrls: ['/bottle-detail.scss']
+  templateUrl: 'page-bottle-detail.html'
 })
 export class BottleDetailPage {
   //liste des bouteilles pour les slides
@@ -24,6 +23,7 @@ export class BottleDetailPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
     console.info('------'+navParams);
+    this.bottles=navParams.data['bottles'];
     this.bottle=navParams.data['bottle'];
   }
 
