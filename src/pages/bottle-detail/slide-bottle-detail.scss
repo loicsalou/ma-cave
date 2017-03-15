@@ -1,6 +1,22 @@
 .slide-bottle-detail {
-  margin-top: 56px;
-  
+
+  h4, p, li {
+    margin: 3px 0;
+    padding: 3px;
+    text-align: left;
+  }
+
+  ul.circle {
+    list-style: circle;
+    margin: 0;
+  }
+
+  h4 {
+    background: #3d39ff;
+    color: #FFF;
+    border: thin solid #fff;
+  }
+
   div.bottle {
     display: flex;
     flex-direction: row;

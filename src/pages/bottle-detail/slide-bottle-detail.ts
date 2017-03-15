@@ -12,6 +12,8 @@ export class BottleDetailSlide {
   //bouteille à afficher
   @Input()
   bottle: Bottle;
+  @Input()
+  showName: boolean = true;
 
   constructor(public navCtrl: NavController) {
   }

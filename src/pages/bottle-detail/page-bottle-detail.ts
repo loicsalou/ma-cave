@@ -9,9 +9,10 @@ import {Bottle} from "../../components/bottle/bottle";
  Ionic pages and navigation.
  */
 @Component({
-  selector: 'page-bottle-detail',
-  templateUrl: 'page-bottle-detail.html'
-})
+             selector: 'page-bottle-detail',
+             templateUrl: 'page-bottle-detail.html',
+             styleUrls: ['/page-bottle-detail.scss']
+           })
 export class BottleDetailPage {
   //liste des bouteilles pour les slides
   @Input()
@@ -22,9 +23,12 @@ export class BottleDetailPage {
   bottle: Bottle;
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
-    console.info('------'+navParams);
-    this.bottles=navParams.data['bottles'];
-    this.bottle=navParams.data['bottle'];
+    console.info('------' + navParams);
+    this.bottles = navParams.data[ 'bottles' ];
+    this.bottle = navParams.data[ 'bottle' ];
+    //TODO trouver comment positionner le slide correspondant à this.bottle en tant que slide courant
+    //TODO voir aussi comment faire scroller le détail vu que tout ne rentre pas
+    //TODO ajuster les marges top et bottom vu qu'apparemment il y a du padding dans le slide
   }
 
 }

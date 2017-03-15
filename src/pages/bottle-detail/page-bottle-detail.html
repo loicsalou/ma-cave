@@ -4,20 +4,24 @@
   See http://ionicframework.com/docs/v2/components/#navigation for more info on
   Ionic pages and navigation.
 -->
-<ion-header>
+<ion-header class="header">
   
   <ion-navbar>
-    <ion-title>{{"bottle-detail" | translate}}</ion-title>
+    <ion-title>{{bottle.nomCru}}</ion-title>
   </ion-navbar>
 
 </ion-header>
 
-<ion-content padding>
+<ion-content scroll="true" class="page-bottle-detail">
   <ion-slides>
     <ion-slide *ngFor="let btl of bottles">
-  
-      <slide-bottle-detail [bottle]="btl"></slide-bottle-detail>
+      <div class="slide-content">
+        
+        <slide-bottle-detail [bottle]="btl" [showName]="false"></slide-bottle-detail>
       
+      </div>
     </ion-slide>
   </ion-slides>
 </ion-content>
+
+
