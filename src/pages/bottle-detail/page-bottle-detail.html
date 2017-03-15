@@ -14,10 +14,10 @@
 
 <ion-content scroll="true" class="page-bottle-detail">
   <ion-slides>
-    <ion-slide *ngFor="let btl of bottles">
+    <ion-slide *ngFor="let btl of bottles; let ix=index">
       <div class="slide-content">
         
-        <slide-bottle-detail [bottle]="btl" [showName]="false"></slide-bottle-detail>
+        <slide-bottle-detail effect="cube" [bottle]="btl" [showName]="false" [index]="ix"></slide-bottle-detail>
       
       </div>
     </ion-slide>

@@ -5,6 +5,7 @@ import {DistributeService} from "../../components/distribution/distribute.servic
 import * as _ from "lodash";
 import {Bottle} from "../../components/bottle/bottle";
 import {BottleDetailPage} from "../bottle-detail/page-bottle-detail";
+import {ListBottleEvent} from "../../components/list/bottle-list-event";
 
 @Component({
              selector: 'page-browse',
@@ -82,21 +83,20 @@ export class Browse2Page implements OnInit {
 
   presentToast() {
     let toast = this.toastCtrl.create({
-      message: (this.bottles && this.bottles.length > 0) ? this.bottles.length + ' bouteilles trouvées' : 'Aucune bouteille ne correspond',
-      duration: 3000,
-      position: 'bottom',
-      showCloseButton: true
-    });
+                                        message: (this.bottles && this.bottles.length > 0) ? this.bottles.length + ' bouteilles trouvées' : 'Aucune bouteille ne correspond',
+                                        duration: 3000,
+                                        position: 'bottom',
+                                        showCloseButton: true
+                                      });
 
-toast.onDidDismiss(() => {
+    toast.onDidDismiss(() => {
       console.log('Dismissed toast');
     });
 
     toast.present();
   }
 
-  triggerDetail(bottle: Bottle) {
-    console.info("show detail " + bottle[ 'nomCru' ]);
-    this.navCtrl.push(BottleDetailPage, {bottle: bottle, bottles: this.bottles});
+  triggerDetail(bottleEvent: ListBottleEvent) {
+    this.navCtrl.push(BottleDetailPage, {bottleEvent: bottleEvent});
   }
 }

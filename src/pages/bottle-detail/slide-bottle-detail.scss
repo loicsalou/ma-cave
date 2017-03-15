@@ -1,4 +1,18 @@
 .slide-bottle-detail {
+  position: relative;;
+
+  div.index {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    border-radius: 50%;
+    background: #3d39ff;
+    color: #fff;
+    height: 25px;
+    min-width: 25px;
+    padding: 1px;
+    border: thin solid white;
+  }
 
   h4, p, li {
     margin: 3px 0;
@@ -24,7 +38,7 @@
 
     .icon {
       margin: auto 0;
-      height:100%;
+      height: 100%;
       max-width: 22vw;
     }
   }

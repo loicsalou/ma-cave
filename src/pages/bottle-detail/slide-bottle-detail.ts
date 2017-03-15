@@ -14,8 +14,13 @@ export class BottleDetailSlide {
   bottle: Bottle;
   @Input()
   showName: boolean = true;
+  @Input()
+  index: number;
 
   constructor(public navCtrl: NavController) {
   }
 
+  getIndex() {
+    return this.index;
+  }
 }

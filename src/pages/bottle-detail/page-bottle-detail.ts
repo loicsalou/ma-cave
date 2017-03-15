@@ -1,6 +1,7 @@
-import {Component, Input} from "@angular/core";
-import {NavController, NavParams} from "ionic-angular";
+import {Component, Input, OnInit, ViewChild} from "@angular/core";
+import {NavController, NavParams, Slides, Platform} from "ionic-angular";
 import {Bottle} from "../../components/bottle/bottle";
+import {ListBottleEvent} from "../../components/list/bottle-list-event";
 
 /*
  Generated class for the BottleDetail page.
@@ -11,24 +12,30 @@ import {Bottle} from "../../components/bottle/bottle";
 @Component({
              selector: 'page-bottle-detail',
              templateUrl: 'page-bottle-detail.html',
-             styleUrls: ['/page-bottle-detail.scss']
+             styleUrls: [ '/page-bottle-detail.scss' ]
            })
 export class BottleDetailPage {
   //liste des bouteilles pour les slides
   @Input()
   bottles: Bottle[];
-
   //bouteille à afficher
   @Input()
   bottle: Bottle;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
-    console.info('------' + navParams);
-    this.bottles = navParams.data[ 'bottles' ];
-    this.bottle = navParams.data[ 'bottle' ];
-    //TODO trouver comment positionner le slide correspondant à this.bottle en tant que slide courant
-    //TODO voir aussi comment faire scroller le détail vu que tout ne rentre pas
-    //TODO ajuster les marges top et bottom vu qu'apparemment il y a du padding dans le slide
+  @ViewChild(Slides) slides: Slides;
+
+  //currently displayed index in the array of bottles
+  currentIndex: number;
+
+  constructor(public navCtrl: NavController, navParams: NavParams) {
+    let bottleEvent: ListBottleEvent = navParams.data[ 'bottleEvent' ];
+    this.bottles = bottleEvent.bottles;
+    this.bottle = bottleEvent.bottle;
+    this.currentIndex = bottleEvent.index;
+  }
+
+  ionViewDidEnter(): void {
+    this.slides.slideTo(this.currentIndex);
   }
 
 }

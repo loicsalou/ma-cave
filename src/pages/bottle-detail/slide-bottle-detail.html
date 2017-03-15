@@ -1,5 +1,5 @@
 <div class="slide-bottle-detail">
-  
+  <div class="index">{{getIndex()}}</div>
   <h4 *ngIf="showName">{{bottle.nomCru}}</h4>
   <div class="bottle">
     <div class="icon" style="display: block">
@@ -35,5 +35,5 @@
     <p *ngIf="bottle.suggestion">{{ "suggestion" | translate }}: {{bottle.suggestion}}</p>
     <p *ngIf="bottle.comment">{{ "comment" | translate }}: {{bottle.comment}}</p>
   </div>
-  
+
 </div>
