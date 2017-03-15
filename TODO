@@ -1,0 +1,10 @@
+- refaire la popup d'affinage de la sélection: un seul panel avec des <hr>. Remplacer les régions par les appellations
+quand on choisit une région, remplacer les classes d'âge par les millésimes. Prévoir que l'on doit pouvoir revenir
+des appellations aux régions (annuler le choix de l'appellation) et des millésimes aux classes d'âge (idem annuler le
+ choix du millésime)
+- popup de sélection: afficher le nombre de bouteille de la sélection courante
+- popup de sélection: cliquer sur un badge provoque le refiltrage et le tour du badge se voit affecter un border bien
+ visible pour mettre en évidence que le filtre est appliqué
+- passer en réactive prog. Utiliser les observables / observers pour être plus fluide
+- supprimer le browse initial et ne garder que le browse2, le renommer en browse
+- revenir sur les photos et voir si j'arrive enfin à prendre une photo et l'utiliser dans l'application

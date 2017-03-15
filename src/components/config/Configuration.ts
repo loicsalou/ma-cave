@@ -5,6 +5,8 @@
  */
 export class Configuration {
 
+  trads=require('../../assets/i18n/fr.json');
+
   public static regionsText2Code = {
     'Alsace et Lorraine': 'alsace',
     'Beaujolais': 'beaujolais',
@@ -33,6 +35,5 @@ export class Configuration {
     'vin de paille': 'liquorous',
     'blanc liquoreux': 'liquorous'
   }
-
 
 }

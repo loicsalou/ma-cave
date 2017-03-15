@@ -1,4 +1,4 @@
-import {Component, Input, EventEmitter, OnChanges} from "@angular/core";
+import {Component, Input, EventEmitter, OnChanges, Output} from "@angular/core";
 
 /*
  Generated class for the Distribution component.
@@ -15,29 +15,26 @@ export class DistributionComponent implements OnChanges {
 
   @Input()
   distribution;
+  @Input()
+  opened = false;
+  @Output()
   badgeClicked: EventEmitter<any> = new EventEmitter();
-  isOpened = false;
+
 
   constructor() {
   }
 
   ngOnChanges() {
-    this.open();
-  }
-
-  open() {
-    this.isOpened=true;
-  }
-
-  close() {
-    this.isOpened=false;
+    console.info("opened:"+this.opened);
+    //this.open();
   }
 
   valueClicked($event, axis: string) {
-    console.info('filter clicked: ' + $event.currentTarget.textContent + ' axis is ' + axis);
-    let value = {value: $event.currentTarget.textContent.split(':')[0], axis: axis};
+    axis = axis ? axis.trim() : '';
+    let filterValue = $event.currentTarget.textContent.split(':')[0];
+    filterValue = filterValue ? filterValue.trim() : '';
+    let value = {value: filterValue, axis: axis};
     this.badgeClicked.emit(value);
-    this.isOpened=false;
   }
 
 }
