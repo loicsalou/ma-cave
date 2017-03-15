@@ -7,14 +7,15 @@
       <ion-icon name="add"></ion-icon>
     </button>
   </ion-fab>
+  
+  <div class="report" *ngIf="distribution">
+    <distribution [distribution]="distribution" [opened]="isDistributionOpened" [count]="bottles.length"
+                  (badgeClicked)="refineFilter($event)"></distribution>
+  </div>
 
 </ion-header>
 
 <ion-content class="page-browse2 page">
-
-  <div class="report" *ngIf="distribution">
-    <distribution [distribution]="distribution" [opened]="isDistributionOpened" (badgeClicked)="refineFilter($event)"></distribution>
-  </div>
 
   <bottle-list [bottles]="bottles" (showDetail)="triggerDetail($event)"></bottle-list>
 

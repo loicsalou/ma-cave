@@ -1,7 +1,7 @@
 <div class="slide-bottle-detail">
   <div class="index">{{getIndex()}}</div>
   <h4 *ngIf="showName">{{bottle.nomCru}}</h4>
-  <div class="bottle">
+  <div class="block bottle">
     <div class="icon" style="display: block">
       <img src="{{ bottle.label | bottleIcon }}">
     </div>
@@ -18,7 +18,7 @@
   </div>
   
   <h4>{{"details" | translate}}</h4>
-  <div>
+  <div class="block">
     <ul class="circle">
       <li>{{ "date_achat" | translate }} {{ bottle.date_achat }}, {{ bottle.lieu_achat }}</li>
       <li>{{ "prix" | translate }} {{ bottle.prix }} € / {{ bottle.cote }} €</li>
