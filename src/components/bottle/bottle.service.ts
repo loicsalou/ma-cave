@@ -6,7 +6,8 @@ import {Bottle} from "./bottle";
 import * as _ from "lodash";
 import {Configuration} from "../config/Configuration";
 import {TranslateService} from "@ngx-translate/core";
-
+import {Observable, Observer} from "rxjs";
+import {Http, Response} from "@angular/http";
 
 /**
  * Services related to the bottles in the cellar.
@@ -18,12 +19,12 @@ export class BottleService {
   bottles = require('../../assets/json/ma-cave.json');
   currentYear = new Date().getFullYear();
 
-  constructor(private i18n: TranslateService) {
-    this.bottles.map((btl: Bottle) => btl['classe_age'] = this.setClasseAge(btl['millesime']));
+  constructor(private i18n: TranslateService, private http: Http) {
+    this.bottles.map((btl: Bottle) => btl[ 'classe_age' ] = this.setClasseAge(btl[ 'millesime' ]));
   }
 
-  setClasseAge(millesime: any) {
-    if (millesime==='-') {
+  private setClasseAge(millesime: any) {
+    if (millesime === '-') {
       return this.i18n.instant('no-age');
     }
     if (millesime + 4 > this.currentYear) {
@@ -39,14 +40,15 @@ export class BottleService {
   }
 
   getBottlesByKeywords(keywords: string[]): any {
-    if (!keywords || keywords.length == 0 || !keywords[0])
+    if (!keywords || keywords.length == 0 || !keywords[ 0 ]) {
       return this.bottles;
+    }
 
-    let search = keywords[0].toLowerCase();
+    let search = keywords[ 0 ].toLowerCase();
     return this.bottles.filter((bottle) => {
       let ret = false;
       for (var key in bottle) {
-        var attrValue = bottle[key].toString().toLocaleLowerCase();
+        var attrValue = bottle[ key ].toString().toLocaleLowerCase();
 
         if (attrValue && attrValue.indexOf(search) != -1) {
           ret = true;
@@ -56,7 +58,6 @@ export class BottleService {
 
       return ret;
     });
-
 
   }
 
@@ -70,14 +71,14 @@ export class BottleService {
     let filtered = this.bottles;
     if (searchParams.regions && searchParams.regions.length > 0) {
       filtered = filtered.filter((bottle) => {
-        let regionCode = Configuration.regionsText2Code[bottle.subregion_label];
+        let regionCode = Configuration.regionsText2Code[ bottle.subregion_label ];
         return searchParams.regions.indexOf(regionCode) != -1;
       })
     }
 
     if (searchParams.colors && searchParams.colors.length > 0) {
       filtered = filtered.filter((bottle) => {
-        let colorCode = Configuration.colorsText2Code[bottle.label];
+        let colorCode = Configuration.colorsText2Code[ bottle.label ];
         return searchParams.colors.indexOf(colorCode) != -1;
       })
     }
@@ -85,14 +86,55 @@ export class BottleService {
     return filtered;
   }
 
-  static isEmpty(array: any[], index: number): boolean {
+  getAllBottlesObservable(): Observable<Bottle[]> {
+    return this.http.get('/assets/json/ma-cave.json')
+      .map((res: Response) => res.json())
+      .catch(this.handleError);
+  }
+
+  getBottlesObservable(searchParams?: any): Observable<Bottle[]> {
+    if (!searchParams) {
+      return this.getAllBottlesObservable();
+    }
+
+    let filtered = [];
+
+    this.getAllBottlesObservable().subscribe(
+      (filtered: Bottle[]) => filtered.filter(
+        bottle => {
+          if (searchParams.regions && searchParams.regions.length > 0) {
+            let regionCode = Configuration.regionsText2Code[ bottle[ 'subregion_label' ] ];
+            return searchParams.regions.indexOf(regionCode) != -1;
+          } else {
+            return true;
+          }
+        }).filter(bottle => {
+        if (searchParams.colors && searchParams.colors.length > 0) {
+          let colorCode = Configuration.colorsText2Code[ bottle['label'] ];
+          return searchParams.colors.indexOf(colorCode) != -1;
+        } else {
+          return true;
+        }
+      }));
+
+    return Observable.create((observer: Observer<Bottle[]>) => {
+      observer.next(filtered);
+    });
+
+  }
+
+  private handleError(error: any) {
+    console.error(error);
+    return Observable.throw(error.json().error || 'Server error');
+  }
+
+  static isEmpty(array: any[ ], index: number): boolean {
     return _.isEmpty(array, index);
   }
 
-  getBottlesBy(bottles: Bottle[], by: string, value: any) {
-
+  getBottlesBy(bottles: Bottle[ ], by: string, value: any) {
     let filtered = bottles.filter(bottle => {
-      let field = bottle[by];
+      let field = bottle[ by ];
       if (typeof field === 'number') {
         return field === +value;
       } else {
@@ -100,10 +142,5 @@ export class BottleService {
       }
     });
     return filtered;
-
   }
 }
-
-
-// WEBPACK FOOTER //
-// ./src/pages/browse/bottle.service.ts

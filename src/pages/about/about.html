@@ -11,6 +11,8 @@
     <h2>version: {{name}}:{{version}}</h2>
     <h2 *ngIf="message">{{message}}</h2>
     <img src="assets/img/vins-tranquilles.png" (click)="onclick($event)"/>
+    <h3 (click)="showTrads()">click pour les traductionss</h3>
+    <p *ngIf="trad">{{trad}}</p>
     <img src="assets/img/carte-vignobles.png" (click)="choosePicture($event)"/>
     <div *ngIf="imagePath">
       <p>{{imagePath}}</p>

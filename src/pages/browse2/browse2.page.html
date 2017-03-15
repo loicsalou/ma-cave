@@ -16,6 +16,6 @@
     <distribution [distribution]="distribution" [opened]="isDistributionOpened" (badgeClicked)="refineFilter($event)"></distribution>
   </div>
 
-  <bottle-list [bottles]="bottles"></bottle-list>
+  <bottle-list [bottles]="bottles" (showDetail)="triggerDetail($event)"></bottle-list>
 
 </ion-content>

@@ -1,4 +1,4 @@
-import {Component, Input} from "@angular/core";
+import {Component, Input, Output, EventEmitter} from "@angular/core";
 import {Bottle} from "../../bottle/bottle";
 import {Bottles} from "../../config/Bottles";
 import {Configuration} from "../../config/Configuration";
@@ -18,6 +18,9 @@ export class BottleItemComponent {
   @Input()
   bottle: Bottle;
 
+  @Output()
+  showDetail: EventEmitter<Bottle> = new EventEmitter();
+
   constructor() {
   }
 
@@ -25,5 +28,7 @@ export class BottleItemComponent {
     return Configuration.colorsText2Code[this.bottle['label']];
   }
 
-  botttle
+  triggerDetail(event: any) {
+    this.showDetail.emit(this.bottle);
+  }
 }

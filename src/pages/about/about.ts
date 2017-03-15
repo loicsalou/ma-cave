@@ -2,6 +2,7 @@
 import {Component, OnInit} from "@angular/core";
 import {NavController} from "ionic-angular";
 import {Camera, ImagePicker, FilePath} from "ionic-native";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'page-about',
@@ -15,9 +16,10 @@ export class AboutPage implements OnInit {
   version: string;
   name: string;
   message: string;
+  trad: string;
   private imagePath: string;
 
-  constructor(public navCtrl: NavController) {
+  constructor(public navCtrl: NavController, public i18n: TranslateService) {
   }
 
   ngOnInit() {
@@ -29,22 +31,21 @@ export class AboutPage implements OnInit {
   onclick(event: any) {
     console.info('zone ' + event.currentTarget.title + ' cliquée');
     let options = {
-      destinationType: Camera.DestinationType.DATA_URL,
-      encodingType: Camera.EncodingType.JPEG,
+      destinationType: Camera.DestinationType.FILE_URI,
+      encodingType: Camera.EncodingType.PNG,
       mediaType: Camera.MediaType.PICTURE,
-      sourceType: 1,
-      saveToPhotoAlbum: false,
+      sourceType: Camera.PictureSourceType.CAMERA,
+      saveToPhotoAlbum: true,
       correctOrientation: true
     };
     Camera.getPicture(options).then((imageData) => {
       let base64Image = 'data:image/jpeg;base64,' + imageData;
-      this.message = 'image capturée !';
+      this.message = 'image capturée ! ' +imageData;
     }, (err) => {
       console.error('Erreur lors de la prise de la photo !');
       this.message = 'Erreur lors de la prise de la photo ! ' + err;
     });
   }
-
 
   choosePicture(event) {
     event.stopPropagation();
@@ -60,26 +61,25 @@ export class AboutPage implements OnInit {
      });
      */
     ImagePicker.getPictures({maximumImagesCount: 3}).then((results) => {
-      for (var i = 0; i < results.length; i++) {
-        FilePath.resolveNativePath(results[i])
-          .then(filePath => {
-            console.log("Chemin résolu " + filePath);
-            this.message = this.imagePath;
-          })
-          .catch(err => this.message = err);
+        for (var i = 0; i < results.length; i++) {
+          this.imagePath=results[i];
+          this.message = this.imagePath;
+        }
+      }
+      ,
+      (err) => {
+        this.message = "Erreur d'accès à la photo ! " + err;
+      }
+    )
+    ;
   }
-}
-,
-(err) => {
-  this.message = "Erreur d'accès à la photo ! " + err;
-}
-)
-;
-}
 
-removePicture(event)
-{
-  event.stopPropagation();
-  this.imagePath = null;
-}
+  showTrads() {
+    this.trad=this.i18n.instant('area_label');
+  }
+
+  removePicture(event) {
+    event.stopPropagation();
+    this.imagePath = null;
+  }
 }

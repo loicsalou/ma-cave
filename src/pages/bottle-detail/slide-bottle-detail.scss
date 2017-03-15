@@ -1,0 +1,49 @@
+.slide-bottle-detail {
+  position: relative;;
+
+  div.index {
+    position: absolute;
+    top: 3px;
+    right: 10px;
+    border-radius: 50%;
+    background: #3d39ff;
+    color: #fff;
+    height: 25px;
+    min-width: 25px;
+    padding: 1px;
+    border: thin solid white;
+  }
+
+  h4, p {
+    padding: 3px 3px 3px 15px;
+  }
+
+  h4, p, li {
+    margin: 3px 0;
+    text-align: left;
+  }
+
+  ul.circle {
+    list-style: circle;
+    margin: 0;
+  }
+
+  h4 {
+    background: #3d39ff;
+    color: #FFF;
+    border: thin solid #fff;
+  }
+
+  div.bottle {
+    display: flex;
+    flex-direction: row;
+    padding: 5px 5px;
+
+    .icon {
+      margin: auto 0;
+      height: 100%;
+      max-width: 22vw;
+    }
+  }
+
+}
