@@ -21,6 +21,6 @@ export class BottleDetailSlide {
   }
 
   getIndex() {
-    return this.index;
+    return this.index+1;
   }
 }

@@ -1,16 +1,49 @@
 .distribution {
 
+  position: fixed;
+  margin: auto;
+
+  .axis {
+    display: flex;
+
+    h3 {
+      flex-grow: 1;
+      padding: 3px;
+    }
+
+    .badge {
+      align-self: center;
+    }
+  }
+
   .filterPanel {
     width: 90vw;
     margin: 5vw;
+  }
+
+  .slide {
+    padding: 5px;
+    background: darken(white, 8%);
+    border: thin solid dodgerblue;
+    border-radius: 5px;
+    width: 90vw;
+    box-shadow: grey 7px 7px 11px 1px;
   }
 
   div {
     background: transparent;
     color: #FFF;
 
-    h3 {
+    h3, h5 {
       color: black;
+    }
+
+    h3 {
+      margin: 5px 0;
+    }
+
+    h5 {
+      margin: 0;
     }
 
     ion-badge {
@@ -20,15 +53,6 @@
         box-shadow: 0 0 0 black;
         transition: box-shadow 60ms;
       }
-    }
-
-    .slide {
-      padding: 5px;
-      background: darken(white, 8%);
-      border: thin solid dodgerblue;
-      border-radius: 5px;
-      width: 90vw;
-      box-shadow: grey 7px 7px 11px 1px;
     }
   }
 }

@@ -7,17 +7,25 @@
 
 <div class="distribution" *ngIf="opened && distribution">
   <div class="filterPanel">
-    <ion-slides>
-      <ion-slide *ngFor="let dimension of distribution">
-        <div class="slide">
+    <h5 class="slide">{{count}} bouteilles trouvées</h5>
+    
+    <div *ngFor="let dimension of distribution">
+      
+      <div class="slide">
+        <div class="axis">
           <h3>{{dimension.axis | translate}}</h3>
-          <hr>
-          <ion-badge (click)="valueClicked($event, dimension.axis)" item-right *ngFor="let value of dimension.values">
-            {{value.key}}:
-            {{value.value}}
+          <ion-badge item-left (click)="clearFilter(dimension.axis)">
+            <ion-icon name="close" item-right></ion-icon>
           </ion-badge>
         </div>
-      </ion-slide>
-    </ion-slides>
+        
+        <ion-badge (click)="valueClicked($event, dimension.axis)" item-right *ngFor="let value of dimension.values">
+          {{value.key}}:
+          {{value.value}}
+        </ion-badge>
+      </div>
+    
+    </div>
+  
   </div>
 </div>
