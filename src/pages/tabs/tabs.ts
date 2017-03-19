@@ -6,8 +6,8 @@ import {BrowsePage} from "../browse/browse.page";
 import {Browse2Page} from "../browse2/browse2.page";
 
 @Component({
-  templateUrl: 'tabs.html'
-})
+             templateUrl: 'tabs.html'
+           })
 export class TabsPage {
   // this tells the tabs component which Pages
   // should be each tab's root Page

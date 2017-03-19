@@ -1,8 +1,4 @@
 <div class="bottle-list">
-  <div *ngIf="isFilterPanelShown" class="wrapper popover">
-    <filter-panel (filterOn)="filterOn($event)"></filter-panel>
-  </div>
-
   <div class="list list-inset">
     <div *ngFor="let btl of bottles; let ix=index" class="item bottle item-button-right">
       <bottle-item [bottle]="btl" (showDetail)="triggerDetail($event,ix)"></bottle-item>

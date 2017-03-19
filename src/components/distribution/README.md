@@ -1,0 +1,90 @@
+# Exemple de données d'utilisation
+## Rows
+[
+ {"nomCru":"A. Chauvet - Cachet Rouge - Millésimé",
+  "country_label":"France",
+  "subregion_label":"Champagne",
+  "area_label":"Champagne Grand Cru",
+  "label":"blanc effervescent",
+  "millesime":2008,
+  "volume":"75 cl",
+  "date_achat":"2016-03-11",
+  "prix":28,
+  "cote":28,
+  "quantite_courante":2,
+  "quantite_achat":3,
+  "garde_min":2,
+  "garde_max":10,
+  "garde_optimum":2,
+  "suggestion":"",
+  "comment":"",
+  "lieu_achat":"salon de la gastro Annecy le vieux",
+  "canal_vente":"En direct du producteur",
+  "nom":"Frigo ( arrière)",
+  "coordX":1,
+  "coordY":3,
+  "coordZ":8,
+  "classe_age":"Age moyen"
+  },
+  {
+  "nomCru":"A. Chauvet - Cachet Rouge - Millésimé",
+  "country_label":"France",
+  "subregion_label":"Champagne",
+  "area_label":"Champagne Grand Cru",
+  "label":"blanc effervescent",
+  "millesime":2008,
+  "volume":"75 cl",
+  "date_achat":"2016-03-11",
+  "prix":28,
+  "cote":28,
+  "quantite_courante":2,
+  "quantite_achat":3,
+  "garde_min":2,
+  "garde_max":10,
+  "garde_optimum":2,
+  "suggestion":"",
+  "comment":"",
+  "lieu_achat":"salon de la gastro Annecy le vieux",
+  "canal_vente":"En direct du producteur",
+  "nom":"Frigo (avant)",
+  "coordX":1,
+  "coordY":1,
+  "coordZ":6,
+  "classe_age":"Age moyen"
+  },
+  {
+  "nomCru":"A. Chauvet - Cachet Vert",
+  "country_label":"France",
+  "subregion_label":"Champagne",
+  "area_label":"Champagne",
+  "label":"blanc effervescent",
+  "millesime":"-",
+  "volume":"75 cl",
+  "date_achat":"2016-03-11",
+  "prix":17.8,
+  "cote":17.8,
+  "quantite_courante":3,
+  "quantite_achat":3,
+  "garde_min":2,
+  "garde_max":10,
+  "garde_optimum":2,
+  "suggestion":"",
+  "comment":"à boire avant 2018",
+  "lieu_achat":"salon de la gastro Annecy le vieux",
+  "canal_vente":"En direct du producteur",
+  "nom":"Sommet",
+  "coordX":3,
+  "coordY":1,
+  "coordZ":3,
+  "classe_age":"Non millésimé"
+  }
+]
+
+## byCols
+["label","subregion_label","classe_age"]
+
+## Output
+[{"axis":"label","values":[{"key":"blanc effervescent","value":3}]},
+ {"axis":"subregion_label","values":[{"key":"Champagne","value":3}]},
+ {"axis":"classe_age","values":[{"key":"Age moyen","value":2},{"key":"Non millésimé","value":1}]}
+]
