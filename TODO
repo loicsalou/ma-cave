@@ -1,6 +1,8 @@
-- refaire la popup d'affinage de la sélection: un seul panel avec des <hr>. Remplacer les régions par les appellations
+- filtrage: refaire en conservant la liste des filtres en cours d'application, repartir systématiquement de la liste
+totale opur pouvoir ajouter un filtre mais aussi l'enlever.
+- refaire la popup d'affinage de la sélection: un seul panel avec des <hr>. Remplacer les régions par les area_label
 quand on choisit une région, remplacer les classes d'âge par les millésimes. Prévoir que l'on doit pouvoir revenir
-des appellations aux régions (annuler le choix de l'appellation) et des millésimes aux classes d'âge (idem annuler le
+des area_label aux régions (annuler le choix de l'appellation) et des millésimes aux classes d'âge (idem annuler le
  choix du millésime)
 - popup de sélection: afficher le nombre de bouteille de la sélection courante
 - popup de sélection: cliquer sur un badge provoque le refiltrage et le tour du badge se voit affecter un border bien

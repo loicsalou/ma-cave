@@ -14,14 +14,15 @@
       <div class="slide">
         <div class="axis">
           <h3>{{dimension.axis | translate}}</h3>
-          <ion-badge item-left (click)="clearFilter(dimension.axis)">
+          <ion-badge item-left (click)="clearFilter(dimension.axis)"
+                     class="reset" [class.active]="isFilteringOn(dimension.axis)">
             <ion-icon name="close" item-right></ion-icon>
           </ion-badge>
         </div>
         
-        <ion-badge (click)="valueClicked($event, dimension.axis)" item-right *ngFor="let value of dimension.values">
-          {{value.key}}:
-          {{value.value}}
+        <ion-badge (click)="valueClicked($event, dimension.axis)" item-right *ngFor="let value of dimension.values"
+        [class.selected]="isFilterSelected(dimension.axis, value.key)">
+          {{value.key}}: {{value.value}}
         </ion-badge>
       </div>
     

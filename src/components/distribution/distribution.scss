@@ -49,9 +49,27 @@
     ion-badge {
       margin: 3px;
       box-shadow: 2px 2px 2px black;
+      background-color: #8f8f8f;
+
       &:active {
         box-shadow: 0 0 0 black;
         transition: box-shadow 60ms;
+        background-color: #387ef5;
+      }
+
+      &.reset {
+        margin-right: 20vw;
+      }
+
+      &.active {
+        transition: box-shadow 60ms;
+        background-color: #387ef5;
+      }
+
+      &.selected {
+        border: thin solid red;
+        box-shadow: initial;
+        background-color: #387ef5;
       }
     }
   }

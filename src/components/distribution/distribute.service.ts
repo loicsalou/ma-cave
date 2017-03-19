@@ -2,11 +2,12 @@
  * Created by loicsalou on 07.03.17.
  */
 import {Injectable} from "@angular/core";
+import * as _ from "lodash";
 
 /**
  * Services related to the bottles in the cellar.
- * The regions below are duplicated in the code of france.component.html as they are emitted when end-user clicks on
- * a region to filter bottles. Any change on either side must be propagated on the other side.
+ * The subregion_label below are duplicated in the code of france.component.html as they are emitted when end-user
+ * clicks on a region to filter bottles. Any change on either side must be propagated on the other side.
  */
 @Injectable()
 export class DistributeService {
@@ -16,6 +17,8 @@ export class DistributeService {
 
     byCols.forEach(col => {
       let r = this.reduceToCount(rows, col);
+      r = _.sortBy(r, item => item.value);
+      r = _.reverse(r);
       distribution.push({axis: col, values: r});
     });
 
@@ -24,15 +27,15 @@ export class DistributeService {
 
   private reduceToCount(rows: any[], col: string): any {
     var occurences = rows.reduce(function (r, row) {
-      r[row[col]] = ++r[row[col]] || 1;
+      r[ row[ col ] ] = ++r[ row[ col ] ] || 1;
       return r;
     }, {});
 
     var result = Object.keys(occurences).map(function (key) {
-      return {key: key, value: occurences[key]};
+      return {key: key, value: occurences[ key ]};
     });
 
-    console.log(result);
+    //console.log(result);
     return result;
   }
 

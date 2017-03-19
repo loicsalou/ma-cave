@@ -8,11 +8,12 @@ import {Configuration} from "../config/Configuration";
 import {TranslateService} from "@ngx-translate/core";
 import {Observable, Observer} from "rxjs";
 import {Http, Response} from "@angular/http";
+import {FilterSet} from "../distribution/distribution";
 
 /**
  * Services related to the bottles in the cellar.
- * The regions below are duplicated in the code of france.component.html as they are emitted when end-user clicks on
- * a region to filter bottles. Any change on either side must be propagated on the other side.
+ * The subregion_label below are duplicated in the code of france.component.html as they are emitted when end-user
+ * clicks on a region to filter bottles. Any change on either side must be propagated on the other side.
  */
 @Injectable()
 export class BottleService {
@@ -39,40 +40,93 @@ export class BottleService {
     return this.i18n.instant('very-old');
   }
 
-  getBottlesByKeywords(keywords: string[]): any {
-    if (!keywords || keywords.length == 0 || !keywords[ 0 ]) {
+  getBottlesByKeywords(fromList: Bottle[], keywords: string[]): any {
+    if (!keywords || keywords.length == 0) {
       return this.bottles;
     }
 
     let search = keywords[ 0 ].toLowerCase();
     return this.bottles.filter((bottle) => {
-      let ret = false;
-      for (var key in bottle) {
-        var attrValue = bottle[ key ].toString().toLocaleLowerCase();
+                                 let ret = false;
+                                 let matches = {};
+                                 for (var key in bottle) {
+                                   var attrValue = bottle[ key ].toString().toLocaleLowerCase();
+                                   if (!attrValue) {
+                                     continue;
+                                   }
+                                   for (var i = 0; i < keywords.length; i++) {
+                                     let token = keywords[ i ].toLocaleLowerCase();
 
-        if (attrValue && attrValue.indexOf(search) != -1) {
-          ret = true;
-          break;
-        }
-      }
+                                     if (attrValue.indexOf(token) != -1) {
+                                       matches[ token ] = true;
+                                       if (this.bottleMatchesAll(matches, keywords)) {
+                                         ret = true;
+                                         break;
+                                       }
+                                     }
+                                   }
+                                 }
 
-      return ret;
-    });
+                                 return ret;
+                               }
+    );
 
   }
 
-  getBottles(searchParams?: any): any {
+  //returns bottles that match ALL filters.
+  //for each filter applies a "OR" between accepted values
+  getBottlesByFilter(filters: FilterSet): any {
+    if (filters.isEmpty()) {
+      return this.bottles;
+    }
+
+    let filtered = this.bottles;
+    if (filters.hasText()) {
+      filtered = this.getBottlesByKeywords(this.bottles, filters.text);
+    }
+
+    if (filters.hasMillesimes()) {
+      filtered = this.filterByAttribute(filtered, 'millesime', filters.millesime);
+    } else {
+      if (filters.hasAges()) {
+        filtered = this.filterByAttribute(filtered, 'classe_age', filters.classe_age);
+      }
+    }
+
+    if (filters.hasAppellations()) {
+      filtered = this.filterByAttribute(filtered, 'area_label', filters.area_label);
+    } else {
+      if (filters.hasRegions()) {
+        filtered = this.filterByAttribute(filtered, 'subregion_label', filters.subregion_label);
+      }
+    }
+
+    if (filters.hasCouleurs()) {
+      filtered = this.filterByAttribute(filtered, 'label', filters.label);
+    }
+
+    return filtered;
+  }
+
+  private filterByAttribute(fromList: Bottle[], attribute: string, admissibleValues: string[]) {
+    return fromList.filter(bottle => {
+      let ret = true;
+      let attrValue = bottle[ attribute ].toString();
+      admissibleValues.forEach(admissibleValue => ret = ret && attrValue.indexOf(admissibleValue) !== -1);
+      return ret;
+    })
+  }
+
+  getBottles(searchParams ?: any): any {
     if (!searchParams) {
       return this.bottles;
     }
-    //Bottle.showDistinctColors();
-    //Bottle.showDistinctRegions();
 
     let filtered = this.bottles;
-    if (searchParams.regions && searchParams.regions.length > 0) {
+    if (searchParams.subregion_label && searchParams.subregion_label.length > 0) {
       filtered = filtered.filter((bottle) => {
         let regionCode = Configuration.regionsText2Code[ bottle.subregion_label ];
-        return searchParams.regions.indexOf(regionCode) != -1;
+        return searchParams.subregion_label.indexOf(regionCode) != -1;
       })
     }
 
@@ -86,14 +140,16 @@ export class BottleService {
     return filtered;
   }
 
-  getAllBottlesObservable(): Observable<Bottle[]> {
+  getAllBottlesObservable(): Observable < Bottle[ ] > {
     return this.http.get('/assets/json/ma-cave.json')
       .map((res: Response) => res.json())
       .catch(this.handleError);
   }
 
-  getBottlesObservable(searchParams?: any): Observable<Bottle[]> {
-    if (!searchParams) {
+  getBottlesObservable(searchParams ?: any): Observable < Bottle[ ] > {
+    if (!
+        searchParams
+    ) {
       return this.getAllBottlesObservable();
     }
 
@@ -102,15 +158,15 @@ export class BottleService {
     this.getAllBottlesObservable().subscribe(
       (filtered: Bottle[]) => filtered.filter(
         bottle => {
-          if (searchParams.regions && searchParams.regions.length > 0) {
+          if (searchParams.subregion_label && searchParams.subregion_label.length > 0) {
             let regionCode = Configuration.regionsText2Code[ bottle[ 'subregion_label' ] ];
-            return searchParams.regions.indexOf(regionCode) != -1;
+            return searchParams.subregion_label.indexOf(regionCode) != -1;
           } else {
             return true;
           }
         }).filter(bottle => {
         if (searchParams.colors && searchParams.colors.length > 0) {
-          let colorCode = Configuration.colorsText2Code[ bottle['label'] ];
+          let colorCode = Configuration.colorsText2Code[ bottle[ 'label' ] ];
           return searchParams.colors.indexOf(colorCode) != -1;
         } else {
           return true;
@@ -142,5 +198,12 @@ export class BottleService {
       }
     });
     return filtered;
+  }
+
+  private bottleMatchesAll(matches: any, keywords: string[]) {
+    let ret = true;
+    keywords.forEach(token =>
+                       ret = ret && matches[ token ]);
+    return ret;
   }
 }

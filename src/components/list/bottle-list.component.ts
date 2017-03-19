@@ -25,12 +25,12 @@ export class BottleListComponent {
   }
 
   clicked(event: any) {
-    console.info("carte de France cliquée !");
+//    console.info("carte de France cliquée !");
   }
 
   filterOn(filters: string) {
     this.isFilterPanelShown = false;
-    console.info("filtering on " + filters);
+//    console.info("filtering on " + filters);
 
     this.bottles = this.bottlesService.getBottles(filters);
   }
