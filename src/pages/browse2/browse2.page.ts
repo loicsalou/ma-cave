@@ -55,7 +55,7 @@ export class Browse2Page implements OnInit {
       this.filterSet.text = strings;
       this.bottles = this.bottlesService.getBottlesByFilter(this.filterSet);
     } else {
-      this.bottles=this.bottlesService.getBottles();
+      this.bottles = this.bottlesService.getBottles();
     }
   }
 
