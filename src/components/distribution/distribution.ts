@@ -130,7 +130,6 @@ export class FilterSet {
   millesime?: string[];
 
   constructor() {
-
   }
 
   hasText() {
@@ -159,5 +158,14 @@ export class FilterSet {
 
   isEmpty() {
     return (!this.hasText() && !this.hasAppellations() && !this.hasAges() && !this.hasCouleurs() && !this.hasMillesimes() && !this.hasRegions());
+  }
+
+  reset() {
+    this.text=undefined;
+    this.area_label=undefined;
+    this.label=undefined;
+    this.classe_age=undefined;
+    this.millesime=undefined;
+    this.subregion_label=undefined;
   }
 }

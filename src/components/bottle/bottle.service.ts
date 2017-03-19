@@ -44,8 +44,7 @@ export class BottleService {
     if (!keywords || keywords.length == 0) {
       return this.bottles;
     }
-
-    let search = keywords[ 0 ].toLowerCase();
+    keywords=keywords.map(keyword => keyword.toLocaleLowerCase());
     return this.bottles.filter((bottle) => {
                                  let ret = false;
                                  let matches = {};
@@ -55,7 +54,7 @@ export class BottleService {
                                      continue;
                                    }
                                    for (var i = 0; i < keywords.length; i++) {
-                                     let token = keywords[ i ].toLocaleLowerCase();
+                                     let token = keywords[ i ];
 
                                      if (attrValue.indexOf(token) != -1) {
                                        matches[ token ] = true;
