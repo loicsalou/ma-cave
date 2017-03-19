@@ -5,6 +5,7 @@ import * as _ from "lodash";
 
 export class Bottle {
 
+/*
   static showDistinctColors() {
     let json = require('../../assets/json/ma-cave.json');
     console.info(_.countBy(json, function (json) {
@@ -18,5 +19,6 @@ export class Bottle {
       return json.subregion_label;
     }));
   }
+*/
 
 }

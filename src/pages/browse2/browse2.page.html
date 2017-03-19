@@ -9,8 +9,8 @@
   </ion-fab>
   
   <div class="report" *ngIf="distribution">
-    <distribution [distribution]="distribution" [opened]="isDistributionOpened" [count]="bottles.length"
-                  (badgeClicked)="refineFilter($event)"></distribution>
+    <distribution [opened]="isDistributionOpened" [bottles]="bottles"
+                  (filterSetChanged)="refineFilter($event)"></distribution>
   </div>
 
 </ion-header>

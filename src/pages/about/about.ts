@@ -1,16 +1,16 @@
 ///<reference path="../../../node_modules/ionic-angular/navigation/nav-controller.d.ts"/>
 import {Component, OnInit} from "@angular/core";
-import {NavController} from "ionic-angular";
-import {Camera, ImagePicker, FilePath} from "ionic-native";
+import {NavController, Platform} from "ionic-angular";
+import {Camera, ImagePicker} from "ionic-native";
 import {TranslateService} from "@ngx-translate/core";
 
 @Component({
-  selector: 'page-about',
-  templateUrl: 'about.html',
-  styleUrls: [
-    '/about.scss'
-  ]
-})
+             selector: 'page-about',
+             templateUrl: 'about.html',
+             styleUrls: [
+               '/about.scss'
+             ]
+           })
 export class AboutPage implements OnInit {
 
   version: string;
@@ -19,7 +19,7 @@ export class AboutPage implements OnInit {
   trad: string;
   private imagePath: string;
 
-  constructor(public navCtrl: NavController, public i18n: TranslateService) {
+  constructor(private platform: Platform, public navCtrl: NavController, public i18n: TranslateService) {
   }
 
   ngOnInit() {
@@ -30,20 +30,23 @@ export class AboutPage implements OnInit {
 
   onclick(event: any) {
     console.info('zone ' + event.currentTarget.title + ' cliquée');
-    let options = {
-      destinationType: Camera.DestinationType.FILE_URI,
-      encodingType: Camera.EncodingType.PNG,
-      mediaType: Camera.MediaType.PICTURE,
-      sourceType: Camera.PictureSourceType.CAMERA,
-      saveToPhotoAlbum: true,
-      correctOrientation: true
-    };
-    Camera.getPicture(options).then((imageData) => {
-      let base64Image = 'data:image/jpeg;base64,' + imageData;
-      this.message = 'image capturée ! ' +imageData;
-    }, (err) => {
-      console.error('Erreur lors de la prise de la photo !');
-      this.message = 'Erreur lors de la prise de la photo ! ' + err;
+    this.platform.ready().then(() => {
+      let options = {
+        quality: 80,
+        destinationType: Camera.DestinationType.DATA_URL,
+        sourceType: Camera.PictureSourceType.CAMERA,
+        allowEdit: false,
+        encodingType: Camera.EncodingType.JPEG,
+        saveToPhotoAlbum: false
+      };
+      // https://github.com/apache/cordova-plugin-camera#module_camera.getPicture
+      Camera.getPicture(options).then((imageData) => {
+        let base64Image = 'data:image/jpeg;base64,' + imageData;
+        this.message = 'image capturée ! ' + imageData;
+      }, (err) => {
+        console.error('Erreur lors de la prise de la photo !');
+        this.message = 'Erreur lors de la prise de la photo ! ' + err;
+      });
     });
   }
 
@@ -61,21 +64,21 @@ export class AboutPage implements OnInit {
      });
      */
     ImagePicker.getPictures({maximumImagesCount: 3}).then((results) => {
-        for (var i = 0; i < results.length; i++) {
-          this.imagePath=results[i];
-          this.message = this.imagePath;
-        }
-      }
+                                                            for (var i = 0; i < results.length; i++) {
+                                                              this.imagePath = results[ i ];
+                                                              this.message = this.imagePath;
+                                                            }
+                                                          }
       ,
-      (err) => {
-        this.message = "Erreur d'accès à la photo ! " + err;
-      }
+                                                          (err) => {
+                                                            this.message = "Erreur d'accès à la photo ! " + err;
+                                                          }
     )
     ;
   }
 
   showTrads() {
-    this.trad=this.i18n.instant('area_label');
+    this.trad = this.i18n.instant('area_label');
   }
 
   removePicture(event) {
