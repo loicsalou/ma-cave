@@ -21,6 +21,8 @@ export class DistributionComponent implements OnChanges, OnInit {
   bottles: Bottle[];
 
   @Output()
+  closed: EventEmitter<any> = new EventEmitter();
+  @Output()
   badgeClicked: EventEmitter<any> = new EventEmitter();
   @Output()
   filterSetChanged: EventEmitter<FilterSet> = new EventEmitter();
@@ -48,6 +50,10 @@ export class DistributionComponent implements OnChanges, OnInit {
 
   ngOnInit(): void {
     this.refreshFilters();
+  }
+
+  close() {
+    this.closed.emit("close");
   }
 
   isFilterSelected(axis: string, value: string) {
@@ -161,11 +167,11 @@ export class FilterSet {
   }
 
   reset() {
-    this.text=undefined;
-    this.area_label=undefined;
-    this.label=undefined;
-    this.classe_age=undefined;
-    this.millesime=undefined;
-    this.subregion_label=undefined;
+    this.text = undefined;
+    this.area_label = undefined;
+    this.label = undefined;
+    this.classe_age = undefined;
+    this.millesime = undefined;
+    this.subregion_label = undefined;
   }
 }

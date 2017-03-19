@@ -40,61 +40,76 @@ export class BottleService {
     return this.i18n.instant('very-old');
   }
 
-  getBottlesByKeywords(fromList: Bottle[], keywords: string[]): any {
+  /**
+   * searches through the given bottles all that match all of the filters passed in
+   * @param fromList array of bottles
+   * @param keywords an array of searched keywords
+   * @returns array of matching bottles
+   */
+  public getBottlesByKeywords(fromList: Bottle[], keywords: string[]): any {
     if (!keywords || keywords.length == 0) {
       return this.bottles;
     }
-    keywords=keywords.map(keyword => keyword.toLocaleLowerCase());
-    return this.bottles.filter((bottle) => {
-                                 let ret = false;
-                                 let matches = {};
-                                 for (var key in bottle) {
-                                   var attrValue = bottle[ key ].toString().toLocaleLowerCase();
-                                   if (!attrValue) {
-                                     continue;
-                                   }
-                                   for (var i = 0; i < keywords.length; i++) {
-                                     let token = keywords[ i ];
+    let filtered = this.bottles;
+    keywords.forEach(keyword => {
+      filtered = this.filterOnKeyword(filtered, keyword);
+    });
 
-                                     if (attrValue.indexOf(token) != -1) {
-                                       matches[ token ] = true;
-                                       if (this.bottleMatchesAll(matches, keywords)) {
-                                         ret = true;
-                                         break;
-                                       }
-                                     }
-                                   }
-                                 }
-
-                                 return ret;
-                               }
-    );
-
+    return filtered;
   }
 
-  //returns bottles that match ALL filters.
-  //for each filter applies a "OR" between accepted values
-  getBottlesByFilter(filters: FilterSet): any {
+  /**
+   * get the bottles which match one keyword
+   * @param list
+   * @param keyword
+   * @returns {any[]}
+   */
+  private filterOnKeyword(list: any[], keyword: string) {
+    return list.filter(bottle => {
+                         let matching = false;
+                         for (var key in bottle) {
+                           if (bottle[ key ].toString().toLocaleLowerCase().indexOf(keyword) !== -1) {
+                             matching = true;
+                           }
+                         }
+                         return matching;
+                       }
+    );
+  }
+
+  /**
+   * Returns bottles that match ALL filters.
+   * <li>all filters must be satisfied: filtered list is refined for each new filter</li>
+   * <li>for each value in filter, applies a "OR" between accepted values</li>
+   * @param filters
+   * @returns {any}
+   */
+  public getBottlesByFilter(filters: FilterSet): any {
     if (filters.isEmpty()) {
       return this.bottles;
     }
 
     let filtered = this.bottles;
+    // always start filtering using textual search
     if (filters.hasText()) {
       filtered = this.getBottlesByKeywords(this.bottles, filters.text);
     }
 
+    // on hierarchical axis like regions and ages, use most precise filter if available
     if (filters.hasMillesimes()) {
       filtered = this.filterByAttribute(filtered, 'millesime', filters.millesime);
     } else {
+      // if filtering on millesime no need to filter on ages (matching millesime implies matching ages slice)
       if (filters.hasAges()) {
         filtered = this.filterByAttribute(filtered, 'classe_age', filters.classe_age);
       }
     }
 
+    // on hierarchical axis like regions and ages, use most precise filter if available
     if (filters.hasAppellations()) {
       filtered = this.filterByAttribute(filtered, 'area_label', filters.area_label);
     } else {
+      // if filtering on area_label no need to filter on region (matching area_label implies matching subregion_label)
       if (filters.hasRegions()) {
         filtered = this.filterByAttribute(filtered, 'subregion_label', filters.subregion_label);
       }
@@ -107,7 +122,7 @@ export class BottleService {
     return filtered;
   }
 
-  private filterByAttribute(fromList: Bottle[], attribute: string, admissibleValues: string[]) {
+  private filterByAttribute(fromList: Bottle[ ], attribute: string, admissibleValues: string[ ]) {
     return fromList.filter(bottle => {
       let ret = true;
       let attrValue = bottle[ attribute ].toString();
@@ -116,28 +131,30 @@ export class BottleService {
     })
   }
 
-  getBottles(searchParams ?: any): any {
-    if (!searchParams) {
-      return this.bottles;
-    }
+  /*
+   getBottles(searchParams ?: any): any {
+   if (!searchParams) {
+   return this.bottles;
+   }
 
-    let filtered = this.bottles;
-    if (searchParams.subregion_label && searchParams.subregion_label.length > 0) {
-      filtered = filtered.filter((bottle) => {
-        let regionCode = Configuration.regionsText2Code[ bottle.subregion_label ];
-        return searchParams.subregion_label.indexOf(regionCode) != -1;
-      })
-    }
+   let filtered = this.bottles;
+   if (searchParams.subregion_label && searchParams.subregion_label.length > 0) {
+   filtered = filtered.filter((bottle) => {
+   let regionCode = Configuration.regionsText2Code[ bottle.subregion_label ];
+   return searchParams.subregion_label.indexOf(regionCode) != -1;
+   })
+   }
 
-    if (searchParams.colors && searchParams.colors.length > 0) {
-      filtered = filtered.filter((bottle) => {
-        let colorCode = Configuration.colorsText2Code[ bottle.label ];
-        return searchParams.colors.indexOf(colorCode) != -1;
-      })
-    }
+   if (searchParams.colors && searchParams.colors.length > 0) {
+   filtered = filtered.filter((bottle) => {
+   let colorCode = Configuration.colorsText2Code[ bottle.label ];
+   return searchParams.colors.indexOf(colorCode) != -1;
+   })
+   }
 
-    return filtered;
-  }
+   return filtered;
+   }
+   */
 
   getAllBottlesObservable(): Observable < Bottle[ ] > {
     return this.http.get('/assets/json/ma-cave.json')
@@ -199,7 +216,7 @@ export class BottleService {
     return filtered;
   }
 
-  private bottleMatchesAll(matches: any, keywords: string[]) {
+  private bottleMatchesAll(matches: any, keywords: string[ ]) {
     let ret = true;
     keywords.forEach(token =>
                        ret = ret && matches[ token ]);
