@@ -131,31 +131,6 @@ export class BottleService {
     })
   }
 
-  /*
-   getBottles(searchParams ?: any): any {
-   if (!searchParams) {
-   return this.bottles;
-   }
-
-   let filtered = this.bottles;
-   if (searchParams.subregion_label && searchParams.subregion_label.length > 0) {
-   filtered = filtered.filter((bottle) => {
-   let regionCode = Configuration.regionsText2Code[ bottle.subregion_label ];
-   return searchParams.subregion_label.indexOf(regionCode) != -1;
-   })
-   }
-
-   if (searchParams.colors && searchParams.colors.length > 0) {
-   filtered = filtered.filter((bottle) => {
-   let colorCode = Configuration.colorsText2Code[ bottle.label ];
-   return searchParams.colors.indexOf(colorCode) != -1;
-   })
-   }
-
-   return filtered;
-   }
-   */
-
   getAllBottlesObservable(): Observable < Bottle[ ] > {
     return this.http.get('/assets/json/ma-cave.json')
       .map((res: Response) => res.json())
