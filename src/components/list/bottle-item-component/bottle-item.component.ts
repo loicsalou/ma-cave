@@ -1,6 +1,5 @@
 import {Component, Input, Output, EventEmitter} from "@angular/core";
 import {Bottle} from "../../bottle/bottle";
-import {Bottles} from "../../config/Bottles";
 import {Configuration} from "../../config/Configuration";
 
 /*
@@ -10,10 +9,10 @@ import {Configuration} from "../../config/Configuration";
  for more info on Angular 2 Components.
  */
 @Component({
-  selector: 'bottle-item',
-  templateUrl: 'bottle-item.component.html',
-  styleUrls: ['/scr/components/list/bottle-item-component/bottle-item.component.scss']
-})
+             selector: 'bottle-item',
+             templateUrl: 'bottle-item.component.html',
+             styleUrls: [ '/scr/components/list/bottle-item-component/bottle-item.component.scss' ]
+           })
 export class BottleItemComponent {
   @Input()
   bottle: Bottle;
@@ -25,7 +24,7 @@ export class BottleItemComponent {
   }
 
   setClasses(): string {
-    return Configuration.colorsText2Code[this.bottle['label']];
+    return Configuration.colorsText2Code[ this.bottle[ 'label' ] ];
   }
 
   triggerDetail(event: any) {

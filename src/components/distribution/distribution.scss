@@ -3,6 +3,33 @@
   position: fixed;
   margin: auto;
 
+  .filterPanel {
+    width: 90vw;
+    margin: 5vw;
+  }
+
+  .header {
+    position: relative;
+    display: flex;
+    background-color: #387ef5;
+    padding: 5px;
+    border: thin solid black;
+
+    h5 {
+      flex-grow: 1;
+      padding: 3px;
+      margin: 3px;
+    }
+
+    ion-badge {
+      margin: auto 3vw auto 0;
+      border-top: thin solid black;
+      border-left: thin solid black;
+      padding: 3px 6px;
+      background-color: #387ef5;
+    }
+  }
+
   .axis {
     display: flex;
 
@@ -14,11 +41,6 @@
     .badge {
       align-self: center;
     }
-  }
-
-  .filterPanel {
-    width: 90vw;
-    margin: 5vw;
   }
 
   .slide {
@@ -34,16 +56,12 @@
     background: transparent;
     color: #FFF;
 
-    h3, h5 {
+    h3 {
       color: black;
     }
 
     h3 {
       margin: 5px 0;
-    }
-
-    h5 {
-      margin: 0;
     }
 
     ion-badge {
@@ -58,7 +76,8 @@
       }
 
       &.reset {
-        margin-right: 20vw;
+        margin-right: 7vw;
+        background-color: #387ef5;
       }
 
       &.active {

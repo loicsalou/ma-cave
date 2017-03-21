@@ -32,7 +32,7 @@ export class Browse2Page implements OnInit {
   }
 
   ngOnInit() {
-    this.bottles = this.bottlesService.getBottles();
+    this.bottles = this.bottlesService.getBottlesByFilter(this.filterSet);
   }
 
   switchDistribution() {
@@ -51,12 +51,10 @@ export class Browse2Page implements OnInit {
     let filter = event.target.value;
     this.filterSet.reset();
     if (filter) {
-      let strings = filter.split(' ');
-      this.filterSet.text = strings;
-      this.bottles = this.bottlesService.getBottlesByFilter(this.filterSet);
-    } else {
-      this.bottles = this.bottlesService.getBottles();
+      this.filterSet.text = filter.split(' ');
+      ;
     }
+    this.bottles = this.bottlesService.getBottlesByFilter(this.filterSet);
   }
 
   refineFilter(filters: FilterSet) {

@@ -5,7 +5,7 @@
  */
 export class Configuration {
 
-  trads=require('../../assets/i18n/fr.json');
+  trads = require('../../assets/i18n/fr.json');
 
   public static regionsText2Code = {
     'Alsace et Lorraine': 'alsace',

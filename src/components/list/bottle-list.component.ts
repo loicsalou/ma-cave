@@ -24,17 +24,6 @@ export class BottleListComponent {
     this.isFilterPanelShown = true;
   }
 
-  clicked(event: any) {
-//    console.info("carte de France cliquée !");
-  }
-
-  filterOn(filters: string) {
-    this.isFilterPanelShown = false;
-//    console.info("filtering on " + filters);
-
-    this.bottles = this.bottlesService.getBottles(filters);
-  }
-
   triggerDetail(bottle: Bottle, index: number) {
     this.showDetail.emit(<ListBottleEvent>{bottles: this.bottles, bottle: bottle, index: index});
   }
