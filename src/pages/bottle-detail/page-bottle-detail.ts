@@ -2,6 +2,7 @@ import {Component, Input, ViewChild} from "@angular/core";
 import {NavController, NavParams, Slides} from "ionic-angular";
 import {Bottle} from "../../components/bottle/bottle";
 import {ListBottleEvent} from "../../components/list/bottle-list-event";
+import {UpdatePage} from "../update/update";
 
 /*
  Generated class for the BottleDetail page.
@@ -32,6 +33,10 @@ export class BottleDetailPage {
     this.bottles = bottleEvent.bottles;
     this.bottle = bottleEvent.bottle;
     this.currentIndex = bottleEvent.index;
+  }
+
+  update() {
+    this.navCtrl.push(UpdatePage, {bottle: this.bottle});
   }
 
   ionViewDidEnter(): void {

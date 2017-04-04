@@ -1,6 +1,7 @@
 <div class="slide-bottle-detail">
   <div class="index">{{getIndex()}}</div>
   <h4 *ngIf="showName">{{bottle.nomCru}}</h4>
+  
   <div class="block bottle">
     <div class="icon" style="display: block">
       <img src="{{ bottle.label | bottleIcon }}">

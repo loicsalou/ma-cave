@@ -6,10 +6,22 @@
     top: 3px;
     right: 10px;
     border-radius: 50%;
-    background: #3d39ff;
-    color: #fff;
+    color: #3d39ff;
     height: 25px;
     min-width: 25px;
+    padding: 1px;
+    border: thin solid black;
+  }
+
+  div.update {
+    position: absolute;
+    top: 33px;
+    right: 7px;
+    border-radius: 50%;
+    background: #3d39ff;
+    color: #fff;
+    height: 31px;
+    min-width: 31px;
     padding: 1px;
     border: thin solid white;
   }

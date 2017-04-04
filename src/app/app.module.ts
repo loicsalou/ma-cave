@@ -18,6 +18,10 @@ import {TranslateHttpLoader} from "@ngx-translate/http-loader";
 import {HttpModule, Http} from "@angular/http";
 import {BottleDetailPage} from "../pages/bottle-detail/page-bottle-detail";
 import {BottleDetailSlide} from "../pages/bottle-detail/slide-bottle-detail";
+import {UpdatePage} from "../pages/update/update";
+import {Camera} from "@ionic-native/camera";
+import {StatusBar} from "@ionic-native/status-bar";
+import {SplashScreen} from "@ionic-native/splash-screen";
 
 @NgModule({
             declarations: [
@@ -32,7 +36,8 @@ import {BottleDetailSlide} from "../pages/bottle-detail/slide-bottle-detail";
               BottleItemComponent,
               BottleIconPipe,
               BottleListComponent,
-              TabsPage
+              TabsPage,
+              UpdatePage
             ],
             imports: [
               IonicModule.forRoot(MyApp),
@@ -53,9 +58,13 @@ import {BottleDetailSlide} from "../pages/bottle-detail/slide-bottle-detail";
               HomePage,
               Browse2Page,
               TabsPage,
-              BottleDetailPage
+              BottleDetailPage,
+              UpdatePage
             ],
             providers: [
+              Camera,
+              StatusBar,
+              SplashScreen,
               {provide: ErrorHandler, useClass: IonicErrorHandler},
               BottleService, DistributeService ]
           })

@@ -10,7 +10,7 @@
   <div class="flex-grow">
     <h2>version: {{name}}:{{version}}</h2>
     <h2 *ngIf="message">{{message}}</h2>
-    <img src="assets/img/vins-tranquilles.png" (click)="onclick($event)"/>
+    <img src="assets/img/vins-tranquilles.png" (click)="takePhoto($event)"/>
     <h3 (click)="showTrads()">click pour les traductionss</h3>
     <p *ngIf="trad">{{trad}}</p>
     <img src="assets/img/carte-vignobles.png" (click)="choosePicture($event)"/>
