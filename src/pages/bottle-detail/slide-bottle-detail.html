@@ -1,12 +1,22 @@
 <div class="slide-bottle-detail">
+  
+  <ion-fab right edge (click)="update()">
+    <button ion-fab mini>
+      <ion-icon name="create"></ion-icon>
+    </button>
+  </ion-fab>
+  
   <div class="index">{{getIndex()}}</div>
   <h4 *ngIf="showName">{{bottle.nomCru}}</h4>
-  <div class="block bottle">
-    <div class="icon" style="display: block">
-      <img src="{{ bottle.label | bottleIcon }}">
+  
+  <div>
+    <div class="block" style="display:flex">
+      <div class="icon">
+        <img src="{{ bottle.label | bottleIcon }}">
+      </div>
+      <h3>{{bottle.nomCru}}</h3>
     </div>
     <div class="description">
-      <h3>{{bottle.nomCru}}</h3>
       <ul class="circle">
         <li>{{bottle.label}}</li>
         <li>{{bottle.country_label}}, {{bottle.subregion_label}}, {{bottle.area_label}}</li>

@@ -24,7 +24,14 @@ export class BottleListComponent {
     this.isFilterPanelShown = true;
   }
 
+  clicked(event: any) {
+  }
+
   triggerDetail(bottle: Bottle, index: number) {
     this.showDetail.emit(<ListBottleEvent>{bottles: this.bottles, bottle: bottle, index: index});
+  }
+
+  color(bottle: Bottle) {
+    return 'red';
   }
 }

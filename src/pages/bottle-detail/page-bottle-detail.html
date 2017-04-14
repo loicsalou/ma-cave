@@ -9,6 +9,12 @@
   <ion-navbar>
     <ion-title>{{"details" | translate}}</ion-title>
   </ion-navbar>
+  
+  <ion-fab top left edge (click)="update()">
+    <button ion-fab mini>
+      <ion-icon name="create"></ion-icon>
+    </button>
+  </ion-fab>
 
 </ion-header>
 
