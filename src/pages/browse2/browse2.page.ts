@@ -1,10 +1,11 @@
 import {Component, OnInit} from "@angular/core";
-import {Platform, NavController, ToastController} from "ionic-angular";
-import {BottleService} from "../../components/bottle/bottle.service";
+import {NavController, Platform, ToastController} from "ionic-angular";
+import {BottleService} from "../../components/bottle/bottle-firebase.service";
 import {Bottle} from "../../components/bottle/bottle";
 import {BottleDetailPage} from "../bottle-detail/page-bottle-detail";
 import {ListBottleEvent} from "../../components/list/bottle-list-event";
 import {FilterSet} from "../../components/distribution/distribution";
+import {FirebaseListObservable} from "angularfire2";
 
 @Component({
              selector: 'page-browse',
@@ -13,6 +14,7 @@ import {FilterSet} from "../../components/distribution/distribution";
            })
 export class Browse2Page implements OnInit {
 
+  bottles_fb: FirebaseListObservable<Bottle[]>;
   bottles: Bottle[];
   distribution = {}; //distribution de la sélection selon plusieurs colonnes pour avoir le compte
   currentDistributionAxis: string[]; //axes de distribution de la distribution courante
@@ -25,14 +27,24 @@ export class Browse2Page implements OnInit {
   constructor(private toastCtrl: ToastController, public navCtrl: NavController, public platform: Platform,
               private bottlesService: BottleService) {
     this.filterSet = new FilterSet();
+    this.bottles_fb = bottlesService.getBottlesObservable();
   }
 
-  setBottles(bottles: Bottle[]) {
-    this.bottles = bottles;
+  setBottles(bottles: FirebaseListObservable<Bottle[]>) {
+    this.bottles_fb = bottles;
   }
 
   ngOnInit() {
-    this.bottles = this.bottlesService.getBottlesByFilter(this.filterSet);
+    this.bottles_fb.subscribe((bottles: Bottle[]) => {
+      this.bottles = bottles;
+      console.info('liste rechargée');
+    });
+  }
+
+  trace(bottles: Bottle[]) {
+    bottles.forEach((bottle: Bottle) =>
+                      console.info(bottle[ 'nomCru' ] + ': ' + bottle[ 'label' ])
+    );
   }
 
   switchDistribution() {
@@ -55,12 +67,14 @@ export class Browse2Page implements OnInit {
       ;
     }
     this.bottles = this.bottlesService.getBottlesByFilter(this.filterSet);
+    //this.bottles_fb = this.bottlesService.getBottlesObservable();
   }
 
   refineFilter(filters: FilterSet) {
     filters.text = this.filterSet.text;
     this.filterSet = filters;
-    this.bottles = this.bottlesService.getBottlesByFilter(filters);
+    this.bottles_fb = this.bottlesService.getBottlesObservable();
+//    this.bottles = this.bottlesService.getBottlesByFilter(filters);
   }
 
   triggerDetail(bottleEvent: ListBottleEvent) {
