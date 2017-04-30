@@ -23,6 +23,7 @@ import {Camera} from "@ionic-native/camera";
 import {StatusBar} from "@ionic-native/status-bar";
 import {SplashScreen} from "@ionic-native/splash-screen";
 import {AngularFireModule} from "angularfire2";
+import {BrowserModule} from "@angular/platform-browser";
 
 export const fireConfig = {
   apiKey: "AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w",
@@ -58,6 +59,7 @@ export const fireConfig = {
                                           deps: [ Http ]
                                         }
                                       }),
+              BrowserModule,
               HttpModule,
               AngularFireModule.initializeApp(fireConfig)
             ],

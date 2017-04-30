@@ -7,9 +7,9 @@ import * as _ from "lodash";
 import {TranslateService} from "@ngx-translate/core";
 import {Observable} from "rxjs";
 import {Http} from "@angular/http";
-import {AngularFire, AuthMethods, AuthProviders, FirebaseListObservable} from "angularfire2";
+import {AngularFire, AuthMethods, AuthProviders} from "angularfire2";
 import {AuthConfiguration} from "angularfire2/auth";
-import {Subscription} from "rxjs/Subscription";
+import {BehaviorSubject} from "rxjs/BehaviorSubject";
 
 /**
  * Services related to the bottles in the cellar.
@@ -18,28 +18,49 @@ import {Subscription} from "rxjs/Subscription";
  */
 @Injectable()
 export class BottleService {
-  bottlesObservable: FirebaseListObservable<Bottle[]>;
-  bottles: Bottle[];
+  private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
+  bottles: Observable<Bottle[]> = this._bottles.asObservable();
   currentYear = new Date().getFullYear();
 
   constructor(private i18n: TranslateService, private http: Http, private firebase: AngularFire) {
     this.firebase.auth.login(this.getAuth());
+    this.fetchAllBottles();
   }
 
-  private setClasseAge(millesime: any) {
-    if (millesime === '-') {
-      return this.i18n.instant('no-age');
+  private setClasseAge(bottle: Bottle) {
+    if (bottle.millesime === '-') {
+      bottle[ 'classeAge' ] = this.i18n.instant('no-age');
+      return;
     }
-    if (millesime + 4 > this.currentYear) {
-      return this.i18n.instant('young');
+    let mill = Number(bottle.millesime);
+    if (mill + 4 > this.currentYear) {
+      bottle[ 'classeAge' ] = this.i18n.instant('young');
     }
-    if (millesime + 10 > this.currentYear) {
-      return this.i18n.instant('middle');
+    if (mill + 10 > this.currentYear) {
+      bottle[ 'classe_age' ] = this.i18n.instant('middle');
     }
-    if (millesime + 15 > this.currentYear) {
-      return this.i18n.instant('old');
+    if (mill + 15 > this.currentYear) {
+      bottle[ 'classeAge' ] = this.i18n.instant('old');
     }
-    return this.i18n.instant('very-old');
+    bottle[ 'classeAge' ] = this.i18n.instant('very-old');
+  }
+
+  /**
+   * searches through the given bottles all that match all of the filters passed in
+   * @param fromList array of bottles
+   * @param keywords an array of searched keywords
+   * @returns array of matching bottles
+   */
+  public getBottlesByKeywords(fromList: Bottle[], keywords: string[]): any {
+    if (!keywords || keywords.length == 0) {
+      this.fetchAllBottles();
+      return;
+    }
+    this.firebase.database.ref('/bottles').orderBykey()
+      .subscribe((bottles: Bottle[]) => {
+        bottles.forEach((bottle: Bottle) => this.setClasseAge(bottle));
+        this._bottles.next(bottles);
+      });
   }
 
   /**
@@ -133,25 +154,19 @@ export class BottleService {
     })
   }
 
-  getAllBottles(): Observable<Bottle[]> {
-    this.bottlesObservable = this.firebase.database.list('/bottles');
-    this.bottlesObservable.subscribe(
-      (bottles: Bottle[]) => {
-        bottles.map(
-          (btl: Bottle) => {
-            btl[ 'classe_age' ] = this.setClasseAge(btl[ 'millesime' ]);
-            return btl;
-          });
-        return bottles;
-      },
-      error => console.error(error),
-      () => console.info('completed')
-    );
-    return new Observable.of(this.bottlesObservable);
+  getBottlesObservable(): Observable<Bottle[]> {
+    return this.bottles;
   }
 
-  private
-  getAuth(): AuthConfiguration {
+  fetchAllBottles() {
+    this.firebase.database.list('/bottles')
+      .subscribe((bottles: Bottle[]) => {
+        bottles.forEach((bottle: Bottle) => this.setClasseAge(bottle));
+        this._bottles.next(bottles);
+      });
+  }
+
+  private getAuth(): AuthConfiguration {
     let me: AuthConfiguration = {
       method: AuthMethods.Anonymous, provider: AuthProviders.Anonymous
     };
@@ -193,7 +208,7 @@ export class BottleService {
 
    }
    */
-  private
+  //private
   handleError(error: any) {
     console.error(error);
     return Observable.throw(error.json().error || 'Server error');

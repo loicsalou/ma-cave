@@ -11,7 +11,7 @@
   </ion-fab>
   
   <div class="report" *ngIf="distribution">
-    <distribution [opened]="isDistributionOpened" (closed)="switchDistribution()" [bottles]="bottlesObservable"
+    <distribution [opened]="isDistributionOpened" (closed)="switchDistribution()" [bottles]="bottles"
                   (filterSetChanged)="refineFilter($event)"></distribution>
   </div>
 
@@ -19,6 +19,6 @@
 
 <ion-content class="page-browse2 page">
   
-  <bottle-list [bottles]="bottlesObservable" (showDetail)="triggerDetail($event)"></bottle-list>
+  <bottle-list [bottles]="bottles" (showDetail)="triggerDetail($event)"></bottle-list>
 
 </ion-content>

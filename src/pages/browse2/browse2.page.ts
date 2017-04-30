@@ -6,6 +6,7 @@ import {BottleDetailPage} from "../bottle-detail/page-bottle-detail";
 import {ListBottleEvent} from "../../components/list/bottle-list-event";
 import {FilterSet} from "../../components/distribution/distribution";
 import {FirebaseListObservable} from "angularfire2";
+import {Observable} from "rxjs/Observable";
 
 @Component({
              selector: 'page-browse',
@@ -14,7 +15,6 @@ import {FirebaseListObservable} from "angularfire2";
            })
 export class Browse2Page implements OnInit {
 
-  bottles_fb: FirebaseListObservable<Bottle[]>;
   bottles: Bottle[];
   distribution = {}; //distribution de la sélection selon plusieurs colonnes pour avoir le compte
   currentDistributionAxis: string[]; //axes de distribution de la distribution courante
@@ -27,17 +27,15 @@ export class Browse2Page implements OnInit {
   constructor(private toastCtrl: ToastController, public navCtrl: NavController, public platform: Platform,
               private bottlesService: BottleService) {
     this.filterSet = new FilterSet();
-    this.bottles_fb = bottlesService.getBottlesObservable();
-  }
-
-  setBottles(bottles: FirebaseListObservable<Bottle[]>) {
-    this.bottles_fb = bottles;
   }
 
   ngOnInit() {
-    this.bottles_fb.subscribe((bottles: Bottle[]) => {
-      this.bottles = bottles;
-      console.info('liste rechargée');
+    this.bottlesService.getBottlesObservable().subscribe((bottles: Bottle[]) => {
+      if (bottles) {
+        this.bottles=bottles;
+        console.info('nombre éléments: ' + this.bottles.length);
+      }
+      //this.trace(this.bottles);
     });
   }
 
@@ -66,15 +64,15 @@ export class Browse2Page implements OnInit {
       this.filterSet.text = filter.split(' ');
       ;
     }
-    this.bottles = this.bottlesService.getBottlesByFilter(this.filterSet);
+    //this.bottles = this.bottlesService.getBottlesByFilter(this.filterSet);
     //this.bottles_fb = this.bottlesService.getBottlesObservable();
   }
 
   refineFilter(filters: FilterSet) {
     filters.text = this.filterSet.text;
     this.filterSet = filters;
-    this.bottles_fb = this.bottlesService.getBottlesObservable();
-//    this.bottles = this.bottlesService.getBottlesByFilter(filters);
+    //this.bottles_fb = this.bottlesService.getBottlesObservable();
+    //this.bottles = this.bottlesService.getBottlesByFilter(filters);
   }
 
   triggerDetail(bottleEvent: ListBottleEvent) {

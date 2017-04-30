@@ -16,7 +16,7 @@ export class BottleListComponent {
   bottles: Bottle[];
 
   @Output()
-  showDetail: EventEmitter<FirebaseListObservable<Bottle[]>> = new EventEmitter();
+  showDetail: EventEmitter<ListBottleEvent> = new EventEmitter();
 
   constructor(private bottlesService: BottleService) {
   }
@@ -28,9 +28,9 @@ export class BottleListComponent {
   clicked(event: any) {
   }
 
-  //triggerDetail(bottle: Bottle, index: number) {
-  //  this.showDetail.emit(<ListBottleEvent>{bottles: this.bottles, bottle: bottle, index: index});
-  //}
+  triggerDetail(bottle: Bottle, index: number) {
+    this.showDetail.emit(<ListBottleEvent>{bottles: this.bottles, bottle: bottle, index: index});
+  }
 
   color(bottle: Bottle) {
     return 'red';

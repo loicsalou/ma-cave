@@ -3,21 +3,23 @@
  */
 
 export class Bottle {
-
-  /*
-   static showDistinctColors() {
-   let json = require('../../assets/json/ma-cave.json');
-   console.info(_.countBy(json, function (json) {
-   return json.label;
-   }));
-   }
-
-   static showDistinctRegions() {
-   let json = require('../../assets/json/ma-cave.json');
-   console.info(_.countBy(json, function (json) {
-   return json.subregion_label;
-   }));
-   }
-   */
-
+  area_label: string;
+  canal_vente: string;
+  comment: string;
+  cote: string;
+  country_label: string;
+  date_achat: string;
+  garde_max: string;
+  garde_min: string;
+  garde_optimum: string;
+  label: string;
+  lieu_achat: string;
+  millesime: string;
+  nomCru: string;
+  prix: string;
+  quantite_achat: string;
+  quantite_courante: string;
+  subregion_label: string;
+  suggestion: string;
+  volume: string;
 }
