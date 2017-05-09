@@ -5,8 +5,6 @@ import {Bottle} from "../../components/bottle/bottle";
 import {BottleDetailPage} from "../bottle-detail/page-bottle-detail";
 import {ListBottleEvent} from "../../components/list/bottle-list-event";
 import {FilterSet} from "../../components/distribution/distribution";
-import {FirebaseListObservable} from "angularfire2";
-import {Observable} from "rxjs/Observable";
 
 @Component({
              selector: 'page-browse',
@@ -32,7 +30,7 @@ export class Browse2Page implements OnInit {
   ngOnInit() {
     this.bottlesService.getBottlesObservable().subscribe((bottles: Bottle[]) => {
       if (bottles) {
-        this.bottles=bottles;
+        this.bottles = bottles;
         console.info('nombre éléments: ' + this.bottles.length);
       }
       //this.trace(this.bottles);
@@ -62,9 +60,8 @@ export class Browse2Page implements OnInit {
     this.filterSet.reset();
     if (filter) {
       this.filterSet.text = filter.split(' ');
-      ;
     }
-    //this.bottles = this.bottlesService.getBottlesByFilter(this.filterSet);
+    this.bottles = this.bottlesService.getBottlesByFilter(this.filterSet);
     //this.bottles_fb = this.bottlesService.getBottlesObservable();
   }
 
@@ -72,7 +69,7 @@ export class Browse2Page implements OnInit {
     filters.text = this.filterSet.text;
     this.filterSet = filters;
     //this.bottles_fb = this.bottlesService.getBottlesObservable();
-    //this.bottles = this.bottlesService.getBottlesByFilter(filters);
+    this.bottles = this.bottlesService.getBottlesByFilter(filters);
   }
 
   triggerDetail(bottleEvent: ListBottleEvent) {

@@ -10,7 +10,8 @@ import {NavController, NavParams} from "ionic-angular";
  */
 @Component({
              selector: 'update',
-             templateUrl: 'update.html'
+             templateUrl: '/update.page.html',
+             styleUrls: [ '/update.page.scss' ]
            })
 export class UpdatePage {
 

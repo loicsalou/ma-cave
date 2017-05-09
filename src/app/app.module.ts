@@ -18,12 +18,14 @@ import {TranslateHttpLoader} from "@ngx-translate/http-loader";
 import {Http, HttpModule} from "@angular/http";
 import {BottleDetailPage} from "../pages/bottle-detail/page-bottle-detail";
 import {BottleDetailSlide} from "../pages/bottle-detail/slide-bottle-detail";
-import {UpdatePage} from "../pages/update/update";
+import {UpdatePage} from "../pages/update/update.page";
 import {Camera} from "@ionic-native/camera";
 import {StatusBar} from "@ionic-native/status-bar";
 import {SplashScreen} from "@ionic-native/splash-screen";
-import {AngularFireModule} from "angularfire2";
 import {BrowserModule} from "@angular/platform-browser";
+import {AngularFireModule} from "angularfire2";
+import {AngularFireAuthModule} from "angularfire2/auth";
+import {AngularFireDatabaseModule} from "angularfire2/database";
 
 export const fireConfig = {
   apiKey: "AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w",
@@ -61,7 +63,9 @@ export const fireConfig = {
                                       }),
               BrowserModule,
               HttpModule,
-              AngularFireModule.initializeApp(fireConfig)
+              AngularFireModule.initializeApp(fireConfig),
+              AngularFireAuthModule,
+              AngularFireDatabaseModule
             ],
             bootstrap: [ IonicApp ],
             entryComponents: [

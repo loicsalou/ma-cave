@@ -7,8 +7,9 @@
 </ion-header>
 
 <ion-content class="home card-background-page page">
-  <div class="slide-bottle-detail">
+  <div class="update">
     <h4 *ngIf="showName">{{bottle.nomCru}}</h4>
+    
     <div class="block bottle">
       <div class="icon" style="display: block">
         <img src="{{ bottle.label | bottleIcon }}">

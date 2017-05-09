@@ -7,9 +7,10 @@ import * as _ from "lodash";
 import {TranslateService} from "@ngx-translate/core";
 import {Observable} from "rxjs";
 import {Http} from "@angular/http";
-import {AngularFire, AuthMethods, AuthProviders} from "angularfire2";
-import {AuthConfiguration} from "angularfire2/auth";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
+import {FilterSet} from "../distribution/distribution";
+import {AngularFireDatabase} from "angularfire2/database";
+import {AngularFireAuth} from "angularfire2/auth";
 
 /**
  * Services related to the bottles in the cellar.
@@ -20,10 +21,13 @@ import {BehaviorSubject} from "rxjs/BehaviorSubject";
 export class BottleService {
   private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
   bottles: Observable<Bottle[]> = this._bottles.asObservable();
-  currentYear = new Date().getFullYear();
+  bottlesArray: Bottle[];
 
-  constructor(private i18n: TranslateService, private http: Http, private firebase: AngularFire) {
-    this.firebase.auth.login(this.getAuth());
+  currentYear = new Date().getFullYear();
+  private start: number = 0;
+
+  constructor(private i18n: TranslateService, private http: Http, private firebase: AngularFireDatabase, private firebaseAuth: AngularFireAuth) {
+    this.firebaseAuth.auth.signInAnonymously();
     this.fetchAllBottles();
   }
 
@@ -46,22 +50,40 @@ export class BottleService {
   }
 
   /**
-   * searches through the given bottles all that match all of the filters passed in
+   * searches through the given bottles all that match all of the filter{s passed in
    * @param fromList array of bottles
    * @param keywords an array of searched keywords
    * @returns array of matching bottles
    */
-  public getBottlesByKeywords(fromList: Bottle[], keywords: string[]): any {
-    if (!keywords || keywords.length == 0) {
-      this.fetchAllBottles();
-      return;
-    }
-    this.firebase.database.ref('/bottles').orderBykey()
-      .subscribe((bottles: Bottle[]) => {
-        bottles.forEach((bottle: Bottle) => this.setClasseAge(bottle));
-        this._bottles.next(bottles);
-      });
-  }
+  //public getBottlesByFilter(filters: FilterSet): any {
+  //  if (filters.isEmpty()) {
+  //    this.fetchAllBottles();
+  //    return;
+  //  }
+  //  this.firebase.list('/bottles', {
+  //    query: {
+  //      equalTo: filters.label[0],
+  //      orderByChild: 'label',
+  //      limitToFirst: 5
+  //    }
+  //  }).subscribe((bottles: Bottle[]) => {
+  //    bottles.forEach((bottle: Bottle) => this.setClasseAge(bottle));
+  //    this._bottles.next(bottles);
+  //    this.getRestOfBottlesByFilter(filters).subscribe((bottles: Bottle[]) => {
+  //      bottles.forEach((bottle: Bottle) => this.setClasseAge(bottle));
+  //      this._bottles.next(bottles);
+  //    });
+  //  });
+  //}
+  //
+  //private getRestOfBottlesByFilter(filters: FilterSet) {
+  //  return this.firebase.list('/bottles', {
+  //    query: {
+  //      equalTo: filters.label,
+  //      orderByChild: 'label'
+  //    }
+  //  });
+  //}
 
   /**
    * searches through the given bottles all that match all of the filters passed in
@@ -69,17 +91,17 @@ export class BottleService {
    * @param keywords an array of searched keywords
    * @returns array of matching bottles
    */
-  //public getBottlesByKeywords(fromList: Bottle[], keywords: string[]): any {
-  //  if (!keywords || keywords.length == 0) {
-  //    return this.bottles;
-  //  }
-  //  let filtered = this.bottles;
-  //  keywords.forEach(keyword => {
-  //    filtered = this.filterOnKeyword(filtered, keyword);
-  //  });
-  //
-  //  return filtered;
-  //}
+  public getBottlesByKeywords(fromList: Bottle[], keywords: string[]): any {
+    if (!keywords || keywords.length == 0) {
+      return this.bottles;
+    }
+    let filtered = this.bottlesArray;
+    keywords.forEach(keyword => {
+      filtered = this.filterOnKeyword(filtered, keyword);
+    });
+
+    return filtered;
+  }
 
   /**
    * get the bottles which match one keyword
@@ -107,43 +129,43 @@ export class BottleService {
    * @param filters
    * @returns {any}
    */
-  //public getBottlesByFilter(filters: FilterSet): FirebaseListObservable<Bottle[ ]> {
-  //  if (filters.isEmpty()) {
-  //    return this.bottles;
-  //  }
-  //
-  //  let filtered = this.bottles;
-  //  // always start filtering using textual search
-  //  if (filters.hasText()) {
-  //    filtered = this.getBottlesByKeywords(this.bottles, filters.text);
-  //  }
-  //
-  //  // on hierarchical axis like regions and ages, use most precise filter if available
-  //  if (filters.hasMillesimes()) {
-  //    filtered = this.filterByAttribute(filtered, 'millesime', filters.millesime);
-  //  } else {
-  //    // if filtering on millesime no need to filter on ages (matching millesime implies matching ages slice)
-  //    if (filters.hasAges()) {
-  //      filtered = this.filterByAttribute(filtered, 'classe_age', filters.classe_age);
-  //    }
-  //  }
-  //
-  //  // on hierarchical axis like regions and ages, use most precise filter if available
-  //  if (filters.hasAppellations()) {
-  //    filtered = this.filterByAttribute(filtered, 'area_label', filters.area_label);
-  //  } else {
-  //    // if filtering on area_label no need to filter on region (matching area_label implies matching subregion_label)
-  //    if (filters.hasRegions()) {
-  //      filtered = this.filterByAttribute(filtered, 'subregion_label', filters.subregion_label);
-  //    }
-  //  }
-  //
-  //  if (filters.hasCouleurs()) {
-  //    filtered = this.filterByAttribute(filtered, 'label', filters.label);
-  //  }
-  //
-  //  return filtered;
-  //}
+  public getBottlesByFilter(filters: FilterSet): Bottle[] {
+    if (filters.isEmpty()) {
+      return this.bottlesArray;
+    }
+
+    let filtered = this.bottlesArray;
+    // always start filtering using textual search
+    if (filters.hasText()) {
+      filtered = this.getBottlesByKeywords(this.bottlesArray, filters.text);
+    }
+
+    // on hierarchical axis like regions and ages, use most precise filter if available
+    if (filters.hasMillesimes()) {
+      filtered = this.filterByAttribute(filtered, 'millesime', filters.millesime);
+    } else {
+      // if filtering on millesime no need to filter on ages (matching millesime implies matching ages slice)
+      if (filters.hasAges()) {
+        filtered = this.filterByAttribute(filtered, 'classe_age', filters.classe_age);
+      }
+    }
+
+    // on hierarchical axis like regions and ages, use most precise filter if available
+    if (filters.hasAppellations()) {
+      filtered = this.filterByAttribute(filtered, 'area_label', filters.area_label);
+    } else {
+      // if filtering on area_label no need to filter on region (matching area_label implies matching subregion_label)
+      if (filters.hasRegions()) {
+        filtered = this.filterByAttribute(filtered, 'subregion_label', filters.subregion_label);
+      }
+    }
+
+    if (filters.hasCouleurs()) {
+      filtered = this.filterByAttribute(filtered, 'label', filters.label);
+    }
+
+    return filtered;
+  }
 
   private filterByAttribute(fromList: Bottle[ ], attribute: string, admissibleValues: string[ ]) {
     return fromList.filter(bottle => {
@@ -159,20 +181,20 @@ export class BottleService {
   }
 
   fetchAllBottles() {
-    this.firebase.database.list('/bottles')
-      .subscribe((bottles: Bottle[]) => {
-        bottles.forEach((bottle: Bottle) => this.setClasseAge(bottle));
-        this._bottles.next(bottles);
-      });
+    this.firebase.list('/bottles').subscribe((bottles: Bottle[]) => {
+      bottles.forEach((bottle: Bottle) => this.setClasseAge(bottle));
+      this.bottlesArray = bottles;
+      this._bottles.next(bottles);
+    });
   }
 
-  private getAuth(): AuthConfiguration {
-    let me: AuthConfiguration = {
-      method: AuthMethods.Anonymous, provider: AuthProviders.Anonymous
-    };
-
-    return me;
-  }
+  //private getAuth(): AuthConfiguration {
+  //  let me: AuthConfiguration = {
+  //    method: AuthMethods.Anonymous, provider: AuthProviders.Anonymous
+  //  };
+  //
+  //  return me;
+  //}
 
   /*
    getBottlesObservable(searchParams ?: any): Observable<Bottle[ ]> {

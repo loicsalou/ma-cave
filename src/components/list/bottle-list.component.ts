@@ -1,8 +1,7 @@
-import {Component, Input, Output, EventEmitter} from "@angular/core";
+import {Component, EventEmitter, Input, Output} from "@angular/core";
 import {BottleService} from "../bottle/bottle-firebase.service";
 import {Bottle} from "../bottle/bottle";
 import {ListBottleEvent} from "./bottle-list-event";
-import {FirebaseListObservable} from "angularfire2";
 
 @Component({
              selector: 'bottle-list',
