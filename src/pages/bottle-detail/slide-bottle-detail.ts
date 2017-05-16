@@ -1,7 +1,7 @@
 import {Component, Input} from "@angular/core";
 import {NavController} from "ionic-angular";
 import {Bottle} from "../../components/bottle/bottle";
-import {UpdatePage} from "../update/update";
+import {UpdatePage} from "../update/update.page";
 
 @Component({
              selector: 'slide-bottle-detail',
@@ -14,7 +14,7 @@ export class BottleDetailSlide {
   @Input()
   bottle: Bottle;
   @Input()
-  showName: boolean = true;
+  showName: boolean;
   @Input()
   index: number;
 
@@ -23,5 +23,9 @@ export class BottleDetailSlide {
 
   getIndex() {
     return this.index + 1;
+  }
+
+  update() {
+    this.navCtrl.push(UpdatePage, {bottle: this.bottle});
   }
 }

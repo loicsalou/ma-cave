@@ -1,4 +1,4 @@
-import {Component} from "@angular/core";
+import {Component, ViewEncapsulation} from "@angular/core";
 import {Bottle} from "../../components/bottle/bottle";
 import {NavController, NavParams} from "ionic-angular";
 
@@ -10,7 +10,10 @@ import {NavController, NavParams} from "ionic-angular";
  */
 @Component({
              selector: 'update',
-             templateUrl: 'update.html'
+             templateUrl: '/update.page.html',
+             styleUrls: [ '/update.page.scss' ],
+             // warning: few browsers support shadow DOM encapsulation at this time
+             encapsulation: ViewEncapsulation.Emulated
            })
 export class UpdatePage {
 

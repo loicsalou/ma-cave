@@ -1,10 +1,8 @@
 <ion-list>
   
-  <div *ngFor="let bottle of bottles" (click)="triggerDetail(btl,ix)" class="bottle">
+  <div *ngFor="let bottle of bottles; let ix=index" (click)="triggerDetail(bottle,ix)" class="bottle">
     <img src="{{ bottle.label | bottleIcon }}" class="logo">
     <h4 class="label">{{ bottle.nomCru }}</h4>
-    <img src="../../assets/icon/right-arrow.png" class="logo">
-  
+    <ion-icon name="arrow-dropright"></ion-icon>
   </div>
-
 </ion-list>

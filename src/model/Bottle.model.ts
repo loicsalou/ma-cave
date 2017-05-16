@@ -1,8 +1,8 @@
 /**
- * Created by loicsalou on 01.03.17.
+ * Created by loicsalou on 23.04.17.
  */
 
-export class Bottle {
+export interface BottleModel {
   area_label: string;
   canal_vente: string;
   comment: string;

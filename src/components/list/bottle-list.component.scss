@@ -1,13 +1,25 @@
 .bottle {
+  border-bottom: thin dotted grey;
   display: flex;
-  height: 45px;
+
+  img {
+    margin-top: auto;
+    margin-bottom: auto;
+  }
 
   .logo {
     flex-grow: 0;
+    height: 45px;
     width: 45px;
   }
 
   .label {
     flex-grow: 1;
+  }
+
+  ion-icon {
+    font-size: 2.3em;
+    margin-top: auto;
+    margin-bottom: auto;
   }
 }

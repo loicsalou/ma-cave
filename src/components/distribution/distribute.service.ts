@@ -27,6 +27,8 @@ export class DistributeService {
    * @returns {Array}
    */
   distributeBy(rows: any[], byCols: string[]): any[] {
+    if (rows==null)
+      return null;
     let distribution = [];
 
     byCols.forEach(col => {

@@ -1,5 +1,5 @@
-import {Component, Input, Output, EventEmitter} from "@angular/core";
-import {BottleService} from "../../components/bottle/bottle.service";
+import {Component, EventEmitter, Input, Output} from "@angular/core";
+import {BottleService} from "../bottle/bottle-firebase.service";
 import {Bottle} from "../bottle/bottle";
 import {ListBottleEvent} from "./bottle-list-event";
 
@@ -12,7 +12,7 @@ export class BottleListComponent {
 
   isFilterPanelShown = false;
   @Input()
-  bottles;
+  bottles: Bottle[];
 
   @Output()
   showDetail: EventEmitter<ListBottleEvent> = new EventEmitter();
