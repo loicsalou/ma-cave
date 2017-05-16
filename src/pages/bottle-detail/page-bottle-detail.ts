@@ -1,5 +1,5 @@
 import {Component, Input, ViewChild} from "@angular/core";
-import {NavController, NavParams, Slides} from "ionic-angular";
+import {LoadingController, NavController, NavParams, Slides} from "ionic-angular";
 import {Bottle} from "../../components/bottle/bottle";
 import {ListBottleEvent} from "../../components/list/bottle-list-event";
 import {UpdatePage} from "../update/update.page";

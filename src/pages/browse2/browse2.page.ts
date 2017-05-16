@@ -1,5 +1,5 @@
 import {Component, OnInit} from "@angular/core";
-import {NavController, Platform, ToastController} from "ionic-angular";
+import {LoadingController, NavController, Platform, ToastController} from "ionic-angular";
 import {BottleService} from "../../components/bottle/bottle-firebase.service";
 import {Bottle} from "../../components/bottle/bottle";
 import {BottleDetailPage} from "../bottle-detail/page-bottle-detail";
@@ -23,19 +23,23 @@ export class Browse2Page implements OnInit {
   filterSet: FilterSet;
 
   constructor(private toastCtrl: ToastController, public navCtrl: NavController, public platform: Platform,
-              private bottlesService: BottleService) {
+              private bottlesService: BottleService, public loadingCtrl: LoadingController) {
     this.filterSet = new FilterSet();
   }
 
   ngOnInit() {
+    let loading = this.loadingCtrl.create({ content: 'Chargement en cours...' });
+    loading.present();
     this.bottlesService.getBottlesObservable().subscribe((bottles: Bottle[]) => {
       if (bottles) {
         this.bottles = bottles;
         console.info('nombre éléments: ' + this.bottles.length);
       }
+      loading.dismiss();
       //this.trace(this.bottles);
     });
   }
+
 
   trace(bottles: Bottle[]) {
     bottles.forEach((bottle: Bottle) =>

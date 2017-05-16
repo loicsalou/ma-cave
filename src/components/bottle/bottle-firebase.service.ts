@@ -27,7 +27,9 @@ export class BottleService {
   private start: number = 0;
 
   constructor(private i18n: TranslateService, private http: Http, private firebase: AngularFireDatabase, private firebaseAuth: AngularFireAuth) {
-    this.firebaseAuth.auth.signInAnonymously();
+    this.firebaseAuth.auth.signInAnonymously().catch((a: Error) =>
+                                                       console.error("login failed: "+ a)
+    );
     this.fetchAllBottles();
   }
 

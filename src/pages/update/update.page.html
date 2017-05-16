@@ -1,4 +1,4 @@
-<ion-header class="home header">
+<ion-header class="header">
   
   <ion-navbar>
     <ion-title>Update</ion-title>
@@ -6,27 +6,27 @@
 
 </ion-header>
 
-<ion-content class="home card-background-page page">
+<ion-content scroll="true" class="page-bottle-detail">
   <div class="update">
-    <h4 *ngIf="showName">{{bottle.nomCru}}</h4>
+    <div>
+      <div class="block" style="display:flex">
+        <div class="icon">
+          <img src="{{ bottle.label | bottleIcon }}">
+        </div>
+        <h5>{{bottle.nomCru}}</h5>
     
-    <div class="block bottle">
-      <div class="icon" style="display: block">
-        <img src="{{ bottle.label | bottleIcon }}">
       </div>
       <div class="description">
-        <h3>{{bottle.nomCru}}</h3>
         <ul class="circle">
           <li>{{bottle.label}}</li>
           <li>{{bottle.country_label}}, {{bottle.subregion_label}}, {{bottle.area_label}}</li>
           <li>{{bottle.classe_age }} ({{bottle.millesime}})</li>
-          <li>{{ "quantite_courante" | translate }}: {{ bottle.quantite_courante }} sur {{bottle
-            .quantite_achat}}
+          <li>{{ "quantite_courante" | translate }}: {{ bottle.quantite_courante }} sur {{bottle.quantite_achat}}
           </li>
         </ul>
       </div>
     </div>
-    
+  
     <h4>{{"details" | translate}}</h4>
     <div class="block">
       <ul class="circle">
@@ -38,13 +38,13 @@
         <li>{{ "garde_optimum" | translate }} {{ bottle.garde_min }} {{ "ans" | translate }}</li>
       </ul>
     </div>
-    
+  
     <h4>{{"infos" | translate}}</h4>
     <div>
       <p *ngIf="!bottle.suggestion && ! bottle.comment">Aucune information complémentaire</p>
       <p *ngIf="bottle.suggestion">{{ "suggestion" | translate }}: {{bottle.suggestion}}</p>
       <p *ngIf="bottle.comment">{{ "comment" | translate }}: {{bottle.comment}}</p>
     </div>
-  
+
   </div>
 </ion-content>
