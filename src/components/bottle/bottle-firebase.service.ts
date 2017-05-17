@@ -35,20 +35,20 @@ export class BottleService {
 
   private setClasseAge(bottle: Bottle) {
     if (bottle.millesime === '-') {
-      bottle[ 'classeAge' ] = this.i18n.instant('no-age');
+      bottle[ 'classe_age' ] = this.i18n.instant('no-age');
       return;
     }
     let mill = Number(bottle.millesime);
     if (mill + 4 > this.currentYear) {
-      bottle[ 'classeAge' ] = this.i18n.instant('young');
+      bottle[ 'classe_age' ] = this.i18n.instant('young');
     }
     if (mill + 10 > this.currentYear) {
       bottle[ 'classe_age' ] = this.i18n.instant('middle');
     }
     if (mill + 15 > this.currentYear) {
-      bottle[ 'classeAge' ] = this.i18n.instant('old');
+      bottle[ 'classe_age' ] = this.i18n.instant('old');
     }
-    bottle[ 'classeAge' ] = this.i18n.instant('very-old');
+    bottle[ 'classe_age' ] = this.i18n.instant('very-old');
   }
 
   /**

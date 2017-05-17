@@ -1,5 +1,5 @@
 import {Component, OnInit} from "@angular/core";
-import {LoadingController, NavController, Platform, ToastController} from "ionic-angular";
+import {Loading, LoadingController, NavController, Platform, ToastController} from "ionic-angular";
 import {BottleService} from "../../components/bottle/bottle-firebase.service";
 import {Bottle} from "../../components/bottle/bottle";
 import {BottleDetailPage} from "../bottle-detail/page-bottle-detail";
@@ -21,6 +21,7 @@ export class Browse2Page implements OnInit {
   // ensemble des filtres utilisés pour l'affichage courant: un table d'axes avec pour chacun les valeurs sélectionnées
   // NB: l'axe "Text" représente la recherche textuelle
   filterSet: FilterSet;
+  private loading: Loading;
 
   constructor(private toastCtrl: ToastController, public navCtrl: NavController, public platform: Platform,
               private bottlesService: BottleService, public loadingCtrl: LoadingController) {
@@ -28,18 +29,16 @@ export class Browse2Page implements OnInit {
   }
 
   ngOnInit() {
-    let loading = this.loadingCtrl.create({ content: 'Chargement en cours...' });
-    loading.present();
+    this.loading = this.loadingCtrl.create({content: 'Chargement en cours...'});
+    this.loading.present();
     this.bottlesService.getBottlesObservable().subscribe((bottles: Bottle[]) => {
-      if (bottles) {
+      if (bottles && bottles.length > 0) {
         this.bottles = bottles;
+        this.loading.dismiss();
         console.info('nombre éléments: ' + this.bottles.length);
       }
-      loading.dismiss();
-      //this.trace(this.bottles);
     });
   }
-
 
   trace(bottles: Bottle[]) {
     bottles.forEach((bottle: Bottle) =>
