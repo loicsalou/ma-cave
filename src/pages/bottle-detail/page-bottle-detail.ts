@@ -52,4 +52,9 @@ export class BottleDetailPage implements OnInit {
     this.slides.slideTo(this.currentIndex);
   }
 
+  slideChanged() {
+    this.currentIndex = this.slides.getActiveIndex();
+    this.bottle=this.bottles[this.currentIndex];
+  }
+
 }
