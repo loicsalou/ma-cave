@@ -28,7 +28,7 @@ export class BottleService {
 
   constructor(private i18n: TranslateService, private http: Http, private firebase: AngularFireDatabase, private firebaseAuth: AngularFireAuth) {
     this.firebaseAuth.auth.signInAnonymously().catch((a: Error) =>
-                                                       console.error("login failed: "+ a)
+                                                       console.error("login failed: " + a)
     );
     this.fetchAllBottles();
   }
@@ -50,42 +50,6 @@ export class BottleService {
     }
     bottle[ 'classe_age' ] = this.i18n.instant('very-old');
   }
-
-  /**
-   * searches through the given bottles all that match all of the filter{s passed in
-   * @param fromList array of bottles
-   * @param keywords an array of searched keywords
-   * @returns array of matching bottles
-   */
-  //public getBottlesByFilter(filters: FilterSet): any {
-  //  if (filters.isEmpty()) {
-  //    this.fetchAllBottles();
-  //    return;
-  //  }
-  //  this.firebase.list('/bottles', {
-  //    query: {
-  //      equalTo: filters.label[0],
-  //      orderByChild: 'label',
-  //      limitToFirst: 5
-  //    }
-  //  }).subscribe((bottles: Bottle[]) => {
-  //    bottles.forEach((bottle: Bottle) => this.setClasseAge(bottle));
-  //    this._bottles.next(bottles);
-  //    this.getRestOfBottlesByFilter(filters).subscribe((bottles: Bottle[]) => {
-  //      bottles.forEach((bottle: Bottle) => this.setClasseAge(bottle));
-  //      this._bottles.next(bottles);
-  //    });
-  //  });
-  //}
-  //
-  //private getRestOfBottlesByFilter(filters: FilterSet) {
-  //  return this.firebase.list('/bottles', {
-  //    query: {
-  //      equalTo: filters.label,
-  //      orderByChild: 'label'
-  //    }
-  //  });
-  //}
 
   /**
    * searches through the given bottles all that match all of the filters passed in
@@ -198,66 +162,16 @@ export class BottleService {
   //  return me;
   //}
 
-  /*
-   getBottlesObservable(searchParams ?: any): Observable<Bottle[ ]> {
-   if (!
-   searchParams
-   ) {
-   return this.getAllBottlesObservable();
-   }
-
-   let filtered = [];
-
-   this.getAllBottlesObservable().subscribe(
-   (filtered: Bottle[]) => filtered.filter(
-   bottle => {
-   if (searchParams.subregion_label && searchParams.subregion_label.length > 0) {
-   let regionCode = Configuration.regionsText2Code[ bottle[ 'subregion_label' ] ];
-   return searchParams.subregion_label.indexOf(regionCode) != -1;
-   } else {
-   return true;
-   }
-   }).filter(bottle => {
-   if (searchParams.colors && searchParams.colors.length > 0) {
-   let colorCode = Configuration.colorsText2Code[ bottle[ 'label' ] ];
-   return searchParams.colors.indexOf(colorCode) != -1;
-   } else {
-   return true;
-   }
-   }));
-
-   return Observable.create((observer: Observer<Bottle[]>) => {
-   observer.next(filtered);
-   });
-
-   }
-   */
-  //private
   handleError(error: any) {
     console.error(error);
     return Observable.throw(error.json().error || 'Server error');
   }
 
-  static
-  isEmpty(array: any[ ], index: number): boolean {
+  private static isEmpty(array: any[ ], index: number): boolean {
     return _.isEmpty(array, index);
   }
 
-  /*
-   getBottlesBy(bottles: Bottle[ ], by: string, value: any) {
-   let filtered = bottles.filter(bottle => {
-   let field = bottle[ by ];
-   if (typeof field === 'number') {
-   return field === +value;
-   } else {
-   return field === value;
-   }
-   });
-   return filtered;
-   }
-   */
-  private
-  bottleMatchesAll(matches: any, keywords: string[ ]) {
+  private bottleMatchesAll(matches: any, keywords: string[ ]) {
     let ret = true;
     keywords.forEach(token =>
                        ret = ret && matches[ token ]);
