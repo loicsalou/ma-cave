@@ -1,8 +1,12 @@
-<ion-list>
+<ion-list sliding="true" class="page">
   
-  <div *ngFor="let bottle of bottles; let ix=index" (click)="triggerDetail(bottle,ix)" class="bottle">
-    <img src="{{ bottle.label | bottleIcon }}" class="logo">
-    <h4 class="label">{{ bottle.nomCru }} ({{bottle.millesime}})</h4>
-    <ion-icon name="arrow-dropright"></ion-icon>
-  </div>
+  <ion-item *ngFor="let bottle of bottles; let ix=index" (click)="triggerDetail(bottle,ix)">
+    <ion-avatar item-start>
+      <img src="{{ bottle.label | bottleIcon }}" class="logo">
+    </ion-avatar>
+    <h4 class="label">{{ bottle.nomCru }}</h4>
+    <ion-note >{{bottle.area_label}} ({{bottle.millesime}})</ion-note>
+    <ion-icon item-end name="arrow-dropright"></ion-icon>
+  </ion-item>
+  
 </ion-list>
