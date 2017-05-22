@@ -131,13 +131,13 @@ export class BottleService {
     })
   }
 
-  getAllBottlesObservable(): Observable < Bottle[ ] > {
+  getAllBottlesObservable(): Observable<Bottle[ ]> {
     return this.http.get('/assets/json/ma-cave.json')
       .map((res: Response) => res.json())
       .catch(this.handleError);
   }
 
-  getBottlesObservable(searchParams ?: any): Observable < Bottle[ ] > {
+  getBottlesObservable(searchParams ?: any): Observable<Bottle[ ]> {
     if (!
         searchParams
     ) {

@@ -1,8 +1,9 @@
-import {Component, Input, ViewChild} from "@angular/core";
-import {LoadingController, NavController, NavParams, Slides} from "ionic-angular";
+import {Component, Input, OnInit, ViewChild} from "@angular/core";
+import {NavController, NavParams, Slides} from "ionic-angular";
 import {Bottle} from "../../components/bottle/bottle";
 import {ListBottleEvent} from "../../components/list/bottle-list-event";
 import {UpdatePage} from "../update/update.page";
+import {Observable} from "rxjs/Observable";
 
 /*
  Generated class for the BottleDetail page.
@@ -15,10 +16,11 @@ import {UpdatePage} from "../update/update.page";
              templateUrl: 'page-bottle-detail.html',
              styleUrls: [ '/page-bottle-detail.scss' ]
            })
-export class BottleDetailPage {
+export class BottleDetailPage implements OnInit {
   //liste des bouteilles pour les slides
   @Input()
   bottles: Bottle[];
+  bottlesObservable: Observable<Bottle[]>;
   //bouteille à afficher
   @Input()
   bottle: Bottle;
@@ -30,9 +32,16 @@ export class BottleDetailPage {
 
   constructor(public navCtrl: NavController, navParams: NavParams) {
     let bottleEvent: ListBottleEvent = navParams.data[ 'bottleEvent' ];
-    this.bottles = bottleEvent.bottles;
+    this.bottlesObservable = bottleEvent.bottles;
     this.bottle = bottleEvent.bottle;
     this.currentIndex = bottleEvent.index;
+  }
+
+  ngOnInit(): void {
+    this.bottlesObservable.subscribe(bottles => {
+      this.bottles = bottles;
+      this.bottle=this.bottles[this.currentIndex];
+    })
   }
 
   update() {
@@ -41,6 +50,11 @@ export class BottleDetailPage {
 
   ionViewDidEnter(): void {
     this.slides.slideTo(this.currentIndex);
+  }
+
+  slideChanged() {
+    this.currentIndex = this.slides.getActiveIndex();
+    this.bottle=this.bottles[this.currentIndex];
   }
 
 }

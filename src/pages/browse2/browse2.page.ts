@@ -5,6 +5,8 @@ import {Bottle} from "../../components/bottle/bottle";
 import {BottleDetailPage} from "../bottle-detail/page-bottle-detail";
 import {ListBottleEvent} from "../../components/list/bottle-list-event";
 import {FilterSet} from "../../components/distribution/distribution";
+import {Observable} from "rxjs/Observable";
+import {BehaviorSubject} from "rxjs/BehaviorSubject";
 
 @Component({
              selector: 'page-browse',
@@ -12,6 +14,8 @@ import {FilterSet} from "../../components/distribution/distribution";
              styleUrls: [ '/src/pages/browse2/browse2.page.scss' ]
            })
 export class Browse2Page implements OnInit {
+  private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
+  private bottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
 
   bottles: Bottle[];
   distribution = {}; //distribution de la sélection selon plusieurs colonnes pour avoir le compte
@@ -33,11 +37,16 @@ export class Browse2Page implements OnInit {
     this.loading.present();
     this.bottlesService.getBottlesObservable().subscribe((bottles: Bottle[]) => {
       if (bottles && bottles.length > 0) {
-        this.bottles = bottles;
+        this.setBottles(bottles);
         this.loading.dismiss();
         console.info('nombre éléments: ' + this.bottles.length);
       }
     });
+  }
+
+  private setBottles(bottles: Bottle[]) {
+    this.bottles = bottles;
+    this._bottles.next(this.bottles);
   }
 
   trace(bottles: Bottle[]) {
@@ -64,7 +73,7 @@ export class Browse2Page implements OnInit {
     if (filter) {
       this.filterSet.text = filter.split(' ');
     }
-    this.bottles = this.bottlesService.getBottlesByFilter(this.filterSet);
+    this.setBottles(this.bottlesService.getBottlesByFilter(this.filterSet));
     //this.bottles_fb = this.bottlesService.getBottlesObservable();
   }
 
@@ -72,10 +81,11 @@ export class Browse2Page implements OnInit {
     filters.text = this.filterSet.text;
     this.filterSet = filters;
     //this.bottles_fb = this.bottlesService.getBottlesObservable();
-    this.bottles = this.bottlesService.getBottlesByFilter(filters);
+    this.setBottles(this.bottlesService.getBottlesByFilter(filters));
   }
 
   triggerDetail(bottleEvent: ListBottleEvent) {
+    bottleEvent.bottles = this.bottlesObservable;
     this.navCtrl.push(BottleDetailPage, {bottleEvent: bottleEvent});
   }
 }

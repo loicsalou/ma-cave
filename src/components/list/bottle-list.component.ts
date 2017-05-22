@@ -1,7 +1,8 @@
-import {Component, EventEmitter, Input, Output} from "@angular/core";
+import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
 import {BottleService} from "../bottle/bottle-firebase.service";
 import {Bottle} from "../bottle/bottle";
 import {ListBottleEvent} from "./bottle-list-event";
+import {Observable} from "rxjs/Observable";
 
 @Component({
              selector: 'bottle-list',
@@ -9,8 +10,7 @@ import {ListBottleEvent} from "./bottle-list-event";
              styleUrls: [ '/bottle-list.component.scss' ]
            })
 export class BottleListComponent {
-
-  isFilterPanelShown = false;
+   isFilterPanelShown = false;
   @Input()
   bottles: Bottle[];
 
@@ -28,7 +28,7 @@ export class BottleListComponent {
   }
 
   triggerDetail(bottle: Bottle, index: number) {
-    this.showDetail.emit(<ListBottleEvent>{bottles: this.bottles, bottle: bottle, index: index});
+    this.showDetail.emit(<ListBottleEvent>{bottle: bottle, index: index});
   }
 
   color(bottle: Bottle) {

@@ -13,7 +13,7 @@
 </ion-header>
 
 <ion-content scroll="true" class="page-bottle-detail">
-  <ion-slides>
+  <ion-slides (ionSlideDidChange)="slideChanged()">
     <ion-slide *ngFor="let btl of bottles; let ix=index">
       
       <div class="slide-content">
