@@ -5,28 +5,12 @@
   for more info on Angular 2 Components.
 -->
 
-<div class="distribution" *ngIf="opened && distribution">
-  <div class="filterPanel">
-    
-    <div class="header">
-      <h5>{{count}} bouteilles trouvées</h5>
-      <ion-badge item-left (click)="close()">
-        <ion-icon name="close" item-right></ion-icon>
-      </ion-badge>
-    </div>
-    
-    <div *ngFor="let dimension of distribution">
-      <div class="slide">
-        <div class="axis">
-          <h3>{{dimension.axis | translate}}</h3>
-        </div>
-        
-        <ion-badge (click)="valueClicked($event, dimension.axis)" item-right *ngFor="let value of dimension.values"
-                   [class.selected]="isFilterSelected(dimension.axis, value.key)">
-          {{value.key}}: {{value.value}}
-        </ion-badge>
-      </div>
-    </div>
-    
-  </div>
-</div>
+<ion-card *ngFor="let dimension of distribution" class="distribution">
+  <ion-title>{{dimension.axis| translate}}</ion-title>
+  
+  <ion-chip (click)="valueClicked($event, dimension.axis)" item-right *ngFor="let value of dimension.values"
+             [class.selected]="isFilterSelected(dimension.axis, value.key)">
+    {{value.key}}: {{value.value}}
+  </ion-chip>
+  
+</ion-card>

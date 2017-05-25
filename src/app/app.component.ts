@@ -9,7 +9,7 @@ import {TabsPage} from "../pages/tabs/tabs";
 @Component({
              templateUrl: 'app.html'
            })
-export class MyApp {
+export class MyCaveApp {
   rootPage = TabsPage;
 
   constructor(platform: Platform, translate: TranslateService, statusBar: StatusBar, splashScreen: SplashScreen) {

@@ -1,26 +1,45 @@
-.bottle {
-  border-bottom: thin dotted grey;
-  display: flex;
-  padding-right: 10px;
+.bottle-page {
 
-  img {
-    margin-top: auto;
-    margin-bottom: auto;
-  }
-
-  .logo {
-    flex-grow: 0;
-    height: 45px;
+  button[ion-button] img {
+    border-radius: 50%;
+    border: thin solid black;
+    background-color: white;
     width: 45px;
+    height: 45px;
   }
 
-  .label {
-    flex-grow: 1;
+  ion-avatar {
+    position:relative;
+    img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-radius: 0;
+    }
   }
 
-  ion-icon {
-    font-size: 2.3em;
-    margin-top: auto;
-    margin-bottom: auto;
+  ion-item-sliding:nth-child(2n) {
+    background-color: lighten(#ebebeb,4%);
+
+    button {
+      background-color: lighten(#ebebeb,4%);
+    }
+
+    ion-item {
+      background-color: inherit;
+    }
+  }
+
+  ion-item-sliding:nth-child(2n+1) {
+    background-color: white;
+
+    button {
+      background-color: white;
+    }
+  }
+
+  .selected-logo {
+    border: thin solid green;
+    border-radius: 40% 40%;
   }
 }

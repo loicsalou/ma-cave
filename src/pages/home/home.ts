@@ -1,7 +1,6 @@
 import {Component} from "@angular/core";
-import {Platform, NavController, ActionSheetController} from "ionic-angular";
+import {ActionSheetController, NavController, Platform} from "ionic-angular";
 import {BrowsePage} from "../browse/browse.page";
-import {Browse2Page} from "../browse2/browse2.page";
 
 @Component({
              selector: 'page-home',
@@ -18,7 +17,7 @@ export class HomePage {
   }
 
   browseCellar() {
-    this.navCtrl.push(Browse2Page);
+    this.navCtrl.push(BrowsePage);
   }
 
   openMenu() {

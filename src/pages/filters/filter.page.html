@@ -1,3 +1,12 @@
-<ion-content class="page-browse2 page">
-  <bottle-list [bottles]="bottles" (showDetail)="triggerDetail($event)"></bottle-list>
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Filtrer</ion-title>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <distribution [opened]="true" [bottles]="bottles" (filterSetChanged)="refineFilter($event)"></distribution>
 </ion-content>

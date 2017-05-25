@@ -1,6 +1,14 @@
-.page-browse2 {
+.page-browse {
+  ion-col > button {
+    margin-top: 10px;
+  }
+
   ion-fab[top] {
     top: 85vh;
+  }
+
+  ion-title {
+    margin-bottom: 5px;
   }
 
   div.report {

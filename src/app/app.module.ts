@@ -1,6 +1,6 @@
 import {ErrorHandler, NgModule} from "@angular/core";
 import {IonicApp, IonicErrorHandler, IonicModule} from "ionic-angular";
-import {MyApp} from "./app.component";
+import {MyCaveApp} from "./app.component";
 import {AboutPage} from "../pages/about/about";
 import {ContactPage} from "../pages/contact/contact";
 import {HomePage} from "../pages/home/home";
@@ -8,7 +8,6 @@ import {TabsPage} from "../pages/tabs/tabs";
 import {BrowsePage} from "../pages/browse/browse.page";
 import {BottleService} from "../components/bottle/bottle-firebase.service";
 import {BottleItemComponent} from "../components/list/bottle-item-component/bottle-item.component";
-import {Browse2Page} from "../pages/browse2/browse2.page";
 import {DistributeService} from "../components/distribution/distribute.service";
 import {DistributionComponent} from "../components/distribution/distribution";
 import {BottleIconPipe} from "../components/list/bottle-item-component/bottle-icon.pipe";
@@ -26,6 +25,7 @@ import {BrowserModule} from "@angular/platform-browser";
 import {AngularFireModule} from "angularfire2";
 import {AngularFireAuthModule} from "angularfire2/auth";
 import {AngularFireDatabaseModule} from "angularfire2/database";
+import {FilterPage} from "../pages/filters/filter.page";
 
 export const fireConfig = {
   apiKey: "AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w",
@@ -38,11 +38,12 @@ export const fireConfig = {
 
 @NgModule({
             declarations: [
-              MyApp,
+              MyCaveApp,
               AboutPage,
               ContactPage,
+              FilterPage,
               HomePage,
-              Browse2Page,
+              BrowsePage,
               BottleDetailPage,
               BottleDetailSlide,
               DistributionComponent,
@@ -53,7 +54,7 @@ export const fireConfig = {
               UpdatePage
             ],
             imports: [
-              IonicModule.forRoot(MyApp),
+              IonicModule.forRoot(MyCaveApp),
               TranslateModule.forRoot({
                                         loader: {
                                           provide: TranslateLoader,
@@ -69,11 +70,11 @@ export const fireConfig = {
             ],
             bootstrap: [ IonicApp ],
             entryComponents: [
-              MyApp,
+              MyCaveApp,
               AboutPage,
               ContactPage,
               HomePage,
-              Browse2Page,
+              BrowsePage,
               TabsPage,
               BottleDetailPage,
               UpdatePage

@@ -33,22 +33,12 @@ export class BottleService {
     this.fetchAllBottles();
   }
 
-  private setClasseAge(bottle: Bottle) {
-    if (bottle.millesime === '-') {
-      bottle[ 'classe_age' ] = this.i18n.instant('no-age');
-      return;
-    }
-    let mill = Number(bottle.millesime);
-    if (mill + 4 > this.currentYear) {
-      bottle[ 'classe_age' ] = this.i18n.instant('young');
-    }
-    if (mill + 10 > this.currentYear) {
-      bottle[ 'classe_age' ] = this.i18n.instant('middle');
-    }
-    if (mill + 15 > this.currentYear) {
-      bottle[ 'classe_age' ] = this.i18n.instant('old');
-    }
-    bottle[ 'classe_age' ] = this.i18n.instant('very-old');
+  fetchAllBottles() {
+    this.firebase.list('/bottles').subscribe((bottles: Bottle[]) => {
+      bottles.forEach((bottle: Bottle) => this.setClasseAge(bottle));
+      this.bottlesArray = bottles;
+      this._bottles.next(bottles);
+    });
   }
 
   /**
@@ -70,34 +60,15 @@ export class BottleService {
   }
 
   /**
-   * get the bottles which match one keyword
-   * @param list
-   * @param keyword
-   * @returns {any[]}
-   */
-  private filterOnKeyword(list: any[], keyword: string) {
-    return list.filter(bottle => {
-                         let matching = false;
-                         for (var key in bottle) {
-                           if (bottle[ key ].toString().toLocaleLowerCase().indexOf(keyword) !== -1) {
-                             matching = true;
-                           }
-                         }
-                         return matching;
-                       }
-    );
-  }
-
-  /**
    * Returns bottles that match ALL filters.
    * <li>all filters must be satisfied: filtered list is refined for each new filter</li>
    * <li>for each value in filter, applies a "OR" between accepted values</li>
    * @param filters
    * @returns {any}
    */
-  public getBottlesByFilter(filters: FilterSet): Bottle[] {
+  public filterOn(filters: FilterSet) {
     if (filters.isEmpty()) {
-      return this.bottlesArray;
+      this._bottles.next(this.bottlesArray);
     }
 
     let filtered = this.bottlesArray;
@@ -130,7 +101,44 @@ export class BottleService {
       filtered = this.filterByAttribute(filtered, 'label', filters.label);
     }
 
-    return filtered;
+    this._bottles.next(filtered);
+  }
+
+  private setClasseAge(bottle: Bottle) {
+    if (bottle.millesime === '-') {
+      bottle[ 'classe_age' ] = this.i18n.instant('no-age');
+      return;
+    }
+    let mill = Number(bottle.millesime);
+    if (mill + 4 > this.currentYear) {
+      bottle[ 'classe_age' ] = this.i18n.instant('young');
+    }
+    if (mill + 10 > this.currentYear) {
+      bottle[ 'classe_age' ] = this.i18n.instant('middle');
+    }
+    if (mill + 15 > this.currentYear) {
+      bottle[ 'classe_age' ] = this.i18n.instant('old');
+    }
+    bottle[ 'classe_age' ] = this.i18n.instant('very-old');
+  }
+
+  /**
+   * get the bottles which match one keyword
+   * @param list
+   * @param keyword
+   * @returns {any[]}
+   */
+  private filterOnKeyword(list: any[], keyword: string) {
+    return list.filter(bottle => {
+                         let matching = false;
+                         for (var key in bottle) {
+                           if (bottle[ key ].toString().toLocaleLowerCase().indexOf(keyword) !== -1) {
+                             matching = true;
+                           }
+                         }
+                         return matching;
+                       }
+    );
   }
 
   private filterByAttribute(fromList: Bottle[ ], attribute: string, admissibleValues: string[ ]) {
@@ -146,14 +154,6 @@ export class BottleService {
     return this.bottles;
   }
 
-  fetchAllBottles() {
-    this.firebase.list('/bottles').subscribe((bottles: Bottle[]) => {
-      bottles.forEach((bottle: Bottle) => this.setClasseAge(bottle));
-      this.bottlesArray = bottles;
-      this._bottles.next(bottles);
-    });
-  }
-
   //private getAuth(): AuthConfiguration {
   //  let me: AuthConfiguration = {
   //    method: AuthMethods.Anonymous, provider: AuthProviders.Anonymous
@@ -161,11 +161,6 @@ export class BottleService {
   //
   //  return me;
   //}
-
-  handleError(error: any) {
-    console.error(error);
-    return Observable.throw(error.json().error || 'Server error');
-  }
 
   private static isEmpty(array: any[ ], index: number): boolean {
     return _.isEmpty(array, index);
@@ -176,5 +171,10 @@ export class BottleService {
     keywords.forEach(token =>
                        ret = ret && matches[ token ]);
     return ret;
+  }
+
+  handleError(error: any) {
+    console.error(error);
+    return Observable.throw(error.json().error || 'Server error');
   }
 }

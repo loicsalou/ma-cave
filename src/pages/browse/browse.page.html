@@ -1,0 +1,29 @@
+<ion-header class="page-browse header">
+  
+  <ion-grid>
+    <ion-row>
+      <ion-col col-auto>
+        <button ion-button menuToggle>
+          <ion-icon name="menu"></ion-icon>
+        </button>
+      </ion-col>
+      <ion-col>
+        <ion-searchbar [placeholder]="Chercher" [autocomplete]="on" [autocorrect]="on" [animated]="true"
+                       (ionInput)="filterOnText($event)">
+        </ion-searchbar>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-header>
+
+<ion-menu class="page-browse" [content]="content" id="menu-components">
+  
+  <page-filter [bottles]="bottles"></page-filter>
+
+</ion-menu>
+
+<ion-content class="page-browse page">
+  <ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>
+  <bottle-list [bottles]="bottles" (showDetail)="triggerDetail($event)"></bottle-list>
+</ion-content>
