@@ -10,21 +10,17 @@ import {BehaviorSubject} from "rxjs/BehaviorSubject";
 
 @Component({
              selector: 'page-browse',
-             templateUrl: 'browse2.page.html',
-             styleUrls: [ '/src/pages/browse2/browse2.page.scss' ]
+             templateUrl: 'browse.page.html',
+             styleUrls: [ '/src/pages/browse/browse.page.scss' ]
            })
-export class Browse2Page implements OnInit {
+export class BrowsePage implements OnInit {
   private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
   private bottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
 
   bottles: Bottle[];
-  distribution = {}; //distribution de la sélection selon plusieurs colonnes pour avoir le compte
-  currentDistributionAxis: string[]; //axes de distribution de la distribution courante
-  isDistributionOpened = false;
   message: string;
-  // ensemble des filtres utilisés pour l'affichage courant: un table d'axes avec pour chacun les valeurs sélectionnées
-  // NB: l'axe "Text" représente la recherche textuelle
   filterSet: FilterSet;
+
   private loading: Loading;
 
   constructor(private toastCtrl: ToastController, public navCtrl: NavController, public platform: Platform,
@@ -55,33 +51,13 @@ export class Browse2Page implements OnInit {
     );
   }
 
-  switchDistribution() {
-    this.isDistributionOpened = !this.isDistributionOpened;
-  }
-
-  openDistribution() {
-    this.isDistributionOpened = true;
-  }
-
-  closeDistribution() {
-    this.isDistributionOpened = false;
-  }
-
   filterOnText(event: any) {
     let filter = event.target.value;
     this.filterSet.reset();
     if (filter) {
       this.filterSet.text = filter.split(' ');
     }
-    this.setBottles(this.bottlesService.getBottlesByFilter(this.filterSet));
-    //this.bottles_fb = this.bottlesService.getBottlesObservable();
-  }
-
-  refineFilter(filters: FilterSet) {
-    filters.text = this.filterSet.text;
-    this.filterSet = filters;
-    //this.bottles_fb = this.bottlesService.getBottlesObservable();
-    this.setBottles(this.bottlesService.getBottlesByFilter(filters));
+    this.bottlesService.filterOn(this.filterSet);
   }
 
   triggerDetail(bottleEvent: ListBottleEvent) {

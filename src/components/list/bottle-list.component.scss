@@ -1,17 +1,41 @@
 .bottle-page {
+
   button[ion-button] img {
+    border-radius: 50%;
+    border: thin solid black;
+    background-color: white;
     width: 45px;
     height: 45px;
   }
-img:nth-child(2n) {
-  border: red solid thin;
-}
-  .item:nth-child(2n) {
-    background: #e9e9e9;
+
+  ion-avatar {
+    position:relative;
+    img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-radius: 0;
+    }
   }
 
-  .item:nth-child(2n+1) {
-    background: white;
+  ion-item-sliding:nth-child(2n) {
+    background-color: lighten(#ebebeb,4%);
+
+    button {
+      background-color: lighten(#ebebeb,4%);
+    }
+
+    ion-item {
+      background-color: inherit;
+    }
+  }
+
+  ion-item-sliding:nth-child(2n+1) {
+    background-color: white;
+
+    button {
+      background-color: white;
+    }
   }
 
   .selected-logo {
