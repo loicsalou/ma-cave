@@ -14,9 +14,7 @@
     </ion-item>
     
     <ion-item-options side="left">
-      <!--<button ion-button icon-left (click)="addToFavoritesOrRemove($event, item, bottle)">-->
         <ion-icon name="star"></ion-icon>
-      <!--</button>-->
     </ion-item-options>
     
     <ion-item-options side="right">
@@ -24,7 +22,7 @@
         <img src="assets/icon/basket.png">
       </button>
       
-      <button ion-button (click)="drawBottle(item)">
+      <button ion-button (click)="drawBottle($event, item, bottle)">
         <img src="assets/icon/tire-bouchon.png">
       </button>
      </ion-item-options>

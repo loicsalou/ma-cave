@@ -51,7 +51,6 @@ export class DistributeService {
       return {key: key, value: occurences[ key ]};
     });
 
-    //console.log(result);
     return result;
   }
 }

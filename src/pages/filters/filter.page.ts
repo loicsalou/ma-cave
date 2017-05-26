@@ -24,4 +24,8 @@ export class FilterPage {
     this.bottlesService.filterOn(filters);
   }
 
+  nbOFBottles(): number {
+    return this.bottles==undefined ? 0 : this.bottles.length;
+  }
+
 }

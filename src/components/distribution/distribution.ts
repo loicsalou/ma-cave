@@ -1,4 +1,4 @@
-import {Component, Input, EventEmitter, OnChanges, Output, OnInit} from "@angular/core";
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from "@angular/core";
 import * as _ from "lodash";
 import {DistributeService} from "./distribute.service";
 import {Bottle} from "../bottle/bottle";
@@ -173,5 +173,28 @@ export class FilterSet {
     this.classe_age = undefined;
     this.millesime = undefined;
     this.subregion_label = undefined;
+  }
+
+  toString() {
+    let strings = [];
+
+    if (this.hasText()) {
+      strings.push(this.text);
+    }
+    if (this.hasAppellations()) {
+      strings.push(this.area_label);
+    } else if (this.hasRegions()) {
+      strings.push(this.subregion_label);
+    }
+    if (this.hasCouleurs()) {
+      strings.push(this.label);
+    }
+    if (this.hasMillesimes()) {
+      strings.push(this.millesime);
+    } else if (this.hasAges()) {
+      strings.push(this.classe_age);
+    }
+
+    return strings.reduce((s1, s2) => s1 + ' & ' + s2);
   }
 }

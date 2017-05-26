@@ -11,6 +11,8 @@ import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {FilterSet} from "../distribution/distribution";
 import {AngularFireDatabase} from "angularfire2/database";
 import {AngularFireAuth} from "angularfire2/auth";
+import {BottleFactory} from "../../model/bottle.factory";
+import {Subject} from "rxjs/Subject";
 
 /**
  * Services related to the bottles in the cellar.
@@ -20,25 +22,35 @@ import {AngularFireAuth} from "angularfire2/auth";
 @Injectable()
 export class BottleService {
   private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
-  bottles: Observable<Bottle[]> = this._bottles.asObservable();
-  bottlesArray: Bottle[];
+  private _bottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
+  private _filtersObservable: Subject<FilterSet> = new Subject<FilterSet>();
+  private filters: FilterSet;
+  private bottlesArray: Bottle[];
 
-  currentYear = new Date().getFullYear();
-  private start: number = 0;
-
-  constructor(private i18n: TranslateService, private http: Http, private firebase: AngularFireDatabase, private firebaseAuth: AngularFireAuth) {
+  constructor(private bottleFactory: BottleFactory, private firebase: AngularFireDatabase,
+              private firebaseAuth: AngularFireAuth) {
     this.firebaseAuth.auth.signInAnonymously().catch((a: Error) =>
                                                        console.error("login failed: " + a)
     );
+    this.setFilters(new FilterSet());
     this.fetchAllBottles();
   }
 
-  fetchAllBottles() {
+  public fetchAllBottles() {
     this.firebase.list('/bottles').subscribe((bottles: Bottle[]) => {
-      bottles.forEach((bottle: Bottle) => this.setClasseAge(bottle));
+      bottles.forEach((bottle: Bottle) => this.bottleFactory.create(bottle));
       this.bottlesArray = bottles;
       this._bottles.next(bottles);
+      this.filters.reset();
     });
+  }
+
+  get bottlesObservable(): Observable<Bottle[]> {
+    return this._bottlesObservable;
+  }
+
+  get filtersObservable(): Observable<FilterSet> {
+    return this._filtersObservable.asObservable();
   }
 
   /**
@@ -47,9 +59,9 @@ export class BottleService {
    * @param keywords an array of searched keywords
    * @returns array of matching bottles
    */
-  public getBottlesByKeywords(fromList: Bottle[], keywords: string[]): any {
+  private getBottlesByKeywords(fromList: Bottle[], keywords: string[]): any {
     if (!keywords || keywords.length == 0) {
-      return this.bottles;
+      return this._bottles;
     }
     let filtered = this.bottlesArray;
     keywords.forEach(keyword => {
@@ -102,24 +114,7 @@ export class BottleService {
     }
 
     this._bottles.next(filtered);
-  }
-
-  private setClasseAge(bottle: Bottle) {
-    if (bottle.millesime === '-') {
-      bottle[ 'classe_age' ] = this.i18n.instant('no-age');
-      return;
-    }
-    let mill = Number(bottle.millesime);
-    if (mill + 4 > this.currentYear) {
-      bottle[ 'classe_age' ] = this.i18n.instant('young');
-    }
-    if (mill + 10 > this.currentYear) {
-      bottle[ 'classe_age' ] = this.i18n.instant('middle');
-    }
-    if (mill + 15 > this.currentYear) {
-      bottle[ 'classe_age' ] = this.i18n.instant('old');
-    }
-    bottle[ 'classe_age' ] = this.i18n.instant('very-old');
+    this.setFilters(filters);
   }
 
   /**
@@ -150,10 +145,6 @@ export class BottleService {
     })
   }
 
-  getBottlesObservable(): Observable<Bottle[]> {
-    return this.bottles;
-  }
-
   //private getAuth(): AuthConfiguration {
   //  let me: AuthConfiguration = {
   //    method: AuthMethods.Anonymous, provider: AuthProviders.Anonymous
@@ -176,5 +167,10 @@ export class BottleService {
   handleError(error: any) {
     console.error(error);
     return Observable.throw(error.json().error || 'Server error');
+  }
+
+  private setFilters(filters: FilterSet) {
+    this.filters=filters;
+    this._filtersObservable.next(filters);
   }
 }

@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Filtrer</ion-title>
+    <ion-title style="margin-top: 4px;">{{ nbOFBottles() }} bouteilles</ion-title>
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
@@ -8,5 +8,7 @@
 </ion-header>
 
 <ion-content>
+  
   <distribution [opened]="true" [bottles]="bottles" (filterSetChanged)="refineFilter($event)"></distribution>
+  
 </ion-content>

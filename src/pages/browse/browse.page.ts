@@ -31,24 +31,22 @@ export class BrowsePage implements OnInit {
   ngOnInit() {
     this.loading = this.loadingCtrl.create({content: 'Chargement en cours...'});
     this.loading.present();
-    this.bottlesService.getBottlesObservable().subscribe((bottles: Bottle[]) => {
+    this.bottlesService.bottlesObservable.subscribe((bottles: Bottle[]) => {
       if (bottles && bottles.length > 0) {
         this.setBottles(bottles);
         this.loading.dismiss();
-        console.info('nombre éléments: ' + this.bottles.length);
       }
     });
+    this.bottlesService.filtersObservable.subscribe(filterSet => this.setFilterSet(filterSet))
+  }
+
+  public isFiltering() {
+    return ! this.filterSet.isEmpty()
   }
 
   private setBottles(bottles: Bottle[]) {
     this.bottles = bottles;
     this._bottles.next(this.bottles);
-  }
-
-  trace(bottles: Bottle[]) {
-    bottles.forEach((bottle: Bottle) =>
-                      console.info(bottle[ 'nomCru' ] + ': ' + bottle[ 'label' ])
-    );
   }
 
   filterOnText(event: any) {
@@ -63,5 +61,9 @@ export class BrowsePage implements OnInit {
   triggerDetail(bottleEvent: ListBottleEvent) {
     bottleEvent.bottles = this.bottlesObservable;
     this.navCtrl.push(BottleDetailPage, {bottleEvent: bottleEvent});
+  }
+
+  private setFilterSet(filterSet: FilterSet) {
+    this.filterSet=filterSet;
   }
 }
