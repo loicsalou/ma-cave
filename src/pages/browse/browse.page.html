@@ -1,23 +1,26 @@
 <ion-header class="page-browse header">
   
   <ion-grid>
-    <ion-row>
+    
+    <ion-row nowrap align-items-center="">
       <ion-col col-auto>
         <button ion-button menuToggle>
           <ion-icon name="menu"></ion-icon>
         </button>
       </ion-col>
+      
       <ion-col>
         <ion-searchbar [placeholder]="Chercher" [autocomplete]="on" [autocorrect]="on" [animated]="true"
-                       (ionInput)="filterOnText($event)">
+                       (ionInput)="filterOnText($event)" *ngIf="isSearchVisible()">
         </ion-searchbar>
+        
+        <div *ngIf="!isSearchVisible()">
+          <ion-title wrap (click)="showSearchBar()">{{ filterSet.toString() }}</ion-title>
+          <ion-note style="color: black; padding-left: 15px;">{{numberOfBottles()}} bouteilles trouvées</ion-note>
+        </div>
       </ion-col>
     </ion-row>
-    <!--<ion-row *ngIf="isFiltering()">-->
-      <!--<ion-col col-auto>-->
-        <!--<ion-note class="filter">{{filterSet.toString()}}</ion-note>-->
-      <!--</ion-col>-->
-    <!--</ion-row>-->
+    
   </ion-grid>
 
 </ion-header>

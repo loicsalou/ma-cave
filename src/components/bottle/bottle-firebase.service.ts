@@ -54,24 +54,6 @@ export class BottleService {
   }
 
   /**
-   * searches through the given bottles all that match all of the filters passed in
-   * @param fromList array of bottles
-   * @param keywords an array of searched keywords
-   * @returns array of matching bottles
-   */
-  private getBottlesByKeywords(fromList: Bottle[], keywords: string[]): any {
-    if (!keywords || keywords.length == 0) {
-      return this._bottles;
-    }
-    let filtered = this.bottlesArray;
-    keywords.forEach(keyword => {
-      filtered = this.filterOnKeyword(filtered, keyword);
-    });
-
-    return filtered;
-  }
-
-  /**
    * Returns bottles that match ALL filters.
    * <li>all filters must be satisfied: filtered list is refined for each new filter</li>
    * <li>for each value in filter, applies a "OR" between accepted values</li>
@@ -79,6 +61,9 @@ export class BottleService {
    * @returns {any}
    */
   public filterOn(filters: FilterSet) {
+    if (this.bottlesArray==undefined) {
+      return;
+    }
     if (filters.isEmpty()) {
       this._bottles.next(this.bottlesArray);
     }
@@ -115,6 +100,24 @@ export class BottleService {
 
     this._bottles.next(filtered);
     this.setFilters(filters);
+  }
+
+  /**
+   * searches through the given bottles all that match all of the filters passed in
+   * @param fromList array of bottles
+   * @param keywords an array of searched keywords
+   * @returns array of matching bottles
+   */
+  private getBottlesByKeywords(fromList: Bottle[], keywords: string[]): any {
+    if (!keywords || keywords.length == 0) {
+      return this._bottles;
+    }
+    let filtered = this.bottlesArray;
+    keywords.forEach(keyword => {
+      filtered = this.filterOnKeyword(filtered, keyword);
+    });
+
+    return filtered;
   }
 
   /**

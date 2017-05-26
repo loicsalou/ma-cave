@@ -14,12 +14,12 @@ export class BottleListComponent {
   isFilterPanelShown = false;
   @Input()
   bottles: Bottle[];
-
   @Output()
   showDetail: EventEmitter<ListBottleEvent> = new EventEmitter();
 
   private basket: Bottle[] = [];
   private favorites: Bottle[] = [];
+  private selected: Bottle[] = [];
 
   private dragItem = new Subject<SlidingBottle>();
 
@@ -31,9 +31,6 @@ export class BottleListComponent {
 
   filter() {
     this.isFilterPanelShown = true;
-  }
-
-  clicked(event: any) {
   }
 
   triggerDetail(bottle: Bottle, index: number) {
@@ -48,8 +45,21 @@ export class BottleListComponent {
     }
   }
 
+  switchSelected(event: Event, bottle: Bottle) {
+    event.stopPropagation();
+    if (this.isSelected(bottle)) {
+      this.selected = this.selected.filter(btl => btl.id != bottle.id);
+    } else {
+      this.selected.push(bottle);
+    }
+  }
+
+  isSelected(bottle) {
+    return this.selected.filter(item => item.id === bottle.id).length == 1;
+  }
+
   isBottleFavorite(bottle: Bottle): boolean {
-    return this.favorites.filter(item => item === bottle).length == 1;
+    return this.favorites.filter(item => item.id === bottle.id).length == 1;
   }
 
   addToFavoritesOrRemove(slidingBottle: SlidingBottle) {
@@ -68,7 +78,7 @@ export class BottleListComponent {
   }
 
   isBottleInBasket(bottle: Bottle): boolean {
-    return this.basket.filter(item => item === bottle).length == 1;
+    return this.basket.filter(item => item.id === bottle.id).length == 1;
   }
 
   drawBottle(event: Event, slidingItem: ItemSliding, bottle: Bottle) {

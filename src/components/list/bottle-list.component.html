@@ -3,10 +3,11 @@
   <ion-item-sliding (click)="triggerDetail(bottle,ix)" (ionDrag)="ionDrag(bottle, item)" #item
                     *ngFor="let bottle of bottles; let ix=index">
     <ion-item>
-      <ion-avatar item-start>
-        <img src="{{ bottle.label | bottleIcon }}" class="overridable logo">
-        <img src="assets/icon/starred.png" *ngIf="isBottleFavorite(bottle)" class="overridable logo">
-        <img src="assets/icon/in-basket.png" *ngIf="isBottleInBasket(bottle)" class="overridable logo">
+      <ion-avatar item-start (click)="switchSelected($event, bottle)">
+        <img src="assets/icon/checked.png" *ngIf="isSelected(bottle)">
+        <img src="{{ bottle.label | bottleIcon }}" class="overridable logo" *ngIf="!isSelected(bottle)">
+        <img src="assets/icon/starred.png" *ngIf="isBottleFavorite(bottle) && !isSelected(bottle)" class="overridable logo">
+        <img src="assets/icon/in-basket.png" *ngIf="isBottleInBasket(bottle) && !isSelected(bottle)" class="overridable logo">
       </ion-avatar>
       <h4 class="label">{{ bottle.nomCru }}</h4>
       <ion-note>{{bottle.area_label}} ({{bottle.millesime}})</ion-note>
