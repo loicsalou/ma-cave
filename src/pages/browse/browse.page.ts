@@ -37,6 +37,7 @@ export class BrowsePage implements OnInit {
         this.setBottles(bottles);
         this.dismissLoading();
         this.checkNavigationParams();
+        console.info(Date.now()+" - received "+bottles.length+" bottles");
       }
     });
     this.bottlesService.filtersObservable.subscribe(filterSet => this.setFilterSet(filterSet));
