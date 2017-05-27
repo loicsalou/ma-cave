@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from "@angular/core";
-import {Loading, LoadingController, NavController, NavParams, Platform, ToastController} from "ionic-angular";
+import {NavController, NavParams, Platform, ToastController} from "ionic-angular";
 import {BottleService} from "../../components/bottle/bottle-firebase.service";
 import {Bottle} from "../../components/bottle/bottle";
 import {BottleDetailPage} from "../bottle-detail/page-bottle-detail";
@@ -23,24 +23,21 @@ export class BrowsePage implements OnInit, OnDestroy {
   bottles: Bottle[];
 
   filterSet: FilterSet;
-  private loading: Loading;
   private navParams: NavParams;
 
   constructor(private toastCtrl: ToastController, public navCtrl: NavController, public platform: Platform,
-              private bottlesService: BottleService, public loadingCtrl: LoadingController, params?: NavParams) {
+              private bottlesService: BottleService, params?: NavParams) {
     this.filterSet = new FilterSet();
     this.navParams = params;
   }
 
   ngOnInit() {
     console.info('initializing browse page instance');
-    this.showLoading();
+    let first = true;
     this.bottleSubscription = this.bottlesService.bottlesObservable.subscribe(
       (bottles: Bottle[]) => {
-        this.showMessage(Date.now() + " - receiving " + bottles.length + " bottles");
         if (bottles && bottles.length > 0) {
           this.setBottles(bottles);
-          this.dismissLoading();
           this.checkNavigationParams();
         }
       },
@@ -65,22 +62,11 @@ export class BrowsePage implements OnInit, OnDestroy {
     basketToast.present();
   }
 
-  private showLoading() {
-    if (this.loading == undefined) {
-      this.loading = this.loadingCtrl.create({
-                                               content: 'Chargement en cours...',
-                                               dismissOnPageChange: false
-                                             });
-      this.loading.present();
-    }
-  }
-
   // in case user navigated to here from the home page then we have search param ==> filter on this text
   private checkNavigationParams() {
     if (this.navParams != undefined && this.navParams.data[ 'text' ] != null) {
       this.filterSet.text = this.navParams.data[ 'text' ].split(' ');
       this.navParams.data[ 'text' ] = undefined;
-      //this.showLoading();
       setTimeout(() => this.bottlesService.filterOn(this.filterSet), 10);
     }
   }
@@ -124,13 +110,5 @@ export class BrowsePage implements OnInit, OnDestroy {
   private setFilterSet(filterSet: FilterSet) {
     this.filterSet = filterSet;
     this.searchBarVisible = false;
-  }
-
-  private dismissLoading() {
-    if (this.loading != undefined) {
-      this.loading.dismiss();
-      this.loading = undefined;
-    }
-
   }
 }

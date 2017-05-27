@@ -13,6 +13,7 @@ import {AngularFireDatabase} from "angularfire2/database";
 import {AngularFireAuth} from "angularfire2/auth";
 import {BottleFactory} from "../../model/bottle.factory";
 import {Subject} from "rxjs/Subject";
+import {Loading, LoadingController} from "ionic-angular";
 
 /**
  * Services related to the bottles in the cellar.
@@ -21,14 +22,15 @@ import {Subject} from "rxjs/Subject";
  */
 @Injectable()
 export class BottleService {
-  private _bottles: Subject<Bottle[]> = new Subject<Bottle[]>();
+  private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
   private _bottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
   private _filtersObservable: Subject<FilterSet> = new Subject<FilterSet>();
   private filters: FilterSet;
   private bottlesArray: Bottle[];
+  private loading: Loading;
 
   constructor(private bottleFactory: BottleFactory, private firebase: AngularFireDatabase,
-              private firebaseAuth: AngularFireAuth) {
+              private loadingCtrl: LoadingController, private firebaseAuth: AngularFireAuth) {
     this.firebaseAuth.auth.signInAnonymously().catch((a: Error) =>
                                                        console.error("login failed: " + a)
     );
@@ -37,13 +39,14 @@ export class BottleService {
   }
 
   public fetchAllBottles() {
-    console.info(Date.now()+" - fetching all bottles");
-
+    //console.info(Date.now()+" - fetching all bottles");
+    this.showLoading();
     this.firebase.list('/bottles').subscribe((bottles: Bottle[]) => {
       bottles.forEach((bottle: Bottle) => this.bottleFactory.create(bottle));
       this.bottlesArray = bottles;
       this._bottles.next(bottles);
       this.filters.reset();
+      this.dismissLoading();
     });
   }
 
@@ -63,8 +66,7 @@ export class BottleService {
    * @returns {any}
    */
   public filterOn(filters: FilterSet) {
-    console.info(Date.now()+" - filtering on "+filters.toString());
-
+    //console.info(Date.now()+" - filtering on "+filters.toString());
     if (this.bottlesArray==undefined) {
       return;
     }
@@ -106,6 +108,23 @@ export class BottleService {
     this._bottles.next(filtered);
   }
 
+  private showLoading() {
+    if (this.loading == undefined) {
+      this.loading = this.loadingCtrl.create({
+                                               content: 'Chargement en cours...',
+                                               dismissOnPageChange: false
+                                             });
+      this.loading.present();
+    }
+  }
+
+  private dismissLoading() {
+    if (this.loading != undefined) {
+      this.loading.dismiss();
+      this.loading = undefined;
+    }
+  }
+
   /**
    * searches through the given bottles all that match all of the filters passed in
    * @param fromList array of bottles
@@ -131,10 +150,11 @@ export class BottleService {
    * @returns {any[]}
    */
   private filterOnKeyword(list: any[], keyword: string) {
+    let keywordLower=keyword.toLocaleLowerCase();
     return list.filter(bottle => {
                          let matching = false;
                          for (var key in bottle) {
-                           if (bottle[ key ].toString().toLocaleLowerCase().indexOf(keyword) !== -1) {
+                           if (bottle[ key ].toString().toLocaleLowerCase().indexOf(keywordLower) !== -1) {
                              matching = true;
                            }
                          }

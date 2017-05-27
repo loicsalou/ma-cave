@@ -28,4 +28,8 @@ export class FilterPage {
     return this.bottles==undefined ? 0 : this.bottles.length;
   }
 
+  reset() {
+    this.filterSet.reset();
+    this.bottlesService.fetchAllBottles();
+  }
 }
