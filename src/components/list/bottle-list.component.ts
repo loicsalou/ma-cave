@@ -93,20 +93,20 @@ export class BottleListComponent {
     if (this.isBottleInBasket(bottle)) {
       //this.basket = this.basket.filter(btl => btl.id != bottle.id);
       let basketToast = this.toastCtrl.create({
-                                                message: 'la bouteille ' + bottle.nomCru + ' a été retirée du panier',
+                                                message: 'la bouteille ' + bottle.nomCru + ' a été placée dans le' +
+                                                ' panier',
                                                 cssClass: 'information-message',
                                                 duration: 2000,
-                                                position: 'top'
+                                                position: 'middle'
                                               });
       basketToast.present();
     } else {
       //this.basket.push(bottle);
       let basketToast = this.toastCtrl.create({
-                                                message: 'la bouteille ' + bottle.nomCru + ' a été placée dans le' +
-                                                ' panier',
+                                                message: 'la bouteille ' + bottle.nomCru + ' a été retirée du panier',
                                                 cssClass: 'information-message',
                                                 duration: 2000,
-                                                position: 'top'
+                                                position: 'middle'
                                               });
       basketToast.present();
     }

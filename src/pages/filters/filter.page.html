@@ -9,6 +9,12 @@
 
 <ion-content>
   <distribution [opened]="true" [bottles]="bottles" (filterSetChanged)="refineFilter($event)"></distribution>
+  <div style="height:35px"></div>
 </ion-content>
 
-<ion-footer><button ion-button float-end (click)="reset()">Réinitialiser</button></ion-footer>
+<ion-footer>
+  <button ion-button float-end (click)="close()">Terminé</button>
+  <button ion-button float-end
+          (click)="reset()">Réinitialiser
+  </button>
+</ion-footer>

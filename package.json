@@ -30,7 +30,7 @@
     "@ngx-translate/http-loader": "0.0.3",
     "angular2-uuid": "1.1.1",
     "angularfire2": "4.0.0-rc.0",
-    "firebase": "4.0.0",
+    "firebase": "3.9.0",
     "firebase-rxjs": "0.1.1",
     "firebase-rxjs-angular": "0.1.1",
     "ionic-angular": "3.3.0",

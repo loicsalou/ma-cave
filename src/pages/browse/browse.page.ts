@@ -36,10 +36,10 @@ export class BrowsePage implements OnInit, OnDestroy {
     let first = true;
     this.bottleSubscription = this.bottlesService.bottlesObservable.subscribe(
       (bottles: Bottle[]) => {
-        if (bottles && bottles.length > 0) {
+        //if (bottles && bottles.length > 0) {
           this.setBottles(bottles);
           this.checkNavigationParams();
-        }
+        //}
       },
       error => this.showMessage('error ! ' + error),
       () => this.showMessage('completed!')
