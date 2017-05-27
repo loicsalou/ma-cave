@@ -194,7 +194,10 @@ export class FilterSet {
     } else if (this.hasAges()) {
       strings.push(this.classe_age);
     }
-
-    return strings.reduce((s1, s2) => s1 + ' & ' + s2);
+    if (strings.length == 0) {
+      return '';
+    } else {
+      return strings.reduce((s1, s2) => s1 + ' & ' + s2);
+    }
   }
 }
