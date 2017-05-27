@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, OnDestroy, OnInit} from "@angular/core";
 import {Loading, LoadingController, NavController, NavParams, Platform, ToastController} from "ionic-angular";
 import {BottleService} from "../../components/bottle/bottle-firebase.service";
 import {Bottle} from "../../components/bottle/bottle";
@@ -7,19 +7,21 @@ import {ListBottleEvent} from "../../components/list/bottle-list-event";
 import {FilterSet} from "../../components/distribution/distribution";
 import {Observable} from "rxjs/Observable";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
+import {Subscription} from "rxjs/Subscription";
 
 @Component({
              selector: 'page-browse',
              templateUrl: 'browse.page.html',
              styleUrls: [ '/src/pages/browse/browse.page.scss' ]
            })
-export class BrowsePage implements OnInit {
+export class BrowsePage implements OnInit, OnDestroy {
+  private bottleSubscription: Subscription;
+  private filterSubscription: Subscription;
   private searchBarVisible: boolean = false;
   private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
   private bottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
   bottles: Bottle[];
 
-  message: string;
   filterSet: FilterSet;
   private loading: Loading;
   private navParams: NavParams;
@@ -31,24 +33,46 @@ export class BrowsePage implements OnInit {
   }
 
   ngOnInit() {
+    console.info('initializing browse page instance');
     this.showLoading();
-    this.bottlesService.bottlesObservable.subscribe((bottles: Bottle[]) => {
-      if (bottles && bottles.length > 0) {
-        this.setBottles(bottles);
-        this.dismissLoading();
-        this.checkNavigationParams();
-        console.info(Date.now()+" - received "+bottles.length+" bottles");
-      }
-    });
-    this.bottlesService.filtersObservable.subscribe(filterSet => this.setFilterSet(filterSet));
+    this.bottleSubscription = this.bottlesService.bottlesObservable.subscribe(
+      (bottles: Bottle[]) => {
+        this.showMessage(Date.now() + " - receiving " + bottles.length + " bottles");
+        if (bottles && bottles.length > 0) {
+          this.setBottles(bottles);
+          this.dismissLoading();
+          this.checkNavigationParams();
+        }
+      },
+      error => this.showMessage('error ! ' + error),
+      () => this.showMessage('completed!')
+    );
+    this.filterSubscription = this.bottlesService.filtersObservable.subscribe(filterSet => this.setFilterSet(filterSet));
+  }
+
+  ngOnDestroy(): void {
+    console.info('destroying browse page instance');
+    this.filterSubscription.unsubscribe();
+    this.bottleSubscription.unsubscribe();
+  }
+
+  private showMessage(s: string) {
+    let basketToast = this.toastCtrl.create({
+                                              message: s,
+                                              cssClass: 'information-message',
+                                              showCloseButton: true
+                                            });
+    basketToast.present();
   }
 
   private showLoading() {
-    this.loading = this.loadingCtrl.create({
-                                             content: 'Chargement en cours...',
-                                             dismissOnPageChange: false
-                                           });
-    this.loading.present();
+    if (this.loading == undefined) {
+      this.loading = this.loadingCtrl.create({
+                                               content: 'Chargement en cours...',
+                                               dismissOnPageChange: false
+                                             });
+      this.loading.present();
+    }
   }
 
   // in case user navigated to here from the home page then we have search param ==> filter on this text
@@ -57,7 +81,7 @@ export class BrowsePage implements OnInit {
       this.filterSet.text = this.navParams.data[ 'text' ].split(' ');
       this.navParams.data[ 'text' ] = undefined;
       //this.showLoading();
-      this.bottlesService.filterOn(this.filterSet);
+      setTimeout(() => this.bottlesService.filterOn(this.filterSet), 10);
     }
   }
 
@@ -77,7 +101,7 @@ export class BrowsePage implements OnInit {
     return !this.filterSet.isEmpty()
   }
 
-  private setBottles(bottles: Bottle[]) {
+  private setBottles(bottles: Bottle[ ]) {
     this.bottles = bottles;
     this._bottles.next(this.bottles);
   }
@@ -105,7 +129,7 @@ export class BrowsePage implements OnInit {
   private dismissLoading() {
     if (this.loading != undefined) {
       this.loading.dismiss();
-      this.loading=undefined;
+      this.loading = undefined;
     }
 
   }

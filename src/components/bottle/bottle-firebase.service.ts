@@ -21,7 +21,7 @@ import {Subject} from "rxjs/Subject";
  */
 @Injectable()
 export class BottleService {
-  private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
+  private _bottles: Subject<Bottle[]> = new Subject<Bottle[]>();
   private _bottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
   private _filtersObservable: Subject<FilterSet> = new Subject<FilterSet>();
   private filters: FilterSet;
@@ -37,6 +37,8 @@ export class BottleService {
   }
 
   public fetchAllBottles() {
+    console.info(Date.now()+" - fetching all bottles");
+
     this.firebase.list('/bottles').subscribe((bottles: Bottle[]) => {
       bottles.forEach((bottle: Bottle) => this.bottleFactory.create(bottle));
       this.bottlesArray = bottles;
@@ -61,6 +63,8 @@ export class BottleService {
    * @returns {any}
    */
   public filterOn(filters: FilterSet) {
+    console.info(Date.now()+" - filtering on "+filters.toString());
+
     if (this.bottlesArray==undefined) {
       return;
     }
@@ -98,8 +102,8 @@ export class BottleService {
       filtered = this.filterByAttribute(filtered, 'label', filters.label);
     }
 
-    this._bottles.next(filtered);
     this.setFilters(filters);
+    this._bottles.next(filtered);
   }
 
   /**
