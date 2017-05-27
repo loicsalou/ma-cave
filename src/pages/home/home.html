@@ -1,8 +1,8 @@
 <ion-header class="home header">
   
-  <ion-navbar>
-    <ion-title>Home</ion-title>
-  </ion-navbar>
+  <ion-searchbar [placeholder]="Chercher" [autocomplete]="on" [autocorrect]="on" [animated]="true"
+                 (ionInput)="filterOnText($event)">
+  </ion-searchbar>
 
 </ion-header>
 
@@ -27,3 +27,4 @@
   </ion-card>
 
 </ion-content>
+<ion-footer text-right padding-horizontal>version {{version}}</ion-footer>

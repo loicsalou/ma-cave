@@ -11,6 +11,9 @@ import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {FilterSet} from "../distribution/distribution";
 import {AngularFireDatabase} from "angularfire2/database";
 import {AngularFireAuth} from "angularfire2/auth";
+import {BottleFactory} from "../../model/bottle.factory";
+import {Subject} from "rxjs/Subject";
+import {Loading, LoadingController} from "ionic-angular";
 
 /**
  * Services related to the bottles in the cellar.
@@ -20,43 +23,39 @@ import {AngularFireAuth} from "angularfire2/auth";
 @Injectable()
 export class BottleService {
   private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
-  bottles: Observable<Bottle[]> = this._bottles.asObservable();
-  bottlesArray: Bottle[];
+  private _bottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
+  private _filtersObservable: Subject<FilterSet> = new Subject<FilterSet>();
+  private filters: FilterSet;
+  private bottlesArray: Bottle[];
+  private loading: Loading;
 
-  currentYear = new Date().getFullYear();
-  private start: number = 0;
-
-  constructor(private i18n: TranslateService, private http: Http, private firebase: AngularFireDatabase, private firebaseAuth: AngularFireAuth) {
+  constructor(private bottleFactory: BottleFactory, private firebase: AngularFireDatabase,
+              private loadingCtrl: LoadingController, private firebaseAuth: AngularFireAuth) {
     this.firebaseAuth.auth.signInAnonymously().catch((a: Error) =>
                                                        console.error("login failed: " + a)
     );
+    this.setFilters(new FilterSet());
     this.fetchAllBottles();
   }
 
-  fetchAllBottles() {
+  public fetchAllBottles() {
+    //console.info(Date.now()+" - fetching all bottles");
+    this.showLoading();
     this.firebase.list('/bottles').subscribe((bottles: Bottle[]) => {
-      bottles.forEach((bottle: Bottle) => this.setClasseAge(bottle));
+      bottles.forEach((bottle: Bottle) => this.bottleFactory.create(bottle));
       this.bottlesArray = bottles;
       this._bottles.next(bottles);
+      this.filters.reset();
+      this.dismissLoading();
     });
   }
 
-  /**
-   * searches through the given bottles all that match all of the filters passed in
-   * @param fromList array of bottles
-   * @param keywords an array of searched keywords
-   * @returns array of matching bottles
-   */
-  public getBottlesByKeywords(fromList: Bottle[], keywords: string[]): any {
-    if (!keywords || keywords.length == 0) {
-      return this.bottles;
-    }
-    let filtered = this.bottlesArray;
-    keywords.forEach(keyword => {
-      filtered = this.filterOnKeyword(filtered, keyword);
-    });
+  get bottlesObservable(): Observable<Bottle[]> {
+    return this._bottlesObservable;
+  }
 
-    return filtered;
+  get filtersObservable(): Observable<FilterSet> {
+    return this._filtersObservable.asObservable();
   }
 
   /**
@@ -67,6 +66,10 @@ export class BottleService {
    * @returns {any}
    */
   public filterOn(filters: FilterSet) {
+    //console.info(Date.now()+" - filtering on "+filters.toString());
+    if (this.bottlesArray==undefined) {
+      return;
+    }
     if (filters.isEmpty()) {
       this._bottles.next(this.bottlesArray);
     }
@@ -101,25 +104,43 @@ export class BottleService {
       filtered = this.filterByAttribute(filtered, 'label', filters.label);
     }
 
+    this.setFilters(filters);
     this._bottles.next(filtered);
   }
 
-  private setClasseAge(bottle: Bottle) {
-    if (bottle.millesime === '-') {
-      bottle[ 'classe_age' ] = this.i18n.instant('no-age');
-      return;
+  private showLoading() {
+    if (this.loading == undefined) {
+      this.loading = this.loadingCtrl.create({
+                                               content: 'Chargement en cours...',
+                                               dismissOnPageChange: false
+                                             });
+      this.loading.present();
     }
-    let mill = Number(bottle.millesime);
-    if (mill + 4 > this.currentYear) {
-      bottle[ 'classe_age' ] = this.i18n.instant('young');
+  }
+
+  private dismissLoading() {
+    if (this.loading != undefined) {
+      this.loading.dismiss();
+      this.loading = undefined;
     }
-    if (mill + 10 > this.currentYear) {
-      bottle[ 'classe_age' ] = this.i18n.instant('middle');
+  }
+
+  /**
+   * searches through the given bottles all that match all of the filters passed in
+   * @param fromList array of bottles
+   * @param keywords an array of searched keywords
+   * @returns array of matching bottles
+   */
+  private getBottlesByKeywords(fromList: Bottle[], keywords: string[]): any {
+    if (!keywords || keywords.length == 0) {
+      return this._bottles;
     }
-    if (mill + 15 > this.currentYear) {
-      bottle[ 'classe_age' ] = this.i18n.instant('old');
-    }
-    bottle[ 'classe_age' ] = this.i18n.instant('very-old');
+    let filtered = this.bottlesArray;
+    keywords.forEach(keyword => {
+      filtered = this.filterOnKeyword(filtered, keyword);
+    });
+
+    return filtered;
   }
 
   /**
@@ -129,10 +150,11 @@ export class BottleService {
    * @returns {any[]}
    */
   private filterOnKeyword(list: any[], keyword: string) {
+    let keywordLower=keyword.toLocaleLowerCase();
     return list.filter(bottle => {
                          let matching = false;
                          for (var key in bottle) {
-                           if (bottle[ key ].toString().toLocaleLowerCase().indexOf(keyword) !== -1) {
+                           if (bottle[ key ].toString().toLocaleLowerCase().indexOf(keywordLower) !== -1) {
                              matching = true;
                            }
                          }
@@ -148,10 +170,6 @@ export class BottleService {
       admissibleValues.forEach(admissibleValue => ret = ret && attrValue.indexOf(admissibleValue) !== -1);
       return ret;
     })
-  }
-
-  getBottlesObservable(): Observable<Bottle[]> {
-    return this.bottles;
   }
 
   //private getAuth(): AuthConfiguration {
@@ -176,5 +194,10 @@ export class BottleService {
   handleError(error: any) {
     console.error(error);
     return Observable.throw(error.json().error || 'Server error');
+  }
+
+  private setFilters(filters: FilterSet) {
+    this.filters=filters;
+    this._filtersObservable.next(filters);
   }
 }

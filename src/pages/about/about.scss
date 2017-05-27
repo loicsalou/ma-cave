@@ -19,4 +19,8 @@ page-about {
     border-radius: 5px;
     padding: 3px;
   }
+
+  ion-title > div.toolbar-title {
+    white-space: normal;
+  }
 }

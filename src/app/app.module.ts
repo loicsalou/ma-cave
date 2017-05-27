@@ -26,6 +26,7 @@ import {AngularFireModule} from "angularfire2";
 import {AngularFireAuthModule} from "angularfire2/auth";
 import {AngularFireDatabaseModule} from "angularfire2/database";
 import {FilterPage} from "../pages/filters/filter.page";
+import {BottleFactory} from "../model/bottle.factory";
 
 export const fireConfig = {
   apiKey: "AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w",
@@ -80,6 +81,7 @@ export const fireConfig = {
               UpdatePage
             ],
             providers: [
+              BottleFactory,
               Camera,
               StatusBar,
               SplashScreen,

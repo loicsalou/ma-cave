@@ -21,6 +21,11 @@ $black: black;
 $header-color: rgba(76, 158, 217, .8);
 $header-color2: rgba(51, 51, 51, .8);
 
+.information-message .toast-wrapper {
+  background-color: #387ef5;
+  color: white;
+}
+
 .header {
   opacity: .97;
 }
