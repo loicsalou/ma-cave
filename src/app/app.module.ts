@@ -27,6 +27,8 @@ import {AngularFireAuthModule} from "angularfire2/auth";
 import {AngularFireDatabaseModule} from "angularfire2/database";
 import {FilterPage} from "../pages/filters/filter.page";
 import {BottleFactory} from "../model/bottle.factory";
+import {UploadBottlesModule} from "../pages/upload-bottles/upload-bottles.page.module";
+import {UploadBottlesPage} from "../pages/upload-bottles/upload-bottles.page";
 
 export const fireConfig = {
   apiKey: "AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w",
@@ -67,7 +69,8 @@ export const fireConfig = {
               HttpModule,
               AngularFireModule.initializeApp(fireConfig),
               AngularFireAuthModule,
-              AngularFireDatabaseModule
+              AngularFireDatabaseModule,
+              UploadBottlesModule
             ],
             bootstrap: [ IonicApp ],
             entryComponents: [
@@ -77,6 +80,7 @@ export const fireConfig = {
               HomePage,
               BrowsePage,
               TabsPage,
+              UploadBottlesPage,
               BottleDetailPage,
               UpdatePage
             ],
