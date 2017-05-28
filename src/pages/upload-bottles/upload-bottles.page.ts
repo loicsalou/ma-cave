@@ -1,7 +1,8 @@
 import {Component} from "@angular/core";
 import {AlertController, IonicPage, NavController, NavParams} from "ionic-angular";
-import {FileUploadOptions, Transfer, TransferObject} from "@ionic-native/transfer";
+//import {FileUploadOptions, Transfer, TransferObject} from "@ionic-native/transfer";
 import {FileChooser} from "@ionic-native/file-chooser";
+//import { FileChooser, FilePath, File } from 'ionic-native';
 
 /**
  * Generated class for the UploadBottles page.
@@ -16,9 +17,10 @@ import {FileChooser} from "@ionic-native/file-chooser";
            })
 export class UploadBottlesPage {
 
-  private fileTransfer: TransferObject = this.transfer.create();
+  //private fileTransfer: TransferObject = this.transfer.create();
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private transfer: Transfer,
+  constructor(public navCtrl: NavController, public navParams: NavParams,
+    //private transfer: Transfer,
               private fileChooser: FileChooser, private alertController: AlertController) {
   }
 
@@ -29,7 +31,10 @@ export class UploadBottlesPage {
   choose() {
     this.fileChooser.open()
       .then(uri => this.presentAlert('Succès !', 'l uri choisie est ' + uri))
-      .catch(e => this.presentAlert('Echec... !', 'erreur ' + e));
+      .catch(e => {
+        console.info(typeof e+' : '+e);
+        this.presentAlert('Echec... !', 'erreur ' + e);
+      });
   }
 
   presentAlert(title: string, text: string) {
@@ -40,19 +45,19 @@ export class UploadBottlesPage {
                                       });
     alert.present();
   }
-
-  upload() {
-    let options: FileUploadOptions = {
-      fileKey: 'file',
-      fileName: 'name.jpg',
-      headers: {}
-    }
-
-    this.fileTransfer.upload('<file path>', '<api endpoint>', options)
-      .then((data) => {
-        // success
-      }, (err) => {
-        // error
-      })
-  }
+  //
+  //upload() {
+  //  let options: FileUploadOptions = {
+  //    fileKey: 'file',
+  //    fileName: 'name.jpg',
+  //    headers: {}
+  //  }
+  //
+  //  this.fileTransfer.upload('<file path>', '<api endpoint>', options)
+  //    .then((data) => {
+  //      // success
+  //    }, (err) => {
+  //      // error
+  //    })
+  //}
 }
