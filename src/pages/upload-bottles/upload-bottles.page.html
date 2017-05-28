@@ -15,7 +15,12 @@
 
 <ion-content padding>
   
-  <button ion-button align-items-start (click)="chooseFile()">Load</button>
+  <div>
+    <label for="from">from</label><input id="from" type="text" [(ngModel)]="from">
+    <label for="nbRead">nbRead</label><input id="nbRead" type="text" [(ngModel)]="nbRead">
+    <label for="viewNb">viewNb</label><input id="viewNb" type="text" [(ngModel)]="viewNb">
+    <button ion-button align-items-start (click)="chooseFile()">Load</button>
+  </div>
   <button ion-button align-items-start (click)="parseEmbeddedFile()">Load embedded</button>
   <button ion-button align-items-start round icon-only block (click)="takePhoto()">
     <ion-icon name="camera"></ion-icon>
@@ -24,7 +29,7 @@
     <ion-icon name="qr-scanner"></ion-icon>
   </button>
   <h3>qrCode: {{qrCodeText}}</h3>
-  <!--<h3>fichier: {{fileContent}}</h3>-->
+  <h4>{{oneBottle}}</h4>
   <ion-slides style="height: 50vh">
     <ion-slide *ngFor="let image of images">
       <ion-card>

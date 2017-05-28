@@ -1,5 +1,5 @@
 import {Component} from "@angular/core";
-import {AlertController, IonicPage, NavController, NavParams} from "ionic-angular";
+import {AlertController, IonicPage, NavController, NavParams, ToastController} from "ionic-angular";
 import {FileChooser} from "@ionic-native/file-chooser";
 import {File} from "@ionic-native/file";
 import {Camera, CameraOptions} from "@ionic-native/camera";
@@ -7,6 +7,9 @@ import {BarcodeScanner, BarcodeScannerOptions, BarcodeScanResult} from "@ionic-n
 import {Transfer} from "@ionic-native/transfer";
 import {FilePath} from "@ionic-native/file-path";
 import * as _ from "lodash";
+import {BottleFactory} from "../../model/bottle.factory";
+import {BottleService} from "../../components/bottle/bottle-firebase.service";
+import {Bottle} from "../../components/bottle/bottle";
 
 /**
  * Generated class for the UploadBottles page.
@@ -20,10 +23,14 @@ import * as _ from "lodash";
              templateUrl: 'upload-bottles.page.html'
            })
 export class UploadBottlesPage {
+  oneBottle: string = '';
   qrCode: BarcodeScanResult;
   qrCodeText: string;
   fileContent: string = '<vide>';
   images: Array<{ src: String }> = [];
+  from: number = 0;
+  nbRead: number = 2;
+  viewNb: number = 0;
 
   //private fileTransfer: TransferObject = this.transfer.create();
 
@@ -34,8 +41,11 @@ export class UploadBottlesPage {
               private transfer: Transfer,
               private fileChooser: FileChooser,
               private alertController: AlertController,
+              private toastController: ToastController,
               private barcodeScanner: BarcodeScanner,
-              private camera: Camera) {
+              private camera: Camera,
+              private bottleService: BottleService,
+              private bottleFactory: BottleFactory) {
   }
 
   ionViewDidLoad() {
@@ -105,7 +115,7 @@ export class UploadBottlesPage {
                                                 reader.readAsText(resFile);
                                                 reader.onloadend = (evt: any) => {
                                                   this.fileContent = evt.target.result;
-                                                  this.presentAlert('Succàs !', 'readFile terminé');
+                                                  //this.presentAlert('Succès !', 'readFile terminé ' + this.fileContent.length);
                                                   this.parseContent();
                                                 }
                                               })
@@ -123,41 +133,71 @@ export class UploadBottlesPage {
   }
 
   parseEmbeddedFile() {
-    let filename='../../assets/init/cavusvinifera-UTF-8-20170528.csv';
-    var reader = new FileReader();
-    let blob=new Blob();
-    reader.readAsText(blob);
-    reader.onloadend = (evt: any) => {
-      this.fileContent = evt.target.result;
-      this.parseContent();
-    }
-  }
-
-
-  parseEmbeddedFile2() {
     this.fileContent = "nomCru;country_label;subregion_label;area_label;label;millesime;volume;date_achat;prix;cote;quantite_courante;quantite_achat;garde_min;garde_max;garde_optimum;suggestion;comment;lieu_achat;canal_vente\n" +
       "A. Chauvet - Cachet Rouge - Millésimé;France;Champagne;Champagne Grand Cru;blanc effervescent;2008;75 cl;11.03.16;28;28;2;3;2;10;2;;;salon de la gastro Annecy le vieux;En direct du producteur\n" +
       "A. Chauvet - Cachet Vert;France;Champagne;Champagne;blanc effervescent;-;75 cl;11.03.16;17.8;17.8;2;3;2;10;2;;à boire avant 2018;salon de la gastro Annecy le vieux;En direct du producteur";
-    this.parseContent();
+    let bottles = this.parseContent();
   }
 
   private parseContent() {
     let csvarray = this.fileContent.split('\n');
     let keys = _.first(csvarray).split(';');
-    let values = _.drop(csvarray, 1);
-    let asArrayOfObjects = _.map(values, function (row) {
-      return buildObject(row, keys);
-    }, {});
-    this.presentAlert('Parsing terminé', 'Nombre d\'éléments trouvés:'+asArrayOfObjects.length);
-    return asArrayOfObjects;
+    let values = _.drop(csvarray, 1 + this.from);
+    values = _.take(values, this.nbRead);
+    let bottles = [];
+    let self=this;
+    try {
+      bottles = _.map(values, function (row) {
+        try {
+          let btl: Bottle = <Bottle>buildObject(row, keys);
+          return self.bottleFactory.create(btl);
+        } catch (ex) {
+          self.showError('Parsing error enreg ' + row + ex);
+        }
+      }, {});
+    } catch (ex2) {
+      self.showError('Parsing global error enreg ' + ex2);
+    }
+    this.presentAlert('Parsing terminé', 'Nombre d\'éléments trouvés:' + bottles.length);
+    this.bottleService.bottlesObservable.subscribe((list: Bottle[]) => {
+      if (list && list.length>0) {
+        this.oneBottle = JSON.stringify(bottles[ this.viewNb ]);
+      }
+    });
+    this.bottleService.setCellarContent(bottles);
+    this.presentAlert('Base rechargée','DB mise à jour !');
+
+    //if (this.viewNb < bottles.length) {
+    //  this.oneBottle = JSON.stringify(bottles[ this.viewNb ]);
+    //}
+    return bottles;
   }
+
+  private showError(s: string) {
+    let basketToast = this.toastController.create({
+                                                    message: s,
+                                                    cssClass: 'error-message',
+                                                    showCloseButton: true
+                                                  });
+    basketToast.present();
+  }
+
+  private showMessage(s: string) {
+    let basketToast = this.toastController.create({
+                                                    message: s,
+                                                    cssClass: 'error-message',
+                                                    showCloseButton: true
+                                                  });
+    basketToast.present();
+  }
+
 }
 
 function buildObject(row: any, keys: any) {
   let object = {};
   let values = row.split(';');
   _.each(keys, function (key, i) {
-    if (i<values.length) {
+    if (i < values.length) {
       object[ key ] = values[ i ];
     } else {
       object[ key ] = '';

@@ -4,9 +4,7 @@
 import {Injectable} from "@angular/core";
 import {Bottle} from "./bottle";
 import * as _ from "lodash";
-import {TranslateService} from "@ngx-translate/core";
 import {Observable} from "rxjs";
-import {Http} from "@angular/http";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {FilterSet} from "../distribution/distribution";
 import {AngularFireDatabase} from "angularfire2/database";
@@ -22,6 +20,7 @@ import {Loading, LoadingController} from "ionic-angular";
  */
 @Injectable()
 export class BottleService {
+  private cellarImported: boolean = false;
   private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
   private _bottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
   private _filtersObservable: Subject<FilterSet> = new Subject<FilterSet>();
@@ -39,15 +38,19 @@ export class BottleService {
   }
 
   public fetchAllBottles() {
-    //console.info(Date.now()+" - fetching all bottles");
-    this.showLoading();
-    this.firebase.list('/bottles').subscribe((bottles: Bottle[]) => {
-      bottles.forEach((bottle: Bottle) => this.bottleFactory.create(bottle));
-      this.bottlesArray = bottles;
-      this._bottles.next(bottles);
-      this.filters.reset();
-      this.dismissLoading();
-    });
+    if (this.cellarImported) {
+      this._bottles.next(this.bottlesArray);
+    } else {
+      //console.info(Date.now()+" - fetching all bottles");
+      this.showLoading();
+      this.firebase.list('/bottles').subscribe((bottles: Bottle[]) => {
+        bottles.forEach((bottle: Bottle) => this.bottleFactory.create(bottle));
+        this.bottlesArray = bottles;
+        this._bottles.next(bottles);
+        this.filters.reset();
+        this.dismissLoading();
+      });
+    }
   }
 
   get bottlesObservable(): Observable<Bottle[]> {
@@ -67,7 +70,7 @@ export class BottleService {
    */
   public filterOn(filters: FilterSet) {
     //console.info(Date.now()+" - filtering on "+filters.toString());
-    if (this.bottlesArray==undefined) {
+    if (this.bottlesArray == undefined) {
       return;
     }
     if (filters.isEmpty()) {
@@ -150,7 +153,7 @@ export class BottleService {
    * @returns {any[]}
    */
   private filterOnKeyword(list: any[], keyword: string) {
-    let keywordLower=keyword.toLocaleLowerCase();
+    let keywordLower = keyword.toLocaleLowerCase();
     return list.filter(bottle => {
                          let matching = false;
                          for (var key in bottle) {
@@ -197,7 +200,13 @@ export class BottleService {
   }
 
   private setFilters(filters: FilterSet) {
-    this.filters=filters;
+    this.filters = filters;
     this._filtersObservable.next(filters);
+  }
+
+  public setCellarContent(bottles: Bottle[]) {
+    this.cellarImported = true;
+    this.bottlesArray=bottles;
+    this._bottles.next(this.bottlesArray);
   }
 }
