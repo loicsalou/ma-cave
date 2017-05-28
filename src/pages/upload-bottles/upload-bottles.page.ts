@@ -6,6 +6,7 @@ import {Camera, CameraOptions} from "@ionic-native/camera";
 import {BarcodeScanner, BarcodeScannerOptions, BarcodeScanResult} from "@ionic-native/barcode-scanner";
 import {Transfer} from "@ionic-native/transfer";
 import {FilePath} from "@ionic-native/file-path";
+import * as _ from "lodash";
 
 /**
  * Generated class for the UploadBottles page.
@@ -99,29 +100,17 @@ export class UploadBottlesPage {
 
   readFile(nativepath: any) {
     (<any>window).resolveLocalFileSystemURL(nativepath, (res) => {
-      res.file((resFile) => {
-        let reader = new FileReader();
-        reader.readAsText(resFile);
-        reader.onloadend = (evt: any) => {
-          this.fileContent = evt.target.result;
-          this.presentAlert('Succàs !', 'readFile ' + this.fileContent);
-        }
-      })
-    }, err => this.presentAlert('Echec... !', 'erreur readFile ' + err)
-  );
-    //
-    //this.presentAlert('lecture', 'fichier: path=' + imagePath + ', nom=' + imageName);
-    //this.file.readAsText(imagePath, imageName)
-    //  .then(function (text) {
-    //    //this.presentAlert('Succès !', text);
-    //    this.fileContent = text;
-    //  })
-    //  .catch(function (err: TypeError) {
-    //    this.presentAlert('Echec !', err.message);
-    //    this.fileContent = err.message;
-    //  });
-    ////checkDir(this.file.dataDirectory, 'mydir').then(_ => console.log('Directory exists')).catch(err =>
-    //// console.log('Directory doesnt exist'));
+                                              res.file((resFile) => {
+                                                let reader = new FileReader();
+                                                reader.readAsText(resFile);
+                                                reader.onloadend = (evt: any) => {
+                                                  this.fileContent = evt.target.result;
+                                                  this.presentAlert('Succàs !', 'readFile terminé');
+                                                  this.parseContent();
+                                                }
+                                              })
+                                            }, err => this.presentAlert('Echec... !', 'erreur readFile ' + err)
+    );
   }
 
   presentAlert(title: string, text: string) {
@@ -133,19 +122,46 @@ export class UploadBottlesPage {
     alert.present();
   }
 
-  //
-  //upload() {
-  //  let options: FileUploadOptions = {
-  //    fileKey: 'file',
-  //    fileName: 'name.jpg',
-  //    headers: {}
-  //  }
-  //
-  //  this.fileTransfer.upload('<file path>', '<api endpoint>', options)
-  //    .then((data) => {
-  //      // success
-  //    }, (err) => {
-  //      // error
-  //    })
-  //}
+  parseEmbeddedFile() {
+    let filename='../../assets/init/cavusvinifera-UTF-8-20170528.csv';
+    var reader = new FileReader();
+    let blob=new Blob();
+    reader.readAsText(blob);
+    reader.onloadend = (evt: any) => {
+      this.fileContent = evt.target.result;
+      this.parseContent();
+    }
+  }
+
+
+  parseEmbeddedFile2() {
+    this.fileContent = "nomCru;country_label;subregion_label;area_label;label;millesime;volume;date_achat;prix;cote;quantite_courante;quantite_achat;garde_min;garde_max;garde_optimum;suggestion;comment;lieu_achat;canal_vente\n" +
+      "A. Chauvet - Cachet Rouge - Millésimé;France;Champagne;Champagne Grand Cru;blanc effervescent;2008;75 cl;11.03.16;28;28;2;3;2;10;2;;;salon de la gastro Annecy le vieux;En direct du producteur\n" +
+      "A. Chauvet - Cachet Vert;France;Champagne;Champagne;blanc effervescent;-;75 cl;11.03.16;17.8;17.8;2;3;2;10;2;;à boire avant 2018;salon de la gastro Annecy le vieux;En direct du producteur";
+    this.parseContent();
+  }
+
+  private parseContent() {
+    let csvarray = this.fileContent.split('\n');
+    let keys = _.first(csvarray).split(';');
+    let values = _.drop(csvarray, 1);
+    let asArrayOfObjects = _.map(values, function (row) {
+      return buildObject(row, keys);
+    }, {});
+    this.presentAlert('Parsing terminé', 'Nombre d\'éléments trouvés:'+asArrayOfObjects.length);
+    return asArrayOfObjects;
+  }
+}
+
+function buildObject(row: any, keys: any) {
+  let object = {};
+  let values = row.split(';');
+  _.each(keys, function (key, i) {
+    if (i<values.length) {
+      object[ key ] = values[ i ];
+    } else {
+      object[ key ] = '';
+    }
+  })
+  return object;
 }

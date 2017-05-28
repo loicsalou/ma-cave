@@ -19,7 +19,7 @@ import {FilePath} from "@ionic-native/file-path";
               UploadBottlesPage
             ],
             providers: [
-              Transfer, TransferObject, FileChooser, Camera, File, FilePath, BarcodeScanner
+              Transfer, TransferObject, FileChooser, Camera, File, FilePath, BarcodeScanner,
             ]
           })
 export class UploadBottlesModule {
