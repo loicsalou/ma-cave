@@ -4,9 +4,7 @@
 import {Injectable} from "@angular/core";
 import {Bottle} from "./bottle";
 import * as _ from "lodash";
-import {TranslateService} from "@ngx-translate/core";
 import {Observable} from "rxjs";
-import {Http} from "@angular/http";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {FilterSet} from "../distribution/distribution";
 import {AngularFireDatabase} from "angularfire2/database";
@@ -14,6 +12,8 @@ import {AngularFireAuth} from "angularfire2/auth";
 import {BottleFactory} from "../../model/bottle.factory";
 import {Subject} from "rxjs/Subject";
 import {Loading, LoadingController} from "ionic-angular";
+import * as firebase from "firebase/app";
+import Reference = firebase.database.Reference;
 
 /**
  * Services related to the bottles in the cellar.
@@ -22,6 +22,8 @@ import {Loading, LoadingController} from "ionic-angular";
  */
 @Injectable()
 export class BottleService {
+  private firebaseRef: Reference;
+  private cellarImported: boolean = false;
   private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
   private _bottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
   private _filtersObservable: Subject<FilterSet> = new Subject<FilterSet>();
@@ -34,20 +36,29 @@ export class BottleService {
     this.firebaseAuth.auth.signInAnonymously().catch((a: Error) =>
                                                        console.error("login failed: " + a)
     );
+    this.firebaseRef = this.firebase.database.ref('users/loicsalou/bottles');
     this.setFilters(new FilterSet());
     this.fetchAllBottles();
   }
 
   public fetchAllBottles() {
-    //console.info(Date.now()+" - fetching all bottles");
-    this.showLoading();
-    this.firebase.list('/bottles').subscribe((bottles: Bottle[]) => {
-      bottles.forEach((bottle: Bottle) => this.bottleFactory.create(bottle));
-      this.bottlesArray = bottles;
-      this._bottles.next(bottles);
-      this.filters.reset();
-      this.dismissLoading();
-    });
+    if (this.cellarImported) {
+      this._bottles.next(this.bottlesArray);
+    } else {
+      this.showLoading();
+      this.firebase.list('users/loicsalou/bottles').subscribe((bottles: Bottle[]) => {
+        bottles.forEach((bottle: Bottle) => this.bottleFactory.create(bottle));
+        this.bottlesArray = bottles;
+        this._bottles.next(bottles);
+        this.filters.reset();
+        this.dismissLoading();
+      });
+    }
+  }
+
+  public save(bottles: Bottle[]) {
+    this.firebaseRef.remove();
+    bottles.forEach(bottle => this.firebaseRef.push(bottle));
   }
 
   get bottlesObservable(): Observable<Bottle[]> {
@@ -67,7 +78,7 @@ export class BottleService {
    */
   public filterOn(filters: FilterSet) {
     //console.info(Date.now()+" - filtering on "+filters.toString());
-    if (this.bottlesArray==undefined) {
+    if (this.bottlesArray == undefined) {
       return;
     }
     if (filters.isEmpty()) {
@@ -150,7 +161,7 @@ export class BottleService {
    * @returns {any[]}
    */
   private filterOnKeyword(list: any[], keyword: string) {
-    let keywordLower=keyword.toLocaleLowerCase();
+    let keywordLower = keyword.toLocaleLowerCase();
     return list.filter(bottle => {
                          let matching = false;
                          for (var key in bottle) {
@@ -197,7 +208,13 @@ export class BottleService {
   }
 
   private setFilters(filters: FilterSet) {
-    this.filters=filters;
+    this.filters = filters;
     this._filtersObservable.next(filters);
+  }
+
+  public setCellarContent(bottles: Bottle[]) {
+    this.cellarImported = true;
+    this.bottlesArray = bottles;
+    this._bottles.next(this.bottlesArray);
   }
 }

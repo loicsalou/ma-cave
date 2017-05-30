@@ -1,6 +1,7 @@
 import {Component, ViewEncapsulation} from "@angular/core";
 import {Bottle} from "../../components/bottle/bottle";
 import {NavController, NavParams} from "ionic-angular";
+import {BottleService} from "../../components/bottle/bottle-firebase.service";
 
 /*
  Generated class for the Update component.
@@ -19,8 +20,11 @@ export class UpdatePage {
 
   bottle: Bottle;
 
-  constructor(navCtrl: NavController, navParams: NavParams) {
+  constructor(navCtrl: NavController, navParams: NavParams, private bottleService: BottleService) {
     this.bottle = navParams.data[ 'bottle' ];
   }
 
+  save() {
+    this.bottleService.save([this.bottle]);
+  }
 }

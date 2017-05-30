@@ -1,11 +1,15 @@
 import {Component} from "@angular/core";
-import {AlertController, IonicPage, NavController, NavParams} from "ionic-angular";
+import {AlertController, IonicPage, NavController, NavParams, ToastController} from "ionic-angular";
 import {FileChooser} from "@ionic-native/file-chooser";
 import {File} from "@ionic-native/file";
 import {Camera, CameraOptions} from "@ionic-native/camera";
 import {BarcodeScanner, BarcodeScannerOptions, BarcodeScanResult} from "@ionic-native/barcode-scanner";
 import {Transfer} from "@ionic-native/transfer";
 import {FilePath} from "@ionic-native/file-path";
+import * as _ from "lodash";
+import {BottleFactory} from "../../model/bottle.factory";
+import {BottleService} from "../../components/bottle/bottle-firebase.service";
+import {Bottle} from "../../components/bottle/bottle";
 
 /**
  * Generated class for the UploadBottles page.
@@ -19,12 +23,15 @@ import {FilePath} from "@ionic-native/file-path";
              templateUrl: 'upload-bottles.page.html'
            })
 export class UploadBottlesPage {
+  oneBottle: string = '';
   qrCode: BarcodeScanResult;
   qrCodeText: string;
   fileContent: string = '<vide>';
   images: Array<{ src: String }> = [];
-
-  //private fileTransfer: TransferObject = this.transfer.create();
+  from: number = 0;
+  nbRead: number = 2;
+  viewNb: number = 0;
+  private bottles: Bottle[] = null;
 
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
@@ -33,15 +40,14 @@ export class UploadBottlesPage {
               private transfer: Transfer,
               private fileChooser: FileChooser,
               private alertController: AlertController,
+              private toastController: ToastController,
               private barcodeScanner: BarcodeScanner,
-              private camera: Camera) {
+              private camera: Camera,
+              private bottleService: BottleService,
+              private bottleFactory: BottleFactory) {
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad UploadBottles');
-  }
-
-  takePhoto() {
+  public takePhoto() {
     const options: CameraOptions = {
       quality: 80,
       destinationType: this.camera.DestinationType.DATA_URL,
@@ -62,7 +68,7 @@ export class UploadBottlesPage {
     });
   }
 
-  scan() {
+  public scan() {
     let opt: BarcodeScannerOptions = {
       preferFrontCamera: false,
       showFlipCameraButton: false,
@@ -72,7 +78,6 @@ export class UploadBottlesPage {
 
     this.barcodeScanner.scan(opt)
       .then(value => {
-        //this.presentAlert('Succès !', 'le code est: ' + value);
         this.qrCode = value;
         this.qrCodeText = value.text;
       })
@@ -82,7 +87,7 @@ export class UploadBottlesPage {
       });
   }
 
-  chooseFile() {
+  public chooseFile() {
     this.fileChooser.open()
       .then(uri => {
         //this.presentAlert('Succès !', 'l uri choisie est ' + uri);
@@ -92,39 +97,34 @@ export class UploadBottlesPage {
         });
       })
       .catch(e => {
-        //console.info(typeof e + ' : ' + e);
         this.presentAlert('Echec... !', 'erreur chooseFile ' + e);
       });
   }
 
-  readFile(nativepath: any) {
-    (<any>window).resolveLocalFileSystemURL(nativepath, (res) => {
-      res.file((resFile) => {
-        let reader = new FileReader();
-        reader.readAsText(resFile);
-        reader.onloadend = (evt: any) => {
-          this.fileContent = evt.target.result;
-          this.presentAlert('Succàs !', 'readFile ' + this.fileContent);
-        }
-      })
-    }, err => this.presentAlert('Echec... !', 'erreur readFile ' + err)
-  );
-    //
-    //this.presentAlert('lecture', 'fichier: path=' + imagePath + ', nom=' + imageName);
-    //this.file.readAsText(imagePath, imageName)
-    //  .then(function (text) {
-    //    //this.presentAlert('Succès !', text);
-    //    this.fileContent = text;
-    //  })
-    //  .catch(function (err: TypeError) {
-    //    this.presentAlert('Echec !', err.message);
-    //    this.fileContent = err.message;
-    //  });
-    ////checkDir(this.file.dataDirectory, 'mydir').then(_ => console.log('Directory exists')).catch(err =>
-    //// console.log('Directory doesnt exist'));
+  public saveBottles() {
+    try {
+      this.bottleService.save(this.bottles);
+      this.bottles=null;
+    } catch (ex) {
+      this.presentAlert('Error !', 'La sauvegarde des données a échoué: ' + ex);
+    }
   }
 
-  presentAlert(title: string, text: string) {
+  private readFile(nativepath: any) {
+    (<any>window).resolveLocalFileSystemURL(nativepath, (res) => {
+                                              res.file((resFile) => {
+                                                let reader = new FileReader();
+                                                reader.readAsText(resFile);
+                                                reader.onloadend = (evt: any) => {
+                                                  this.fileContent = evt.target.result;
+                                                  this.parseContent();
+                                                }
+                                              })
+                                            }, err => this.presentAlert('Echec... !', 'erreur readFile ' + err)
+    );
+  }
+
+  private presentAlert(title: string, text: string) {
     let alert = this.alertController.create({
                                               title: title,
                                               subTitle: text,
@@ -133,19 +133,71 @@ export class UploadBottlesPage {
     alert.present();
   }
 
-  //
-  //upload() {
-  //  let options: FileUploadOptions = {
-  //    fileKey: 'file',
-  //    fileName: 'name.jpg',
-  //    headers: {}
-  //  }
-  //
-  //  this.fileTransfer.upload('<file path>', '<api endpoint>', options)
-  //    .then((data) => {
-  //      // success
-  //    }, (err) => {
-  //      // error
-  //    })
-  //}
+  parseEmbeddedFile() {
+    this.fileContent = "nomCru;country_label;subregion_label;area_label;label;millesime;volume;date_achat;prix;cote;quantite_courante;quantite_achat;garde_min;garde_max;garde_optimum;suggestion;comment;lieu_achat;canal_vente\n" +
+      "A. Chauvet - Cachet Rouge - Millésimé;France;Champagne;Champagne Grand Cru;blanc effervescent;2008;75 cl;11.03.16;28;28;2;3;2;10;2;;;salon de la gastro Annecy le vieux;En direct du producteur\n" +
+      "A. Chauvet - Cachet Vert;France;Champagne;Champagne;blanc effervescent;-;75 cl;11.03.16;17.8;17.8;2;3;2;10;2;;à boire avant 2018;salon de la gastro Annecy le vieux;En direct du producteur";
+    this.parseContent();
+  }
+
+  private parseContent() {
+    let csvarray = this.fileContent.split('\n');
+    let keys = _.first(csvarray).split(';');
+    let values = _.drop(csvarray, 1 + this.from);
+    values = _.take(values, this.nbRead);
+    this.bottles = [];
+    let self = this;
+    try {
+      this.bottles = _.map(values, function (row) {
+        try {
+          let btl: Bottle = <Bottle>buildObject(row, keys);
+          return self.bottleFactory.create(btl);
+        } catch (ex) {
+          self.showError('Parsing error enreg ' + row + ex);
+        }
+      }, {});
+    } catch (ex2) {
+      self.showError('Parsing global error enreg ' + ex2);
+    }
+    this.bottleService.bottlesObservable.subscribe((list: Bottle[]) => {
+      if (list && list.length > 0) {
+        this.oneBottle = JSON.stringify(this.bottles[ this.viewNb ]);
+      }
+    });
+    this.bottleService.setCellarContent(this.bottles);
+
+    return this.bottles;
+  }
+
+  private showError(s: string) {
+    let basketToast = this.toastController.create({
+                                                    message: s,
+                                                    cssClass: 'error-message',
+                                                    showCloseButton: true
+                                                  });
+    basketToast.present();
+  }
+
+  private showMessage(s: string) {
+    let basketToast = this.toastController.create({
+                                                    message: s,
+                                                    cssClass: 'error-message',
+                                                    showCloseButton: true
+                                                  });
+    basketToast.present();
+  }
+
+}
+
+function buildObject(row: any, keys: any) {
+  let object = {};
+  let values = row.split(';');
+  _.each(keys, function (key, i) {
+    if (i < values.length) {
+      object[ key ] = values[ i ];
+    } else {
+      object[ key ] = '';
+    }
+  })
+  return object;
 }
