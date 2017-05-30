@@ -31,8 +31,7 @@ export class UploadBottlesPage {
   from: number = 0;
   nbRead: number = 2;
   viewNb: number = 0;
-
-  //private fileTransfer: TransferObject = this.transfer.create();
+  private bottles: Bottle[] = null;
 
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
@@ -48,11 +47,7 @@ export class UploadBottlesPage {
               private bottleFactory: BottleFactory) {
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad UploadBottles');
-  }
-
-  takePhoto() {
+  public takePhoto() {
     const options: CameraOptions = {
       quality: 80,
       destinationType: this.camera.DestinationType.DATA_URL,
@@ -73,7 +68,7 @@ export class UploadBottlesPage {
     });
   }
 
-  scan() {
+  public scan() {
     let opt: BarcodeScannerOptions = {
       preferFrontCamera: false,
       showFlipCameraButton: false,
@@ -83,7 +78,6 @@ export class UploadBottlesPage {
 
     this.barcodeScanner.scan(opt)
       .then(value => {
-        //this.presentAlert('Succès !', 'le code est: ' + value);
         this.qrCode = value;
         this.qrCodeText = value.text;
       })
@@ -93,7 +87,7 @@ export class UploadBottlesPage {
       });
   }
 
-  chooseFile() {
+  public chooseFile() {
     this.fileChooser.open()
       .then(uri => {
         //this.presentAlert('Succès !', 'l uri choisie est ' + uri);
@@ -103,19 +97,26 @@ export class UploadBottlesPage {
         });
       })
       .catch(e => {
-        //console.info(typeof e + ' : ' + e);
         this.presentAlert('Echec... !', 'erreur chooseFile ' + e);
       });
   }
 
-  readFile(nativepath: any) {
+  public saveBottles() {
+    try {
+      this.bottleService.save(this.bottles);
+      this.bottles=null;
+    } catch (ex) {
+      this.presentAlert('Error !', 'La sauvegarde des données a échoué: ' + ex);
+    }
+  }
+
+  private readFile(nativepath: any) {
     (<any>window).resolveLocalFileSystemURL(nativepath, (res) => {
                                               res.file((resFile) => {
                                                 let reader = new FileReader();
                                                 reader.readAsText(resFile);
                                                 reader.onloadend = (evt: any) => {
                                                   this.fileContent = evt.target.result;
-                                                  //this.presentAlert('Succès !', 'readFile terminé ' + this.fileContent.length);
                                                   this.parseContent();
                                                 }
                                               })
@@ -123,7 +124,7 @@ export class UploadBottlesPage {
     );
   }
 
-  presentAlert(title: string, text: string) {
+  private presentAlert(title: string, text: string) {
     let alert = this.alertController.create({
                                               title: title,
                                               subTitle: text,
@@ -136,7 +137,7 @@ export class UploadBottlesPage {
     this.fileContent = "nomCru;country_label;subregion_label;area_label;label;millesime;volume;date_achat;prix;cote;quantite_courante;quantite_achat;garde_min;garde_max;garde_optimum;suggestion;comment;lieu_achat;canal_vente\n" +
       "A. Chauvet - Cachet Rouge - Millésimé;France;Champagne;Champagne Grand Cru;blanc effervescent;2008;75 cl;11.03.16;28;28;2;3;2;10;2;;;salon de la gastro Annecy le vieux;En direct du producteur\n" +
       "A. Chauvet - Cachet Vert;France;Champagne;Champagne;blanc effervescent;-;75 cl;11.03.16;17.8;17.8;2;3;2;10;2;;à boire avant 2018;salon de la gastro Annecy le vieux;En direct du producteur";
-    let bottles = this.parseContent();
+    this.parseContent();
   }
 
   private parseContent() {
@@ -144,10 +145,10 @@ export class UploadBottlesPage {
     let keys = _.first(csvarray).split(';');
     let values = _.drop(csvarray, 1 + this.from);
     values = _.take(values, this.nbRead);
-    let bottles = [];
-    let self=this;
+    this.bottles = [];
+    let self = this;
     try {
-      bottles = _.map(values, function (row) {
+      this.bottles = _.map(values, function (row) {
         try {
           let btl: Bottle = <Bottle>buildObject(row, keys);
           return self.bottleFactory.create(btl);
@@ -158,19 +159,14 @@ export class UploadBottlesPage {
     } catch (ex2) {
       self.showError('Parsing global error enreg ' + ex2);
     }
-    this.presentAlert('Parsing terminé', 'Nombre d\'éléments trouvés:' + bottles.length);
     this.bottleService.bottlesObservable.subscribe((list: Bottle[]) => {
-      if (list && list.length>0) {
-        this.oneBottle = JSON.stringify(bottles[ this.viewNb ]);
+      if (list && list.length > 0) {
+        this.oneBottle = JSON.stringify(this.bottles[ this.viewNb ]);
       }
     });
-    this.bottleService.setCellarContent(bottles);
-    this.presentAlert('Base rechargée','DB mise à jour !');
+    this.bottleService.setCellarContent(this.bottles);
 
-    //if (this.viewNb < bottles.length) {
-    //  this.oneBottle = JSON.stringify(bottles[ this.viewNb ]);
-    //}
-    return bottles;
+    return this.bottles;
   }
 
   private showError(s: string) {

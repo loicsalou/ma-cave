@@ -12,6 +12,8 @@ import {AngularFireAuth} from "angularfire2/auth";
 import {BottleFactory} from "../../model/bottle.factory";
 import {Subject} from "rxjs/Subject";
 import {Loading, LoadingController} from "ionic-angular";
+import * as firebase from "firebase/app";
+import Reference = firebase.database.Reference;
 
 /**
  * Services related to the bottles in the cellar.
@@ -20,6 +22,7 @@ import {Loading, LoadingController} from "ionic-angular";
  */
 @Injectable()
 export class BottleService {
+  private firebaseRef: Reference;
   private cellarImported: boolean = false;
   private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
   private _bottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
@@ -33,6 +36,7 @@ export class BottleService {
     this.firebaseAuth.auth.signInAnonymously().catch((a: Error) =>
                                                        console.error("login failed: " + a)
     );
+    this.firebaseRef = this.firebase.database.ref('users/loicsalou/bottles');
     this.setFilters(new FilterSet());
     this.fetchAllBottles();
   }
@@ -41,9 +45,8 @@ export class BottleService {
     if (this.cellarImported) {
       this._bottles.next(this.bottlesArray);
     } else {
-      //console.info(Date.now()+" - fetching all bottles");
       this.showLoading();
-      this.firebase.list('/bottles').subscribe((bottles: Bottle[]) => {
+      this.firebase.list('users/loicsalou/bottles').subscribe((bottles: Bottle[]) => {
         bottles.forEach((bottle: Bottle) => this.bottleFactory.create(bottle));
         this.bottlesArray = bottles;
         this._bottles.next(bottles);
@@ -51,6 +54,11 @@ export class BottleService {
         this.dismissLoading();
       });
     }
+  }
+
+  public save(bottles: Bottle[]) {
+    this.firebaseRef.remove();
+    bottles.forEach(bottle => this.firebaseRef.push(bottle));
   }
 
   get bottlesObservable(): Observable<Bottle[]> {
@@ -206,7 +214,7 @@ export class BottleService {
 
   public setCellarContent(bottles: Bottle[]) {
     this.cellarImported = true;
-    this.bottlesArray=bottles;
+    this.bottlesArray = bottles;
     this._bottles.next(this.bottlesArray);
   }
 }

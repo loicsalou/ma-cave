@@ -16,20 +16,58 @@
 <ion-content padding>
   
   <div>
-    <label for="from">from</label><input id="from" type="text" [(ngModel)]="from">
-    <label for="nbRead">nbRead</label><input id="nbRead" type="text" [(ngModel)]="nbRead">
-    <label for="viewNb">viewNb</label><input id="viewNb" type="text" [(ngModel)]="viewNb">
-    <button ion-button align-items-start (click)="chooseFile()">Load</button>
+    <ion-row>
+      <ion-col col-3>
+        <label for="from">from:</label>
+      </ion-col>
+      <ion-col col-6>
+        <input id="from" type="text" [(ngModel)]="from">
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-3>
+        <label for="nbRead">nbRead:</label>
+      </ion-col>
+      <ion-col col-6>
+        <input id="nbRead" type="text" [(ngModel)]="nbRead">
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-3>
+        <label for="viewNb">viewNb:</label>
+      </ion-col>
+      <ion-col col-6>
+        <input id="viewNb" type="text" [(ngModel)]="viewNb">
+      </ion-col>
+    </ion-row>
+    <button ion-button align-items-start round icon-only block (click)="chooseFile()">
+      <ion-icon name="cloud-upload"></ion-icon>
+      Importer CSV
+    </button>
   </div>
-  <button ion-button align-items-start (click)="parseEmbeddedFile()">Load embedded</button>
+  <button ion-button align-items-start round icon-only block (click)="parseEmbeddedFile()">
+    <ion-icon name="cloud-upload"></ion-icon>
+    Importer essai
+  </button>
+  <button ion-button align-items-start round icon-only block (click)="saveBottles()">
+    <ion-icon name="folder"></ion-icon>
+    Effacer DB et importer
+  </button>
+  
+  <ion-item-divider></ion-item-divider>
+  
   <button ion-button align-items-start round icon-only block (click)="takePhoto()">
     <ion-icon name="camera"></ion-icon>
+    Prendre une photo
   </button>
+  
+  <ion-item-divider></ion-item-divider>
+  
   <button ion-button align-items-start round icon-only block (click)="scan()">
     <ion-icon name="qr-scanner"></ion-icon>
+    Scanner QR-code
   </button>
   <h3>qrCode: {{qrCodeText}}</h3>
-  <h4>{{oneBottle}}</h4>
   <ion-slides style="height: 50vh">
     <ion-slide *ngFor="let image of images">
       <ion-card>
