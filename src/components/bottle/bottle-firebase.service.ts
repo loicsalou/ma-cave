@@ -1,18 +1,17 @@
 /**
  * Created by loicsalou on 28.02.17.
  */
-import {Injectable} from "@angular/core";
-import {Bottle} from "./bottle";
-import * as _ from "lodash";
-import {Observable} from "rxjs";
-import {BehaviorSubject} from "rxjs/BehaviorSubject";
-import {FilterSet} from "../distribution/distribution";
-import {AngularFireDatabase} from "angularfire2/database";
-import {AngularFireAuth} from "angularfire2/auth";
-import {BottleFactory} from "../../model/bottle.factory";
-import {Subject} from "rxjs/Subject";
-import {Loading, LoadingController} from "ionic-angular";
-import * as firebase from "firebase/app";
+import {Injectable} from '@angular/core';
+import {Bottle} from './bottle';
+import {Observable} from 'rxjs';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {FilterSet} from '../distribution/distribution';
+import {AngularFireDatabase} from 'angularfire2/database';
+import {AngularFireAuth} from 'angularfire2/auth';
+import {BottleFactory} from '../../model/bottle.factory';
+import {Subject} from 'rxjs/Subject';
+import {Loading, LoadingController} from 'ionic-angular';
+import * as firebase from 'firebase/app';
 import Reference = firebase.database.Reference;
 
 /**
@@ -34,7 +33,7 @@ export class BottleService {
   constructor(private bottleFactory: BottleFactory, private firebase: AngularFireDatabase,
               private loadingCtrl: LoadingController, private firebaseAuth: AngularFireAuth) {
     this.firebaseAuth.auth.signInAnonymously().catch((a: Error) =>
-                                                       console.error("login failed: " + a)
+                                                       console.error('login failed: ' + a)
     );
     this.firebaseRef = this.firebase.database.ref('users/loicsalou/bottles');
     this.setFilters(new FilterSet());
@@ -116,6 +115,7 @@ export class BottleService {
     }
 
     this.setFilters(filters);
+    
     this._bottles.next(filtered);
   }
 
@@ -190,17 +190,6 @@ export class BottleService {
   //
   //  return me;
   //}
-
-  private static isEmpty(array: any[ ], index: number): boolean {
-    return _.isEmpty(array, index);
-  }
-
-  private bottleMatchesAll(matches: any, keywords: string[ ]) {
-    let ret = true;
-    keywords.forEach(token =>
-                       ret = ret && matches[ token ]);
-    return ret;
-  }
 
   handleError(error: any) {
     console.error(error);

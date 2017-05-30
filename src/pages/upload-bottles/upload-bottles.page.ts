@@ -1,15 +1,15 @@
-import {Component} from "@angular/core";
-import {AlertController, IonicPage, NavController, NavParams, ToastController} from "ionic-angular";
-import {FileChooser} from "@ionic-native/file-chooser";
-import {File} from "@ionic-native/file";
-import {Camera, CameraOptions} from "@ionic-native/camera";
-import {BarcodeScanner, BarcodeScannerOptions, BarcodeScanResult} from "@ionic-native/barcode-scanner";
-import {Transfer} from "@ionic-native/transfer";
-import {FilePath} from "@ionic-native/file-path";
-import * as _ from "lodash";
-import {BottleFactory} from "../../model/bottle.factory";
-import {BottleService} from "../../components/bottle/bottle-firebase.service";
-import {Bottle} from "../../components/bottle/bottle";
+import {Component} from '@angular/core';
+import {AlertController, IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
+import {FileChooser} from '@ionic-native/file-chooser';
+import {File} from '@ionic-native/file';
+import {Camera, CameraOptions} from '@ionic-native/camera';
+import {BarcodeScanner, BarcodeScannerOptions, BarcodeScanResult} from '@ionic-native/barcode-scanner';
+import {Transfer} from '@ionic-native/transfer';
+import {FilePath} from '@ionic-native/file-path';
+import * as _ from 'lodash';
+import {BottleFactory} from '../../model/bottle.factory';
+import {BottleService} from '../../components/bottle/bottle-firebase.service';
+import {Bottle} from '../../components/bottle/bottle';
 
 /**
  * Generated class for the UploadBottles page.
@@ -104,7 +104,7 @@ export class UploadBottlesPage {
   public saveBottles() {
     try {
       this.bottleService.save(this.bottles);
-      this.bottles=null;
+      this.bottles = null;
     } catch (ex) {
       this.presentAlert('Error !', 'La sauvegarde des données a échoué: ' + ex);
     }
@@ -134,9 +134,9 @@ export class UploadBottlesPage {
   }
 
   parseEmbeddedFile() {
-    this.fileContent = "nomCru;country_label;subregion_label;area_label;label;millesime;volume;date_achat;prix;cote;quantite_courante;quantite_achat;garde_min;garde_max;garde_optimum;suggestion;comment;lieu_achat;canal_vente\n" +
-      "A. Chauvet - Cachet Rouge - Millésimé;France;Champagne;Champagne Grand Cru;blanc effervescent;2008;75 cl;11.03.16;28;28;2;3;2;10;2;;;salon de la gastro Annecy le vieux;En direct du producteur\n" +
-      "A. Chauvet - Cachet Vert;France;Champagne;Champagne;blanc effervescent;-;75 cl;11.03.16;17.8;17.8;2;3;2;10;2;;à boire avant 2018;salon de la gastro Annecy le vieux;En direct du producteur";
+    this.fileContent = 'nomCru;country_label;subregion_label;area_label;label;millesime;volume;date_achat;prix;cote;quantite_courante;quantite_achat;garde_min;garde_max;garde_optimum;suggestion;comment;lieu_achat;canal_vente\n' +
+      'A. Chauvet - Cachet Rouge - Millésimé;France;Champagne;Champagne Grand Cru;blanc effervescent;2008;75 cl;11.03.16;28;28;2;3;2;10;2;;;salon de la gastro Annecy le vieux;En direct du producteur\n' +
+      'A. Chauvet - Cachet Vert;France;Champagne;Champagne;blanc effervescent;-;75 cl;11.03.16;17.8;17.8;2;3;2;10;2;;à boire avant 2018;salon de la gastro Annecy le vieux;En direct du producteur';
     this.parseContent();
   }
 
@@ -177,16 +177,6 @@ export class UploadBottlesPage {
                                                   });
     basketToast.present();
   }
-
-  private showMessage(s: string) {
-    let basketToast = this.toastController.create({
-                                                    message: s,
-                                                    cssClass: 'error-message',
-                                                    showCloseButton: true
-                                                  });
-    basketToast.present();
-  }
-
 }
 
 function buildObject(row: any, keys: any) {

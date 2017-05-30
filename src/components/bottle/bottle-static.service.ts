@@ -1,14 +1,14 @@
 /**
  * Created by loicsalou on 28.02.17.
  */
-import {Injectable} from "@angular/core";
-import {Bottle} from "./bottle";
-import * as _ from "lodash";
-import {Configuration} from "../config/Configuration";
-import {TranslateService} from "@ngx-translate/core";
-import {Observable, Observer} from "rxjs";
-import {Http, Response} from "@angular/http";
-import {FilterSet} from "../distribution/distribution";
+import {Injectable} from '@angular/core';
+import {Bottle} from './bottle';
+import * as _ from 'lodash';
+import {Configuration} from '../config/Configuration';
+import {TranslateService} from '@ngx-translate/core';
+import {Observable, Observer} from 'rxjs';
+import {Http, Response} from '@angular/http';
+import {FilterSet} from '../distribution/distribution';
 
 /**
  * Services related to the bottles in the cellar.
@@ -189,12 +189,5 @@ export class BottleService {
       }
     });
     return filtered;
-  }
-
-  private bottleMatchesAll(matches: any, keywords: string[ ]) {
-    let ret = true;
-    keywords.forEach(token =>
-                       ret = ret && matches[ token ]);
-    return ret;
   }
 }

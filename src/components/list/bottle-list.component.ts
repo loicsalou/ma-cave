@@ -1,9 +1,9 @@
-import {Component, EventEmitter, Input, Output} from "@angular/core";
-import {BottleService} from "../bottle/bottle-firebase.service";
-import {Bottle} from "../bottle/bottle";
-import {ListBottleEvent} from "./bottle-list-event";
-import {ItemSliding, ToastController} from "ionic-angular";
-import {Subject} from "rxjs/Subject";
+import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {BottleService} from '../bottle/bottle-firebase.service';
+import {Bottle} from '../bottle/bottle';
+import {ListBottleEvent} from './bottle-list-event';
+import {ItemSliding, ToastController} from 'ionic-angular';
+import {Subject} from 'rxjs/Subject';
 
 @Component({
              selector: 'bottle-list',
@@ -16,10 +16,6 @@ export class BottleListComponent {
   bottles: Bottle[];
   @Output()
   showDetail: EventEmitter<ListBottleEvent> = new EventEmitter();
-
-  private basket: Bottle[] = [];
-  private favorites: Bottle[] = [];
-  private selected: Bottle[] = [];
 
   private dragItem = new Subject<SlidingBottle>();
 
@@ -56,12 +52,12 @@ export class BottleListComponent {
   }
 
   isSelected(bottle) {
-    return bottle['selected'];
+    return bottle[ 'selected' ];
     //return this.selected.filter(item => item.id === bottle.id).length == 1;
   }
 
   isBottleFavorite(bottle: Bottle): boolean {
-    return bottle['favorite'];
+    return bottle[ 'favorite' ];
     //return this.favorites.filter(item => item.id === bottle.id).length == 1;
   }
 
@@ -82,7 +78,7 @@ export class BottleListComponent {
   }
 
   isBottleInBasket(bottle: Bottle): boolean {
-    return bottle['in-basket'];
+    return bottle[ 'in-basket' ];
     //return this.basket.filter(item => item.id === bottle.id).length == 1;
   }
 

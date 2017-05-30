@@ -1,6 +1,6 @@
-import {Component, Input, Output, EventEmitter} from "@angular/core";
-import {Bottle} from "../../bottle/bottle";
-import {Configuration} from "../../config/Configuration";
+import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Bottle} from '../../bottle/bottle';
+import {Configuration} from '../../config/Configuration';
 
 /*
  Generated class for the BottleItemComponent component.

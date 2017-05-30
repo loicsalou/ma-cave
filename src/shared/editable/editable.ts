@@ -1,4 +1,4 @@
-import { Directive } from '@angular/core';
+import {Directive} from '@angular/core';
 
 /**
  * Generated class for the Editable directive.
@@ -7,13 +7,11 @@ import { Directive } from '@angular/core';
  * for more info on Angular Directives.
  */
 @Directive({
-  selector: '[editable]' // Attribute selector
-})
+             selector: '[editable]' // Attribute selector
+           })
 export class Editable {
 
   constructor() {
   }
-
-
 
 }

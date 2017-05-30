@@ -2,7 +2,7 @@ import {Bottle} from '../../components/bottle/bottle';
 import {Component, Input} from '@angular/core';
 import {FilterSet} from '../../components/distribution/distribution';
 import {BottleService} from '../../components/bottle/bottle-firebase.service';
-import {MenuController} from "ionic-angular";
+import {MenuController} from 'ionic-angular';
 
 @Component({
              selector: 'page-filter',
@@ -26,7 +26,7 @@ export class FilterPage {
   }
 
   nbOFBottles(): number {
-    return this.bottles==undefined ? 0 : this.bottles.length;
+    return this.bottles == undefined ? 0 : this.bottles.length;
   }
 
   close() {

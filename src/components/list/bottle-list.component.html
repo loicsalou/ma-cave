@@ -1,33 +1,35 @@
 <ion-list sliding="true" class="bottle-page">
-  
+
   <ion-item-sliding (click)="triggerDetail(bottle,ix)" (ionDrag)="ionDrag(bottle, item)" #item
                     *ngFor="let bottle of bottles; let ix=index">
     <ion-item>
       <ion-avatar item-start (click)="switchSelected($event, bottle)">
         <img src="assets/icon/checked.png" *ngIf="isSelected(bottle)">
         <img src="{{ bottle.label | bottleIcon }}" class="overridable logo" *ngIf="!isSelected(bottle)">
-        <img src="assets/icon/starred.png" *ngIf="isBottleFavorite(bottle) && !isSelected(bottle)" class="overridable logo">
-        <img src="assets/icon/in-basket.png" *ngIf="isBottleInBasket(bottle) && !isSelected(bottle)" class="overridable logo">
+        <img src="assets/icon/starred.png" *ngIf="isBottleFavorite(bottle) && !isSelected(bottle)"
+             class="overridable logo">
+        <img src="assets/icon/in-basket.png" *ngIf="isBottleInBasket(bottle) && !isSelected(bottle)"
+             class="overridable logo">
       </ion-avatar>
       <h4 class="label">{{ bottle.nomCru }}</h4>
       <ion-note>{{bottle.area_label}} ({{bottle.millesime}})</ion-note>
       <!--<ion-icon item-end name="arrow-dropright" (click)="triggerDetail(bottle,ix)"></ion-icon>-->
     </ion-item>
-    
+
     <ion-item-options side="left">
-        <ion-icon name="star"></ion-icon>
+      <ion-icon name="star"></ion-icon>
     </ion-item-options>
-    
+
     <ion-item-options side="right">
       <button ion-button (click)="addToBasketOrRemove($event, item, bottle)">
         <img src="assets/icon/basket.png">
       </button>
-      
+
       <button ion-button (click)="drawBottle($event, item, bottle)">
         <img src="assets/icon/tire-bouchon.png">
       </button>
-     </ion-item-options>
-  
+    </ion-item-options>
+
   </ion-item-sliding>
 
 

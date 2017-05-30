@@ -1,8 +1,8 @@
 /**
  * Created by loicsalou on 07.03.17.
  */
-import {Injectable} from "@angular/core";
-import * as _ from "lodash";
+import {Injectable} from '@angular/core';
+import * as _ from 'lodash';
 
 /**
  * Services related to the bottles in the cellar.
@@ -27,8 +27,9 @@ export class DistributeService {
    * @returns {Array}
    */
   distributeBy(rows: any[], byCols: string[]): any[] {
-    if (rows==null)
+    if (rows == null) {
       return null;
+    }
     let distribution = [];
 
     byCols.forEach(col => {
