@@ -9,7 +9,7 @@
   }
 
   ion-avatar {
-    position:relative;
+    position: relative;
     img {
       position: absolute;
       top: 0;
@@ -19,10 +19,10 @@
   }
 
   ion-item-sliding:nth-child(2n) {
-    background-color: lighten(#ebebeb,4%);
+    background-color: lighten(#ebebeb, 4%);
 
     button {
-      background-color: lighten(#ebebeb,4%);
+      background-color: lighten(#ebebeb, 4%);
     }
 
     ion-item {

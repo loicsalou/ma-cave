@@ -1,8 +1,8 @@
 ///<reference path="../../../node_modules/ionic-angular/navigation/nav-controller.d.ts"/>
-import {Component, OnInit} from "@angular/core";
-import {NavController, Platform} from "ionic-angular";
-import {TranslateService} from "@ngx-translate/core";
-import {Camera, CameraOptions} from "@ionic-native/camera";
+import {Component, OnInit} from '@angular/core';
+import {NavController, Platform} from 'ionic-angular';
+import {TranslateService} from '@ngx-translate/core';
+import {Camera, CameraOptions} from '@ionic-native/camera';
 
 @Component({
              selector: 'page-about',

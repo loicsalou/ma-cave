@@ -9,8 +9,8 @@
   <ion-title>{{dimension.axis| translate}}</ion-title>
   
   <ion-chip (click)="valueClicked($event, dimension.axis)" item-right *ngFor="let value of dimension.values"
-             [class.selected]="isFilterSelected(dimension.axis, value.key)">
+            [class.selected]="isFilterSelected(dimension.axis, value.key)">
     {{value.key}}: {{value.value}}
   </ion-chip>
-  
+
 </ion-card>

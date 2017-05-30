@@ -1,7 +1,7 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from "@angular/core";
-import * as _ from "lodash";
-import {DistributeService} from "./distribute.service";
-import {Bottle} from "../bottle/bottle";
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
+import * as _ from 'lodash';
+import {DistributeService} from './distribute.service';
+import {Bottle} from '../bottle/bottle';
 
 /*
  Generated class for the Distribution component.
@@ -53,7 +53,7 @@ export class DistributionComponent implements OnChanges, OnInit {
   }
 
   close() {
-    this.closed.emit("close");
+    this.closed.emit('close');
   }
 
   isFilterSelected(axis: string, value: string) {

@@ -1,9 +1,9 @@
-import {Component, Input, OnInit, ViewChild} from "@angular/core";
-import {NavController, NavParams, Slides} from "ionic-angular";
-import {Bottle} from "../../components/bottle/bottle";
-import {ListBottleEvent} from "../../components/list/bottle-list-event";
-import {UpdatePage} from "../update/update.page";
-import {Observable} from "rxjs/Observable";
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {NavController, NavParams, Slides} from 'ionic-angular';
+import {Bottle} from '../../components/bottle/bottle';
+import {ListBottleEvent} from '../../components/list/bottle-list-event';
+import {UpdatePage} from '../update/update.page';
+import {Observable} from 'rxjs/Observable';
 
 /*
  Generated class for the BottleDetail page.
@@ -40,7 +40,7 @@ export class BottleDetailPage implements OnInit {
   ngOnInit(): void {
     this.bottlesObservable.subscribe(bottles => {
       this.bottles = bottles;
-      this.bottle=this.bottles[this.currentIndex];
+      this.bottle = this.bottles[ this.currentIndex ];
     })
   }
 
@@ -54,7 +54,7 @@ export class BottleDetailPage implements OnInit {
 
   slideChanged() {
     this.currentIndex = this.slides.getActiveIndex();
-    this.bottle=this.bottles[this.currentIndex];
+    this.bottle = this.bottles[ this.currentIndex ];
   }
 
 }

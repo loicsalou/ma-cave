@@ -14,7 +14,7 @@
           <img src="{{ bottle.label | bottleIcon }}">
         </div>
         <h5>{{bottle.nomCru}}</h5>
-    
+      
       </div>
       <div class="description">
         <ul class="circle">
@@ -26,7 +26,7 @@
         </ul>
       </div>
     </div>
-  
+    
     <h4>{{"details" | translate}}</h4>
     <div class="block">
       <ul class="circle">
@@ -38,13 +38,13 @@
         <li>{{ "garde_optimum" | translate }} {{ bottle.garde_min }} {{ "ans" | translate }}</li>
       </ul>
     </div>
-  
+    
     <h4>{{"infos" | translate}}</h4>
     <div>
       <p *ngIf="!bottle.suggestion && ! bottle.comment">Aucune information complémentaire</p>
       <p *ngIf="bottle.suggestion">{{ "suggestion" | translate }}: {{bottle.suggestion}}</p>
       <p *ngIf="bottle.comment">{{ "comment" | translate }}: {{bottle.comment}}</p>
     </div>
-
+  
   </div>
 </ion-content>

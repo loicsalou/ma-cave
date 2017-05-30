@@ -1,13 +1,13 @@
-import {Component, OnDestroy, OnInit} from "@angular/core";
-import {NavController, NavParams, Platform, ToastController} from "ionic-angular";
-import {BottleService} from "../../components/bottle/bottle-firebase.service";
-import {Bottle} from "../../components/bottle/bottle";
-import {BottleDetailPage} from "../bottle-detail/page-bottle-detail";
-import {ListBottleEvent} from "../../components/list/bottle-list-event";
-import {FilterSet} from "../../components/distribution/distribution";
-import {Observable} from "rxjs/Observable";
-import {BehaviorSubject} from "rxjs/BehaviorSubject";
-import {Subscription} from "rxjs/Subscription";
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {NavController, NavParams, Platform, ToastController} from 'ionic-angular';
+import {BottleService} from '../../components/bottle/bottle-firebase.service';
+import {Bottle} from '../../components/bottle/bottle';
+import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
+import {ListBottleEvent} from '../../components/list/bottle-list-event';
+import {FilterSet} from '../../components/distribution/distribution';
+import {Observable} from 'rxjs/Observable';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Subscription} from 'rxjs/Subscription';
 
 @Component({
              selector: 'page-browse',
@@ -33,12 +33,11 @@ export class BrowsePage implements OnInit, OnDestroy {
 
   ngOnInit() {
     console.info('initializing browse page instance');
-    let first = true;
     this.bottleSubscription = this.bottlesService.bottlesObservable.subscribe(
       (bottles: Bottle[]) => {
         //if (bottles && bottles.length > 0) {
-          this.setBottles(bottles);
-          this.checkNavigationParams();
+        this.setBottles(bottles);
+        this.checkNavigationParams();
         //}
       },
       error => this.showMessage('error ! ' + error),
