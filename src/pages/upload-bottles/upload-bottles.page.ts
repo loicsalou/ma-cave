@@ -10,6 +10,7 @@ import * as _ from 'lodash';
 import {BottleFactory} from '../../model/bottle.factory';
 import {BottleService} from '../../components/bottle/bottle-firebase.service';
 import {Bottle} from '../../components/bottle/bottle';
+import {CavusService} from './cavus.service';
 
 /**
  * Generated class for the UploadBottles page.
@@ -44,7 +45,8 @@ export class UploadBottlesPage {
               private barcodeScanner: BarcodeScanner,
               private camera: Camera,
               private bottleService: BottleService,
-              private bottleFactory: BottleFactory) {
+              private bottleFactory: BottleFactory,
+              private cavusService: CavusService) {
   }
 
   public takePhoto() {
@@ -108,6 +110,10 @@ export class UploadBottlesPage {
     } catch (ex) {
       this.presentAlert('Error !', 'La sauvegarde des données a échoué: ' + ex);
     }
+  }
+
+  public cavus() {
+    this.cavusService.connectToCavus();
   }
 
   private readFile(nativepath: any) {

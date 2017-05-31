@@ -115,7 +115,7 @@ export class BottleService {
     }
 
     this.setFilters(filters);
-    
+
     this._bottles.next(filtered);
   }
 
@@ -207,3 +207,5 @@ export class BottleService {
     this._bottles.next(this.bottlesArray);
   }
 }
+
+

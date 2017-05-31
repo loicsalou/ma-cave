@@ -7,19 +7,21 @@ import {File} from '@ionic-native/file';
 import {Camera} from '@ionic-native/camera';
 import {BarcodeScanner} from '@ionic-native/barcode-scanner';
 import {FilePath} from '@ionic-native/file-path';
+import {HttpModule} from '@angular/http';
+import {CavusService} from './cavus.service';
 
 @NgModule({
             declarations: [
               UploadBottlesPage
             ],
             imports: [
-              IonicPageModule.forChild(UploadBottlesPage)
+              IonicPageModule.forChild(UploadBottlesPage), HttpModule
             ],
             exports: [
               UploadBottlesPage
             ],
             providers: [
-              Transfer, TransferObject, FileChooser, Camera, File, FilePath, BarcodeScanner,
+              Transfer, TransferObject, FileChooser, Camera, File, FilePath, BarcodeScanner, CavusService
             ]
           })
 export class UploadBottlesModule {
