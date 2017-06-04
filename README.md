@@ -15,13 +15,16 @@ Conclusion: toutes les images, tous les fichiers contenus dans assets sont inclu
 | recherche | recherche multicritèees, par région, couleur, appellation, millésime... | oui |
 | recherche | recherche par mot clé | oui |
 | importer | importer la cave depuis cavus sous forme CSV | oui |
-| importer | importer la cave depuis cavus sous forme XLS, idéalement automatiser la connexion à cavus et récupérer le flux XLS | non |
+| importer | importer la cave depuis cavus sous forme XLS | non |
+| importer | idéalement automatiser la connexion à cavus et récupérer le flux XLS | non |
 | stocker les factures | photographier une facture et l'associer à un lot de bouteilles | non |
 | gérer le login | identifier l'utilisateur (FB, tweeter, mail...) | non |
 | authentifier l'utilisateur | gérer l'empreinte digitale | non |
 | mise à jour| mise à jour d'un lot de bouteille | non |
 | retirer une bouteille | mettre à jour le nombre de bouteilles restantes, saisir un court formulaire d'impression sur la bouteille | non |
 | ranger les bouteilles | faciliter le travail pour retrouver les bouteilles rangées. Cela mérite beaucoup d'attentions: photographier les casiers ? pointer les emplacements ? d'n'd pour déplacer ? etc. | non |
+|recherche|compléter avec options 'bouteilles actuellement en cave' et 'vaforites seulement' | non |
+| chargement | effectuer le chargement en background pour plus de fluidité, par blocs de 50 ? | non |
 
 
 

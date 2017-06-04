@@ -11,6 +11,7 @@ import {BottleFactory} from '../../model/bottle.factory';
 import {BottleService} from '../../components/bottle/bottle-firebase.service';
 import {Bottle} from '../../components/bottle/bottle';
 import {CavusService} from './cavus.service';
+import * as decoder from 'text-encoding';
 
 /**
  * Generated class for the UploadBottles page.
@@ -117,13 +118,25 @@ export class UploadBottlesPage {
   }
 
   private readFile(nativepath: any) {
+    let xlsx = require('xlsx');
     (<any>window).resolveLocalFileSystemURL(nativepath, (res) => {
                                               res.file((resFile) => {
+                                                try {
+                                                  let workbook = xlsx.readFile(resFile)
+                                                } catch (err) {
+                                                  console.error('-1-' + err);
+                                                  this.showError('-1-' + err);
+                                                }
                                                 let reader = new FileReader();
                                                 reader.readAsText(resFile);
                                                 reader.onloadend = (evt: any) => {
-                                                  this.fileContent = evt.target.result;
-                                                  this.parseContent();
+                                                  try {
+                                                    this.fileContent = evt.target.result;
+                                                    this.parseContent();
+                                                  } catch (err) {
+                                                    console.error('-2-' + err);
+                                                    this.showError('-2-' + err);
+                                                  }
                                                 }
                                               })
                                             }, err => this.presentAlert('Echec... !', 'erreur readFile ' + err)
@@ -175,6 +188,64 @@ export class UploadBottlesPage {
     return this.bottles;
   }
 
+  public parseContentXLS2(event: any) {
+    let file = event.currentTarget.files[ 0 ];
+    let reader = new FileReader();
+    reader.onload = function (evt) {
+      let buf = new Uint8Array(evt.target['result']);
+      let dec = new decoder.TextDecoder('ascii');
+      let s=dec.decode(buf);
+      console.info('ooo');
+      //buf = buf.map((byte) => byte-65);
+    }
+    reader.readAsArrayBuffer(file);
+  }
+
+  public parseContentXLS(event: any) {
+    let textType = /text.*/;
+    let file = event.currentTarget.files[ 0 ];
+    //if (! file.type.match(textType)) {
+    //  alert('File not supported!');
+    //  return;
+    //}
+    console.info(event.currentTarget.files[ 0 ]);
+    let reader = new FileReader();
+    let nbread = this.nbRead;
+    let nbfrom = this.from;
+    let self = this;
+    let bottleService = this.bottleService;
+    reader.onload = function (evt) {
+      let csvarray = evt.target[ 'result' ].split(/\r\n|\n/);
+      let keys = _.first(csvarray).replace(/['"]+/g, '').split(/\t/);
+      let values = _.drop(csvarray, 1 + nbfrom);
+      values = _.take(values, nbread);
+      let bottles = null;
+      try {
+        bottles = _.map(values, function (row) {
+          try {
+            let btl: Bottle = <Bottle>buildObjectFromXLS(row, keys);
+            return self.bottleFactory.create(btl);
+          } catch (ex) {
+            self.showError('Parsing error enreg ' + row + ex);
+          }
+        }, {});
+      } catch (ex2) {
+        self.showError('Parsing global error enreg ' + ex2);
+      }
+      bottleService.bottlesObservable.subscribe((list: Bottle[]) => {
+        self.bottles = list;
+        if (list && list.length > 0) {
+          console.info(JSON.stringify(list[ 0 ]));
+        }
+      });
+      bottleService.setCellarContent(bottles);
+    }
+    reader.onerror = function (evt) {
+      alert('cannot read the file ! ' + file);
+    };
+    reader.readAsText(file, 'ascii');
+  }
+
   private showError(s: string) {
     let basketToast = this.toastController.create({
                                                     message: s,
@@ -188,6 +259,20 @@ export class UploadBottlesPage {
 function buildObject(row: any, keys: any) {
   let object = {};
   let values = row.split(';');
+  _.each(keys, function (key, i) {
+    if (i < values.length) {
+      object[ key ] = values[ i ];
+    } else {
+      object[ key ] = '';
+    }
+  })
+  return object;
+}
+
+function buildObjectFromXLS(row: any, keys: any) {
+  let object = {};
+  let rowString = row.replace(/['"]+/g, '');
+  let values = rowString.split(/\t/);
   _.each(keys, function (key, i) {
     if (i < values.length) {
       object[ key ] = values[ i ];

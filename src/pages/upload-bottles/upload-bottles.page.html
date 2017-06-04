@@ -44,8 +44,9 @@
       <ion-icon name="cloud-upload"></ion-icon>
       Importer CSV
     </button>
+    <input type="file" id="input" (change)="parseContentXLS($event)">
   </div>
-  <button ion-button align-items-start round icon-only block (click)="parseEmbeddedFile()">
+  <button ion-button align-items-start round icon-only block (click)="parseEmbeddedFileXLS()">
     <ion-icon name="cloud-upload"></ion-icon>
     Importer essai
   </button>
