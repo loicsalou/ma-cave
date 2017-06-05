@@ -1,10 +1,7 @@
 import {Component} from '@angular/core';
-import {AlertController, IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
+import {AlertController, IonicPage, NavController, ToastController, Platform} from 'ionic-angular';
 import {FileChooser} from '@ionic-native/file-chooser';
 import {File} from '@ionic-native/file';
-import {Camera, CameraOptions} from '@ionic-native/camera';
-import {BarcodeScanner, BarcodeScannerOptions, BarcodeScanResult} from '@ionic-native/barcode-scanner';
-import {Transfer} from '@ionic-native/transfer';
 import {FilePath} from '@ionic-native/file-path';
 import * as _ from 'lodash';
 import {BottleFactory} from '../../model/bottle.factory';
@@ -25,69 +22,32 @@ import {CavusService} from './cavus.service';
            })
 export class UploadBottlesPage {
   oneBottle: string = '';
-  qrCode: BarcodeScanResult;
-  qrCodeText: string;
   fileContent: string = '<vide>';
-  images: Array<{ src: String }> = [];
   from: number = 0;
   nbRead: number = 999;
   viewNb: number = 0;
   private bottles: Bottle[] = null;
   encoding: string; // forcer l'encoding
+  optionsVisibles: boolean=false; // forcer l'encoding
 
   constructor(public navCtrl: NavController,
-              public navParams: NavParams,
               private file: File,
               private filepath: FilePath,
-              private transfer: Transfer,
               private fileChooser: FileChooser,
               private alertController: AlertController,
               private toastController: ToastController,
-              private barcodeScanner: BarcodeScanner,
-              private camera: Camera,
               private bottleService: BottleService,
               private bottleFactory: BottleFactory,
+              private platform: Platform,
               private cavusService: CavusService) {
   }
 
-  public takePhoto() {
-    const options: CameraOptions = {
-      quality: 80,
-      destinationType: this.camera.DestinationType.DATA_URL,
-      sourceType: this.camera.PictureSourceType.CAMERA,
-      allowEdit: true,
-      encodingType: this.camera.EncodingType.PNG,
-      saveToPhotoAlbum: false
-    }
-    this.camera.getPicture(options).then((imageData) => {
-      // imageData is either a base64 encoded string or a file URI
-      // If it's base64:
-      let base64Image = 'data:image/jpeg;base64,' + imageData;
-      this.images.unshift({
-                            src: base64Image
-                          })
-    }, (err) => {
-      this.presentAlert('Error !', err);
-    });
+  public platformIsCordova(): boolean {
+    return this.platform.is('cordova');
   }
 
-  public scan() {
-    let opt: BarcodeScannerOptions = {
-      preferFrontCamera: false,
-      showFlipCameraButton: false,
-      showTorchButton: false,
-      prompt: 'Scanner un code'
-    };
-
-    this.barcodeScanner.scan(opt)
-      .then(value => {
-        this.qrCode = value;
-        this.qrCodeText = value.text;
-      })
-      .catch(err => {
-        this.presentAlert('Echec !', 'le scan a échoué: ' + err);
-        this.qrCodeText = err;
-      });
+  public switchAdvancedOptions() {
+    this.optionsVisibles=!this.optionsVisibles;
   }
 
   public chooseFile() {
@@ -117,7 +77,7 @@ export class UploadBottlesPage {
     //let textType = /text.*/;
     let file = event.currentTarget.files[ 0 ];
     let isXls = file.name.toLowerCase().endsWith('.xls');
-    let encoding = isXls ? 'ascii' : 'utf-8';
+    let encoding = isXls ? 'windows-1252' : 'utf-8';
     console.info(event.currentTarget.files[ 0 ]);
     let reader = new FileReader();
     let self = this;
@@ -128,6 +88,7 @@ export class UploadBottlesPage {
       } else {
         self.parseContentCSV();
       }
+      self.saveBottles();
     }
     reader.onerror = function (evt) {
       alert('cannot read the file ! ' + file);
@@ -141,7 +102,7 @@ export class UploadBottlesPage {
                                                 let reader = new FileReader();
                                                 let isXls = resFile.name.toLowerCase().endsWith('.xls');
                                                 if (this.encoding == null) {
-                                                  this.encoding = isXls ? 'ascii' : 'utf-8';
+                                                  this.encoding = isXls ? 'windows-1252' : 'utf-8';
                                                 }
                                                 reader.readAsText(resFile, this.encoding);
                                                 reader.onloadend = (evt: any) => {
@@ -151,6 +112,7 @@ export class UploadBottlesPage {
                                                   } else {
                                                     this.parseContentCSV();
                                                   }
+                                                  this.saveBottles();
                                                 }
                                               })
                                             }, err => this.presentAlert('Echec... !', 'erreur readFile ' + err)
@@ -186,7 +148,7 @@ export class UploadBottlesPage {
       self.showError('Parsing global error enreg ' + ex2);
     }
     this.bottleService.setCellarContent(bottles);
-    this.bottles=bottles;
+    this.bottles = bottles;
     this.presentAlert('Parsing OK', 'CSV parsé au format ' + this.encoding + ' nombre lu ' + csvarray.length + ' chargé '
                       + (bottles == null ? 'KO' + ' !' : bottles.length));
 
@@ -210,7 +172,7 @@ export class UploadBottlesPage {
       }
     }, err => this.showError('Parsing global error enreg ' + err));
     this.bottleService.setCellarContent(bottles);
-    this.bottles=bottles;
+    this.bottles = bottles;
     this.presentAlert('Parsing OK', 'XLS parsé au format ' + this.encoding + ' nombre lu ' + csvarray.length + ' chargé '
                       + (bottles == null ? 'KO' + ' !' : bottles.length));
   }
