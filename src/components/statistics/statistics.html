@@ -1,0 +1,19 @@
+<!-- Generated template for the StatisticsComponent component -->
+<div class="statistics">
+  <p>Nombre total de bouteilles: {{stats.totalNumberOfBottles}}</p>
+  
+  <h3>répartition par région:</h3>
+  <li *ngFor="let axis of stats.by_subregion_label.keys()">{{axis}}: {{stats.by_subregion_label.get(axis)}}</li>
+  
+  <h3>répartition par couleur:</h3>
+  <li *ngFor="let axis of stats.by_label.keys()">{{axis}}: {{stats.by_label.get(axis)}}</li>
+  
+  <h3>répartition par classe d'âge:</h3>
+  <li *ngFor="let axis of stats.by_classe_age.keys()">{{axis}}: {{stats.by_classe_age.get(axis)}}</li>
+  
+  <h3>répartition par millésime:</h3>
+  <li *ngFor="let axis of stats.by_millesime.keys()">{{axis}}: {{stats.by_millesime.get(axis)}}</li>
+  
+  <h3>répartition par classe d'âge:</h3>
+  <li *ngFor="let axis of stats.by_prix.keys()">{{axis}}: {{stats.by_prix.get(axis)}}</li>
+</div>

@@ -5,6 +5,7 @@ import {Injectable} from '@angular/core';
 import {Bottle} from '../components/bottle/bottle';
 import {TranslateService} from '@ngx-translate/core';
 import {UUID} from 'angular2-uuid';
+import {Statistics} from '../components/bottle/statistics';
 
 /**
  * Instanciation des bouteilles.
@@ -14,34 +15,36 @@ import {UUID} from 'angular2-uuid';
  */
 @Injectable()
 export class BottleFactory {
-
   currentYear = new Date().getFullYear();
 
-  constructor(private i18n: TranslateService) {
+  constructor(private i18n: TranslateService, private _stats: Statistics) {
   }
 
   public create(btl: Bottle): Bottle {
-    this.checkId(btl).setClasseAge(btl);
+    this.checkId(btl).setClasseAge(btl).updateStats(btl);
 
     return btl;
+  }
+
+  get stats(): Statistics {
+    return this._stats;
   }
 
   private setClasseAge(bottle: Bottle): BottleFactory {
     if (bottle.millesime === '-') {
       bottle[ 'classe_age' ] = this.i18n.instant('no-age');
-      return;
+      return this;
     }
     let mill = Number(bottle.millesime);
     if (mill + 4 > this.currentYear) {
       bottle[ 'classe_age' ] = this.i18n.instant('young');
-    }
-    if (mill + 10 > this.currentYear) {
+    } else if (mill + 10 > this.currentYear) {
       bottle[ 'classe_age' ] = this.i18n.instant('middle');
-    }
-    if (mill + 15 > this.currentYear) {
+    } else if (mill + 15 > this.currentYear) {
       bottle[ 'classe_age' ] = this.i18n.instant('old');
+    } else {
+      bottle[ 'classe_age' ] = this.i18n.instant('very-old');
     }
-    bottle[ 'classe_age' ] = this.i18n.instant('very-old');
 
     return this;
   }
@@ -50,6 +53,11 @@ export class BottleFactory {
     if (bottle.id == undefined || bottle.id == null) {
       bottle[ 'id' ] = UUID.UUID();
     }
+    return this;
+  }
+
+  private updateStats(bottle: Bottle): BottleFactory {
+    this._stats.updateFrom(bottle);
     return this;
   }
 }

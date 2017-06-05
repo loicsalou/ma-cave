@@ -8,6 +8,7 @@ import {FilterSet} from '../../components/distribution/distribution';
 import {Observable} from 'rxjs/Observable';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Subscription} from 'rxjs/Subscription';
+import {Statistics} from '../../components/bottle/statistics';
 
 @Component({
              selector: 'page-browse',
@@ -26,7 +27,7 @@ export class BrowsePage implements OnInit, OnDestroy {
   private navParams: NavParams;
 
   constructor(private toastCtrl: ToastController, public navCtrl: NavController, public platform: Platform,
-              private bottlesService: BottleService, params?: NavParams) {
+              private bottlesService: BottleService, private stats: Statistics, params?: NavParams) {
     this.filterSet = new FilterSet();
     this.navParams = params;
   }

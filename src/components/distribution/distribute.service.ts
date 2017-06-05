@@ -9,10 +9,10 @@ import * as _ from 'lodash';
  * This service is responsible for distributing an array of rows among attributes.
  * The goal is to know, for each distinct attribute value which is asked, how many rows have the same value.
  * Example:
- * given an array of bottles, and the array ['label', 'subregion_label', 'class_age'] we can get
+ * given an array of bottles, and the array ['label', 'subregion_label', 'classe_age'] we can get
  * <li>{ label: {'rouge': 261, 'blanc': 250, 'blanc liquoreux': 27 etc.}}</li>
  * <li>{ subregion_label: {'bourgogne': 123, 'bordeaux': 220, 'Val de Loire': 72 etc.}}</li>
- * <li>{ class_age: {'jeune': 123, 'moyen': 220, 'vieux': 120, 'très vieux': 25 etc.}}</li>
+ * <li>{ classe_age: {'jeune': 123, 'moyen': 220, 'vieux': 120, 'très vieux': 25 etc.}}</li>
  *
  * The subregion_label below are duplicated in the code of france.component.html as they are emitted when end-user
  * clicks on a region to filter bottles. Any change on either side must be propagated on the other side.

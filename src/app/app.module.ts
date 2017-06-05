@@ -29,6 +29,8 @@ import {FilterPage} from '../pages/filters/filter.page';
 import {BottleFactory} from '../model/bottle.factory';
 import {UploadBottlesModule} from '../pages/upload-bottles/upload-bottles.page.module';
 import {UploadBottlesPage} from '../pages/upload-bottles/upload-bottles.page';
+import {Statistics} from '../components/bottle/statistics';
+import { StatisticsComponent } from '../components/statistics/statistics';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -54,7 +56,8 @@ export const fireConfig = {
               BottleIconPipe,
               BottleListComponent,
               TabsPage,
-              UpdatePage
+              UpdatePage,
+    StatisticsComponent
             ],
             imports: [
               IonicModule.forRoot(MyCaveApp),
@@ -87,6 +90,7 @@ export const fireConfig = {
             providers: [
               BottleFactory,
               Camera,
+              Statistics,
               StatusBar,
               SplashScreen,
               {provide: ErrorHandler, useClass: IonicErrorHandler},
