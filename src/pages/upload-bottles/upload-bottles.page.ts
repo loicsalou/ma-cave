@@ -11,7 +11,6 @@ import {BottleFactory} from '../../model/bottle.factory';
 import {BottleService} from '../../components/bottle/bottle-firebase.service';
 import {Bottle} from '../../components/bottle/bottle';
 import {CavusService} from './cavus.service';
-import * as decoder from 'text-encoding';
 
 /**
  * Generated class for the UploadBottles page.
@@ -31,9 +30,10 @@ export class UploadBottlesPage {
   fileContent: string = '<vide>';
   images: Array<{ src: String }> = [];
   from: number = 0;
-  nbRead: number = 2;
+  nbRead: number = 999;
   viewNb: number = 0;
   private bottles: Bottle[] = null;
+  encoding: string; // forcer l'encoding
 
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
@@ -106,36 +106,50 @@ export class UploadBottlesPage {
 
   public saveBottles() {
     try {
-      this.bottleService.save(this.bottles);
+      this.bottleService.initializeDB(this.bottles);
       this.bottles = null;
     } catch (ex) {
       this.presentAlert('Error !', 'La sauvegarde des données a échoué: ' + ex);
     }
   }
 
-  public cavus() {
-    this.cavusService.connectToCavus();
+  private readBrowserFile(event: any) {
+    //let textType = /text.*/;
+    let file = event.currentTarget.files[ 0 ];
+    let isXls = file.name.toLowerCase().endsWith('.xls');
+    let encoding = isXls ? 'ascii' : 'utf-8';
+    console.info(event.currentTarget.files[ 0 ]);
+    let reader = new FileReader();
+    let self = this;
+    reader.onload = function (evt) {
+      self.fileContent = evt.target[ 'result' ];
+      if (isXls) {
+        self.parseContentXLS();
+      } else {
+        self.parseContentCSV();
+      }
+    }
+    reader.onerror = function (evt) {
+      alert('cannot read the file ! ' + file);
+    };
+    reader.readAsText(file, encoding);
   }
 
   private readFile(nativepath: any) {
-    let xlsx = require('xlsx');
     (<any>window).resolveLocalFileSystemURL(nativepath, (res) => {
                                               res.file((resFile) => {
-                                                try {
-                                                  let workbook = xlsx.readFile(resFile)
-                                                } catch (err) {
-                                                  console.error('-1-' + err);
-                                                  this.showError('-1-' + err);
-                                                }
                                                 let reader = new FileReader();
-                                                reader.readAsText(resFile);
+                                                let isXls = resFile.name.toLowerCase().endsWith('.xls');
+                                                if (this.encoding == null) {
+                                                  this.encoding = isXls ? 'ascii' : 'utf-8';
+                                                }
+                                                reader.readAsText(resFile, this.encoding);
                                                 reader.onloadend = (evt: any) => {
-                                                  try {
-                                                    this.fileContent = evt.target.result;
-                                                    this.parseContent();
-                                                  } catch (err) {
-                                                    console.error('-2-' + err);
-                                                    this.showError('-2-' + err);
+                                                  this.fileContent = evt.target.result;
+                                                  if (isXls) {
+                                                    this.parseContentXLS();
+                                                  } else {
+                                                    this.parseContentCSV();
                                                   }
                                                 }
                                               })
@@ -152,22 +166,15 @@ export class UploadBottlesPage {
     alert.present();
   }
 
-  parseEmbeddedFile() {
-    this.fileContent = 'nomCru;country_label;subregion_label;area_label;label;millesime;volume;date_achat;prix;cote;quantite_courante;quantite_achat;garde_min;garde_max;garde_optimum;suggestion;comment;lieu_achat;canal_vente\n' +
-      'A. Chauvet - Cachet Rouge - Millésimé;France;Champagne;Champagne Grand Cru;blanc effervescent;2008;75 cl;11.03.16;28;28;2;3;2;10;2;;;salon de la gastro Annecy le vieux;En direct du producteur\n' +
-      'A. Chauvet - Cachet Vert;France;Champagne;Champagne;blanc effervescent;-;75 cl;11.03.16;17.8;17.8;2;3;2;10;2;;à boire avant 2018;salon de la gastro Annecy le vieux;En direct du producteur';
-    this.parseContent();
-  }
-
-  private parseContent() {
+  private parseContentCSV() {
     let csvarray = this.fileContent.split('\n');
     let keys = _.first(csvarray).split(';');
     let values = _.drop(csvarray, 1 + this.from);
     values = _.take(values, this.nbRead);
-    this.bottles = [];
+    let bottles = [];
     let self = this;
     try {
-      this.bottles = _.map(values, function (row) {
+      bottles = _.map(values, function (row) {
         try {
           let btl: Bottle = <Bottle>buildObject(row, keys);
           return self.bottleFactory.create(btl);
@@ -178,73 +185,48 @@ export class UploadBottlesPage {
     } catch (ex2) {
       self.showError('Parsing global error enreg ' + ex2);
     }
-    this.bottleService.bottlesObservable.subscribe((list: Bottle[]) => {
-      if (list && list.length > 0) {
-        this.oneBottle = JSON.stringify(this.bottles[ this.viewNb ]);
-      }
-    });
-    this.bottleService.setCellarContent(this.bottles);
+    this.bottleService.setCellarContent(bottles);
+    this.bottles=bottles;
+    this.presentAlert('Parsing OK', 'CSV parsé au format ' + this.encoding + ' nombre lu ' + csvarray.length + ' chargé '
+                      + (bottles == null ? 'KO' + ' !' : bottles.length));
 
     return this.bottles;
   }
 
-  public parseContentXLS2(event: any) {
-    let file = event.currentTarget.files[ 0 ];
-    let reader = new FileReader();
-    reader.onload = function (evt) {
-      let buf = new Uint8Array(evt.target['result']);
-      let dec = new decoder.TextDecoder('ascii');
-      let s=dec.decode(buf);
-      console.info('ooo');
-      //buf = buf.map((byte) => byte-65);
-    }
-    reader.readAsArrayBuffer(file);
-  }
-
-  public parseContentXLS(event: any) {
-    let textType = /text.*/;
-    let file = event.currentTarget.files[ 0 ];
-    //if (! file.type.match(textType)) {
-    //  alert('File not supported!');
-    //  return;
-    //}
-    console.info(event.currentTarget.files[ 0 ]);
-    let reader = new FileReader();
+  public parseContentXLS() {
+    //let textType = /text.*/;
     let nbread = this.nbRead;
     let nbfrom = this.from;
-    let self = this;
-    let bottleService = this.bottleService;
-    reader.onload = function (evt) {
-      let csvarray = evt.target[ 'result' ].split(/\r\n|\n/);
-      let keys = _.first(csvarray).replace(/['"]+/g, '').split(/\t/);
-      let values = _.drop(csvarray, 1 + nbfrom);
-      values = _.take(values, nbread);
-      let bottles = null;
+    let csvarray = this.fileContent.split(/\r\n|\n/);
+    let keys = _.first(csvarray).replace(/['"]+/g, '').split(/\t/);
+    let values = _.drop(csvarray, 1 + nbfrom);
+    values = _.take(values, nbread);
+    let bottles = _.map(values, row => {
       try {
-        bottles = _.map(values, function (row) {
-          try {
-            let btl: Bottle = <Bottle>buildObjectFromXLS(row, keys);
-            return self.bottleFactory.create(btl);
-          } catch (ex) {
-            self.showError('Parsing error enreg ' + row + ex);
-          }
-        }, {});
-      } catch (ex2) {
-        self.showError('Parsing global error enreg ' + ex2);
+        let btl: Bottle = <Bottle>buildObjectFromXLS(row, keys);
+        return this.bottleFactory.create(btl);
+      } catch (ex) {
+        this.showError('Parsing error enreg ' + row + ex);
       }
-      bottleService.bottlesObservable.subscribe((list: Bottle[]) => {
-        self.bottles = list;
-        if (list && list.length > 0) {
-          console.info(JSON.stringify(list[ 0 ]));
-        }
-      });
-      bottleService.setCellarContent(bottles);
-    }
-    reader.onerror = function (evt) {
-      alert('cannot read the file ! ' + file);
-    };
-    reader.readAsText(file, 'ascii');
+    }, err => this.showError('Parsing global error enreg ' + err));
+    this.bottleService.setCellarContent(bottles);
+    this.bottles=bottles;
+    this.presentAlert('Parsing OK', 'XLS parsé au format ' + this.encoding + ' nombre lu ' + csvarray.length + ' chargé '
+                      + (bottles == null ? 'KO' + ' !' : bottles.length));
   }
+
+  //public parseContentXLS2(event: any) {
+  //  let file = event.currentTarget.files[ 0 ];
+  //  let reader = new FileReader();
+  //  reader.onload = function (evt) {
+  //    let buf = new Uint8Array(evt.target['result']);
+  //    let dec = new decoder.TextDecoder('ascii');
+  //    let s=dec.decode(buf);
+  //    console.info('ooo');
+  //    //buf = buf.map((byte) => byte-65);
+  //  }
+  //  reader.readAsArrayBuffer(file);
+  //}
 
   private showError(s: string) {
     let basketToast = this.toastController.create({

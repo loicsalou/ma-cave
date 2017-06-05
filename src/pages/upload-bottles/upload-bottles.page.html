@@ -18,7 +18,7 @@
   <div>
     <ion-row>
       <ion-col col-3>
-        <label for="from">from:</label>
+        <label for="from">Charger depuis:</label>
       </ion-col>
       <ion-col col-6>
         <input id="from" type="text" [(ngModel)]="from">
@@ -26,33 +26,70 @@
     </ion-row>
     <ion-row>
       <ion-col col-3>
-        <label for="nbRead">nbRead:</label>
+        <label for="nbRead">En charger:</label>
       </ion-col>
       <ion-col col-6>
         <input id="nbRead" type="text" [(ngModel)]="nbRead">
       </ion-col>
     </ion-row>
     <ion-row>
-      <ion-col col-3>
-        <label for="viewNb">viewNb:</label>
-      </ion-col>
-      <ion-col col-6>
-        <input id="viewNb" type="text" [(ngModel)]="viewNb">
-      </ion-col>
+      <ion-list>
+        <ion-item>
+          <ion-label>Encoding</ion-label>
+          <ion-select [(ngModel)]="encoding">
+            <ion-option value="utf-8">UTF-8</ion-option>
+            <ion-option value="windows-1252">windows-1252 / Ascii</ion-option>
+            <ion-option value="ibm866">ibm866</ion-option>
+            <ion-option value="iso-8859-2">iso-8859-2</ion-option>
+            <ion-option value="iso-8859-3">iso-8859-3</ion-option>
+            <ion-option value="iso-8859-4">iso-8859-4</ion-option>
+            <ion-option value="iso-8859-5">iso-8859-5</ion-option>
+            <ion-option value="iso-8859-6">iso-8859-6</ion-option>
+            <ion-option value="iso-8859-7">iso-8859-7</ion-option>
+            <ion-option value="iso-8859-8">iso-8859-8</ion-option>
+            <ion-option value="iso-8859-8i">iso-8859-8i</ion-option>
+            <ion-option value="iso-8859-10">iso-8859-10</ion-option>
+            <ion-option value="iso-8859-13">iso-8859-13</ion-option>
+            <ion-option value="iso-8859-14">iso-8859-14</ion-option>
+            <ion-option value="iso-8859-15">iso-8859-15</ion-option>
+            <ion-option value="iso-8859-16">iso-8859-16</ion-option>
+            <ion-option value="koi8-r">koi8-r</ion-option>
+            <ion-option value="koi8-u">koi8-u</ion-option>
+            <ion-option value="macintosh">macintosh</ion-option>
+            <ion-option value="windows-874">windows-874</ion-option>
+            <ion-option value="windows-1250">windows-1250</ion-option>
+            <ion-option value="windows-1251">windows-1251</ion-option>
+            <ion-option value="windows-1253">windows-1253</ion-option>
+            <ion-option value="windows-1254">windows-1254</ion-option>
+            <ion-option value="windows-1255">windows-1255</ion-option>
+            <ion-option value="windows-1256">windows-1256</ion-option>
+            <ion-option value="windows-1257">windows-1257</ion-option>
+            <ion-option value="windows-1258">windows-1258</ion-option>
+            <ion-option value="x-mac-cyrillic">x-mac-cyrillic</ion-option>
+            <ion-option value="gbk">gbk</ion-option>
+            <ion-option value="gb18030">gb18030</ion-option>
+            <ion-option value="hz-gb-2312">hz-gb-2312</ion-option>
+            <ion-option value="big5">big5</ion-option>
+            <ion-option value="euc-jp">euc-jp</ion-option>
+            <ion-option value="iso-2022-jp">iso-2022-jp</ion-option>
+            <ion-option value="shift-jis">shift-jis</ion-option>
+            <ion-option value="euc-kr">euc-kr</ion-option>
+            <ion-option value="iso-2022-kr">iso-2022-kr</ion-option>
+            <ion-option value="utf-16be">utf-16be</ion-option>
+            <ion-option value="utf-16le">utf-16le</ion-option>
+          </ion-select>
+        </ion-item>
+      </ion-list>
     </ion-row>
     <button ion-button align-items-start round icon-only block (click)="chooseFile()">
       <ion-icon name="cloud-upload"></ion-icon>
-      Importer CSV
+      Importer XLS ou CSV
     </button>
-    <input type="file" id="input" (change)="parseContentXLS($event)">
+    <input type="file" id="input" (change)="readBrowserFile($event)">
   </div>
-  <button ion-button align-items-start round icon-only block (click)="parseEmbeddedFileXLS()">
-    <ion-icon name="cloud-upload"></ion-icon>
-    Importer essai
-  </button>
   <button ion-button align-items-start round icon-only block (click)="saveBottles()">
     <ion-icon name="folder"></ion-icon>
-    Effacer DB et importer
+    Effacer et importer la cave
   </button>
   
   <ion-item-divider></ion-item-divider>

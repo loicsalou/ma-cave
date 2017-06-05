@@ -56,6 +56,10 @@ export class BottleService {
   }
 
   public save(bottles: Bottle[]) {
+    bottles.forEach(bottle => this.firebaseRef.push(bottle));
+  }
+
+  public initializeDB(bottles: Bottle[]) {
     this.firebaseRef.remove();
     bottles.forEach(bottle => this.firebaseRef.push(bottle));
   }
