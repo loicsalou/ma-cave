@@ -56,6 +56,10 @@ export class BottleService {
   }
 
   public save(bottles: Bottle[]) {
+    bottles.forEach(bottle => this.firebaseRef.push(bottle));
+  }
+
+  public initializeDB(bottles: Bottle[]) {
     this.firebaseRef.remove();
     bottles.forEach(bottle => this.firebaseRef.push(bottle));
   }
@@ -115,7 +119,7 @@ export class BottleService {
     }
 
     this.setFilters(filters);
-    
+
     this._bottles.next(filtered);
   }
 
@@ -207,3 +211,5 @@ export class BottleService {
     this._bottles.next(this.bottlesArray);
   }
 }
+
+
