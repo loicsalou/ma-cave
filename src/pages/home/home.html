@@ -1,7 +1,7 @@
 <ion-header class="home header">
   
-  <ion-searchbar [placeholder]="Chercher" [autocomplete]="on" [autocorrect]="on" [animated]="true"
-                 (ionInput)="filterOnText($event)">
+  <ion-searchbar [placeholder]="Chercher" [autocomplete]="off" [autocorrect]="on" [animated]="true"
+                 (search)="filterOnText($event)">
   </ion-searchbar>
 
 </ion-header>

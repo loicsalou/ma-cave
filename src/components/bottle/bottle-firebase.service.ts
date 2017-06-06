@@ -31,10 +31,7 @@ export class BottleService {
   private loading: Loading;
 
   constructor(private bottleFactory: BottleFactory, private firebase: AngularFireDatabase,
-              private loadingCtrl: LoadingController, private firebaseAuth: AngularFireAuth) {
-    this.firebaseAuth.auth.signInAnonymously().catch((a: Error) =>
-                                                       console.error('login failed: ' + a)
-    );
+              private loadingCtrl: LoadingController) {
     this.firebaseRef = this.firebase.database.ref('users/loicsalou/bottles');
     this.setFilters(new FilterSet());
     this.fetchAllBottles();

@@ -26,7 +26,7 @@ export class DistributeService {
    * @param byCols array of columns in the objects: object must provide values for these attributes
    * @returns {Array}
    */
-  distributeBy(rows: any[], byCols: string[]): any[] {
+  distributeBy(rows: any[], byCols: string[]): Distribution[] {
     if (rows == null) {
       return null;
     }
@@ -42,7 +42,7 @@ export class DistributeService {
     return distribution;
   }
 
-  private reduceToCount(rows: any[], col: string): any {
+  private reduceToCount(rows: any[], col: string): KeyValue[] {
     var occurences = rows.reduce(function (r, row) {
       r[ row[ col ] ] = ++r[ row[ col ] ] || 1;
       return r;

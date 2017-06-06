@@ -21,7 +21,7 @@ export class BottleFactory {
   }
 
   public create(btl: Bottle): Bottle {
-    this.checkId(btl).setClasseAge(btl).updateStats(btl);
+    this.checkId(btl).setClasseAge(btl);
 
     return btl;
   }
@@ -53,11 +53,6 @@ export class BottleFactory {
     if (bottle.id == undefined || bottle.id == null) {
       bottle[ 'id' ] = UUID.UUID();
     }
-    return this;
-  }
-
-  private updateStats(bottle: Bottle): BottleFactory {
-    this._stats.updateFrom(bottle);
     return this;
   }
 }
