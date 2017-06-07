@@ -4,7 +4,7 @@
 
 export class Bottle {
   id?: string;
-  class_age?: string;
+  classe_age?: string;
   area_label: string;
   canal_vente: string;
   comment: string;

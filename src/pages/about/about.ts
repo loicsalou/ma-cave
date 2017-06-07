@@ -3,6 +3,8 @@ import {Component, OnInit} from '@angular/core';
 import {NavController, Platform} from 'ionic-angular';
 import {TranslateService} from '@ngx-translate/core';
 import {Camera, CameraOptions} from '@ionic-native/camera';
+import {Statistics} from '../../components/bottle/statistics';
+import {StatisticsService} from '../../components/statistics/statistics-firebase.service';
 
 @Component({
              selector: 'page-about',
@@ -18,6 +20,7 @@ export class AboutPage implements OnInit {
   message: string;
   trad: string;
   private imagePath: string;
+  stats: Statistics;
 
   images: Array<{ src: String }>;
 

@@ -15,7 +15,9 @@ Conclusion: toutes les images, tous les fichiers contenus dans assets sont inclu
 | recherche | recherche multicritèees, par région, couleur, appellation, millésime... | oui |
 | recherche | recherche par mot clé | oui |
 | importer | importer la cave depuis cavus sous forme CSV | oui |
-| importer | importer la cave depuis cavus sous forme XLS | non |
+| importer | importer la cave depuis cavus sous forme XLS | oui |
+| statistiques | gérer quelques statistiques | oui |
+| statistiques | les montrer graphiquement | non |
 | importer | idéalement automatiser la connexion à cavus et récupérer le flux XLS | non |
 | stocker les factures | photographier une facture et l'associer à un lot de bouteilles | non |
 | gérer le login | identifier l'utilisateur (FB, tweeter, mail...) | non |

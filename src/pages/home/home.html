@@ -7,7 +7,7 @@
 </ion-header>
 
 <ion-content class="home card-background-page page">
-  
+  <ion-title *ngIf="!loginService.authenticated">Erreur de login:{{loginService.error}}</ion-title>
   <ion-card class="card-background" (click)="browseCellar()">
     <img src="assets/img/vins-tranquilles.png"/>
     <h4 class="card-title">Chercher une bouteille</h4>
@@ -15,15 +15,14 @@
   </ion-card>
   
   <ion-card class="card-background">
-    <img src="assets/img/cave-sur-mesure.jpg" (click)="manageCellar()"/>
-    <h4 class="card-title">Ranger la cave</h4>
-    <div class="card-subtitle">Ajouter des bouteilles, réograniser...</div>
+    <statistics [axis]="'label'" [legend]="'left'" [topMost]="8"></statistics>
+    <!--<statistics [axis]="'subregion_label'" [legend]="'right'"></statistics>-->
   </ion-card>
   
   <ion-card class="card-background">
-    <img src="assets/img/statistiques-vin.png"/>
-    <h4 class="card-title">Surveiller</h4>
-    <div class="card-subtitle">Statistiques, vin à boire etc.</div>
+    <img src="assets/img/cave-sur-mesure.jpg" (click)="manageCellar()"/>
+    <h4 class="card-title">Ranger la cave</h4>
+    <div class="card-subtitle">Ajouter des bouteilles, réograniser...</div>
   </ion-card>
 
 </ion-content>
