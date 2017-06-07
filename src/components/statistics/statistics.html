@@ -7,7 +7,11 @@
   </ion-row>
   
   <ion-row>
-    <ion-col col-6>
+    <button *ngIf="!chartVisible" ion-button align-items-start round icon-only block (click)="generateCharts()">
+      <ion-icon name="cloud-upload"></ion-icon>
+      voir
+    </button>
+    <ion-col col-12>
       <h3>Par couleur</h3>
       <canvas #doughnutColors></canvas>
     </ion-col>
