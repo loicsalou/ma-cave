@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {DistributeService} from '../distribution/distribute.service';
 import {Chart} from 'chart.js';
 import {BottleService} from '../bottle/bottle-firebase.service';
@@ -17,9 +17,16 @@ import * as _ from 'lodash';
            })
 export class StatisticsComponent implements OnInit {
   //axes de distribution de la distribution courante
+  @Input()
+  axis: string;
+  @Input()
+  legend: string;
+  @Input()
+  topMost: number=6;
+
   static DEFAULT_AXIS = [ 'label', 'subregion_label', 'classe_age' ];
   static STANDARD_COLORS = [
-    'grey', 'black', 'blue', 'red', 'orange', 'aqua', 'aquamarine', 'blueviolet', 'green', 'cornsilk', 'fuchsia'
+    'blue', 'red', 'orange', 'aqua', 'aquamarine', 'blueviolet', 'green', 'cornsilk', 'fuchsia', 'grey', 'black'
   ];
   static COLORS_BY_WINECOLOR = {
     'autres': 'grey',
@@ -38,45 +45,38 @@ export class StatisticsComponent implements OnInit {
 
   totalNumberOfBottles: number = 0;
 
-  @ViewChild('doughnutColors') doughnutColors;
-  colorsDoughnut: any;
-
-  @ViewChild('doughnutRegions') doughnutRegions;
-  regionsDoughnut: any;
-  private regionsDistribution: Distribution;
-
-  bottles: Bottle[];
-  chartVisible = false;
+  @ViewChild('chart') canvas;
+  chart: any;
 
   constructor(private distributionService: DistributeService, private bottlesService: BottleService) {
   }
 
   ngOnInit(): void {
-    this.bottlesService.bottlesObservable.subscribe((bottles: Bottle[]) => this.bottles = bottles.filter(btl => +btl.quantite_courante > 0));
+    this.bottlesService.bottlesObservable.subscribe((bottles: Bottle[]) => {
+      this.createChart(bottles.filter(btl => +btl.quantite_courante > 0));
+    });
   }
 
-  generateCharts() {
-    this.createCharts(this.bottles);
-    this.chartVisible = true;
-  }
-
-  private createCharts(bottles: Bottle[]) {
-    let distribution: Distribution[] = this.distributionService.distributeBy(bottles, StatisticsComponent.DEFAULT_AXIS);
+  private createChart(bottles: Bottle[]) {
+    let distribution: Distribution[] = this.distributionService.distributeBy(bottles, [ this.axis ]);
     console.info('distribution de ' + bottles.length + ' faite');
     if (bottles.length !== 0) {
       this.totalNumberOfBottles = bottles.length;
-      this.createColorChart(distribution[ 0 ]);
-      this.createRegionChart(distribution[ 1 ]);
+      if (this.axis == 'label') {
+        this.createColorChart(distribution[ 0 ]);
+      } else if (this.axis == 'subregion_label') {
+        this.createRegionChart(distribution[ 0 ]);
+      }
     }
   }
 
   createColorChart(distribution: Distribution) {
-    if (!distribution || !this.doughnutColors) {
+    if (!distribution) {
       return;
     }
 
     //on enlève regroupe les bouteilles représentant un pourcentage inférieur au seuil minimal d'importance
-    let significantData = this.reduceDistributionToSignificant(distribution, 0.02, 4);
+    let significantData = this.reduceDistributionToSignificant(distribution, 0.02, this.topMost);
     //on extrait les indexes (couleur du vin par ex)
     let axis = significantData.map(kv => kv.key);
     //on affecte les couleurs des portions du chart
@@ -86,7 +86,7 @@ export class StatisticsComponent implements OnInit {
     borderColors = _.fill(borderColors, 'grey');
     //on extrait les valeurs correspondantes (rouge, blanc par ex)
     let values = significantData.map(kv => kv.value);
-    this.colorsDoughnut = new Chart(this.doughnutColors.nativeElement, {
+    this.chart = new Chart(this.canvas.nativeElement, {
 
       type: 'doughnut',
       data: {
@@ -102,6 +102,7 @@ export class StatisticsComponent implements OnInit {
       options: {
         legend: {
           display: true,
+          position: this.legend,
           labels: {
             boxWidth: 15,
             fontSize: 8,
@@ -115,7 +116,7 @@ export class StatisticsComponent implements OnInit {
   }
 
   createRegionChart(distribution: Distribution) {
-    if (!distribution || !this.doughnutRegions) {
+    if (!distribution) {
       return;
     }
 
@@ -131,7 +132,7 @@ export class StatisticsComponent implements OnInit {
     //on extrait les valeurs correspondantes (rouge, blanc par ex)
     let values = significantData.map(kv => kv.value);
 
-    this.regionsDoughnut = new Chart(this.doughnutRegions.nativeElement, {
+    this.chart = new Chart(this.chart.nativeElement, {
 
       type: 'doughnut',
       data: {

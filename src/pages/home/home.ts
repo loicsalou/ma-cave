@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {ActionSheetController, NavController, Platform} from 'ionic-angular';
 import {BrowsePage} from '../browse/browse.page';
 import {StatisticsService} from '../../components/statistics/statistics-firebase.service';
