@@ -7,7 +7,7 @@
 </ion-header>
 
 <ion-content class="home card-background-page page">
-  
+  <ion-title>login {{loginService.authenticated}}-{{loginService.error}}</ion-title>
   <ion-card class="card-background" (click)="browseCellar()">
     <img src="assets/img/vins-tranquilles.png"/>
     <h4 class="card-title">Chercher une bouteille</h4>

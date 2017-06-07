@@ -17,14 +17,20 @@ import Reference = firebase.database.Reference;
 @Injectable()
 export class LoginService {
   private _authenticated: boolean;
+  error: Error;
 
   constructor(private alertCtrl: AlertController, private firebaseAuth: AngularFireAuth, private platform: Platform) {
   }
 
   public login() {
     this.firebaseAuth.auth.signInAnonymously()
-      .then(() => this._authenticated = true)
-      .catch((a: Error) => this.alertCtrl.create(this.loginError(a)).present()).then(() => this.platform.exitApp());
+      .then(
+        () => this._authenticated = true
+      )
+      .catch(
+        (a: Error) => this.error=a
+          //this.alertCtrl.create(this.loginError(a)).present()).then(() => this.platform.exitApp()
+    );
   }
 
   get authenticated(): boolean {
