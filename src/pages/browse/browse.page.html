@@ -10,8 +10,8 @@
       </ion-col>
       
       <ion-col>
-        <ion-searchbar [placeholder]="Chercher" [autocomplete]="on" [autocorrect]="on" [animated]="true"
-                       (ionInput)="filterOnText($event)" *ngIf="isSearchVisible()">
+        <ion-searchbar [placeholder]="Chercher" [autocomplete]="off" [autocorrect]="on" [animated]="true"
+                       (search)="filterOnText($event)" *ngIf="isSearchVisible()">
         </ion-searchbar>
         
         <div *ngIf="!isSearchVisible()">
