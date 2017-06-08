@@ -176,7 +176,7 @@ var UploadBottlesPage = (function () {
         catch (ex2) {
             self.showError('Parsing global error enreg ' + ex2);
         }
-        this.bottleService.bottlesObservable.subscribe(function (list) {
+        this.bottleService.allBottlesObservable.subscribe(function (list) {
             if (list && list.length > 0) {
                 _this.oneBottle = JSON.stringify(_this.bottles[_this.viewNb]);
             }
@@ -229,7 +229,7 @@ var UploadBottlesPage = (function () {
             catch (ex2) {
                 self.showError('Parsing global error enreg ' + ex2);
             }
-            bottleService.bottlesObservable.subscribe(function (list) {
+            bottleService.allBottlesObservable.subscribe(function (list) {
                 self.bottles = list;
                 if (list && list.length > 0) {
                     console.info(JSON.stringify(list[0]));

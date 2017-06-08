@@ -46,7 +46,7 @@ export class StatisticsService {
       return;
     }
     this.bottleService.fetchAllBottles();
-    let sub: Subscription = this.bottleService.bottlesObservable.subscribe((bottles: Bottle[]) => {
+    let sub: Subscription = this.bottleService.allBottlesObservable.subscribe((bottles: Bottle[]) => {
                     if (bottles.length != 0) {
                       this.statistics = new Statistics();
                       this.initStats(bottles);

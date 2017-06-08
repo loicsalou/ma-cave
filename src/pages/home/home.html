@@ -9,7 +9,8 @@
 <ion-content class="home card-background-page page">
   <ion-title *ngIf="!loginService.authenticated">Erreur de login:{{loginService.error}}</ion-title>
   <ion-card class="card-background" (click)="browseCellar()">
-    <img src="assets/img/vins-tranquilles.png"/>
+    <img src="assets/img/cave-sur-mesure.jpg" (click)="manageCellar()"/>
+    <!--<img src="assets/img/vins-tranquilles.png"/>-->
     <h4 class="card-title">Chercher une bouteille</h4>
     <div class="card-subtitle">Recherche par critères</div>
   </ion-card>
@@ -19,11 +20,16 @@
     <!--<statistics [axis]="'subregion_label'" [legend]="'right'"></statistics>-->
   </ion-card>
   
-  <ion-card class="card-background">
-    <img src="assets/img/cave-sur-mesure.jpg" (click)="manageCellar()"/>
-    <h4 class="card-title">Ranger la cave</h4>
-    <div class="card-subtitle">Ajouter des bouteilles, réograniser...</div>
-  </ion-card>
+  <!--<ion-card class="card-background">-->
+    <!--&lt;!&ndash;<statistics [axis]="'label'" [legend]="'left'" [topMost]="8"></statistics>&ndash;&gt;-->
+    <!--<statistics [axis]="'subregion_label'" [legend]="'right'"></statistics>-->
+  <!--</ion-card>-->
+  
+  <!--<ion-card class="card-background">-->
+    <!--<img src="assets/img/cave-sur-mesure.jpg" (click)="manageCellar()"/>-->
+    <!--<h4 class="card-title">Ranger la cave</h4>-->
+    <!--<div class="card-subtitle">Ajouter des bouteilles, réograniser...</div>-->
+  <!--</ion-card>-->
 
 </ion-content>
 <ion-footer text-right padding-horizontal>version {{version}}</ion-footer>

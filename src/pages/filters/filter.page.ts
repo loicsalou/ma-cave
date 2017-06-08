@@ -14,9 +14,15 @@ export class FilterPage {
   bottles: Bottle[];
 
   filterSet: FilterSet;
+  historyVisible=false;
 
   constructor(private bottlesService: BottleService, private menuController: MenuController) {
     this.filterSet = new FilterSet();
+  }
+
+  switchHistory() {
+      this.filterSet.switchHistory();
+      this.refineFilter(this.filterSet);
   }
 
   refineFilter(filters: FilterSet) {
