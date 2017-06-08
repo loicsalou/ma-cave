@@ -1,5 +1,5 @@
 import {Bottle} from '../../components/bottle/bottle';
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {FilterSet} from '../../components/distribution/distribution';
 import {BottleService} from '../../components/bottle/bottle-firebase.service';
 import {MenuController} from 'ionic-angular';
@@ -8,7 +8,7 @@ import {MenuController} from 'ionic-angular';
              selector: 'page-filter',
              templateUrl: 'filter.page.html'
            })
-export class FilterPage {
+export class FilterPage implements OnInit {
 
   @Input()
   bottles: Bottle[];
@@ -17,7 +17,10 @@ export class FilterPage {
   historyVisible=false;
 
   constructor(private bottlesService: BottleService, private menuController: MenuController) {
-    this.filterSet = new FilterSet();
+  }
+
+  ngOnInit(): void {
+    this.bottlesService.filtersObservable.subscribe(filterSet => this.filterSet=filterSet);
   }
 
   switchHistory() {

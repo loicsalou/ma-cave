@@ -11,6 +11,7 @@ import {BottleFactory} from '../../model/bottle.factory';
 import {Loading, LoadingController} from 'ionic-angular';
 import * as firebase from 'firebase/app';
 import Reference = firebase.database.Reference;
+import {Subject} from 'rxjs/Subject';
 
 /**
  * Services related to the bottles in the cellar.
@@ -25,7 +26,7 @@ export class BottleService {
   private _allBottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
   private _filteredBottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
   private _filteredBottlesObservable: Observable<Bottle[]> = this._filteredBottles.asObservable();
-  //private _filtersObservable: Subject<FilterSet> = new Subject<FilterSet>();
+  private _filtersObservable: Subject<FilterSet> = new Subject<FilterSet>();
   private filters: FilterSet;
   private allBottlesArray: Bottle[];
   private loading: Loading;
@@ -75,9 +76,9 @@ export class BottleService {
     return this._filteredBottlesObservable;
   }
 
-  //get filtersObservable(): Observable<FilterSet> {
-  //  return this._filtersObservable.asObservable();
-  //}
+  get filtersObservable(): Observable<FilterSet> {
+    return this._filtersObservable.asObservable();
+  }
 
   /**
    * Returns bottles that match ALL filters.
@@ -212,7 +213,7 @@ export class BottleService {
 
   private setFilters(filters: FilterSet) {
     this.filters = filters;
-    //this._filtersObservable.next(filters);
+    this._filtersObservable.next(filters);
   }
 
   public setCellarContent(bottles: Bottle[]) {

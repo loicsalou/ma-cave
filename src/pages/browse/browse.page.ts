@@ -17,7 +17,7 @@ import {Statistics} from '../../components/bottle/statistics';
            })
 export class BrowsePage implements OnInit, OnDestroy {
   private bottleSubscription: Subscription;
-  //private filterSubscription: Subscription;
+  private filterSubscription: Subscription;
   private searchBarVisible: boolean = false;
   private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
   private bottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
@@ -44,7 +44,7 @@ export class BrowsePage implements OnInit, OnDestroy {
       error => this.showMessage('error ! ' + error),
       () => this.showMessage('completed!')
     );
-    //this.filterSubscription = this.bottlesService.filtersObservable.subscribe(filterSet => this.setFilterSet(filterSet));
+    this.filterSubscription = this.bottlesService.filtersObservable.subscribe(filterSet => this.setFilterSet(filterSet));
   }
 
   ngOnDestroy(): void {
