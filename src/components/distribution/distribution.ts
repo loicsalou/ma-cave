@@ -27,7 +27,7 @@ export class DistributionComponent implements OnChanges, OnInit {
   @Output()
   filterSetChanged: EventEmitter<FilterSet> = new EventEmitter();
 
-  //axes de distribution de la distribution courante
+//axes de distribution de la distribution courante
   static DEFAULT_AXIS = [ 'label', 'subregion_label', 'classe_age' ];
   currentDistributionAxis: string[] = DistributionComponent.DEFAULT_AXIS;
 
@@ -134,6 +134,7 @@ export class FilterSet {
   label?: string[];
   classe_age?: string[];
   millesime?: string[];
+  private history: boolean = false;
 
   constructor() {
   }
@@ -162,8 +163,16 @@ export class FilterSet {
     return this.millesime && this.millesime.length > 0;
   }
 
+  switchHistory() {
+    this.history = !this.history;
+  }
+
+  searchHistory() {
+    return this.history;
+  }
+
   isEmpty() {
-    return (!this.hasText() && !this.hasAppellations() && !this.hasAges() && !this.hasCouleurs() && !this.hasMillesimes() && !this.hasRegions());
+    return (!this.hasText() && !this.hasAppellations() && !this.hasAges() && !this.hasCouleurs() && !this.hasMillesimes() && !this.hasRegions() && this.history);
   }
 
   reset() {
@@ -173,6 +182,7 @@ export class FilterSet {
     this.classe_age = undefined;
     this.millesime = undefined;
     this.subregion_label = undefined;
+    this.history = false;
   }
 
   toString() {

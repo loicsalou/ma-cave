@@ -7,12 +7,11 @@ import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {FilterSet} from '../distribution/distribution';
 import {AngularFireDatabase} from 'angularfire2/database';
-import {AngularFireAuth} from 'angularfire2/auth';
 import {BottleFactory} from '../../model/bottle.factory';
-import {Subject} from 'rxjs/Subject';
 import {Loading, LoadingController} from 'ionic-angular';
 import * as firebase from 'firebase/app';
 import Reference = firebase.database.Reference;
+import {Subject} from 'rxjs/Subject';
 
 /**
  * Services related to the bottles in the cellar.
@@ -24,10 +23,12 @@ export class BottleService {
   private firebaseRef: Reference;
   private cellarImported: boolean = false;
   private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
-  private _bottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
+  private _allBottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
+  private _filteredBottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
+  private _filteredBottlesObservable: Observable<Bottle[]> = this._filteredBottles.asObservable();
   private _filtersObservable: Subject<FilterSet> = new Subject<FilterSet>();
   private filters: FilterSet;
-  private bottlesArray: Bottle[];
+  private allBottlesArray: Bottle[];
   private loading: Loading;
 
   constructor(private bottleFactory: BottleFactory, private firebase: AngularFireDatabase,
@@ -39,14 +40,20 @@ export class BottleService {
 
   public fetchAllBottles() {
     if (this.cellarImported) {
-      this._bottles.next(this.bottlesArray);
+      this._bottles.next(this.allBottlesArray);
     } else {
       this.showLoading();
-      this.firebase.list('users/loicsalou/bottles').subscribe((bottles: Bottle[]) => {
+      this.firebase.list('users/loicsalou/bottles', {
+        query: {
+          limitToFirst: 1000,
+          orderByChild: 'quantite_courante',
+          startAt: '0'
+        }
+      }).subscribe((bottles: Bottle[]) => {
         bottles.forEach((bottle: Bottle) => this.bottleFactory.create(bottle));
-        this.bottlesArray = bottles;
+        this.allBottlesArray = bottles;
         this._bottles.next(bottles);
-        this.filters.reset();
+        this.filterOn(this.filters);
         this.dismissLoading();
       });
     }
@@ -61,8 +68,12 @@ export class BottleService {
     bottles.forEach(bottle => this.firebaseRef.push(bottle));
   }
 
-  get bottlesObservable(): Observable<Bottle[]> {
-    return this._bottlesObservable;
+  get allBottlesObservable(): Observable<Bottle[]> {
+    return this._allBottlesObservable;
+  }
+
+  get filteredBottlesObservable(): Observable<Bottle[]> {
+    return this._filteredBottlesObservable;
   }
 
   get filtersObservable(): Observable<FilterSet> {
@@ -76,19 +87,22 @@ export class BottleService {
    * @param filters
    * @returns {any}
    */
-  public filterOn(filters: FilterSet) {
+  public filterOn(filters: FilterSet): Bottle[] {
     //console.info(Date.now()+" - filtering on "+filters.toString());
-    if (this.bottlesArray == undefined) {
+    if (this.allBottlesArray == undefined) {
       return;
     }
     if (filters.isEmpty()) {
-      this._bottles.next(this.bottlesArray);
+      this._filteredBottles.next(this.allBottlesArray);
     }
 
-    let filtered = this.bottlesArray;
+    let filtered = this.allBottlesArray;
+    if (!filters.searchHistory()) {
+      filtered = filtered.filter(btl => +btl.quantite_courante > 0);
+    }
     // always start filtering using textual search
     if (filters.hasText()) {
-      filtered = this.getBottlesByKeywords(this.bottlesArray, filters.text);
+      filtered = this.getBottlesByKeywords(filtered, filters.text);
     }
 
     // on hierarchical axis like regions and ages, use most precise filter if available
@@ -117,7 +131,7 @@ export class BottleService {
 
     this.setFilters(filters);
 
-    this._bottles.next(filtered);
+    this._filteredBottles.next(filtered);
   }
 
   private showLoading() {
@@ -147,7 +161,7 @@ export class BottleService {
     if (!keywords || keywords.length == 0) {
       return this._bottles;
     }
-    let filtered = this.bottlesArray;
+    let filtered = this.allBottlesArray;
     keywords.forEach(keyword => {
       filtered = this.filterOnKeyword(filtered, keyword);
     });
@@ -204,8 +218,8 @@ export class BottleService {
 
   public setCellarContent(bottles: Bottle[]) {
     this.cellarImported = true;
-    this.bottlesArray = bottles;
-    this._bottles.next(this.bottlesArray);
+    this.allBottlesArray = bottles;
+    this._bottles.next(this.allBottlesArray);
   }
 }
 

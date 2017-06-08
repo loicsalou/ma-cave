@@ -34,7 +34,7 @@ export class BrowsePage implements OnInit, OnDestroy {
 
   ngOnInit() {
     console.info('initializing browse page instance');
-    this.bottleSubscription = this.bottlesService.bottlesObservable.subscribe(
+    this.bottleSubscription = this.bottlesService.filteredBottlesObservable.subscribe(
       (bottles: Bottle[]) => {
         this.setBottles(bottles);
         if (bottles && bottles.length > 0) {
@@ -49,7 +49,7 @@ export class BrowsePage implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     console.info('destroying browse page instance');
-    this.filterSubscription.unsubscribe();
+    //this.filterSubscription.unsubscribe();
     this.bottleSubscription.unsubscribe();
   }
 
@@ -67,7 +67,8 @@ export class BrowsePage implements OnInit, OnDestroy {
     if (this.navParams != undefined && this.navParams.data[ 'text' ] != null) {
       this.filterSet.text = this.navParams.data[ 'text' ].split(' ');
       this.navParams.data[ 'text' ] = undefined;
-      setTimeout(() => this.bottlesService.filterOn(this.filterSet), 10);
+      this.bottlesService.filterOn(this.filterSet);
+      //setTimeout(() => this.bottlesService.filterOn(this.filterSet), 10);
     }
   }
 

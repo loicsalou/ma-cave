@@ -52,7 +52,7 @@ export class StatisticsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.bottlesService.bottlesObservable.subscribe((bottles: Bottle[]) => {
+    this.bottlesService.allBottlesObservable.subscribe((bottles: Bottle[]) => {
       this.createChart(bottles.filter(btl => +btl.quantite_courante > 0));
     });
   }
@@ -105,7 +105,7 @@ export class StatisticsComponent implements OnInit {
           position: this.legend,
           labels: {
             boxWidth: 15,
-            fontSize: 8,
+            fontSize: 12,
             fontColor: 'black',
             padding: 5
           }
@@ -121,7 +121,7 @@ export class StatisticsComponent implements OnInit {
     }
 
     //on enlève regroupe les bouteilles représentant un pourcentage inférieur au seuil minimal d'importance
-    let significantData = this.reduceDistributionToSignificant(distribution, 0.02, 4);
+    let significantData = this.reduceDistributionToSignificant(distribution, 0.02, this.topMost);
     //on extrait les indexes (couleur du vin par ex)
     let axis = significantData.map(kv => kv.key);
     //on affecte les couleurs des portions du chart
@@ -150,7 +150,7 @@ export class StatisticsComponent implements OnInit {
           display: true,
           labels: {
             boxWidth: 15,
-            fontSize: 8,
+            fontSize: 12,
             fontColor: 'black',
             padding: 5
           }

@@ -14,8 +14,8 @@
                        (search)="filterOnText($event)" *ngIf="isSearchVisible()">
         </ion-searchbar>
         
-        <div *ngIf="!isSearchVisible()">
-          <ion-title wrap (click)="showSearchBar()">{{ filterSet.toString() }}</ion-title>
+        <div *ngIf="!isSearchVisible()" (click)="showSearchBar()">
+          <ion-title wrap>{{ filterSet.toString() }}</ion-title>
           <ion-note style="color: black; padding-left: 15px;">{{numberOfBottles()}} bouteilles trouvées</ion-note>
         </div>
       </ion-col>
