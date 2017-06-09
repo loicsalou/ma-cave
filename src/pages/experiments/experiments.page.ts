@@ -68,11 +68,9 @@ export class ExperimentsPage {
   }
 
   private presentAlert(title: string, text: string) {
-    let alert = this.alertController.create({
-                                              title: title,
-                                              subTitle: text,
-                                              buttons: [ 'Ok' ]
-                                            });
+    let alert = this.alertController.create(
+
+    );
     alert.present();
   }
 

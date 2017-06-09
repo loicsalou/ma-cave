@@ -35,7 +35,7 @@ export class BottleListComponent {
 
   ionDrag(bottle: Bottle, item: ItemSliding) {
     let percent = item.getSlidingPercent();
-    if (percent < 0 && Math.abs(percent) > 0.15) {
+    if (percent < 0 && Math.abs(percent) > 0.05) {
       console.info(bottle.nomCru + ' dragged');
       this.dragItem.next(<SlidingBottle>{slidingItem: item, bottle: bottle});
     }

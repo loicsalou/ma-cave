@@ -33,6 +33,8 @@ export class DistributionComponent implements OnChanges, OnInit {
 
   //distribution des bouteilles selon les axes retenus
   distribution;
+  //état des filtres par axe à l'écran
+  open={};
 
   //filtres courant et valeurs sélectionnées
   filterSet: FilterSet = new FilterSet();
@@ -107,6 +109,18 @@ export class DistributionComponent implements OnChanges, OnInit {
 
     this.checkSubFilters();
     this.distribution = this.distributionService.distributeBy(this.bottles, this.currentDistributionAxis);
+    this.distribution.forEach(d => this.isOpen[ d.axis ]);
+  }
+
+  isOpen(axis: string) {
+    if (this.open[ axis ] == undefined) {
+      this.open[ axis ] = false;
+    }
+    return this.open[ axis ];
+  }
+
+  public switchDistribution(d: Distribution) {
+    this.isOpen(d.axis) ? this.open[ d.axis ] = false : this.open[ d.axis ] = true;
   }
 
   isFilteringOn(axis: string) {

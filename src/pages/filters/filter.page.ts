@@ -20,10 +20,12 @@ export class FilterPage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.bottlesService.filtersObservable.subscribe(filterSet => this.filterSet=filterSet);
+    this.bottlesService.filtersObservable.subscribe(
+      filterSet => this.filterSet=filterSet
+    );
   }
 
-  switchHistory() {
+  switchHistory(event) {
       this.filterSet.switchHistory();
       this.refineFilter(this.filterSet);
   }

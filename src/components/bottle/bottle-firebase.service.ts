@@ -11,7 +11,6 @@ import {BottleFactory} from '../../model/bottle.factory';
 import {Loading, LoadingController} from 'ionic-angular';
 import * as firebase from 'firebase/app';
 import Reference = firebase.database.Reference;
-import {Subject} from 'rxjs/Subject';
 
 /**
  * Services related to the bottles in the cellar.
@@ -26,15 +25,14 @@ export class BottleService {
   private _allBottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
   private _filteredBottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
   private _filteredBottlesObservable: Observable<Bottle[]> = this._filteredBottles.asObservable();
-  private _filtersObservable: Subject<FilterSet> = new Subject<FilterSet>();
-  private filters: FilterSet;
+  private _filtersObservable: BehaviorSubject<FilterSet> = new BehaviorSubject<FilterSet>(new FilterSet());
+  private filters: FilterSet=new FilterSet();
   private allBottlesArray: Bottle[];
   private loading: Loading;
 
   constructor(private bottleFactory: BottleFactory, private firebase: AngularFireDatabase,
               private loadingCtrl: LoadingController) {
     this.firebaseRef = this.firebase.database.ref('users/loicsalou/bottles');
-    this.setFilters(new FilterSet());
     this.fetchAllBottles();
   }
 
@@ -88,6 +86,9 @@ export class BottleService {
    * @returns {any}
    */
   public filterOn(filters: FilterSet): Bottle[] {
+    if (!filters) {
+      return;
+    }
     //console.info(Date.now()+" - filtering on "+filters.toString());
     if (this.allBottlesArray == undefined) {
       return;

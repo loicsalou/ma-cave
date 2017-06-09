@@ -9,13 +9,16 @@
 
 <ion-content>
   <distribution [opened]="true" [bottles]="bottles" (filterSetChanged)="refineFilter($event)"></distribution>
+  
   <ion-item>
     <ion-label>Historique</ion-label>
-    <ion-toggle (click)="switchHistory()"></ion-toggle>
+    <ion-toggle (click)="switchHistory($event)"></ion-toggle>
   </ion-item>
+  
   <ion-item>
-    <button ion-button>
-      <ion-icon name="star-outline"></ion-icon>
+    <button ion-button item-right outline icon-left>
+      <ion-icon name='star'></ion-icon>
+      Favoris seuls
     </button>
   </ion-item>
   

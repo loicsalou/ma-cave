@@ -23,12 +23,11 @@ export class BrowsePage implements OnInit, OnDestroy {
   private bottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
   bottles: Bottle[];
 
-  filterSet: FilterSet;
+  filterSet: FilterSet = new FilterSet();
   private navParams: NavParams;
 
   constructor(private toastCtrl: ToastController, public navCtrl: NavController, public platform: Platform,
               private bottlesService: BottleService, private stats: Statistics, params?: NavParams) {
-    this.filterSet = new FilterSet();
     this.navParams = params;
   }
 
