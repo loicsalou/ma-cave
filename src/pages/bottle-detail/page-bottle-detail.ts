@@ -4,6 +4,7 @@ import {Bottle} from '../../components/bottle/bottle';
 import {ListBottleEvent} from '../../components/list/bottle-list-event';
 import {UpdatePage} from '../update/update.page';
 import {Observable} from 'rxjs/Observable';
+import * as _ from 'lodash';
 
 /*
  Generated class for the BottleDetail page.
@@ -20,6 +21,9 @@ export class BottleDetailPage implements OnInit {
   //liste des bouteilles pour les slides
   @Input()
   bottles: Bottle[];
+
+  //On ne crée les slides que pour ces bouteilles
+  slideBottles: Bottle[];
   bottlesObservable: Observable<Bottle[]>;
   //bouteille à afficher
   @Input()
@@ -39,9 +43,25 @@ export class BottleDetailPage implements OnInit {
 
   ngOnInit(): void {
     this.bottlesObservable.subscribe(bottles => {
-      this.bottles = bottles;
-      this.bottle = this.bottles[ this.currentIndex ];
-    })
+      if (bottles.length > 0) {
+        this.bottles = bottles;
+        this.slideBottles = this.extractSlideBottles(this.currentIndex);
+        this.bottle = this.bottles[ this.currentIndex ];
+      }
+    });
+    this.slideBottles = this.extractSlideBottles(this.currentIndex);
+
+  }
+
+  private extractSlideBottles(currentIndex: number): Bottle[] {
+    let fromIndex = (currentIndex < 1 ? 0 : currentIndex - 1);
+    let toIndex = (fromIndex + 3 > this.bottles.length ? this.bottles.length : fromIndex + 3);
+    let ret = _.slice(this.bottles, fromIndex, toIndex);
+    console.info('from ' + fromIndex + ' to ' + toIndex + ': 1.' + ret[ 0 ].nomCru +
+                 ' 2.' + ret[ 1 ].nomCru + ' 3.' + ret[ 2 ].nomCru);
+    console.info('current=' + this.currentIndex + '.' + this.bottles[this.currentIndex].nomCru);
+
+    return ret;
   }
 
   update() {
@@ -52,9 +72,10 @@ export class BottleDetailPage implements OnInit {
     this.slides.slideTo(this.currentIndex);
   }
 
-  slideChanged() {
-    this.currentIndex = this.slides.getActiveIndex();
+  slideChanged(increment: number) {
+    this.currentIndex += increment;
     this.bottle = this.bottles[ this.currentIndex ];
+    this.slideBottles = this.extractSlideBottles(this.currentIndex);
   }
 
 }

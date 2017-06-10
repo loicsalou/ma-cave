@@ -13,11 +13,13 @@
 </ion-header>
 
 <ion-content scroll="true" class="page-bottle-detail">
-  <ion-slides (ionSlideDidChange)="slideChanged()">
-    <ion-slide *ngFor="let btl of bottles; let ix=index">
+  <ion-slides (ionSlideNextEnd)="slideChanged(1)" (ionSlidePrevEnd)="slideChanged(-1)">
+    <ion-slide *ngFor="let btl of slideBottles">
       
       <div class="slide-content">
-        <slide-bottle-detail effect="cube" [bottle]="btl" [showName]="false" [index]="ix"></slide-bottle-detail>
+        <slide-bottle-detail effect="cube" [bottle]="btl" [showName]="false"
+                             (onSlideLeft)="slideChanged(-1)" (onSlideRight)="slideChanged(1)">
+        </slide-bottle-detail>
       </div>
     
     </ion-slide>
