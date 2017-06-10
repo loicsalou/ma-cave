@@ -38,22 +38,7 @@
       <li>{{ "garde_optimum" | translate }} {{ bottle.garde_min }} {{ "ans" | translate }}</li>
     </ul>
   </div>
-  <ion-row>
-    
-    <ion-col col-12>
-      <!-- Float the icon right -->
-      <button ion-button icon-right (click)="slideRight()">
-        Right Icon
-        <ion-icon name="arrow-dropright"></ion-icon>
-      </button>
-      <!-- Float the icon left -->
-      <button ion-button icon-left (click)="slideLeft()">
-        <ion-icon name="arrow-dropleft"></ion-icon>
-        Left Icon
-      </button>
-    </ion-col>
   
-  </ion-row>
   <h4>{{"infos" | translate}}</h4>
   <div>
     <p *ngIf="!bottle.suggestion && ! bottle.comment">Aucune information complémentaire</p>

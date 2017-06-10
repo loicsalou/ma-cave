@@ -18,13 +18,14 @@ import * as _ from 'lodash';
              styleUrls: [ '/page-bottle-detail.scss' ]
            })
 export class BottleDetailPage implements OnInit {
-  //liste des bouteilles pour les slides
-  @Input()
-  bottles: Bottle[];
+  private static SLIDES_BEFORE = 15;
+  private static TOTAL_SLIDES = 30;
 
   //On ne crée les slides que pour ces bouteilles
+  wholeSelection: Bottle[];
   slideBottles: Bottle[];
   bottlesObservable: Observable<Bottle[]>;
+
   //bouteille à afficher
   @Input()
   bottle: Bottle;
@@ -33,33 +34,40 @@ export class BottleDetailPage implements OnInit {
 
   //currently displayed index in the array of bottles
   currentIndex: number;
+  private originalIndex: number;
 
   constructor(public navCtrl: NavController, navParams: NavParams) {
     let bottleEvent: ListBottleEvent = navParams.data[ 'bottleEvent' ];
     this.bottlesObservable = bottleEvent.bottles;
     this.bottle = bottleEvent.bottle;
-    this.currentIndex = bottleEvent.index;
+    this.originalIndex = bottleEvent.index;
   }
 
   ngOnInit(): void {
     this.bottlesObservable.subscribe(bottles => {
       if (bottles.length > 0) {
-        this.bottles = bottles;
-        this.slideBottles = this.extractSlideBottles(this.currentIndex);
-        this.bottle = this.bottles[ this.currentIndex ];
+        this.slideBottles = this.extractSlideBottles(bottles, this.originalIndex);
+        this.wholeSelection = bottles;
       }
     });
-    this.slideBottles = this.extractSlideBottles(this.currentIndex);
 
   }
 
-  private extractSlideBottles(currentIndex: number): Bottle[] {
-    let fromIndex = (currentIndex < 1 ? 0 : currentIndex - 1);
-    let toIndex = (fromIndex + 3 > this.bottles.length ? this.bottles.length : fromIndex + 3);
-    let ret = _.slice(this.bottles, fromIndex, toIndex);
-    console.info('from ' + fromIndex + ' to ' + toIndex + ': 1.' + ret[ 0 ].nomCru +
-                 ' 2.' + ret[ 1 ].nomCru + ' 3.' + ret[ 2 ].nomCru);
-    console.info('current=' + this.currentIndex + '.' + this.bottles[this.currentIndex].nomCru);
+  private extractSlideBottles(bottles: Bottle[], targetIndex: number): Bottle[] {
+    let fromIndex = 0;
+    if (targetIndex < BottleDetailPage.SLIDES_BEFORE) {
+      fromIndex = 0;
+      this.currentIndex=targetIndex;
+    } else {
+      fromIndex = targetIndex - BottleDetailPage.SLIDES_BEFORE;
+      this.currentIndex = BottleDetailPage.SLIDES_BEFORE;
+    }
+    let toIndex = (fromIndex + BottleDetailPage.TOTAL_SLIDES > bottles.length ? bottles.length : fromIndex + BottleDetailPage.TOTAL_SLIDES);
+    let ret = _.slice(bottles, fromIndex, toIndex);
+    //console.info('from ' + fromIndex + ' to ' + toIndex + ': 1.' + ret[ 0 ].nomCru +
+    //             ' 2.' + ret[ 1 ].nomCru + ' 3.' + ret[ 2 ].nomCru);
+    //console.info('current=' + this.currentIndex + '.' + bottles[this.currentIndex].nomCru);
+    //this.bottle = ret[ this.currentIndex ];
 
     return ret;
   }
@@ -72,10 +80,27 @@ export class BottleDetailPage implements OnInit {
     this.slides.slideTo(this.currentIndex);
   }
 
-  slideChanged(increment: number) {
-    this.currentIndex += increment;
-    this.bottle = this.bottles[ this.currentIndex ];
-    this.slideBottles = this.extractSlideBottles(this.currentIndex);
+  slideChanged(event) {
+    if (event.realIndex == undefined) {
+      return;
+    }
+    this.currentIndex = event.realIndex;
+    this.bottle = this.slideBottles[ this.currentIndex ];
+  }
+
+  lastSlideReached(event) {
+    //la transition vers le dernier slide va avoir lieu. La bouteille courante n'est pas encore la dernière
+    //console.info('last slide reached');
+    //ne fonctionne pas franchement. Semble à peu près ok mais comme on est sur le dernier slide il faut que l'on
+    // reposition l'index courant sur le slide au centre de la nouvelle collection sinon on n'aura plus d'evénement
+    // lastSlideReached puisqu'on est déjà dessus.
+    //this.slideBottles = this.extractSlideBottles(this.wholeSelection, this.originalIndex + this.currentIndex);
+    //this.currentIndex=BottleDetailPage.SLIDES_BEFORE;
+    //this.bottle=this.slideBottles[this.currentIndex];
+  }
+
+  firstSlideReached(event) {
+    //console.info('first slide reached');
   }
 
 }
