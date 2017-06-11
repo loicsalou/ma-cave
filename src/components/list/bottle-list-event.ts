@@ -11,7 +11,7 @@ import {Observable} from 'rxjs/Observable';
  * - index: l'index de la bouteille choisie dans la liste, permet de se positionner directement dessus dnas les slides
  */
 export declare class ListBottleEvent {
-  bottles: Observable<Bottle[]>;
+  bottles: Bottle[];
   bottle: Bottle;
   index: number;
 }

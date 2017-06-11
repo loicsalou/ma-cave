@@ -49,8 +49,7 @@ export class BottleService {
         }
       }).subscribe((bottles: Bottle[]) => {
         bottles.forEach((bottle: Bottle) => this.bottleFactory.create(bottle));
-        this.allBottlesArray = bottles;
-        this._bottles.next(bottles);
+        this.setAllBottlesArray(bottles);
         this.filterOn(this.filters);
         this.dismissLoading();
       });
@@ -78,6 +77,11 @@ export class BottleService {
     return this._filtersObservable.asObservable();
   }
 
+  private setAllBottlesArray(bottles: Bottle[]) {
+    this.allBottlesArray=bottles;
+    this._bottles.next(bottles);
+  }
+
   /**
    * Returns bottles that match ALL filters.
    * <li>all filters must be satisfied: filtered list is refined for each new filter</li>
@@ -95,11 +99,16 @@ export class BottleService {
     }
     if (filters.isEmpty()) {
       this._filteredBottles.next(this.allBottlesArray);
+      return;
     }
 
     let filtered = this.allBottlesArray;
     if (!filters.searchHistory()) {
       filtered = filtered.filter(btl => +btl.quantite_courante > 0);
+    }
+    //ne garder que les bouteilles favorites, sinon toutes
+    if (filters.searchFavoriteOnly()) {
+      filtered = filtered.filter(btl => btl.favorite);
     }
     // always start filtering using textual search
     if (filters.hasText()) {

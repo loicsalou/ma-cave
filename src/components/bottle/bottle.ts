@@ -5,6 +5,7 @@
 export class Bottle {
   id?: string;
   classe_age?: string;
+  favorite?: boolean;
   area_label: string;
   canal_vente: string;
   comment: string;

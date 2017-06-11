@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {NavController} from 'ionic-angular';
 import {Bottle} from '../../components/bottle/bottle';
 import {UpdatePage} from '../update/update.page';

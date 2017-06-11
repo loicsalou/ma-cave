@@ -9,6 +9,7 @@ import {Observable} from 'rxjs/Observable';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Subscription} from 'rxjs/Subscription';
 import {Statistics} from '../../components/bottle/statistics';
+import * as _ from 'lodash';
 
 @Component({
              selector: 'page-browse',
@@ -19,8 +20,6 @@ export class BrowsePage implements OnInit, OnDestroy {
   private bottleSubscription: Subscription;
   private filterSubscription: Subscription;
   private searchBarVisible: boolean = false;
-  private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
-  private bottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
   bottles: Bottle[];
 
   filterSet: FilterSet = new FilterSet();
@@ -32,22 +31,38 @@ export class BrowsePage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.info('initializing browse page instance');
+    this.trace('initializing browse page instance');
+    this.setFilter();
+    this.filterSubscription = this.bottlesService.filtersObservable.subscribe(
+      filterSet => {
+        this.trace('receiving filter');
+        this.setFilterSet(filterSet);
+      });
     this.bottleSubscription = this.bottlesService.filteredBottlesObservable.subscribe(
-      (bottles: Bottle[]) => {
-        this.setBottles(bottles);
-        if (bottles && bottles.length > 0) {
-          this.checkNavigationParams();
-        }
+      (received: Bottle[]) => {
+        this.trace('receiving bottles');
+        this.bottles=[];
+        _.chunk(received, 30).forEach(
+
+        (chunk:any[], ix) => {
+          this.trace('iteration '+ix+' processing bottles after timeout '+ chunk.length);
+          setTimeout(
+              () => {
+                this.trace('inside iteration '+ix+' processing bottles after timeout '+ chunk.length);
+
+                this.bottles=_.concat(this.bottles, chunk);
+              }, ix*50
+            )
+          }
+        )
       },
       error => this.showMessage('error ! ' + error),
       () => this.showMessage('completed!')
     );
-    this.filterSubscription = this.bottlesService.filtersObservable.subscribe(filterSet => this.setFilterSet(filterSet));
   }
 
   ngOnDestroy(): void {
-    console.info('destroying browse page instance');
+    this.trace('destroying browse page instance');
     //this.filterSubscription.unsubscribe();
     this.bottleSubscription.unsubscribe();
   }
@@ -62,13 +77,16 @@ export class BrowsePage implements OnInit, OnDestroy {
   }
 
   // in case user navigated to here from the home page then we have search param ==> filter on this text
-  private checkNavigationParams() {
+  private setFilter() {
+    this.trace('checking nav params');
     if (this.navParams != undefined && this.navParams.data[ 'text' ] != null) {
       this.filterSet.text = this.navParams.data[ 'text' ].split(' ');
-      this.navParams.data[ 'text' ] = undefined;
-      this.bottlesService.filterOn(this.filterSet);
-      //setTimeout(() => this.bottlesService.filterOn(this.filterSet), 10);
     }
+    this.bottlesService.filterOn(this.filterSet);
+  }
+
+  private trace(text: string) {
+    console.info(text);
   }
 
   public isSearchVisible(): boolean {
@@ -89,7 +107,6 @@ export class BrowsePage implements OnInit, OnDestroy {
 
   private setBottles(bottles: Bottle[ ]) {
     this.bottles = bottles;
-    this._bottles.next(this.bottles);
   }
 
   filterOnText(event: any) {
@@ -103,7 +120,6 @@ export class BrowsePage implements OnInit, OnDestroy {
   }
 
   triggerDetail(bottleEvent: ListBottleEvent) {
-    bottleEvent.bottles = this.bottlesObservable;
     this.navCtrl.push(BottleDetailPage, {bottleEvent: bottleEvent});
   }
 

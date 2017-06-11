@@ -34,7 +34,7 @@ export class DistributionComponent implements OnChanges, OnInit {
   //distribution des bouteilles selon les axes retenus
   distribution;
   //état des filtres par axe à l'écran
-  open={};
+  open = {};
 
   //filtres courant et valeurs sélectionnées
   filterSet: FilterSet = new FilterSet();
@@ -149,6 +149,7 @@ export class FilterSet {
   classe_age?: string[];
   millesime?: string[];
   private history: boolean = false;
+  private favoriteOnly: boolean = false;
 
   constructor() {
   }
@@ -181,12 +182,27 @@ export class FilterSet {
     this.history = !this.history;
   }
 
+  switchFavorite() {
+    this.favoriteOnly = !this.favoriteOnly
+  }
+
   searchHistory() {
     return this.history;
   }
 
+  searchFavoriteOnly() {
+    return this.favoriteOnly;
+  }
+
+  /**
+   * empty si aucun filtrage en place susceptible de changer la liste chargée de la base.
+   * A noter le "favoriteOnly" ne permet que de se concentrer sur les bouteilles favorites. Si il est à false one ne
+   * se préoccupe pas du status favotire ou pas de la bouteille.
+   * @returns {boolean}
+   */
   isEmpty() {
-    return (!this.hasText() && !this.hasAppellations() && !this.hasAges() && !this.hasCouleurs() && !this.hasMillesimes() && !this.hasRegions() && this.history);
+    return (!this.hasText() && !this.hasAppellations() && !this.hasAges() && !this.hasCouleurs() && !this.hasMillesimes()
+            && !this.hasRegions() && this.history && !this.favoriteOnly);
   }
 
   reset() {
