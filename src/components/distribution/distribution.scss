@@ -8,11 +8,9 @@
   ion-badge {
     margin-bottom: 5px;
     margin-right: 5px;
+    &.selected {
+      border: thin solid red;
+    }
   }
 
-  ion-chip {
-    margin-right: 5px;
-    padding-left: 7px;
-    padding-right: 7px;
-  }
 }
