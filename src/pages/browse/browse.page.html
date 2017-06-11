@@ -16,7 +16,7 @@
         
         <div *ngIf="!isSearchVisible()" (click)="showSearchBar()">
           <ion-title wrap>{{ filterSet.toString() }}</ion-title>
-          <ion-note style="color: black; padding-left: 15px;">{{numberOfBottles()}} bouteilles trouvées</ion-note>
+          <ion-note style="color: black; padding-left: 15px;">{{numberOfLots()}} crus / {{numberOfBottles()}} bouteilles</ion-note>
         </div>
       </ion-col>
     </ion-row>

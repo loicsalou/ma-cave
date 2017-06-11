@@ -47,6 +47,7 @@ export class StatisticsComponent implements OnInit {
 
   @ViewChild('chart') canvas;
   chart: any;
+  private totalNumberOfLots: number;
 
   constructor(private distributionService: DistributeService, private bottlesService: BottleService) {
   }
@@ -61,7 +62,8 @@ export class StatisticsComponent implements OnInit {
     let distribution: Distribution[] = this.distributionService.distributeBy(bottles, [ this.axis ]);
     console.info('distribution de ' + bottles.length + ' faite');
     if (bottles.length !== 0) {
-      this.totalNumberOfBottles = bottles.length;
+      this.totalNumberOfLots = bottles.length;
+      this.totalNumberOfBottles=bottles.reduce((tot:number,btl:Bottle) => tot+ +btl.quantite_courante, 0);
       if (this.axis == 'label') {
         this.createColorChart(distribution[ 0 ]);
       } else if (this.axis == 'subregion_label') {
