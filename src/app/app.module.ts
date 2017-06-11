@@ -33,6 +33,9 @@ import {Statistics} from '../components/bottle/statistics';
 import { StatisticsComponent } from '../components/statistics/statistics';
 import {LoginService} from '../pages/home/login.service';
 import {StatisticsService} from '../components/statistics/statistics-firebase.service';
+import {ChartsModule} from 'ng2-charts';
+import '../../node_modules/chart.js/dist/Chart.bundle.min.js';
+
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -75,7 +78,8 @@ export const fireConfig = {
               AngularFireModule.initializeApp(fireConfig),
               AngularFireAuthModule,
               AngularFireDatabaseModule,
-              UploadBottlesModule
+              UploadBottlesModule,
+              ChartsModule
             ],
             bootstrap: [ IonicApp ],
             entryComponents: [

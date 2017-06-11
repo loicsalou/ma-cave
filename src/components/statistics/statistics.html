@@ -1,9 +1,9 @@
-<!-- Generated template for the StatisticsComponent component -->
-<div class="statistics">
-  <ion-title>{{totalNumberOfLots}} crus / {{totalNumberOfBottles}} bouteilles</ion-title>
-  <ion-row>
-    <ion-col col-12>
-      <canvas #chart></canvas>
-    </ion-col>
-  </ion-row>
+<div style="display: block" *ngIf="ready">
+  <canvas baseChart
+          [data]="doughnutChartData"
+          [labels]="doughnutChartLabels"
+          [chartType]="doughnutChartType"
+          [options]="doughnutOptions"
+          (chartHover)="chartHovered($event)"
+          (chartClick)="chartClicked($event)"></canvas>
 </div>

@@ -1,5 +1,5 @@
 import {Bottle} from '../../components/bottle/bottle';
-import {Component, Input, OnInit, OnChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit} from '@angular/core';
 import {FilterSet} from '../../components/distribution/distribution';
 import {BottleService} from '../../components/bottle/bottle-firebase.service';
 import {MenuController} from 'ionic-angular';
@@ -13,35 +13,36 @@ export class FilterPage implements OnInit, OnChanges {
   @Input()
   bottles: Bottle[];
 
-  nbOfBottles: number=0;
+  nbOfBottles: number = 0;
   filterSet: FilterSet;
-  historyVisible=false;
+  historyVisible = false;
 
   constructor(private bottlesService: BottleService, private menuController: MenuController) {
   }
 
   ngOnInit(): void {
     this.bottlesService.filtersObservable.subscribe(
-      filterSet => this.filterSet=filterSet
+      filterSet => this.filterSet = filterSet
     );
   }
 
   ngOnChanges() {
     if (this.bottles) {
-      this.nbOfBottles = this.bottles.reduce((tot:number, btl: Bottle) => tot+ +btl.quantite_courante, 0);
+      this.nbOfBottles = this.bottles.reduce((tot: number, btl: Bottle) => tot + +btl.quantite_courante, 0);
     }
   }
 
   switchFavorite(event) {
-      this.filterSet.switchFavorite();
-      this.refineFilter(this.filterSet);
+    this.filterSet.switchFavorite();
+    this.bottlesService.filterOn(this.filterSet);
   }
 
   switchHistory(event) {
-      this.filterSet.switchHistory();
-      this.refineFilter(this.filterSet);
+    this.filterSet.switchHistory();
+    this.bottlesService.filterOn(this.filterSet);
   }
 
+  //appelé depuis la page des filtres dnas le but d'enrichir le filtre textuel existant déjà si c'est le cas
   refineFilter(filters: FilterSet) {
     filters.text = this.filterSet.text;
     this.filterSet = filters;

@@ -169,9 +169,9 @@ export class BottleService {
    */
   private getBottlesByKeywords(fromList: Bottle[], keywords: string[]): any {
     if (!keywords || keywords.length == 0) {
-      return this._bottles;
+      return fromList;
     }
-    let filtered = this.allBottlesArray;
+    let filtered = fromList;
     keywords.forEach(keyword => {
       filtered = this.filterOnKeyword(filtered, keyword);
     });

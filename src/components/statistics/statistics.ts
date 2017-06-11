@@ -1,9 +1,12 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {DistributeService} from '../distribution/distribute.service';
-import {Chart} from 'chart.js';
+import {Chart, ChartElement} from 'chart.js';
 import {BottleService} from '../bottle/bottle-firebase.service';
 import {Bottle} from '../bottle/bottle';
 import * as _ from 'lodash';
+import {FilterSet} from '../distribution/distribution';
+import {NavController} from 'ionic-angular';
+import {BrowsePage} from '../../pages/browse/browse.page';
 
 /**
  * Generated class for the StatisticsComponent component.
@@ -16,15 +19,17 @@ import * as _ from 'lodash';
              templateUrl: 'statistics.html'
            })
 export class StatisticsComponent implements OnInit {
-  //axes de distribution de la distribution courante
+// axes de distribution de la distribution courante
   @Input()
   axis: string;
   @Input()
   legend: string;
   @Input()
-  topMost: number=6;
+  topMost: number = 6;
 
-  static DEFAULT_AXIS = [ 'label', 'subregion_label', 'classe_age' ];
+  ready=false;
+
+//  static DEFAULT_AXIS = [ 'label', 'subregion_label', 'classe_age' ];
   static STANDARD_COLORS = [
     'blue', 'red', 'orange', 'aqua', 'aquamarine', 'blueviolet', 'green', 'cornsilk', 'fuchsia', 'grey', 'black'
   ];
@@ -44,12 +49,25 @@ export class StatisticsComponent implements OnInit {
   };
 
   totalNumberOfBottles: number = 0;
-
-  @ViewChild('chart') canvas;
-  chart: any;
+//
+//  @ViewChild('chart') canvas;
+//  chart: any;
   private totalNumberOfLots: number;
 
-  constructor(private distributionService: DistributeService, private bottlesService: BottleService) {
+  // Doughnut
+  public doughnutChartLabels:string[] = ['Download Sales', 'In-Store Sales', 'Mail-Order Sales'];
+  public doughnutChartData:number[] = [350, 450, 100];
+  public doughnutChartType:string = 'doughnut';
+  public doughnutColors: Array<string> = new Array();
+  public doughnutOptions = {
+    scaleShowVerticalLines: false,
+    responsive: true,
+    legend: {
+      position:'left'
+    }
+  };
+
+  constructor(private distributionService: DistributeService, private bottlesService: BottleService, private nav: NavController) {
   }
 
   ngOnInit(): void {
@@ -63,11 +81,12 @@ export class StatisticsComponent implements OnInit {
     console.info('distribution de ' + bottles.length + ' faite');
     if (bottles.length !== 0) {
       this.totalNumberOfLots = bottles.length;
-      this.totalNumberOfBottles=bottles.reduce((tot:number,btl:Bottle) => tot+ +btl.quantite_courante, 0);
+      this.totalNumberOfBottles = bottles.reduce((tot: number, btl: Bottle) => tot + +btl.quantite_courante, 0);
       if (this.axis == 'label') {
         this.createColorChart(distribution[ 0 ]);
-      } else if (this.axis == 'subregion_label') {
-        this.createRegionChart(distribution[ 0 ]);
+        this.ready=true;
+      //} else if (this.axis == 'subregion_label') {
+      //  this.createRegionChart(distribution[ 0 ]);
       }
     }
   }
@@ -77,89 +96,17 @@ export class StatisticsComponent implements OnInit {
       return;
     }
 
-    //on enlève regroupe les bouteilles représentant un pourcentage inférieur au seuil minimal d'importance
+    //on enlève / regroupe les bouteilles représentant un pourcentage inférieur au seuil minimal d'importance
     let significantData = this.reduceDistributionToSignificant(distribution, 0.02, this.topMost);
     //on extrait les indexes (couleur du vin par ex)
-    let axis = significantData.map(kv => kv.key);
+    this.doughnutChartLabels = significantData.map(kv => kv.key);
     //on affecte les couleurs des portions du chart
-    let colors = axis.map(colorname => StatisticsComponent.COLORS_BY_WINECOLOR[ colorname ]);
+    this.doughnutColors = this.doughnutChartLabels.map(colorname => StatisticsComponent.COLORS_BY_WINECOLOR[ colorname ]);
     //les borders sont gris
-    let borderColors: string[] = new Array(axis.length);
+    let borderColors: string[] = new Array(this.doughnutChartLabels.length);
     borderColors = _.fill(borderColors, 'grey');
     //on extrait les valeurs correspondantes (rouge, blanc par ex)
-    let values = significantData.map(kv => kv.value);
-    this.chart = new Chart(this.canvas.nativeElement, {
-
-      type: 'doughnut',
-      data: {
-        labels: axis,
-        datasets: [ {
-          label: '# bouteilles',
-          data: values,
-          backgroundColor: colors,
-          borderColor: borderColors,
-          borderWidth: .5
-        } ]
-      },
-      options: {
-        legend: {
-          display: true,
-          position: this.legend,
-          labels: {
-            boxWidth: 15,
-            fontSize: 12,
-            fontColor: 'black',
-            padding: 5
-          }
-        }
-      }
-
-    });
-  }
-
-  createRegionChart(distribution: Distribution) {
-    if (!distribution) {
-      return;
-    }
-
-    //on enlève regroupe les bouteilles représentant un pourcentage inférieur au seuil minimal d'importance
-    let significantData = this.reduceDistributionToSignificant(distribution, 0.02, this.topMost);
-    //on extrait les indexes (couleur du vin par ex)
-    let axis = significantData.map(kv => kv.key);
-    //on affecte les couleurs des portions du chart
-    let colors = axis.map((colorname, i) => StatisticsComponent.STANDARD_COLORS[ i % StatisticsComponent.STANDARD_COLORS.length ]);
-    //les borders sont gris
-    let borderColors: string[] = new Array(axis.length);
-    borderColors = _.fill(borderColors, 'grey');
-    //on extrait les valeurs correspondantes (rouge, blanc par ex)
-    let values = significantData.map(kv => kv.value);
-
-    this.chart = new Chart(this.chart.nativeElement, {
-
-      type: 'doughnut',
-      data: {
-        labels: axis,
-        datasets: [ {
-          label: '# bouteilles',
-          data: values,
-          backgroundColor: colors,
-          borderColor: borderColors,
-          borderWidth: .5
-        } ]
-      },
-      options: {
-        legend: {
-          display: true,
-          labels: {
-            boxWidth: 15,
-            fontSize: 12,
-            fontColor: 'black',
-            padding: 5
-          }
-        }
-      }
-
-    });
+    this.doughnutChartData = significantData.map(kv => kv.value);
   }
 
   /**
@@ -195,4 +142,22 @@ export class StatisticsComponent implements OnInit {
 
     return significantData;
   }
+
+  // events
+  public chartClicked(e:any):void {
+    if (e.active) {
+      let axisIndex=e.active[0]['_index'];
+      let color=this.doughnutChartLabels[axisIndex];
+      let fs:FilterSet= new FilterSet();
+      fs.label=[color];
+
+      this.nav.push(BrowsePage,{filterSet: fs});
+      this.bottlesService.filterOn(fs);
+    }
+  }
+
+  public chartHovered(e:any):void {
+    console.log(e);
+  }
+
 }
