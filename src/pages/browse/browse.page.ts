@@ -5,8 +5,6 @@ import {Bottle} from '../../components/bottle/bottle';
 import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
 import {ListBottleEvent} from '../../components/list/bottle-list-event';
 import {FilterSet} from '../../components/distribution/distribution';
-import {Observable} from 'rxjs/Observable';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Subscription} from 'rxjs/Subscription';
 import {Statistics} from '../../components/bottle/statistics';
 import * as _ from 'lodash';
@@ -24,6 +22,7 @@ export class BrowsePage implements OnInit, OnDestroy {
 
   filterSet: FilterSet = new FilterSet();
   private navParams: NavParams;
+  private nbOfBottles: number = 0;
 
   constructor(private toastCtrl: ToastController, public navCtrl: NavController, public platform: Platform,
               private bottlesService: BottleService, private stats: Statistics, params?: NavParams) {
@@ -41,17 +40,20 @@ export class BrowsePage implements OnInit, OnDestroy {
     this.bottleSubscription = this.bottlesService.filteredBottlesObservable.subscribe(
       (received: Bottle[]) => {
         this.trace('receiving bottles');
-        this.bottles=[];
+        this.bottles = [];
+        this.nbOfBottles = 0;
         _.chunk(received, 30).forEach(
-
-        (chunk:any[], ix) => {
-          this.trace('iteration '+ix+' processing bottles after timeout '+ chunk.length);
-          setTimeout(
+          (chunk: any[], ix) => {
+            this.trace('iteration ' + ix + ' processing bottles after timeout ' + chunk.length);
+            setTimeout(
               () => {
-                this.trace('inside iteration '+ix+' processing bottles after timeout '+ chunk.length);
-
-                this.bottles=_.concat(this.bottles, chunk);
-              }, ix*50
+                this.trace('inside iteration ' + ix + ' processing bottles after timeout ' + chunk.length);
+                this.nbOfBottles += chunk.reduce(
+                  (tot: number, btl2: Bottle) => tot + +btl2.quantite_courante,
+                  0
+                );
+                this.bottles = _.concat(this.bottles, chunk);
+              }, ix * 50
             )
           }
         )
@@ -98,6 +100,11 @@ export class BrowsePage implements OnInit, OnDestroy {
   }
 
   public numberOfBottles(): number {
+    return this.nbOfBottles;
+    //return this.bottles == undefined ? 0 : this.bottles.length;
+  }
+
+  public numberOfLots(): number {
     return this.bottles == undefined ? 0 : this.bottles.length;
   }
 
