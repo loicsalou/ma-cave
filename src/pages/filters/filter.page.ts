@@ -1,5 +1,5 @@
 import {Bottle} from '../../components/bottle/bottle';
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, OnChanges} from '@angular/core';
 import {FilterSet} from '../../components/distribution/distribution';
 import {BottleService} from '../../components/bottle/bottle-firebase.service';
 import {MenuController} from 'ionic-angular';
@@ -8,11 +8,12 @@ import {MenuController} from 'ionic-angular';
              selector: 'page-filter',
              templateUrl: 'filter.page.html'
            })
-export class FilterPage implements OnInit {
+export class FilterPage implements OnInit, OnChanges {
 
   @Input()
   bottles: Bottle[];
 
+  nbOfBottles: number=0;
   filterSet: FilterSet;
   historyVisible=false;
 
@@ -23,6 +24,12 @@ export class FilterPage implements OnInit {
     this.bottlesService.filtersObservable.subscribe(
       filterSet => this.filterSet=filterSet
     );
+  }
+
+  ngOnChanges() {
+    if (this.bottles) {
+      this.nbOfBottles = this.bottles.reduce((tot:number, btl: Bottle) => tot+ +btl.quantite_courante, 0);
+    }
   }
 
   switchFavorite(event) {
@@ -41,8 +48,12 @@ export class FilterPage implements OnInit {
     this.bottlesService.filterOn(filters);
   }
 
-  nbOFBottles(): number {
+  getNbOfLots(): number {
     return this.bottles == undefined ? 0 : this.bottles.length;
+  }
+
+  getNbOfBottles(): number {
+    return this.nbOfBottles;
   }
 
   close() {
