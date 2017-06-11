@@ -30,7 +30,7 @@ export class BottleListComponent {
   }
 
   triggerDetail(bottle: Bottle, index: number) {
-    this.showDetail.emit(<ListBottleEvent>{bottle: bottle, index: index});
+    this.showDetail.emit(<ListBottleEvent>{bottle: bottle, bottles: this.bottles, index: index});
   }
 
   ionDrag(bottle: Bottle, item: ItemSliding) {
@@ -44,11 +44,6 @@ export class BottleListComponent {
   switchSelected(event: Event, bottle: Bottle) {
     event.stopPropagation();
     bottle[ 'selected' ] = bottle[ 'selected' ] ? !bottle[ 'selected' ] : true;
-    //if (this.isSelected(bottle)) {
-    //  this.selected = this.selected.filter(btl => btl.id != bottle.id);
-    //} else {
-    //  this.selected.push(bottle);
-    //}
   }
 
   isSelected(bottle) {
@@ -57,7 +52,7 @@ export class BottleListComponent {
   }
 
   isBottleFavorite(bottle: Bottle): boolean {
-    return bottle[ 'favorite' ];
+    return bottle.favorite;
     //return this.favorites.filter(item => item.id === bottle.id).length == 1;
   }
 
@@ -66,14 +61,7 @@ export class BottleListComponent {
   }
 
   manageFavorites(slidingItem: ItemSliding, bottle: Bottle) {
-    bottle[ 'favorite' ] = bottle[ 'favorite' ] ? !bottle[ 'favorite' ] : true;
-    //if (this.isBottleFavorite(bottle)) {
-    //  this.favorites = this.favorites.filter(btl => btl.id != bottle.id);
-    //  console.info(bottle.nomCru + ' no longer favorite');
-    //} else {
-    //  this.favorites.push(bottle);
-    //  console.info(bottle.nomCru + ' is now favorite');
-    //}
+    bottle.favorite = bottle.favorite ? !bottle.favorite : true;
     slidingItem.close();
   }
 

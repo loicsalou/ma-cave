@@ -3,7 +3,6 @@ import {NavController, NavParams, Slides} from 'ionic-angular';
 import {Bottle} from '../../components/bottle/bottle';
 import {ListBottleEvent} from '../../components/list/bottle-list-event';
 import {UpdatePage} from '../update/update.page';
-import {Observable} from 'rxjs/Observable';
 import * as _ from 'lodash';
 
 /*
@@ -24,7 +23,6 @@ export class BottleDetailPage implements OnInit {
   //On ne crée les slides que pour ces bouteilles
   wholeSelection: Bottle[];
   slideBottles: Bottle[];
-  bottlesObservable: Observable<Bottle[]>;
 
   //bouteille à afficher
   @Input()
@@ -38,26 +36,20 @@ export class BottleDetailPage implements OnInit {
 
   constructor(public navCtrl: NavController, navParams: NavParams) {
     let bottleEvent: ListBottleEvent = navParams.data[ 'bottleEvent' ];
-    this.bottlesObservable = bottleEvent.bottles;
+    this.wholeSelection = bottleEvent.bottles;
     this.bottle = bottleEvent.bottle;
     this.originalIndex = bottleEvent.index;
   }
 
   ngOnInit(): void {
-    this.bottlesObservable.subscribe(bottles => {
-      if (bottles.length > 0) {
-        this.slideBottles = this.extractSlideBottles(bottles, this.originalIndex);
-        this.wholeSelection = bottles;
-      }
-    });
-
+    this.slideBottles = this.extractSlideBottles(this.wholeSelection, this.originalIndex);
   }
 
   private extractSlideBottles(bottles: Bottle[], targetIndex: number): Bottle[] {
     let fromIndex = 0;
     if (targetIndex < BottleDetailPage.SLIDES_BEFORE) {
       fromIndex = 0;
-      this.currentIndex=targetIndex;
+      this.currentIndex = targetIndex;
     } else {
       fromIndex = targetIndex - BottleDetailPage.SLIDES_BEFORE;
       this.currentIndex = BottleDetailPage.SLIDES_BEFORE;

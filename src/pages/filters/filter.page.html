@@ -16,10 +16,8 @@
   </ion-item>
   
   <ion-item>
-    <button ion-button item-right outline icon-left>
-      <ion-icon name='star'></ion-icon>
-      Favoris seuls
-    </button>
+    <ion-label>Favoris seuls</ion-label>
+    <ion-toggle (click)="switchFavorite($event)"></ion-toggle>
   </ion-item>
   
   <div style="height:35px"></div>

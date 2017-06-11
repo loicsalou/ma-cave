@@ -25,6 +25,11 @@ export class FilterPage implements OnInit {
     );
   }
 
+  switchFavorite(event) {
+      this.filterSet.switchFavorite();
+      this.refineFilter(this.filterSet);
+  }
+
   switchHistory(event) {
       this.filterSet.switchHistory();
       this.refineFilter(this.filterSet);
