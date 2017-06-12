@@ -12,12 +12,12 @@
   
   <ion-item>
     <ion-label>Historique</ion-label>
-    <ion-toggle (click)="switchHistory($event)"></ion-toggle>
+    <ion-toggle (ionChange)="switchHistory($event)"></ion-toggle>
   </ion-item>
   
   <ion-item>
     <ion-label>Favoris seuls</ion-label>
-    <ion-toggle (click)="switchFavorite($event)"></ion-toggle>
+    <ion-toggle (ionChange)="switchFavorite($event)"></ion-toggle>
   </ion-item>
   
   <div style="height:35px"></div>
