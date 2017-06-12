@@ -8,6 +8,7 @@
 </ion-header>
 
 <ion-content>
+  
   <distribution [opened]="true" [bottles]="bottles" (filterSetChanged)="refineFilter($event)"></distribution>
   
   <ion-item>
@@ -19,6 +20,17 @@
     <ion-label>Favoris seuls</ion-label>
     <ion-toggle (ionChange)="switchFavorite($event)"></ion-toggle>
   </ion-item>
+  
+  <ion-row align-items-start>
+    <ion-col margin-left col-4 align-item-center>
+      <ion-label>Asc</ion-label>
+      <ion-checkbox [(ngModel)]="ascending"></ion-checkbox>
+    </ion-col>
+    <ion-col padding-top col-7>
+      <ion-badge margin-right margin-bottom *ngFor="let axis of sortAxis" (click)="sort(axis)">{{axis
+        .name}}</ion-badge>
+    </ion-col>
+  </ion-row>
   
   <div style="height:35px"></div>
 </ion-content>
