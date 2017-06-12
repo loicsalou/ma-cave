@@ -7,7 +7,6 @@ import {HomePage} from '../pages/home/home';
 import {TabsPage} from '../pages/tabs/tabs';
 import {BrowsePage} from '../pages/browse/browse.page';
 import {BottleService} from '../components/bottle/bottle-firebase.service';
-import {BottleItemComponent} from '../components/list/bottle-item-component/bottle-item.component';
 import {DistributeService} from '../components/distribution/distribute.service';
 import {DistributionComponent} from '../components/distribution/distribution';
 import {BottleIconPipe} from '../components/list/bottle-item-component/bottle-icon.pipe';
@@ -57,7 +56,6 @@ export const fireConfig = {
               BottleDetailPage,
               BottleDetailSlide,
               DistributionComponent,
-              BottleItemComponent,
               BottleIconPipe,
               BottleListComponent,
               TabsPage,

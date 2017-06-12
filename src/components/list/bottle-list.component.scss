@@ -1,5 +1,10 @@
 .bottle-page {
 
+  ion-label {
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+
   button[ion-button] img {
     border-radius: 50%;
     border: thin solid black;
