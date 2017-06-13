@@ -78,7 +78,7 @@ export class StatisticsComponent implements OnInit {
 
   private createChart(bottles: Bottle[]) {
     let distribution: Distribution[] = this.distributionService.distributeBy(bottles, [ this.axis ]);
-    console.info('distribution de ' + bottles.length + ' faite');
+    //console.info('distribution de ' + bottles.length + ' faite');
     if (bottles.length !== 0) {
       this.totalNumberOfLots = bottles.length;
       this.totalNumberOfBottles = bottles.reduce((tot: number, btl: Bottle) => tot + +btl.quantite_courante, 0);
@@ -157,7 +157,7 @@ export class StatisticsComponent implements OnInit {
   }
 
   public chartHovered(e:any):void {
-    console.log(e);
+    //console.log(e);
   }
 
 }

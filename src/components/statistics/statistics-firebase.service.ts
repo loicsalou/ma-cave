@@ -10,9 +10,9 @@ import {AngularFireDatabase} from 'angularfire2/database';
 import {AlertController, LoadingController} from 'ionic-angular';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
+import {Subscription} from 'rxjs/Subscription';
 import Reference = firebase.database.Reference;
 import DataSnapshot = firebase.database.DataSnapshot;
-import {Subscription} from 'rxjs/Subscription';
 
 /**
  * Services related to the bottles in the cellar.
@@ -47,15 +47,15 @@ export class StatisticsService {
     }
     this.bottleService.fetchAllBottles();
     let sub: Subscription = this.bottleService.allBottlesObservable.subscribe((bottles: Bottle[]) => {
-                    if (bottles.length != 0) {
-                      this.statistics = new Statistics();
-                      this.initStats(bottles);
-                      if (this.statistics != null) {
-                        this.firebaseRef.push(this.statistics);
-                      }
-                      sub.unsubscribe();
-                    }
-                  }, err => this.alertCtrl.create(this.pushError(err)).present()
+                                                                                if (bottles.length != 0) {
+                                                                                  this.statistics = new Statistics();
+                                                                                  this.initStats(bottles);
+                                                                                  if (this.statistics != null) {
+                                                                                    this.firebaseRef.push(this.statistics);
+                                                                                  }
+                                                                                  sub.unsubscribe();
+                                                                                }
+                                                                              }, err => this.alertCtrl.create(this.pushError(err)).present()
     )
   }
 
@@ -68,7 +68,11 @@ export class StatisticsService {
     this.firebaseRef.limitToFirst(1).on('value', (stats: DataSnapshot) => {
       this.snapshot = stats;
       this.statistics = stats.val()
-    }, err => console.error('no statistics found'));
+    }, err => this.alertCtrl.create({
+                                      title: 'Echec',
+                                      subTitle: 'Aucune statistique trouvée' + err,
+                                      buttons: [ 'Ok' ]
+                                    }).present());
   }
 
   private updateFrom(btl: Bottle) {
