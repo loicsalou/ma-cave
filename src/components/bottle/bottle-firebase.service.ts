@@ -64,7 +64,7 @@ export class BottleService {
   }
 
   public replaceBottle(bottle: Bottle) {
-    this.firebaseItems.set(bottle['$ref'], bottle);
+    //this.firebaseItems.set(bottle['$ref'], bottle);
   }
 
   public initializeDB(bottles: Bottle[]) {
