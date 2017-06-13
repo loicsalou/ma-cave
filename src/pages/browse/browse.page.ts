@@ -81,8 +81,12 @@ export class BrowsePage implements OnInit, OnDestroy {
   // in case user navigated to here from the home page then we have search param ==> filter on this text
   private setFilter() {
     this.trace('checking nav params');
-    if (this.navParams != undefined && this.navParams.data[ 'text' ] != null) {
-      this.filterSet.text = this.navParams.data[ 'text' ].split(' ');
+    if (this.navParams != undefined) {
+      if (this.navParams.data[ 'text' ] != null) {
+        this.filterSet.text = this.navParams.data[ 'text' ].split(' ');
+      } else if (this.navParams.data[ 'filterSet' ] != null) {
+        this.filterSet = this.navParams.data[ 'filterSet' ];
+      }
     }
     this.bottlesService.filterOn(this.filterSet);
   }

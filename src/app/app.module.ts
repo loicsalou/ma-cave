@@ -7,7 +7,6 @@ import {HomePage} from '../pages/home/home';
 import {TabsPage} from '../pages/tabs/tabs';
 import {BrowsePage} from '../pages/browse/browse.page';
 import {BottleService} from '../components/bottle/bottle-firebase.service';
-import {BottleItemComponent} from '../components/list/bottle-item-component/bottle-item.component';
 import {DistributeService} from '../components/distribution/distribute.service';
 import {DistributionComponent} from '../components/distribution/distribution';
 import {BottleIconPipe} from '../components/list/bottle-item-component/bottle-icon.pipe';
@@ -33,6 +32,9 @@ import {Statistics} from '../components/bottle/statistics';
 import { StatisticsComponent } from '../components/statistics/statistics';
 import {LoginService} from '../pages/home/login.service';
 import {StatisticsService} from '../components/statistics/statistics-firebase.service';
+import {ChartsModule} from 'ng2-charts';
+import '../../node_modules/chart.js/dist/Chart.bundle.min.js';
+
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -54,7 +56,6 @@ export const fireConfig = {
               BottleDetailPage,
               BottleDetailSlide,
               DistributionComponent,
-              BottleItemComponent,
               BottleIconPipe,
               BottleListComponent,
               TabsPage,
@@ -75,7 +76,8 @@ export const fireConfig = {
               AngularFireModule.initializeApp(fireConfig),
               AngularFireAuthModule,
               AngularFireDatabaseModule,
-              UploadBottlesModule
+              UploadBottlesModule,
+              ChartsModule
             ],
             bootstrap: [ IonicApp ],
             entryComponents: [
