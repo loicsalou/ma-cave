@@ -3,7 +3,6 @@ import {Component, Input, OnChanges, OnInit} from '@angular/core';
 import {FilterSet} from '../../components/distribution/distribution';
 import {BottleService} from '../../components/bottle/bottle-firebase.service';
 import {MenuController} from 'ionic-angular';
-import * as _ from 'lodash';
 
 @Component({
              selector: 'page-filter',
@@ -13,7 +12,7 @@ export class FilterPage implements OnInit, OnChanges {
   //public sortAxis = [ 'Quantité', 'Millésime', 'Région' ];
 
   public sortAxis = [
-    {id: 'qty', name: 'Quantité', col: 'quantite_restante'},
+    {id: 'qty', name: 'Quantité', col: 'quantite_courante'},
     {id: 'vintage', name: 'Millésime', col: 'millesime'},
     {id: 'area', name: 'Région', col: 'area_label'}
   ]
@@ -36,8 +35,7 @@ export class FilterPage implements OnInit, OnChanges {
   }
 
   sort(axis: any) {
-    console.info('tri demandé sur ' + axis.name + ' ' + (this.ascending ? 'ascendant' : 'descendant'));
-    this.bottles = _.orderBy(this.bottles, [ axis.col, this.ascending ? 'asc' : 'desc' ]);
+    this.bottlesService.filterOn(this.filterSet, axis.col, (this.ascending ? 'asc' : 'desc'))
   }
 
   ngOnChanges() {

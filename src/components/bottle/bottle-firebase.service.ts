@@ -11,6 +11,7 @@ import {BottleFactory} from '../../model/bottle.factory';
 import {Loading, LoadingController} from 'ionic-angular';
 import * as firebase from 'firebase/app';
 import Reference = firebase.database.Reference;
+import * as _ from 'lodash';
 
 /**
  * Services related to the bottles in the cellar.
@@ -89,7 +90,8 @@ export class BottleService {
    * @param filters
    * @returns {any}
    */
-  public filterOn(filters: FilterSet): Bottle[] {
+  public filterOn(filters: FilterSet, name?: string, order?: string): Bottle[] {
+
     if (!filters) {
       return;
     }
@@ -97,48 +99,48 @@ export class BottleService {
     if (this.allBottlesArray == undefined) {
       return;
     }
-    if (filters.isEmpty()) {
-      this._filteredBottles.next(this.allBottlesArray);
-      return;
-    }
 
     let filtered = this.allBottlesArray;
-    if (!filters.searchHistory()) {
-      filtered = filtered.filter(btl => +btl.quantite_courante > 0);
-    }
-    //ne garder que les bouteilles favorites, sinon toutes
-    if (filters.searchFavoriteOnly()) {
-      filtered = filtered.filter(btl => btl.favorite);
-    }
-    // always start filtering using textual search
-    if (filters.hasText()) {
-      filtered = this.getBottlesByKeywords(filtered, filters.text);
-    }
+    if (!filters.isEmpty()) {
+      if (!filters.searchHistory()) {
+        filtered = filtered.filter(btl => +btl.quantite_courante > 0);
+      }
+      //ne garder que les bouteilles favorites, sinon toutes
+      if (filters.searchFavoriteOnly()) {
+        filtered = filtered.filter(btl => btl.favorite);
+      }
+      // always start filtering using textual search
+      if (filters.hasText()) {
+        filtered = this.getBottlesByKeywords(filtered, filters.text);
+      }
 
-    // on hierarchical axis like regions and ages, use most precise filter if available
-    if (filters.hasMillesimes()) {
-      filtered = this.filterByAttribute(filtered, 'millesime', filters.millesime);
-    } else {
-      // if filtering on millesime no need to filter on ages (matching millesime implies matching ages slice)
-      if (filters.hasAges()) {
-        filtered = this.filterByAttribute(filtered, 'classe_age', filters.classe_age);
+      // on hierarchical axis like regions and ages, use most precise filter if available
+      if (filters.hasMillesimes()) {
+        filtered = this.filterByAttribute(filtered, 'millesime', filters.millesime);
+      } else {
+        // if filtering on millesime no need to filter on ages (matching millesime implies matching ages slice)
+        if (filters.hasAges()) {
+          filtered = this.filterByAttribute(filtered, 'classe_age', filters.classe_age);
+        }
+      }
+
+      // on hierarchical axis like regions and ages, use most precise filter if available
+      if (filters.hasAppellations()) {
+        filtered = this.filterByAttribute(filtered, 'area_label', filters.area_label);
+      } else {
+        // if filtering on area_label no need to filter on region (matching area_label implies matching subregion_label)
+        if (filters.hasRegions()) {
+          filtered = this.filterByAttribute(filtered, 'subregion_label', filters.subregion_label);
+        }
+      }
+
+      if (filters.hasCouleurs()) {
+        filtered = this.filterByAttribute(filtered, 'label', filters.label);
       }
     }
-
-    // on hierarchical axis like regions and ages, use most precise filter if available
-    if (filters.hasAppellations()) {
-      filtered = this.filterByAttribute(filtered, 'area_label', filters.area_label);
-    } else {
-      // if filtering on area_label no need to filter on region (matching area_label implies matching subregion_label)
-      if (filters.hasRegions()) {
-        filtered = this.filterByAttribute(filtered, 'subregion_label', filters.subregion_label);
-      }
-    }
-
-    if (filters.hasCouleurs()) {
-      filtered = this.filterByAttribute(filtered, 'label', filters.label);
-    }
-
+  if (name) {
+      filtered=_.orderBy(filtered, [name], [order]);
+  }
     this.setFilters(filters);
 
     this._filteredBottles.next(filtered);
