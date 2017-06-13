@@ -36,7 +36,6 @@ export class BottleListComponent {
   ionDrag(bottle: Bottle, item: ItemSliding) {
     let percent = item.getSlidingPercent();
     if (percent < 0 && Math.abs(percent) > 0.05) {
-      console.info(bottle.nomCru + ' dragged');
       this.dragItem.next(<SlidingBottle>{slidingItem: item, bottle: bottle});
     }
   }
@@ -63,6 +62,7 @@ export class BottleListComponent {
   manageFavorites(slidingItem: ItemSliding, bottle: Bottle) {
     bottle.favorite = bottle.favorite ? !bottle.favorite : true;
     slidingItem.close();
+    this.bottlesService.replaceBottle(bottle);
   }
 
   isBottleInBasket(bottle: Bottle): boolean {

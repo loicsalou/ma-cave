@@ -6,9 +6,9 @@ import {Bottle} from './bottle';
 import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {FilterSet} from '../distribution/distribution';
-import {AngularFireDatabase, FirebaseListObservable} from 'angularfire2/database';
+import {AngularFireDatabase} from 'angularfire2/database';
 import {BottleFactory} from '../../model/bottle.factory';
-import {Loading, LoadingController} from 'ionic-angular';
+import {AlertController, Loading, LoadingController} from 'ionic-angular';
 import * as firebase from 'firebase/app';
 import * as _ from 'lodash';
 import Reference = firebase.database.Reference;
@@ -21,7 +21,6 @@ import Reference = firebase.database.Reference;
 @Injectable()
 export class BottleService {
   private firebaseRef: Reference;
-  private firebaseItems: FirebaseListObservable<any>;
   private cellarImported: boolean = false;
   private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
   private _allBottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
@@ -33,7 +32,7 @@ export class BottleService {
   private loading: Loading;
 
   constructor(private bottleFactory: BottleFactory, private firebase: AngularFireDatabase,
-              private loadingCtrl: LoadingController) {
+              private loadingCtrl: LoadingController, private alertController: AlertController) {
     this.firebaseRef = this.firebase.database.ref('users/loicsalou/bottles');
     this.fetchAllBottles();
   }
@@ -43,14 +42,14 @@ export class BottleService {
       this._bottles.next(this.allBottlesArray);
     } else {
       this.showLoading();
-      this.firebaseItems = this.firebase.list('users/loicsalou/bottles', {
+      let items = this.firebase.list('users/loicsalou/bottles', {
         query: {
           limitToFirst: 1000,
           orderByChild: 'quantite_courante',
           startAt: '0'
         }
       });
-      this.firebaseItems.subscribe((bottles: Bottle[]) => {
+      items.subscribe((bottles: Bottle[]) => {
         bottles.forEach((bottle: Bottle) => this.bottleFactory.create(bottle));
         this.setAllBottlesArray(bottles);
         this.filterOn(this.filters);
@@ -64,7 +63,19 @@ export class BottleService {
   }
 
   public replaceBottle(bottle: Bottle) {
-    //this.firebaseItems.set(bottle['$ref'], bottle);
+    //let ref = this.firebase.database.ref('users/loicsalou/bottles/bottle');
+    //ref.
+    this.firebaseRef.child(bottle[ '$key' ])
+      .set(bottle,
+           err => {
+             if (err) {
+               this.alertController.create({
+                                             title: 'Echec',
+                                             subTitle: '_La sauvegarde a échoué ! ' + err,
+                                             buttons: [ 'Ok' ]
+                                           }).present()
+             }
+           });
   }
 
   public initializeDB(bottles: Bottle[]) {
@@ -225,7 +236,11 @@ export class BottleService {
   //}
 
   handleError(error: any) {
-    console.error(error);
+    this.alertController.create({
+                                  title: 'Erreur !',
+                                  subTitle: 'Une erreur s\'est produite ! ' + error,
+                                  buttons: [ 'Ok' ]
+                                })
     return Observable.throw(error.json().error || 'Server error');
   }
 

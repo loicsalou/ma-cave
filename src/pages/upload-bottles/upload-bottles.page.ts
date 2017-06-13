@@ -78,7 +78,7 @@ export class UploadBottlesPage {
     let file = event.currentTarget.files[ 0 ];
     let isXls = file.name.toLowerCase().endsWith('.xls');
     let encoding = isXls ? 'windows-1252' : 'utf-8';
-    console.info(event.currentTarget.files[ 0 ]);
+    //console.info(event.currentTarget.files[ 0 ]);
     let reader = new FileReader();
     let self = this;
     reader.onload = function (evt) {

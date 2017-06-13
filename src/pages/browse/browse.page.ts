@@ -92,7 +92,7 @@ export class BrowsePage implements OnInit, OnDestroy {
   }
 
   private trace(text: string) {
-    console.info(text);
+    //console.info(text);
   }
 
   public isSearchVisible(): boolean {
