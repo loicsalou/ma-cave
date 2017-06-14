@@ -12,6 +12,7 @@ import {AlertController, Loading, LoadingController} from 'ionic-angular';
 import * as firebase from 'firebase/app';
 import * as _ from 'lodash';
 import Reference = firebase.database.Reference;
+import {LoginService} from '../../pages/home/login.service';
 
 /**
  * Services related to the bottles in the cellar.
@@ -32,8 +33,9 @@ export class BottleService {
   private loading: Loading;
 
   constructor(private bottleFactory: BottleFactory, private firebase: AngularFireDatabase,
-              private loadingCtrl: LoadingController, private alertController: AlertController) {
-    this.firebaseRef = this.firebase.database.ref('users/loicsalou/bottles');
+              private loadingCtrl: LoadingController, private alertController: AlertController,
+              private loginService: LoginService) {
+    this.firebaseRef = this.firebase.database.ref('users/' + this.loginService.getCellarExplorerUserId() + '/bottles');
     this.fetchAllBottles();
   }
 
@@ -42,7 +44,7 @@ export class BottleService {
       this._bottles.next(this.allBottlesArray);
     } else {
       this.showLoading();
-      let items = this.firebase.list('users/loicsalou/bottles', {
+      let items = this.firebase.list('users' + this.loginService.getCellarExplorerUserId() + 'bottles', {
         query: {
           limitToFirst: 1000,
           orderByChild: 'quantite_courante',

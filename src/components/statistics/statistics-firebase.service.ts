@@ -13,6 +13,7 @@ import {Subject} from 'rxjs/Subject';
 import {Subscription} from 'rxjs/Subscription';
 import Reference = firebase.database.Reference;
 import DataSnapshot = firebase.database.DataSnapshot;
+import {LoginService} from '../../pages/home/login.service';
 
 /**
  * Services related to the bottles in the cellar.
@@ -29,8 +30,9 @@ export class StatisticsService {
   private _statsObservable: Observable<Statistics> = this._stats.asObservable();
 
   constructor(private bottleService: BottleService, private firebase: AngularFireDatabase,
-              private loadingCtrl: LoadingController, private alertCtrl: AlertController) {
-    this.firebaseRef = this.firebase.database.ref('users/loicsalou/stats');
+              private loadingCtrl: LoadingController, private alertCtrl: AlertController,
+              private loginService: LoginService) {
+    this.firebaseRef = this.firebase.database.ref('users' + this.loginService.getCellarExplorerUserId() + 'stats');
   }
 
   get statsObservable(): Observable<Statistics> {

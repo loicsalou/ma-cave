@@ -35,6 +35,7 @@ import {StatisticsService} from '../components/statistics/statistics-firebase.se
 import {ChartsModule} from 'ng2-charts';
 import '../../node_modules/chart.js/dist/Chart.bundle.min.js';
 import {AnonymousLoginService} from '../pages/home/anonymous-login.service';
+import {EmailLoginService} from '../pages/home/email-login.service';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -99,7 +100,7 @@ export const fireConfig = {
               StatusBar,
               SplashScreen,
               {provide: ErrorHandler, useClass: IonicErrorHandler},
-              {provide: LoginService, useClass: AnonymousLoginService},
+              {provide: LoginService, useClass: EmailLoginService},
               BottleService, DistributeService ]
           })
 export class AppModule {
