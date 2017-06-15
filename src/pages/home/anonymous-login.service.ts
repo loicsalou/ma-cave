@@ -19,7 +19,6 @@ import {LoginService} from './login.service';
 @Injectable()
 export class AnonymousLoginService extends LoginService {
 
-  private _authenticated: boolean;
   error: Error;
   private firebaseRef: firebase.database.Reference;
 
@@ -32,20 +31,11 @@ export class AnonymousLoginService extends LoginService {
   public login() {
     this.firebaseAuth.auth.signInAnonymously()
       .then(
-        () => this._authenticated = true
+        () => this.success('loicsalou')
       )
       .catch(
         (a: Error) => this.error = a
-        //this.alertCtrl.create(this.loginError(a)).present()).then(() => this.platform.exitApp()
       );
-  }
-
-  public getCellarExplorerUserId(): string {
-    return 'loicsalou';
-  }
-
-  get authenticated(): boolean {
-    return this._authenticated;
   }
 
   private loginError(err) {

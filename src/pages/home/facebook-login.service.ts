@@ -17,11 +17,8 @@ import Reference = firebase.database.Reference;
  */
 @Injectable()
 export class FacebookLoginService extends LoginService {
-  private _authenticated: boolean;
-  error: Error;
   private provider: firebase.auth.FacebookAuthProvider;
   private facebookToken;
-  private user: any;
 
   constructor(private alertCtrl: AlertController, private toastCtrl: ToastController, private platform: Platform, private facebook: Facebook) {
     super();
@@ -37,11 +34,13 @@ export class FacebookLoginService extends LoginService {
       // The signed-in user info.
       // This gives you a Facebook Access Token. You can use it to access the Facebook API.
       //self.facebookToken = result.credential.accessToken;
-      self.user = result.authResponse.userID;
-      this.provider.auth().signinWithCredential(fc).then(fs => this.toastMessage('login successful'+self.user))
+      let user = result.authResponse.userID;
+      this.provider.auth().signinWithCredential(fc)
+        .then(fs => {
+          this.success(user);
+          this.toastMessage('login successful' + user);
+        })
         .catch(fberr => this.loginError(fberr));
-      self._authenticated = true;
-      // ...
     }).catch(error => {
       // Handle Errors here.
       //var errorCode = error.code;
@@ -53,14 +52,6 @@ export class FacebookLoginService extends LoginService {
       //var credential = error.credential;
       // ...
     });
-  }
-
-  public getCellarExplorerUserId(): string {
-    return this.user === undefined ? undefined : this.user[ 'uid' ];
-  }
-
-  get authenticated(): boolean {
-    return this.user !== undefined;
   }
 
   private toastMessage(text) {

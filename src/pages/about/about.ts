@@ -4,7 +4,6 @@ import {NavController, Platform} from 'ionic-angular';
 import {TranslateService} from '@ngx-translate/core';
 import {Camera, CameraOptions} from '@ionic-native/camera';
 import {Statistics} from '../../components/bottle/statistics';
-import {StatisticsService} from '../../components/statistics/statistics-firebase.service';
 
 @Component({
              selector: 'page-about',

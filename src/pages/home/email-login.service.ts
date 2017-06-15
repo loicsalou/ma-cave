@@ -22,8 +22,6 @@ export class EmailLoginService extends LoginService {
   private _authenticated: boolean;
   error: Error;
   private firebaseRef: firebase.database.Reference;
-  private password: any;
-  private email: any;
 
   constructor(private alertCtrl: AlertController, private firebaseAuth: AngularFireAuth, private platform: Platform,
               private firebase: AngularFireDatabase, private alertController: AlertController) {
@@ -31,31 +29,26 @@ export class EmailLoginService extends LoginService {
     this.firebaseRef = this.firebase.database.ref('users/');
   }
 
-  setLogin(email, password) {
-    this.email = email;
-    this.password = password;
-  }
-
   public login() {
     let self = this;
-    firebase.auth().signInWithEmailAndPassword(this.email, this.password).catch(function (error) {
-      // Handle Errors here.
-      firebase.auth().createUserWithEmailAndPassword(self.email, self.password).catch(function (error2) {
-        // Handle Errors here.
+    firebase.auth().signInWithEmailAndPassword(this.user, this.psw)
+      .then(() => self.success(self.user))
+      .catch(function (error) {
+        firebase.auth().createUserWithEmailAndPassword(self.user, self.psw)
+          .then(() => self.success(self.user))
+          .catch(function (error2) {
+            self.loginError(error);
+          });
         self.loginError(error);
-        // ...
       });
-      self.loginError(error);
-      // ...
-    });
   }
 
-  public getCellarExplorerUserId(): string {
-    return this.email;
-  }
+  public success(user: string): any {
+    user = user.replace(/[\.]/g, '');
+    user = user.replace(/[#.]/g, '');
+    let psw = undefined;
 
-  get authenticated(): boolean {
-    return this._authenticated;
+    return super.success(user);
   }
 
   private loginError(err) {

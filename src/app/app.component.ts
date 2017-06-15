@@ -27,10 +27,10 @@ export class MyCaveApp {
       translate.use('fr');
 
       // login
-      if (this.loginService instanceof EmailLoginService) {
-        (<EmailLoginService>this.loginService).setLogin('business.salou@gmail.com','!2bgbne1');
-        this.loginService.login();
-      }
+      //if (this.loginService instanceof EmailLoginService) {
+      //  (<EmailLoginService>this.loginService).setLogin('business.salou@gmail.com','!2bgbne1');
+      //  this.loginService.login();
+      //}
     });
   }
 
