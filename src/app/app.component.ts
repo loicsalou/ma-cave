@@ -5,6 +5,7 @@ import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
 import {TabsPage} from '../pages/tabs/tabs';
 import {LoginService} from '../pages/home/login.service';
+import {EmailLoginService} from '../pages/home/email-login.service';
 
 @Component({
              templateUrl: 'app.html'
@@ -26,7 +27,10 @@ export class MyCaveApp {
       translate.use('fr');
 
       // login
-      this.loginService.login();
+      //if (this.loginService instanceof EmailLoginService) {
+      //  (<EmailLoginService>this.loginService).setLogin('business.salou@gmail.com','!2bgbne1');
+      //  this.loginService.login();
+      //}
     });
   }
 

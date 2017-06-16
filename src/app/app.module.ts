@@ -29,12 +29,12 @@ import {BottleFactory} from '../model/bottle.factory';
 import {UploadBottlesModule} from '../pages/upload-bottles/upload-bottles.page.module';
 import {UploadBottlesPage} from '../pages/upload-bottles/upload-bottles.page';
 import {Statistics} from '../components/bottle/statistics';
-import { StatisticsComponent } from '../components/statistics/statistics';
+import {StatisticsComponent} from '../components/statistics/statistics';
 import {LoginService} from '../pages/home/login.service';
-import {StatisticsService} from '../components/statistics/statistics-firebase.service';
 import {ChartsModule} from 'ng2-charts';
 import '../../node_modules/chart.js/dist/Chart.bundle.min.js';
-
+import {AnonymousLoginService} from '../pages/home/anonymous-login.service';
+import {EmailLoginService} from '../pages/home/email-login.service';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -60,7 +60,7 @@ export const fireConfig = {
               BottleListComponent,
               TabsPage,
               UpdatePage,
-    StatisticsComponent
+              StatisticsComponent
             ],
             imports: [
               IonicModule.forRoot(MyCaveApp),
@@ -95,11 +95,10 @@ export const fireConfig = {
               BottleFactory,
               Camera,
               Statistics,
-              LoginService,
-              StatisticsService,
               StatusBar,
               SplashScreen,
               {provide: ErrorHandler, useClass: IonicErrorHandler},
+              {provide: LoginService, useClass: EmailLoginService},
               BottleService, DistributeService ]
           })
 export class AppModule {

@@ -1,49 +1,40 @@
+import {EventEmitter, Output} from '@angular/core';
 /**
- * Created by loicsalou on 28.02.17.
+ * Created by loicsalou on 13.06.17.
  */
-import {Injectable} from '@angular/core';
-import {Bottle} from './bottle';
-import {FilterSet} from '../distribution/distribution';
-import {AngularFireAuth} from 'angularfire2/auth';
-import {AlertController, Platform} from 'ionic-angular';
-import * as firebase from 'firebase/app';
-import Reference = firebase.database.Reference;
 
-/**
- * Services related to the bottles in the cellar.
- * The subregion_label below are duplicated in the code of france.component.html as they are emitted when end-user
- * clicks on a region to filter bottles. Any change on either side must be propagated on the other side.
- */
-@Injectable()
-export class LoginService {
-  private _authenticated: boolean;
-  error: Error;
+export abstract class LoginService {
+  @Output()
+  public authentified: EventEmitter<string>=new EventEmitter();
 
-  constructor(private alertCtrl: AlertController, private firebaseAuth: AngularFireAuth, private platform: Platform) {
+  private _user: string;
+  private _psw: string;
+
+  public abstract login();
+
+  public getUser(): string {
+    return this._user;
   }
 
-  public login() {
-    this.firebaseAuth.auth.signInAnonymously()
-      .then(
-        () => this._authenticated = true
-      )
-      .catch(
-        (a: Error) => this.error=a
-          //this.alertCtrl.create(this.loginError(a)).present()).then(() => this.platform.exitApp()
-    );
+  get user(): string {
+    return this._user;
   }
 
-  get authenticated(): boolean {
-    return this._authenticated;
+  get psw(): string {
+    return this._psw;
   }
 
-  private loginError(err) {
-    return {
-      title: 'Echec',
-      subTitle: 'l\'authentification a échoué: ' + err,
-      buttons: [ 'Ok' ]
-    }
+  set user(value: string) {
+    this._user = value;
   }
+
+  set psw(value: string) {
+    this._psw = value;
+  }
+
+  public success(user: string) {
+    this._user=user;
+    this.authentified.emit(user);
+  }
+
 }
-
-

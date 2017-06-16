@@ -11,6 +11,7 @@ import {BottleFactory} from '../../model/bottle.factory';
 import {AlertController, Loading, LoadingController} from 'ionic-angular';
 import * as firebase from 'firebase/app';
 import * as _ from 'lodash';
+import {LoginService} from '../../pages/home/login.service';
 import Reference = firebase.database.Reference;
 
 /**
@@ -32,8 +33,14 @@ export class BottleService {
   private loading: Loading;
 
   constructor(private bottleFactory: BottleFactory, private firebase: AngularFireDatabase,
-              private loadingCtrl: LoadingController, private alertController: AlertController) {
-    this.firebaseRef = this.firebase.database.ref('users/loicsalou/bottles');
+              private loadingCtrl: LoadingController, private alertController: AlertController,
+              private loginService: LoginService) {
+    this.initFirebase();
+    loginService.authentified.asObservable().subscribe(user => this.initFirebase());
+  }
+
+  initFirebase() {
+    this.firebaseRef = this.firebase.database.ref('users/' + this.loginService.getUser() + '/bottles');
     this.fetchAllBottles();
   }
 
@@ -42,7 +49,7 @@ export class BottleService {
       this._bottles.next(this.allBottlesArray);
     } else {
       this.showLoading();
-      let items = this.firebase.list('users/loicsalou/bottles', {
+      let items = this.firebase.list('users/' + this.loginService.getUser() + '/bottles', {
         query: {
           limitToFirst: 1000,
           orderByChild: 'quantite_courante',
@@ -79,7 +86,13 @@ export class BottleService {
   }
 
   public initializeDB(bottles: Bottle[]) {
-    this.firebaseRef.remove();
+    //this.firebaseRef.remove()
+    //  .then(function() {
+    //    console.log("Remove succeeded.")
+    //  })
+    //  .catch(function(error) {
+    //    console.log("Remove failed: " + error.message)
+    //  });
     bottles.forEach(bottle => this.firebaseRef.push(bottle));
   }
 
