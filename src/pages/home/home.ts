@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {NavController, Platform, ToastController} from 'ionic-angular';
+import {Modal, ModalController, NavController, Platform, ToastController} from 'ionic-angular';
 import {BrowsePage} from '../browse/browse.page';
 import {LoginService} from './login.service';
 import {AnonymousLoginService} from './anonymous-login.service';
+import {EmailLoginPage} from './email-login.page';
 
 @Component({
              selector: 'page-home',
@@ -11,26 +12,19 @@ import {AnonymousLoginService} from './anonymous-login.service';
            })
 export class HomePage implements OnInit {
   version: any;
-  loginOK = false;
-  user: string;
-  psw: string;
+  private loginPage: Modal;
 
   constructor(public navCtrl: NavController, public platform: Platform,
-              public toastController: ToastController, public loginService: LoginService) {
+              public toastController: ToastController, public loginService: LoginService,
+              private modalController: ModalController) {
+    this.loginPage = this.modalController.create(EmailLoginPage);
+    this.loginPage.present();
     this.loginService.authentified.subscribe(user => {
-      this.loginOK = true;
-      this.toast('l\'utilisateur ' + user + ' a bien été identifié');
-    })
+      this.loginPage.dismiss();
+    });
     if (this.loginService instanceof AnonymousLoginService) {
       this.loginService.login();
     }
-  }
-
-  public signin() {
-    this.loginService.authentified.subscribe(user => this.loginOK = true);
-    this.loginService.user = this.user;
-    this.loginService.psw = this.psw;
-    this.loginService.login();
   }
 
   ngOnInit(): void {
@@ -44,20 +38,6 @@ export class HomePage implements OnInit {
         text: text
       })
     }
-    ;
-  }
-
-  private toast(message) {
-    let basketToast = this.toastController.create({
-                                                    message: message,
-                                                    cssClass: 'info-message',
-                                                    showCloseButton: true
-                                                  });
-    basketToast.present();
-  }
-
-  manageCellar() {
-    // this.navCtrl.push(BrowsePage);
   }
 
   browseCellar() {

@@ -1,42 +1,20 @@
 <ion-header class="home header">
-  
   <ion-searchbar [placeholder]="Chercher" [autocomplete]="on" [autocorrect]="on" [animated]="true"
                  (search)="filterOnText($event)">
   </ion-searchbar>
-
 </ion-header>
 
-<ion-content class="home card-background-page page">
-  <div *ngIf="!loginOK">
-    <input type="text" [(ngModel)]="user">
-    <p></p>
-    <input type="password" [(ngModel)]="psw">
-    <button ion-button align-items-start round block (click)="signin()">Sign-in</button>
-  </div>
-  <div *ngIf="loginOK">
-    <ion-title *ngIf="!loginService.authenticated">Erreur de login:{{loginService.error}}</ion-title>
-    <ion-card class="card-background" (click)="browseCellar()">
-      <img src="assets/img/cave-sur-mesure.jpg" (click)="manageCellar()"/>
-      <!--<img src="assets/img/vins-tranquilles.png"/>-->
-      <h2 class="card-title">Explorer la cave</h2>
-    </ion-card>
-    
-    <ion-card class="card-background">
-      <statistics [axis]="'label'" [topMost]="5" [legend]="true"></statistics>
-      <!--<statistics [axis]="'label'" [legend]="'left'" [topMost]="8"></statistics>-->
-      <!--<statistics [axis]="'subregion_label'" [legend]="'right'"></statistics>-->
-    </ion-card>
-    
-    <!--<ion-card class="card-background">-->
-    <!--&lt;!&ndash;<statistics [axis]="'label'" [legend]="'left'" [topMost]="8"></statistics>&ndash;&gt;-->
-    <!--<statistics [axis]="'subregion_label'" [legend]="'right'"></statistics>-->
-    <!--</ion-card>-->
-    
-    <!--<ion-card class="card-background">-->
-    <!--<img src="assets/img/cave-sur-mesure.jpg" (click)="manageCellar()"/>-->
-    <!--<h4 class="card-title">Ranger la cave</h4>-->
-    <!--<div class="card-subtitle">Ajouter des bouteilles, réograniser...</div>-->
-    <!--</ion-card>-->
-  </div>
+<ion-content align-items-center class="home card-background-page page">
+  
+  <ion-card class="card-background" (click)="browseCellar()">
+    <img src="assets/img/cave-sur-mesure.jpg"/>
+    <ion-card-title class="card-title">Explorer la cave</ion-card-title>
+  </ion-card>
+  
+  <ion-card class="card-background">
+    <statistics [axis]="'label'" [topMost]="5" [legend]="true"></statistics>
+  </ion-card>
+
 </ion-content>
+
 <ion-footer text-right padding-horizontal>version {{version}}</ion-footer>

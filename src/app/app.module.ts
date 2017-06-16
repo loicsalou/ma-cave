@@ -35,6 +35,7 @@ import {ChartsModule} from 'ng2-charts';
 import '../../node_modules/chart.js/dist/Chart.bundle.min.js';
 import {AnonymousLoginService} from '../pages/home/anonymous-login.service';
 import {EmailLoginService} from '../pages/home/email-login.service';
+import {EmailLoginPage} from '../pages/home/email-login.page';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -50,6 +51,7 @@ export const fireConfig = {
               MyCaveApp,
               AboutPage,
               ContactPage,
+              EmailLoginPage,
               FilterPage,
               HomePage,
               BrowsePage,
@@ -82,6 +84,7 @@ export const fireConfig = {
             bootstrap: [ IonicApp ],
             entryComponents: [
               MyCaveApp,
+              EmailLoginPage,
               AboutPage,
               ContactPage,
               HomePage,
