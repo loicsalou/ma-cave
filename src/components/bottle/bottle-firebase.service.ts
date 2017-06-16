@@ -49,7 +49,7 @@ export class BottleService {
       this._bottles.next(this.allBottlesArray);
     } else {
       this.showLoading();
-      let items = this.firebase.list('users' + this.loginService.getUser() + 'bottles', {
+      let items = this.firebase.list('users/' + this.loginService.getUser() + '/bottles', {
         query: {
           limitToFirst: 1000,
           orderByChild: 'quantite_courante',

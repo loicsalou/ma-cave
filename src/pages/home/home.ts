@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {NavController, Platform, ToastController} from 'ionic-angular';
 import {BrowsePage} from '../browse/browse.page';
 import {LoginService} from './login.service';
+import {AnonymousLoginService} from './anonymous-login.service';
 
 @Component({
              selector: 'page-home',
@@ -20,12 +21,15 @@ export class HomePage implements OnInit {
       this.loginOK = true;
       this.toast('l\'utilisateur ' + user + ' a bien été identifié');
     })
+    if (this.loginService instanceof AnonymousLoginService) {
+      this.loginService.login();
+    }
   }
 
   public signin() {
     this.loginService.authentified.subscribe(user => this.loginOK = true);
-    this.loginService.user=this.user;
-    this.loginService.psw=this.psw;
+    this.loginService.user = this.user;
+    this.loginService.psw = this.psw;
     this.loginService.login();
   }
 
