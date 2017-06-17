@@ -28,6 +28,10 @@ export class FirebaseImageService extends FirebaseService {
               alertController: AlertController,
               private loginService: LoginService) {
     super(loadingCtrl, alertController);
+    loginService.authentified.asObservable().subscribe(user => this.initFirebase());
+  }
+
+  initFirebase() {
     this.firebaseRef = this.firebase.database.ref(this.USERS_ROOT + '/' + this.loginService.getUser() + '/' + this.IMAGES_FOLDER);
   }
 
