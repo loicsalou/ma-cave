@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {Modal, ModalController, NavController, Platform, ToastController} from 'ionic-angular';
 import {BrowsePage} from '../browse/browse.page';
-import {LoginService} from './login.service';
-import {AnonymousLoginService} from './anonymous-login.service';
-import {EmailLoginPage} from './email-login.page';
+import {LoginService} from '../../service/login.service';
+import {AnonymousLoginService} from '../../service/anonymous-login.service';
+import {EmailLoginPage} from '../login/email-login.page';
 
 @Component({
              selector: 'page-home',

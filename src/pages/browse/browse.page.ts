@@ -1,12 +1,12 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {NavController, NavParams, Platform, ToastController} from 'ionic-angular';
-import {BottleService} from '../../components/bottle/bottle-firebase.service';
-import {Bottle} from '../../components/bottle/bottle';
+import {BottleService} from '../../service/bottle-firebase.service';
+import {Bottle} from '../../model/bottle';
 import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
 import {ListBottleEvent} from '../../components/list/bottle-list-event';
 import {FilterSet} from '../../components/distribution/distribution';
 import {Subscription} from 'rxjs/Subscription';
-import {Statistics} from '../../components/bottle/statistics';
+import {Statistics} from '../../model/statistics';
 import * as _ from 'lodash';
 
 @Component({

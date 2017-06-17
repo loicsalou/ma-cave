@@ -12,5 +12,5 @@ export class Statistics {
   by_subregion_label: Map<string, number> = new Map();
   by_volume: Map<string, number> = new Map();
 
-  totalNumberOfBottles = 0;
+  totalNumberOfBottles=0;
 }

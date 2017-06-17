@@ -1,8 +1,8 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import {DistributeService} from '../distribution/distribute.service';
+import {DistributeService} from '../../service/distribute.service';
 import {Chart, ChartElement} from 'chart.js';
-import {BottleService} from '../bottle/bottle-firebase.service';
-import {Bottle} from '../bottle/bottle';
+import {BottleService} from '../../service/bottle-firebase.service';
+import {Bottle} from '../../model/bottle';
 import * as _ from 'lodash';
 import {FilterSet} from '../distribution/distribution';
 import {NavController} from 'ionic-angular';

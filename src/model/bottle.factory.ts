@@ -2,10 +2,10 @@
  * Created by loicsalou on 25.05.17.
  */
 import {Injectable} from '@angular/core';
-import {Bottle} from '../components/bottle/bottle';
+import {Bottle} from './bottle';
 import {TranslateService} from '@ngx-translate/core';
 import {UUID} from 'angular2-uuid';
-import {Statistics} from '../components/bottle/statistics';
+import {Statistics} from './statistics';
 
 /**
  * Instanciation des bouteilles.

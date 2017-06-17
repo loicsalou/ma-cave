@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {LoginPage} from './login-page';
 import {LoginService} from '../../service/login.service';
 import {AlertController} from 'ionic-angular';

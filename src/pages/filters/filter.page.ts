@@ -1,7 +1,7 @@
-import {Bottle} from '../../components/bottle/bottle';
+import {Bottle} from '../../model/bottle';
 import {Component, Input, OnChanges, OnInit} from '@angular/core';
 import {FilterSet} from '../../components/distribution/distribution';
-import {BottleService} from '../../components/bottle/bottle-firebase.service';
+import {BottleService} from '../../service/bottle-firebase.service';
 import {MenuController} from 'ionic-angular';
 
 @Component({

@@ -5,7 +5,7 @@ import {EventEmitter, Output} from '@angular/core';
 
 export abstract class LoginService {
   @Output()
-  public authentified: EventEmitter<string> = new EventEmitter();
+  public authentified: EventEmitter<string>=new EventEmitter();
 
   private _user: string;
   private _psw: string;
@@ -33,7 +33,7 @@ export abstract class LoginService {
   }
 
   public success(user: string) {
-    this._user = user;
+    this._user=user;
     this.authentified.emit(user);
   }
 
