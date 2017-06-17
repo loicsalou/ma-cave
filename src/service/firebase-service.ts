@@ -15,10 +15,10 @@ export abstract class FirebaseService {
   constructor(private loadingCtrl: LoadingController, private alertController: AlertController) {
   }
 
-  showLoading() {
+  showLoading(message?: string) {
     if (this.loading == undefined) {
       this.loading = this.loadingCtrl.create({
-                                               content: 'Chargement en cours...',
+                                               content: message ? message : 'Chargement en cours...',
                                                dismissOnPageChange: false
                                              });
       this.loading.present();

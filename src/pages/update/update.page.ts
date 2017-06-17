@@ -33,11 +33,14 @@ export class UpdatePage implements OnInit {
   ngOnInit(): void {
     let imagesObservable = this.imageService.getList(this.bottle);
     this.imagesSubscription = imagesObservable.subscribe(
-      images => this.images = images.map(
-        image => {
-          return {src: 'data:image/jpeg;base64,' + image}
-        }
-      )
+      images => {
+        this.images = images.map(
+          image => {
+            return {src: image.image}
+          }
+        );
+        console.info(this.images.length + ' images trouvées');
+      }
     );
     this.navCtrl.viewWillLeave.subscribe(() => this.imagesSubscription.unsubscribe());
   }
@@ -47,13 +50,18 @@ export class UpdatePage implements OnInit {
   }
 
   public takePhoto() {
+    //L'option allowedit est imprévisible sur android, cf doc cordova
+    // https://github.com/apache/cordova-plugin-camera#cameraoptions-errata-
     const options: CameraOptions = {
-      quality: 60,
+      quality: 10,
       destinationType: this.camera.DestinationType.DATA_URL,
       sourceType: this.camera.PictureSourceType.CAMERA,
-      allowEdit: true,
-      encodingType: this.camera.EncodingType.PNG,
-      saveToPhotoAlbum: false
+      allowEdit: false,
+      targetHeight: 300,
+      targetWidth: 300,
+      mediaType: this.camera.MediaType.PICTURE,
+      encodingType: this.camera.EncodingType.JPEG,
+      saveToPhotoAlbum: true
     }
     this.camera.getPicture(options).then((imageData) => {
       // imageData is either a base64 encoded string or a file URI if it's base64:
@@ -64,6 +72,21 @@ export class UpdatePage implements OnInit {
       this.presentAlert('L\'image n\'a pas pu être récupérée !', err);
     });
   }
+
+  //private getOptions(srcType): CameraOptions {
+  //  var options = {
+  //    // Some common settings are 20, 50, and 100
+  //    quality: 20,
+  //    destinationType: Camera.DestinationType.FILE_URI,
+  //    // In this app, dynamically set the picture source, Camera or photo gallery
+  //    sourceType: srcType,
+  //    encodingType: Camera.EncodingType.JPEG,
+  //    mediaType: Camera.MediaType.PICTURE,
+  //    allowEdit: true,
+  //    correctOrientation: true  //Corrects Android orientation quirks
+  //  }
+  //  return options;
+  //}
 
   private presentAlert(title: string, text: string) {
     let alert = this.alertController.create({

@@ -28,7 +28,15 @@ export class FirebaseImageService extends FirebaseService {
               alertController: AlertController,
               private loginService: LoginService) {
     super(loadingCtrl, alertController);
-    loginService.authentified.asObservable().subscribe(user => this.initFirebase());
+    if (loginService.user) {
+      this.initFirebase();
+    } else {
+      try {
+        loginService.authentified.subscribe(user => this.initFirebase());
+      } catch(ex) {
+        this.handleError(ex);
+      }
+    }
   }
 
   initFirebase() {
@@ -64,7 +72,6 @@ export class FirebaseImageService extends FirebaseService {
     if (!bottle) {
       return items;
     }
-    this.showLoading();
     items = this.firebase.list(this.USERS_ROOT + '/' + this.loginService.getUser() + '/' + this.IMAGES_FOLDER, {
                                  query: {
                                    limitToFirst: 5,
@@ -74,8 +81,10 @@ export class FirebaseImageService extends FirebaseService {
                                }
     );
     items.subscribe(
-      images => this.dismissLoading(),
-      err => this.handleError(err)
+      (images:Image[]) => console.info(images.length+' images reçues'),
+      err => {
+        this.handleError(err);
+      }
     );
     return items;
   }
