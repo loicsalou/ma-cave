@@ -5,6 +5,7 @@ import {BottleService} from '../../service/bottle-firebase.service';
 import {Camera, CameraOptions} from '@ionic-native/camera';
 import {FirebaseImageService} from '../../service/firebase-image.service';
 import {Subscription} from 'rxjs/Subscription';
+import * as firebase from 'firebase/app';
 
 /*
  Generated class for the Update component.
@@ -22,6 +23,7 @@ import {Subscription} from 'rxjs/Subscription';
 export class UpdatePage implements OnInit {
 
   bottle: Bottle;
+  imgUrl: string;
   images: Array<{ src: String }> = [];
   private imagesSubscription: Subscription;
 
@@ -49,44 +51,45 @@ export class UpdatePage implements OnInit {
     this.bottleService.save([ this.bottle ]);
   }
 
-  public takePhoto() {
+  loadImage() {
+    let promise: firebase.Promise<any> = this.imageService.getImage('20170415_174618.jpg');
+    promise.then(
+      url => {
+        console.info('URL resstituée: ' + url);
+        this.imgUrl = url;
+      }
+    ).catch(
+      err => console.error('erreur d\'accès à l\'url' + err)
+    );
+  }
+
+  public takePhoto(sourceType: number) {
     //L'option allowedit est imprévisible sur android, cf doc cordova
     // https://github.com/apache/cordova-plugin-camera#cameraoptions-errata-
     const options: CameraOptions = {
-      quality: 10,
-      destinationType: this.camera.DestinationType.DATA_URL,
-      sourceType: this.camera.PictureSourceType.CAMERA,
-      allowEdit: false,
-      targetHeight: 300,
-      targetWidth: 300,
+      quality: 50,
+      destinationType: this.camera.DestinationType.FILE_URI,
+      sourceType: sourceType,
+      allowEdit: true,
+      targetHeight: 500,
+      targetWidth: 500,
       mediaType: this.camera.MediaType.PICTURE,
-      encodingType: this.camera.EncodingType.JPEG,
       saveToPhotoAlbum: true
     }
-    this.camera.getPicture(options).then((imageData) => {
+    this.camera.getPicture(options).then((imageUri) => {
       // imageData is either a base64 encoded string or a file URI if it's base64:
-      let base64Image = 'data:image/jpeg;base64,' + imageData;
-      this.images.unshift({src: base64Image});
-      this.imageService.add(base64Image, this.bottle);
+      this.images.unshift({src: imageUri});
+      this.imageService.uploadImagesToFirebase(imageUri);
     }, (err) => {
       this.presentAlert('L\'image n\'a pas pu être récupérée !', err);
     });
   }
 
-  //private getOptions(srcType): CameraOptions {
-  //  var options = {
-  //    // Some common settings are 20, 50, and 100
-  //    quality: 20,
-  //    destinationType: Camera.DestinationType.FILE_URI,
-  //    // In this app, dynamically set the picture source, Camera or photo gallery
-  //    sourceType: srcType,
-  //    encodingType: Camera.EncodingType.JPEG,
-  //    mediaType: Camera.MediaType.PICTURE,
-  //    allowEdit: true,
-  //    correctOrientation: true  //Corrects Android orientation quirks
-  //  }
-  //  return options;
-  //}
+  readBrowserFile(event: any) {
+    //let textType = /text.*/;
+    let file = event.currentTarget.files[ 0 ];
+    this.imageService.uploadImage(file);
+  }
 
   private presentAlert(title: string, text: string) {
     let alert = this.alertController.create({

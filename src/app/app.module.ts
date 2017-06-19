@@ -102,7 +102,7 @@ export const fireConfig = {
               StatusBar,
               SplashScreen,
               {provide: ErrorHandler, useClass: IonicErrorHandler},
-              {provide: LoginService, useClass: EmailLoginService},
+              {provide: LoginService, useClass: AnonymousLoginService},
               BottleService,
               DistributeService,
               FirebaseImageService ]

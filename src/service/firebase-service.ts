@@ -1,4 +1,4 @@
-import {AlertController, Loading, LoadingController} from 'ionic-angular';
+import {AlertController, Loading, LoadingController, ToastController} from 'ionic-angular';
 import {Observable} from 'rxjs/Observable';
 /**
  * Created by loicsalou on 16.06.17.
@@ -12,7 +12,8 @@ export abstract class FirebaseService {
 
   private loading: Loading;
 
-  constructor(private loadingCtrl: LoadingController, private alertController: AlertController) {
+  constructor(private loadingCtrl: LoadingController, private alertController: AlertController,
+              private toastController: ToastController) {
   }
 
   showLoading(message?: string) {
@@ -32,7 +33,22 @@ export abstract class FirebaseService {
     }
   }
 
-  showAlert(message: string, err: any) {
+  showInfo(message: string) {
+    this.alertController.create({
+                                  title: 'Information',
+                                  subTitle: message,
+                                  buttons: [ 'Ok' ]
+                                }).present()
+
+  }
+
+  showToast(message: string) {
+    this.toastController.create({
+                                  message: message
+                                }).present()
+  }
+
+  showAlert(message: string, err?: any) {
     this.alertController.create({
                                   title: 'Echec',
                                   subTitle: message + err,
@@ -41,10 +57,10 @@ export abstract class FirebaseService {
 
   }
 
-  handleError(error: any) {
+  handleError(error: any, message?: string) {
     this.alertController.create({
                                   title: 'Erreur !',
-                                  subTitle: 'Une erreur s\'est produite ! ' + error,
+                                  subTitle: message ? message + error : 'Une erreur s\'est produite ! ' + error,
                                   buttons: [ 'Ok' ]
                                 })
     return Observable.throw(error.json().error || 'Database error');

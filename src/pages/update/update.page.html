@@ -48,6 +48,13 @@
   
   </div>
   
+  <input type="file" id="input" (change)="readBrowserFile($event)">
+  <button ion-button align-items-start round icon-only block (click)="loadImage()">
+    <ion-icon name="albums"></ion-icon>
+  </button>
+  <p>{{imgUrl}}</p>
+  <img [src]="imgUrl" *ngIf="imgUrl">
+  
   <button ion-button align-items-start round icon-only block (click)="takePhoto()">
     <ion-icon name="camera"></ion-icon>
   </button>

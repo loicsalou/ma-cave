@@ -5,14 +5,20 @@ import {Injectable} from '@angular/core';
 import {FilterSet} from '../distribution/distribution';
 import {AngularFireDatabase} from 'angularfire2/database';
 import {BottleFactory} from '../../model/bottle.factory';
-import {AlertController, LoadingController} from 'ionic-angular';
+import {AlertController, LoadingController, ToastController} from 'ionic-angular';
 import * as firebase from 'firebase/app';
+import 'firebase/storage';
 import {LoginService} from './login.service';
 import {Bottle} from '../model/bottle';
 import {FirebaseService} from './firebase-service';
 import {Observable} from 'rxjs/Observable';
 import {Image} from '../model/image';
+import {FilePath} from '@ionic-native/file-path';
+import {FileItem} from './file-item';
+import * as _ from 'lodash';
 import Reference = firebase.database.Reference;
+
+//import { FirebaseApp } from 'angularfire2';
 
 /**
  * Services related to the bottles in the cellar.
@@ -22,45 +28,33 @@ import Reference = firebase.database.Reference;
 @Injectable()
 export class FirebaseImageService extends FirebaseService {
 
-  private firebaseRef: Reference;
+  private storageRef: firebase.storage.Reference;
 
-  constructor(private firebase: AngularFireDatabase, loadingCtrl: LoadingController,
-              alertController: AlertController,
+  constructor(private angularFirebase: AngularFireDatabase, loadingCtrl: LoadingController,
+              alertController: AlertController, toastController: ToastController, private filepath: FilePath,
               private loginService: LoginService) {
-    super(loadingCtrl, alertController);
+    super(loadingCtrl, alertController, toastController);
     if (loginService.user) {
       this.initFirebase();
     } else {
       try {
         loginService.authentified.subscribe(user => this.initFirebase());
-      } catch(ex) {
+      } catch (ex) {
         this.handleError(ex);
       }
     }
   }
 
   initFirebase() {
-    this.firebaseRef = this.firebase.database.ref(this.USERS_ROOT + '/' + this.loginService.getUser() + '/' + this.IMAGES_FOLDER);
+    this.storageRef = this.angularFirebase.app.storage().ref(this.USERS_ROOT + '/' + this.loginService.getUser() + '/' + this.IMAGES_FOLDER);
   }
 
-  public add(image: any, bottle: Bottle) {
-    try {
-      // Get a key for the image.
-      let newKey = this.firebaseRef.push().key;
-
-      // Write the new post's data simultaneously in the posts list and the user's post list.
-      let updates = {};
-      updates[ '/' + newKey ] = {
-        bottleId: bottle[ '$key' ],
-        image: image
-      };
-      //updates[ '/user-posts/' + uid + '/' + newKey ] = postData;
-
-      return this.firebaseRef.update(updates);
-      //this.firebaseRef.push(image);
-    } catch (ex) {
-      this.handleError(ex)
-    }
+  /**
+   * liste des images d'une bouteille
+   * @param bottle
+   */
+  public getImage(name: string): firebase.Promise<any>{
+    return this.storageRef.child(this.IMAGES_FOLDER).child(name).getDownloadURL();
   }
 
   /**
@@ -72,16 +66,16 @@ export class FirebaseImageService extends FirebaseService {
     if (!bottle) {
       return items;
     }
-    items = this.firebase.list(this.USERS_ROOT + '/' + this.loginService.getUser() + '/' + this.IMAGES_FOLDER, {
-                                 query: {
-                                   limitToFirst: 5,
-                                   orderByChild: 'bottleId',
-                                   equalTo: bottle[ '$key' ]
-                                 }
-                               }
+    items = this.angularFirebase.list(this.USERS_ROOT + '/' + this.loginService.getUser() + '/' + this.IMAGES_FOLDER, {
+                                        query: {
+                                          limitToFirst: 5,
+                                          orderByChild: 'bottleId',
+                                          equalTo: bottle[ '$key' ]
+                                        }
+                                      }
     );
     items.subscribe(
-      (images:Image[]) => console.info(images.length+' images reçues'),
+      (images: Image[]) => console.info(images.length + ' images reçues'),
       err => {
         this.handleError(err);
       }
@@ -89,6 +83,53 @@ export class FirebaseImageService extends FirebaseService {
     return items;
   }
 
+  deleteImage(file: File) {
+    let item: FileItem = new FileItem(file);
+    item.isUploading = true;
+    let self = this;
+    this.storageRef.child(`${this.IMAGES_FOLDER}/${item.file.name}`)
+      .delete()
+      .then(function () {
+              self.showToast('Image supprimée !')
+            }
+      )
+      .catch(function (error) {
+        self.showAlert('L\'image n\'a pas pu être supprimée ! ', error);
+      });
+  }
+
+  uploadImage(file: File) {
+    let item: FileItem = new FileItem(file);
+    this.uploadImagesToFirebase([ item ]);
+  }
+
+  uploadImagesToFirebase(files: FileItem[]) {
+    _.each(files, (item: FileItem) => {
+
+      item.isUploading = true;
+      let uploadTask: firebase.storage.UploadTask = this.storageRef.child(`${this.IMAGES_FOLDER}/${item.file.name}`).put(item.file);
+
+      uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
+                    (snapshot) => item.progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
+                    (error) => {
+                    },
+                    () => {
+                      item.url = uploadTask.snapshot.downloadURL;
+                      item.isUploading = false;
+                      this.saveImage({name: item.file.name, url: item.url});
+                    }
+      );
+
+    });
+
+  }
+
+  private saveImage(image: any) {
+    let saveref = this.angularFirebase.database.ref(this.USERS_ROOT + '/' + this.loginService.getUser() + '/'
+                                                    + this.IMAGES_FOLDER);
+
+    saveref.push(image);
+  }
 }
 
 

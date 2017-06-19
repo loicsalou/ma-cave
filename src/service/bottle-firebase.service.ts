@@ -8,7 +8,7 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {FilterSet} from '../components/distribution/distribution';
 import {AngularFireDatabase} from 'angularfire2/database';
 import {BottleFactory} from '../model/bottle.factory';
-import {AlertController, LoadingController} from 'ionic-angular';
+import {AlertController, LoadingController, ToastController} from 'ionic-angular';
 import * as firebase from 'firebase/app';
 import * as _ from 'lodash';
 import {LoginService} from './login.service';
@@ -33,9 +33,9 @@ export class BottleService extends FirebaseService {
   private allBottlesArray: Bottle[];
 
   constructor(private bottleFactory: BottleFactory, private firebase: AngularFireDatabase,
-              loadingCtrl: LoadingController, alertController: AlertController,
+              loadingCtrl: LoadingController, alertController: AlertController, toastController: ToastController,
               private loginService: LoginService) {
-    super(loadingCtrl, alertController);
+    super(loadingCtrl, alertController, toastController);
     this.initFirebase();
     loginService.authentified.asObservable().subscribe(user => this.initFirebase());
   }
