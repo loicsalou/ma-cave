@@ -70,49 +70,6 @@ export class UpdatePage implements OnInit {
     );
   }
 
-  public takePhoto(sourceType: number) {
-    //L'option allowedit est imprévisible sur android, cf doc cordova
-    // https://github.com/apache/cordova-plugin-camera#cameraoptions-errata-
-    const options: CameraOptions = {
-      quality: 50,
-      destinationType: this.camera.DestinationType.FILE_URI,
-      sourceType: sourceType,
-      allowEdit: true,
-      targetHeight: 500,
-      targetWidth: 500,
-      mediaType: this.camera.MediaType.PICTURE,
-      saveToPhotoAlbum: true
-    };
-    this.camera.getPicture(options).then((fileUri) => {
-                                           this.imageService.tracer.subscribe(
-                                             message => this.traces.push(message)
-                                           );
-                                           try {
-                                             this.imageService.uploadImageToFireBase(fileUri);
-                                           } catch(err) {
-                                             this.traces.push(JSON.stringify(err));
-                                           }
-                                         }
-    )
-  }
-
-  //
-  //private uploadFile(fileUri: any) {
-  //  this.imageService.tracer.subscribe(
-  //    message => this.traces.push(message)
-  //  );
-  //
-  //  let self = this;
-  //  (<any>window).resolveLocalFileSystemURL(fileUri, (res) => {
-  //                                            res.file((resFile) => {
-  //                                              self.traces.push('native file' + JSON.stringify(resFile) + ' ' +
-  // (typeof resFile)); //self.imageService.uploadImage(resFile);  let reader = new FileReader(); reader.onloadend =
-  // function (evt) { self.traces.push('blob chargé. appel du service image'); let blob = new Blob([ new
-  // Uint8Array(evt.target[ '' ]) ], {type: 'image/jpeg'}); //let blob = new Blob([ evt.target[ 'result' ] ], {type: //
-  // 'image/jpeg'}); self.imageService.uploadBlob(blob); } reader.onerror = function (err) { self.traces.push('error
-  // reading file ! ' + JSON.stringify(err)); } reader.readAsArrayBuffer(resFile); }) }, err =>
-  // self.presentAlert('Echec... !', 'erreur readFile ' + err) ); }
-
   readBrowserFile(event: any) {
     this.imageService.tracer.subscribe(
       message => this.traces.push(message)
@@ -132,4 +89,38 @@ export class UpdatePage implements OnInit {
     );
     alert.present();
   }
+
+  //PHOTO
+  doGetPicture() {
+    //let imageSource = (Device.isVirtual ? Camera.PictureSourceType.PHOTOLIBRARY : Camera.PictureSourceType.CAMERA);
+    //console.log(Device)
+    let imageSource = this.camera.PictureSourceType.CAMERA;
+    this.camera.getPicture({
+                             destinationType: this.camera.DestinationType.FILE_URI,
+                             sourceType: imageSource,
+                             targetHeight: 640,
+                             correctOrientation: true
+                           })
+      .then((_imagePath) => {
+        alert('got image path ' + _imagePath);
+        // convert picture to blob
+        return this.imageService.makeFileIntoBlob(_imagePath);
+      }).then((_imageBlob) => {
+      alert('got image blob ' + _imageBlob);
+
+      // upload the blob
+      return this.imageService.uploadToFirebase(_imageBlob);
+    }).then((_uploadSnapshot: any) => {
+      alert('file uploaded successfully  ' + _uploadSnapshot.downloadURL);
+
+      // store reference to storage in database
+      return this.imageService.saveToDatabaseAssetList(_uploadSnapshot);
+
+    }).then((_uploadSnapshot: any) => {
+      alert('file saved to asset catalog successfully  ');
+    }, (_error) => {
+      alert('Error ' + (_error.message || _error));
+    });
+  }
+
 }

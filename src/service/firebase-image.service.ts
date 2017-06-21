@@ -105,6 +105,7 @@ export class FirebaseImageService extends FirebaseService {
     this.tracer.emit(msg + ' ' + JSON.stringify(obj));
   }
 
+  //fonctionne pour les navigateurs, mais pas pour Android malheureusement
   uploadImage(file: File) {
     this.trace('uploadImage start - ', file);
     let item: FileItem = new FileItem(file);
@@ -113,12 +114,12 @@ export class FirebaseImageService extends FirebaseService {
     this.trace('uploadImage end - ', item);
   }
 
-  uploadBlob(file: Blob) {
-    this.trace('uploadBlob start - ', file);
-    let item: FileItem = new FileItem(file);
-    this.showInfo('file item is:' + JSON.stringify(item));
-    this.uploadImagesToFirebase([ item ]);
-    this.trace('uploadBlob end - ', item);
+  private saveImage(image: any) {
+    let saveref = this.angularFirebase.database.ref(this.USERS_ROOT + '/' + this.loginService.getUser() + '/'
+                                                    + this.IMAGES_FOLDER);
+
+    saveref.push(image);
+    this.showToast('l\'image ' + image.name + ' a bien été sauvegardée !');
   }
 
   uploadImagesToFirebase(files: FileItem[]) {
@@ -152,54 +153,78 @@ export class FirebaseImageService extends FirebaseService {
         this.trace('erreur !', err);
       }
     });
+  }
+
+  // code pour Android
+
+  makeFileIntoBlob(_imagePath) {
+
+    // INSTALL PLUGIN - cordova plugin add cordova-plugin-file
+    return new Promise((resolve, reject) => {
+      (<any>window).resolveLocalFileSystemURL(_imagePath, (fileEntry) => {
+
+        fileEntry.file((resFile) => {
+
+          var reader = new FileReader();
+          reader.onloadend = (evt: any) => {
+            var imgBlob: any = new Blob([ evt.target.result ], {type: 'image/jpeg'});
+            imgBlob.name = 'sample.jpg';
+            resolve(imgBlob);
+          };
+
+          reader.onerror = (e) => {
+            console.log('Failed file read: ' + e.toString());
+            reject(e);
+          };
+
+          reader.readAsArrayBuffer(resFile);
+        });
+      });
+    });
+  }
+
+  uploadToFirebase(_imageBlob) {
+    var fileName = 'sample-' + new Date().getTime() + '.jpg';
+
+    return new Promise((resolve, reject) => {
+      var fileRef = firebase.storage().ref('images/' + fileName);
+
+      var uploadTask = fileRef.put(_imageBlob);
+
+      uploadTask.on('state_changed', (_snapshot) => {
+        console.log('snapshot progess ' + _snapshot);
+      }, (_error) => {
+        reject(_error);
+      }, () => {
+        // completion...
+        resolve(uploadTask.snapshot);
+      });
+    });
+  }
+
+  saveToDatabaseAssetList(_uploadSnapshot) {
+    var ref = firebase.database().ref('assets');
+
+    return new Promise((resolve, reject) => {
+
+      // we will save meta data of image in database
+      var dataToSave = {
+        'URL': _uploadSnapshot.downloadURL, // url to access file
+        'name': _uploadSnapshot.metadata.name, // name of the file
+        'owner': firebase.auth().currentUser.uid,
+        'email': firebase.auth().currentUser.email,
+        'lastUpdated': new Date().getTime(),
+      };
+
+      ref.push(dataToSave, (_response) => {
+        resolve(_response);
+      }).catch((_error) => {
+        reject(_error);
+      });
+    });
 
   }
 
-  private saveImage(image: any) {
-    let saveref = this.angularFirebase.database.ref(this.USERS_ROOT + '/' + this.loginService.getUser() + '/'
-                                                    + this.IMAGES_FOLDER);
-
-    saveref.push(image);
-    this.showToast('l\'image ' + image.name + ' a bien été sauvegardée !');
-  }
-
-  private saveImage2(image: any, nom: string) {
-    this.trace('saveImage2 - nom ', nom);
-    let saveref = this.angularFirebase.database.ref(this.USERS_ROOT + '/' + this.loginService.getUser() + '/'
-                                                    + this.IMAGES_FOLDER);
-
-    saveref.push(image);
-    this.showToast('l\'image ' + nom + ' a bien été sauvegardée !');
-  }
-
-  uploadImageToFireBase(fileUri: string) {
-    (<any>window).resolveLocalFileSystemURL(fileUri, (resolved) => {
-                                              resolved.file((resolvedFile) => {
-                                                try {
-                                                  this.trace('uploadImageToFireBase - fileUri ', fileUri);
-                                                  this.trace('uploadImageToFireBase - resolved ', resolved);
-                                                  this.trace('uploadImageToFireBase - resolved file', resolvedFile);
-                                                  let dir = resolved.nativeURL.substring(0, resolved.nativeURL.lastIndexOf('/') + 1);
-                                                  let filename = resolvedFile.name;
-                                                  this.trace('filedir=' + dir + ' filename=' + filename, '');
-                                                  this.file.readAsArrayBuffer(dir, filename).then(
-                                                    success => {
-                                                      try {
-                                                        this.trace('readAsArrayBuffer OK', success);
-                                                        let blob = new Blob([ success ], {type: 'image/jpeg'});
-                                                        this.uploadBlob(blob);
-                                                      } catch (err) {
-                                                        this.trace('ERREUR dans readAsArrayBuffer', JSON.stringify(err));
-                                                      }
-                                                    }
-                                                  );
-                                                } catch (err) {
-                                                  this.trace('ERREUR dans uploadImageToFireBase', JSON.stringify(err));
-                                                }
-                                              })
-                                            }, err => this.showAlert('Echec... ! erreur readFile ', JSON.stringify(err))
-    );
-  }
 }
 
 
