@@ -1,5 +1,5 @@
 import {ErrorHandler, NgModule} from '@angular/core';
-import {IonicApp, IonicErrorHandler, IonicModule} from 'ionic-angular';
+import {IonicApp, IonicErrorHandler, IonicModule, Platform} from 'ionic-angular';
 import {MyCaveApp} from './app.component';
 import {AboutPage} from '../pages/about/about';
 import {ContactPage} from '../pages/contact/contact';
@@ -98,6 +98,7 @@ export const fireConfig = {
             providers: [
               BottleFactory,
               Camera,
+              //Platform,
               Statistics,
               StatusBar,
               SplashScreen,

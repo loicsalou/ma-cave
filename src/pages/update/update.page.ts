@@ -1,11 +1,12 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {Bottle} from '../../model/bottle';
-import {AlertController, NavController, NavParams} from 'ionic-angular';
+import {AlertController, NavController, NavParams, Platform} from 'ionic-angular';
 import {BottleService} from '../../service/bottle-firebase.service';
 import {Camera, CameraOptions} from '@ionic-native/camera';
 import {FirebaseImageService} from '../../service/firebase-image.service';
 import {Subscription} from 'rxjs/Subscription';
 import * as firebase from 'firebase/app';
+import {File as CordovaFile} from '@ionic-native/file';
 
 /*
  Generated class for the Update component.
@@ -26,9 +27,11 @@ export class UpdatePage implements OnInit {
   imgUrl: string;
   images: Array<{ src: String }> = [];
   private imagesSubscription: Subscription;
+  private traces: string[] = [];
 
   constructor(private navCtrl: NavController, private navParams: NavParams, private bottleService: BottleService,
-              private camera: Camera, private alertController: AlertController, private imageService: FirebaseImageService) {
+              private camera: Camera, private alertController: AlertController, private cordovaFile: CordovaFile,
+              private imageService: FirebaseImageService, private platform: Platform) {
     this.bottle = navParams.data[ 'bottle' ];
   }
 
@@ -49,6 +52,10 @@ export class UpdatePage implements OnInit {
 
   save() {
     this.bottleService.save([ this.bottle ]);
+  }
+
+  public platformIsCordova(): boolean {
+    return this.platform.is('cordova');
   }
 
   loadImage() {
@@ -75,17 +82,42 @@ export class UpdatePage implements OnInit {
       targetWidth: 500,
       mediaType: this.camera.MediaType.PICTURE,
       saveToPhotoAlbum: true
-    }
-    this.camera.getPicture(options).then((imageUri) => {
-      // imageData is either a base64 encoded string or a file URI if it's base64:
-      this.images.unshift({src: imageUri});
-      this.imageService.uploadImagesToFirebase(imageUri);
-    }, (err) => {
-      this.presentAlert('L\'image n\'a pas pu être récupérée !', err);
-    });
+    };
+    this.camera.getPicture(options).then((fileUri) => {
+                                           this.imageService.tracer.subscribe(
+                                             message => this.traces.push(message)
+                                           );
+                                           try {
+                                             this.imageService.uploadImageToFireBase(fileUri);
+                                           } catch(err) {
+                                             this.traces.push(JSON.stringify(err));
+                                           }
+                                         }
+    )
   }
 
+  //
+  //private uploadFile(fileUri: any) {
+  //  this.imageService.tracer.subscribe(
+  //    message => this.traces.push(message)
+  //  );
+  //
+  //  let self = this;
+  //  (<any>window).resolveLocalFileSystemURL(fileUri, (res) => {
+  //                                            res.file((resFile) => {
+  //                                              self.traces.push('native file' + JSON.stringify(resFile) + ' ' +
+  // (typeof resFile)); //self.imageService.uploadImage(resFile);  let reader = new FileReader(); reader.onloadend =
+  // function (evt) { self.traces.push('blob chargé. appel du service image'); let blob = new Blob([ new
+  // Uint8Array(evt.target[ '' ]) ], {type: 'image/jpeg'}); //let blob = new Blob([ evt.target[ 'result' ] ], {type: //
+  // 'image/jpeg'}); self.imageService.uploadBlob(blob); } reader.onerror = function (err) { self.traces.push('error
+  // reading file ! ' + JSON.stringify(err)); } reader.readAsArrayBuffer(resFile); }) }, err =>
+  // self.presentAlert('Echec... !', 'erreur readFile ' + err) ); }
+
   readBrowserFile(event: any) {
+    this.imageService.tracer.subscribe(
+      message => this.traces.push(message)
+    );
+
     //let textType = /text.*/;
     let file = event.currentTarget.files[ 0 ];
     this.imageService.uploadImage(file);
@@ -100,5 +132,4 @@ export class UpdatePage implements OnInit {
     );
     alert.present();
   }
-
 }

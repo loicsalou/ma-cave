@@ -1,11 +1,11 @@
 export class FileItem {
-    
-  public file:File;
+
+  public file:Blob;
   public url:string = '';
   public isUploading:boolean = false;
   public progress:number = 0;
 
-  public constructor(file:File) {
+  public constructor(file:Blob) {
     this.file = file;
   }
 

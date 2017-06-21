@@ -7,57 +7,108 @@
 </ion-header>
 
 <ion-content scroll="true" class="page-update">
-  <div class="update">
-    <div>
-      <div class="block" style="display:flex">
-        <div class="icon">
-          <img src="{{ bottle.label | bottleIcon }}">
-        </div>
-        <h5>{{bottle.nomCru}}</h5>
-      
-      </div>
-      <div class="description">
-        <ul class="circle">
-          <li>{{bottle.label}}</li>
-          <li>{{bottle.country_label}}, {{bottle.subregion_label}}, {{bottle.area_label}}</li>
-          <li>{{bottle.classe_age }} ({{bottle.millesime}})</li>
-          <li>{{ "quantite_courante" | translate }}: {{ bottle.quantite_courante }} sur {{bottle.quantite_achat}}
-          </li>
-        </ul>
-      </div>
-    </div>
-    
-    <h4>{{"details" | translate}}</h4>
-    <div class="block">
-      <ul class="circle">
-        <li>{{ "date_achat" | translate }} {{ bottle.date_achat }}, {{ bottle.lieu_achat }}</li>
-        <li>{{ "prix" | translate }} {{ bottle.prix }} € / {{ bottle.cote }} €</li>
-        <li>{{ "garde" | translate }} {{ bottle.garde_min }} {{ "ans" | translate }} / {{ bottle.garde_max }} {{ "ans"
-          | translate }}
-        </li>
-        <li>{{ "garde_optimum" | translate }} {{ bottle.garde_min }} {{ "ans" | translate }}</li>
-      </ul>
-    </div>
-    
-    <h4>{{"infos" | translate}}</h4>
-    <div>
-      <p *ngIf="!bottle.suggestion && ! bottle.comment">Aucune information complémentaire</p>
-      <p *ngIf="bottle.suggestion">{{ "suggestion" | translate }}: {{bottle.suggestion}}</p>
-      <p *ngIf="bottle.comment">{{ "comment" | translate }}: {{bottle.comment}}</p>
-    </div>
+  <ion-row d-flex>
+    <ion-col>
+      <img src="{{ bottle.label | bottleIcon }}">
+    </ion-col>
+    <ion-col>
+      <ion-item>
+        <ion-label>{{'bottle.label' | translate}}</ion-label>
+        <ion-input type="text" [(ngModel)]="bottle.label"></ion-input>
+      </ion-item>
+    </ion-col>
+  </ion-row>
   
-  </div>
+  <ion-row>
+    <ion-item>
+      <ion-label>{{'bottle.nomCru'| translate}}</ion-label>
+      <ion-input type="text" [(ngModel)]="bottle.nomCru"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>{{'bottle.country_label' | translate}}</ion-label>
+      <ion-input type="text" [(ngModel)]="bottle.country_label"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>{{'bottle.subregion_label' | translate}}</ion-label>
+      <ion-input type="text" [(ngModel)]="bottle.subregion_label"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>{{'bottle.area_label' | translate}}</ion-label>
+      <ion-input type="text" [(ngModel)]="bottle.area_label"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-col>âge: {{bottle.classe_age }}</ion-col>
+    </ion-item>
+    <ion-item>
+      <ion-label>{{'bottle.millesime' | translate}}</ion-label>
+      <ion-datetime displayFormat="YYYY" [(ngModel)]="bottle.millesime"></ion-datetime>
+    </ion-item>
+    <ion-item>
+      <ion-label>{{'bottle.quantite_courante' | translate}}</ion-label>
+      <ion-input type="number" [(ngModel)]="bottle.quantite_courante"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>{{'bottle.quantite_achat' | translate}}</ion-label>
+      <ion-input type="number" [(ngModel)]="bottle.quantite_achat"></ion-input>
+    </ion-item>
+  </ion-row>
   
-  <input type="file" id="input" (change)="readBrowserFile($event)">
-  <button ion-button align-items-start round icon-only block (click)="loadImage()">
-    <ion-icon name="albums"></ion-icon>
-  </button>
-  <p>{{imgUrl}}</p>
-  <img [src]="imgUrl" *ngIf="imgUrl">
+  <ion-row>
+    <h4>{{'details' | translate}}</h4>
+    <ion-item>
+      <ion-label>{{ 'bottle.date_achat' | translate }}</ion-label>
+      <ion-datetime displayFormat="DD/MM/YYYY" [(ngModel)]="bottle.date_achat"></ion-datetime>
+    </ion-item>
+    <ion-item>
+      <ion-label>{{ 'bottle.lieu_achat' | translate }}</ion-label>
+      <ion-input type="text" [(ngModel)]="bottle.lieu_achat"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>{{ 'bottle.prix' | translate }}</ion-label>
+      <ion-input type="text" [(ngModel)]="bottle.prix"></ion-input>
+      <ion-label>{{ 'bottle.cote' | translate }}</ion-label>
+      <ion-input type="text" [(ngModel)]="bottle.cote"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>{{ 'bottle.garde_min' | translate }}</ion-label>
+      <ion-input type="number" [(ngModel)]="bottle.garde_min"></ion-input>
+      <ion-label>{{ 'bottle.garde_max' | translate }}</ion-label>
+      <ion-input type="number" [(ngModel)]="bottle.garde_max"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>{{ 'bottle.garde_optimum' | translate }}</ion-label>
+      <ion-input type="number" [(ngModel)]="bottle.garde_optimum"></ion-input>
+    </ion-item>
+  </ion-row>
+  
+  <ion-row>
+    <h4>{{'infos' | translate}}</h4>
+    
+    <ion-item>
+      <ion-label>{{ 'bottle.comment' | translate }}</ion-label>
+      <ion-textarea [(ngModel)]="bottle.comment"></ion-textarea>
+    </ion-item>
+    
+    <ion-item>
+      <ion-label>{{ 'bottle.suggestion' | translate }}</ion-label>
+      <ion-textarea [(ngModel)]="bottle.suggestion"></ion-textarea>
+    </ion-item>
+  </ion-row>
+  
+  <ion-row>
+    <input *ngIf="! platformIsCordova()" type="file" id="input" (change)="readBrowserFile($event)">
+    <button *ngIf="platformIsCordova()" ion-button align-items-start round icon-only block (click)="loadImage()">
+      <ion-icon name="albums">Voir les images</ion-icon>
+    </button>
+  </ion-row>
   
   <button ion-button align-items-start round icon-only block (click)="takePhoto()">
     <ion-icon name="camera"></ion-icon>
   </button>
+  
+  <p *ngFor="let msg of traces">{{msg}}</p>
+  
+  <img [src]="imgUrl" *ngIf="imgUrl">
   <ion-slides style="height: 50vh">
     <ion-slide *ngFor="let image of images">
       <ion-card>
@@ -65,5 +116,7 @@
       </ion-card>
     </ion-slide>
   </ion-slides>
+  
+  <img #capture [src]="imgUrl" *ngIf="imgUrl">
 
 </ion-content>

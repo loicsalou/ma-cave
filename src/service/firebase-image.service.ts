@@ -1,7 +1,7 @@
 /**
  * Created by loicsalou on 28.02.17.
  */
-import {Injectable} from '@angular/core';
+import {EventEmitter, Injectable} from '@angular/core';
 import {FilterSet} from '../distribution/distribution';
 import {AngularFireDatabase} from 'angularfire2/database';
 import {BottleFactory} from '../../model/bottle.factory';
@@ -16,6 +16,8 @@ import {Image} from '../model/image';
 import {FilePath} from '@ionic-native/file-path';
 import {FileItem} from './file-item';
 import * as _ from 'lodash';
+import {Http} from '@angular/http';
+import {File as CordovaFile} from '@ionic-native/file';
 import Reference = firebase.database.Reference;
 
 //import { FirebaseApp } from 'angularfire2';
@@ -29,10 +31,11 @@ import Reference = firebase.database.Reference;
 export class FirebaseImageService extends FirebaseService {
 
   private storageRef: firebase.storage.Reference;
+  public tracer: EventEmitter<string> = new EventEmitter();
 
   constructor(private angularFirebase: AngularFireDatabase, loadingCtrl: LoadingController,
               alertController: AlertController, toastController: ToastController, private filepath: FilePath,
-              private loginService: LoginService) {
+              private loginService: LoginService, private http: Http, private file: CordovaFile) {
     super(loadingCtrl, alertController, toastController);
     if (loginService.user) {
       this.initFirebase();
@@ -53,8 +56,8 @@ export class FirebaseImageService extends FirebaseService {
    * liste des images d'une bouteille
    * @param bottle
    */
-  public getImage(name: string): firebase.Promise<any>{
-    return this.storageRef.child(this.IMAGES_FOLDER).child(name).getDownloadURL();
+  public getImage(name: string): firebase.Promise<any> {
+    return this.storageRef.child(name).getDownloadURL();
   }
 
   /**
@@ -87,7 +90,7 @@ export class FirebaseImageService extends FirebaseService {
     let item: FileItem = new FileItem(file);
     item.isUploading = true;
     let self = this;
-    this.storageRef.child(`${this.IMAGES_FOLDER}/${item.file.name}`)
+    this.storageRef.child(`${this.IMAGES_FOLDER}/${item.file[ 'name' ]}`)
       .delete()
       .then(function () {
               self.showToast('Image supprimée !')
@@ -98,28 +101,56 @@ export class FirebaseImageService extends FirebaseService {
       });
   }
 
+  trace(msg, obj) {
+    this.tracer.emit(msg + ' ' + JSON.stringify(obj));
+  }
+
   uploadImage(file: File) {
+    this.trace('uploadImage start - ', file);
     let item: FileItem = new FileItem(file);
+    this.showInfo('file item is:' + JSON.stringify(item));
     this.uploadImagesToFirebase([ item ]);
+    this.trace('uploadImage end - ', item);
+  }
+
+  uploadBlob(file: Blob) {
+    this.trace('uploadBlob start - ', file);
+    let item: FileItem = new FileItem(file);
+    this.showInfo('file item is:' + JSON.stringify(item));
+    this.uploadImagesToFirebase([ item ]);
+    this.trace('uploadBlob end - ', item);
   }
 
   uploadImagesToFirebase(files: FileItem[]) {
     _.each(files, (item: FileItem) => {
-
+      this.trace('uploadImagesToFirebase loop start - ', item);
       item.isUploading = true;
-      let uploadTask: firebase.storage.UploadTask = this.storageRef.child(`${this.IMAGES_FOLDER}/${item.file.name}`).put(item.file);
+      try {
+        let uploadTask: firebase.storage.UploadTask = this.storageRef.child(item.file[ 'name' ]).put(item.file);
+        this.trace('uploadImagesToFirebase uploadTask created - ', '');
 
-      uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
-                    (snapshot) => item.progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
-                    (error) => {
-                    },
-                    () => {
-                      item.url = uploadTask.snapshot.downloadURL;
-                      item.isUploading = false;
-                      this.saveImage({name: item.file.name, url: item.url});
-                    }
-      );
+        uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
+                      (snapshot) => {
+                        item.progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        this.trace('uploadImagesToFirebase progress - ', snapshot.bytesTransferred);
+                      },
+                      (error) => {
+                        this.trace('uploadImagesToFirebase ERROR - ', error);
+                        this.showAlert('uploadToFireBase planté !' + error);
+                      },
+                      () => {
+                        this.trace('uploadImagesToFirebase complete - ', '');
+                        item.url = uploadTask.snapshot.downloadURL;
+                        item.isUploading = false;
+                        this.trace('uploadImagesToFirebase before saveimage - ', '');
+                        this.saveImage({name: item.file[ 'name' ], url: item.url});
+                        this.trace('uploadImagesToFirebase after saveimage - ', '');
 
+                      }
+        );
+      } catch (err) {
+        this.trace('erreur !', err);
+      }
     });
 
   }
@@ -129,6 +160,45 @@ export class FirebaseImageService extends FirebaseService {
                                                     + this.IMAGES_FOLDER);
 
     saveref.push(image);
+    this.showToast('l\'image ' + image.name + ' a bien été sauvegardée !');
+  }
+
+  private saveImage2(image: any, nom: string) {
+    this.trace('saveImage2 - nom ', nom);
+    let saveref = this.angularFirebase.database.ref(this.USERS_ROOT + '/' + this.loginService.getUser() + '/'
+                                                    + this.IMAGES_FOLDER);
+
+    saveref.push(image);
+    this.showToast('l\'image ' + nom + ' a bien été sauvegardée !');
+  }
+
+  uploadImageToFireBase(fileUri: string) {
+    (<any>window).resolveLocalFileSystemURL(fileUri, (resolved) => {
+                                              resolved.file((resolvedFile) => {
+                                                try {
+                                                  this.trace('uploadImageToFireBase - fileUri ', fileUri);
+                                                  this.trace('uploadImageToFireBase - resolved ', resolved);
+                                                  this.trace('uploadImageToFireBase - resolved file', resolvedFile);
+                                                  let dir = resolved.nativeURL.substring(0, resolved.nativeURL.lastIndexOf('/') + 1);
+                                                  let filename = resolvedFile.name;
+                                                  this.trace('filedir=' + dir + ' filename=' + filename, '');
+                                                  this.file.readAsArrayBuffer(dir, filename).then(
+                                                    success => {
+                                                      try {
+                                                        this.trace('readAsArrayBuffer OK', success);
+                                                        let blob = new Blob([ success ], {type: 'image/jpeg'});
+                                                        this.uploadBlob(blob);
+                                                      } catch (err) {
+                                                        this.trace('ERREUR dans readAsArrayBuffer', JSON.stringify(err));
+                                                      }
+                                                    }
+                                                  );
+                                                } catch (err) {
+                                                  this.trace('ERREUR dans uploadImageToFireBase', JSON.stringify(err));
+                                                }
+                                              })
+                                            }, err => this.showAlert('Echec... ! erreur readFile ', JSON.stringify(err))
+    );
   }
 }
 

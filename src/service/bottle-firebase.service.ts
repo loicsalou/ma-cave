@@ -109,7 +109,6 @@ export class BottleService extends FirebaseService {
     if (!filters) {
       return;
     }
-    //console.info(Date.now()+" - filtering on "+filters.toString());
     if (this.allBottlesArray == undefined) {
       return;
     }
