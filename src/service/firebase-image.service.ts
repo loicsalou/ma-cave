@@ -157,11 +157,29 @@ export class FirebaseImageService extends FirebaseService {
 
   // code pour Android
 
-  makeFileIntoBlob(_imagePath) {
+  //upload a picture taken on the phone and puch to firebase
+  uploadPhoto(imagePath: any) {
+    this.makeFileIntoBlob(imagePath)
+      .then((imageBlob) => {
+        // upload the blob
+        return this.uploadToFirebase(imageBlob);
+      })
+      .then((uploadSnapshot: any) => {
+        //file uploaded successfully URL= uploadSnapshot.downloadURL
+        // store reference to storage in database
+        return this.saveToDatabaseAssetList(uploadSnapshot);
+      })
+      .then((ploadSnapshot: any) => {
+        //alert('file saved to asset catalog successfully  ');
+      }, (error) => {
+        alert('Error during push to firebase of the picture' + (error.message || error));
+      });
+  }
 
-    // INSTALL PLUGIN - cordova plugin add cordova-plugin-file
+  makeFileIntoBlob(imagePath) {
+    // REQUIRED PLUGIN - cordova plugin add cordova-plugin-file
     return new Promise((resolve, reject) => {
-      (<any>window).resolveLocalFileSystemURL(_imagePath, (fileEntry) => {
+      (<any>window).resolveLocalFileSystemURL(imagePath, (fileEntry) => {
 
         fileEntry.file((resFile) => {
 
@@ -183,24 +201,55 @@ export class FirebaseImageService extends FirebaseService {
     });
   }
 
-  uploadToFirebase(_imageBlob) {
+  uploadToFirebase(imageBlob) {
     var fileName = 'sample-' + new Date().getTime() + '.jpg';
 
     return new Promise((resolve, reject) => {
-      var fileRef = firebase.storage().ref('images/' + fileName);
 
-      var uploadTask = fileRef.put(_imageBlob);
+      var fileRef = this.storageRef.child(fileName);
+      var uploadTask = fileRef.put(imageBlob);
 
-      uploadTask.on('state_changed', (_snapshot) => {
-        console.log('snapshot progess ' + _snapshot);
-      }, (_error) => {
-        reject(_error);
-      }, () => {
-        // completion...
-        resolve(uploadTask.snapshot);
-      });
+      uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
+                    (snapshot) => {
+                      //item.progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                      this.trace('uploadImagesToFirebase progress - ', (snapshot.bytesTransferred / snapshot.totalBytes) * 100 + '%');
+                    },
+                    (error) => {
+                      this.trace('uploadImagesToFirebase ERROR - ', error);
+                      this.showAlert('uploadToFireBase planté !' + error);
+                      reject(error);
+                    },
+                    () => {
+                      this.trace('uploadImagesToFirebase complete - ', '');
+                      //item.url = uploadTask.snapshot.downloadURL;
+                      //item.isUploading = false;
+                      this.trace('uploadImagesToFirebase before saveimage - ', '');
+                      //this.saveImage({name: item.file[ 'name' ], url: item.url});
+                      //this.trace('uploadImagesToFirebase after saveimage - ', '');
+                      resolve(uploadTask.snapshot);
+                    })
     });
   }
+
+  //
+  //uploadToFirebase(_imageBlob) {
+  //  var fileName = 'sample-' + new Date().getTime() + '.jpg';
+  //
+  //  return new Promise((resolve, reject) => {
+  //    var fileRef = firebase.storage().ref('images/' + fileName);
+  //
+  //    var uploadTask = fileRef.put(_imageBlob);
+  //
+  //    uploadTask.on('state_changed', (_snapshot) => {
+  //      console.log('snapshot progess ' + _snapshot);
+  //    }, (_error) => {
+  //      reject(_error);
+  //    }, () => {
+  //      // completion...
+  //      resolve(uploadTask.snapshot);
+  //    });
+  //  });
+  //}
 
   saveToDatabaseAssetList(_uploadSnapshot) {
     var ref = firebase.database().ref('assets');
@@ -222,7 +271,6 @@ export class FirebaseImageService extends FirebaseService {
         reject(_error);
       });
     });
-
   }
 
 }

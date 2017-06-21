@@ -102,9 +102,18 @@
     </button>
   </ion-row>
   
-  <button ion-button align-items-start round icon-only block (click)="doGetPicture()">
-    <ion-icon name="camera"></ion-icon>
-  </button>
+  <ion-row>
+    <ion-col col-6>
+      <button ion-button align-items-start round icon-only block (click)="doGetPictureFromCamera()">
+        <ion-icon name="camera"></ion-icon>
+      </button>
+    </ion-col>
+    <ion-col col-6>
+      <button ion-button align-items-start round icon-only block (click)="doGetPictureFromGallery()">
+        <ion-icon name="fa-search"></ion-icon>
+      </button>
+    </ion-col>
+  </ion-row>
   
   <p *ngFor="let msg of traces">{{msg}}</p>
   

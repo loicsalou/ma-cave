@@ -2,7 +2,7 @@ import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {Bottle} from '../../model/bottle';
 import {AlertController, NavController, NavParams, Platform} from 'ionic-angular';
 import {BottleService} from '../../service/bottle-firebase.service';
-import {Camera, CameraOptions} from '@ionic-native/camera';
+import {Camera} from '@ionic-native/camera';
 import {FirebaseImageService} from '../../service/firebase-image.service';
 import {Subscription} from 'rxjs/Subscription';
 import * as firebase from 'firebase/app';
@@ -91,7 +91,7 @@ export class UpdatePage implements OnInit {
   }
 
   //PHOTO
-  doGetPicture() {
+  doGetPictureFromCamera() {
     //let imageSource = (Device.isVirtual ? Camera.PictureSourceType.PHOTOLIBRARY : Camera.PictureSourceType.CAMERA);
     //console.log(Device)
     let imageSource = this.camera.PictureSourceType.CAMERA;
@@ -101,26 +101,20 @@ export class UpdatePage implements OnInit {
                              targetHeight: 640,
                              correctOrientation: true
                            })
-      .then((_imagePath) => {
-        alert('got image path ' + _imagePath);
-        // convert picture to blob
-        return this.imageService.makeFileIntoBlob(_imagePath);
-      }).then((_imageBlob) => {
-      alert('got image blob ' + _imageBlob);
+      .then(imagePath => this.imageService.uploadPhoto(imagePath));
+  }
 
-      // upload the blob
-      return this.imageService.uploadToFirebase(_imageBlob);
-    }).then((_uploadSnapshot: any) => {
-      alert('file uploaded successfully  ' + _uploadSnapshot.downloadURL);
-
-      // store reference to storage in database
-      return this.imageService.saveToDatabaseAssetList(_uploadSnapshot);
-
-    }).then((_uploadSnapshot: any) => {
-      alert('file saved to asset catalog successfully  ');
-    }, (_error) => {
-      alert('Error ' + (_error.message || _error));
-    });
+  doGetPictureFromGallery() {
+    //let imageSource = (Device.isVirtual ? Camera.PictureSourceType.PHOTOLIBRARY : Camera.PictureSourceType.CAMERA);
+    //console.log(Device)
+    let imageSource = this.camera.PictureSourceType.PHOTOLIBRARY;
+    this.camera.getPicture({
+                             destinationType: this.camera.DestinationType.FILE_URI,
+                             sourceType: imageSource,
+                             targetHeight: 640,
+                             correctOrientation: true
+                           })
+      .then(imagePath => this.imageService.uploadPhoto(imagePath));
   }
 
 }
