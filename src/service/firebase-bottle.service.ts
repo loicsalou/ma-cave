@@ -2,7 +2,7 @@
  * Created by loicsalou on 28.02.17.
  */
 import {Injectable} from '@angular/core';
-import {Bottle} from '../model/bottle';
+import {Bottle, BottleMetadata} from '../model/bottle';
 import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {FilterSet} from '../components/distribution/distribution';

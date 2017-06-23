@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {NavController, NavParams, Platform, ToastController} from 'ionic-angular';
-import {BottleService} from '../../service/bottle-firebase.service';
+import {BottleService} from '../../service/firebase-bottle.service';
 import {Bottle} from '../../model/bottle';
 import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
 import {ListBottleEvent} from '../../components/list/bottle-list-event';

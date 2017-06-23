@@ -9,16 +9,16 @@ import {AlertController, LoadingController, ToastController} from 'ionic-angular
 import * as firebase from 'firebase/app';
 import 'firebase/storage';
 import {LoginService} from './login.service';
-import {Bottle} from '../model/bottle';
+import {Bottle, BottleMetadata} from '../model/bottle';
 import {FirebaseService} from './firebase-service';
 import {Observable} from 'rxjs/Observable';
 import {Image} from '../model/image';
 import {FilePath} from '@ionic-native/file-path';
 import {FileItem} from './file-item';
-import * as _ from 'lodash';
 import {Http} from '@angular/http';
 import {File as CordovaFile} from '@ionic-native/file';
 import Reference = firebase.database.Reference;
+import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
 
 //import { FirebaseApp } from 'angularfire2';
 
@@ -86,7 +86,7 @@ export class FirebaseImageService extends FirebaseService {
     return items;
   }
 
-  deleteImage(file: File) {
+  public deleteImage(file: File) {
     let item: FileItem = new FileItem(file);
     item.isUploading = true;
     let self = this;
@@ -101,91 +101,99 @@ export class FirebaseImageService extends FirebaseService {
       });
   }
 
-  trace(msg, obj) {
-    this.tracer.emit(msg + ' ' + JSON.stringify(obj));
-  }
-
-  //fonctionne pour les navigateurs, mais pas pour Android malheureusement
-  uploadImage(file: File) {
-    this.trace('uploadImage start - ', file);
-    let item: FileItem = new FileItem(file);
-    this.showInfo('file item is:' + JSON.stringify(item));
-    this.uploadImagesToFirebase([ item ]);
-    this.trace('uploadImage end - ', item);
-  }
-
-  private saveImage(image: any) {
-    let saveref = this.angularFirebase.database.ref(this.USERS_ROOT + '/' + this.loginService.getUser() + '/'
-                                                    + this.IMAGES_FOLDER);
-
-    saveref.push(image);
-    this.showToast('l\'image ' + image.name + ' a bien été sauvegardée !');
-  }
-
-  uploadImagesToFirebase(files: FileItem[]) {
-    _.each(files, (item: FileItem) => {
-      this.trace('uploadImagesToFirebase loop start - ', item);
-      item.isUploading = true;
-      try {
-        let uploadTask: firebase.storage.UploadTask = this.storageRef.child(item.file[ 'name' ]).put(item.file);
-        this.trace('uploadImagesToFirebase uploadTask created - ', '');
-
-        uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
-                      (snapshot) => {
-                        item.progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        this.trace('uploadImagesToFirebase progress - ', snapshot.bytesTransferred);
-                      },
-                      (error) => {
-                        this.trace('uploadImagesToFirebase ERROR - ', error);
-                        this.showAlert('uploadToFireBase planté !' + error);
-                      },
-                      () => {
-                        this.trace('uploadImagesToFirebase complete - ', '');
-                        item.url = uploadTask.snapshot.downloadURL;
-                        item.isUploading = false;
-                        this.trace('uploadImagesToFirebase before saveimage - ', '');
-                        this.saveImage({name: item.file[ 'name' ], url: item.url});
-                        this.trace('uploadImagesToFirebase after saveimage - ', '');
-
-                      }
-        );
-      } catch (err) {
-        this.trace('erreur !', err);
-      }
-    });
-  }
+  //
+  //trace(msg, obj) {
+  //  this.tracer.emit(msg + ' ' + JSON.stringify(obj));
+  //}
+  //
+  ////fonctionne pour les navigateurs, mais pas pour Android malheureusement
+  //uploadImage(file: File) {
+  //  this.trace('uploadImage start - ', file);
+  //  let item: FileItem = new FileItem(file);
+  //  this.showInfo('file item is:' + JSON.stringify(item));
+  //  this.uploadImagesToFirebase([ item ]);
+  //  this.trace('uploadImage end - ', item);
+  //}
+  //
+  //private saveImage(image: any) {
+  //  let saveref = this.angularFirebase.database.ref(this.USERS_ROOT + '/' + this.loginService.getUser() + '/'
+  //                                                  + this.IMAGES_FOLDER);
+  //
+  //  saveref.push(image);
+  //  this.showToast('l\'image ' + image.name + ' a bien été sauvegardée !');
+  //}
+  //
+  //uploadImagesToFirebase(files: FileItem[]) {
+  //  _.each(files, (item: FileItem) => {
+  //    this.trace('uploadImagesToFirebase loop start - ', item);
+  //    item.isUploading = true;
+  //    try {
+  //      let uploadTask: firebase.storage.UploadTask = this.storageRef.child(item.file[ 'name' ]).put(item.file);
+  //      this.trace('uploadImagesToFirebase uploadTask created - ', '');
+  //
+  //      uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
+  //                    (snapshot) => {
+  //                      item.progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+  //                      this.trace('uploadImagesToFirebase progress - ', snapshot.bytesTransferred);
+  //                    },
+  //                    (error) => {
+  //                      this.trace('uploadImagesToFirebase ERROR - ', error);
+  //                      this.showAlert('uploadToFireBase planté !' + error);
+  //                    },
+  //                    () => {
+  //                      this.trace('uploadImagesToFirebase complete - ', '');
+  //                      item.url = uploadTask.snapshot.downloadURL;
+  //                      item.isUploading = false;
+  //                      this.trace('uploadImagesToFirebase before saveimage - ', '');
+  //                      this.saveImage({name: item.file[ 'name' ], url: item.url});
+  //                      this.trace('uploadImagesToFirebase after saveimage - ', '');
+  //
+  //                    }
+  //      );
+  //    } catch (err) {
+  //      this.trace('erreur !', err);
+  //    }
+  //  });
+  //}
 
   // code pour Android
 
-  //upload a picture taken on the phone and puch to firebase
-  uploadPhoto(imagePath: any) {
-    this.makeFileIntoBlob(imagePath)
-      .then((imageBlob) => {
-        // upload the blob
-        return this.uploadToFirebase(imageBlob);
-      })
+  /**
+   * upload a picture taken on the phone and push to firebase
+   */
+  public uploadImage(image: File | any, meta: BottleMetadata) {
+    if (image instanceof File) {
+      this.uploadFileOrBlob(image, meta)
+    } else {
+      this.makeFileIntoBlob(image)
+        .then((imageBlob) => {
+          // upload the blob
+          return this.uploadFileOrBlob(imageBlob, meta);
+        })
+    }
+  }
+
+  private uploadFileOrBlob(fileOrBlob, meta: BottleMetadata) {
+    this.uploadToFirebase(fileOrBlob)
       .then((uploadSnapshot: any) => {
         //file uploaded successfully URL= uploadSnapshot.downloadURL
         // store reference to storage in database
-        return this.saveToDatabaseAssetList(uploadSnapshot);
-      })
-      .then((ploadSnapshot: any) => {
-        //alert('file saved to asset catalog successfully  ');
+        return this.saveToDatabaseAssetList(uploadSnapshot, meta);
       }, (error) => {
-        alert('Error during push to firebase of the picture' + (error.message || error));
+        this.showAlert('Error during push to firebase of the picture', error);
       });
   }
 
-  makeFileIntoBlob(imagePath) {
+  private makeFileIntoBlob(imagePath): Promise<Blob> {
     // REQUIRED PLUGIN - cordova plugin add cordova-plugin-file
     return new Promise((resolve, reject) => {
       (<any>window).resolveLocalFileSystemURL(imagePath, (fileEntry) => {
 
         fileEntry.file((resFile) => {
 
-          var reader = new FileReader();
+          let reader = new FileReader();
           reader.onloadend = (evt: any) => {
-            var imgBlob: any = new Blob([ evt.target.result ], {type: 'image/jpeg'});
+            let imgBlob: any = new Blob([ evt.target.result ], {type: 'image/jpeg'});
             imgBlob.name = 'sample.jpg';
             resolve(imgBlob);
           };
@@ -201,29 +209,30 @@ export class FirebaseImageService extends FirebaseService {
     });
   }
 
-  uploadToFirebase(imageBlob) {
-    var fileName = 'sample-' + new Date().getTime() + '.jpg';
+  uploadToFirebase(imageBlob): Promise<UploadTaskSnapshot> {
+    let fileName = 'sample-' + new Date().getTime() + '.jpg';
 
     return new Promise((resolve, reject) => {
 
-      var fileRef = this.storageRef.child(fileName);
-      var uploadTask = fileRef.put(imageBlob);
+      let fileRef = this.storageRef.child(fileName);
+      let uploadTask = fileRef.put(imageBlob);
 
       uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
                     (snapshot) => {
                       //item.progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                      this.trace('uploadImagesToFirebase progress - ', (snapshot.bytesTransferred / snapshot.totalBytes) * 100 + '%');
+                      //this.trace('uploadImagesToFirebase progress - ', (snapshot.bytesTransferred /
+                      // snapshot.totalBytes) * 100 + '%');
                     },
                     (error) => {
-                      this.trace('uploadImagesToFirebase ERROR - ', error);
+                      //this.trace('uploadImagesToFirebase ERROR - ', error);
                       this.showAlert('uploadToFireBase planté !' + error);
                       reject(error);
                     },
                     () => {
-                      this.trace('uploadImagesToFirebase complete - ', '');
+                      //this.trace('uploadImagesToFirebase complete - ', '');
                       //item.url = uploadTask.snapshot.downloadURL;
                       //item.isUploading = false;
-                      this.trace('uploadImagesToFirebase before saveimage - ', '');
+                      //this.trace('uploadImagesToFirebase before saveimage - ', '');
                       //this.saveImage({name: item.file[ 'name' ], url: item.url});
                       //this.trace('uploadImagesToFirebase after saveimage - ', '');
                       resolve(uploadTask.snapshot);
@@ -251,18 +260,22 @@ export class FirebaseImageService extends FirebaseService {
   //  });
   //}
 
-  saveToDatabaseAssetList(_uploadSnapshot) {
-    var ref = firebase.database().ref('assets');
+  private saveToDatabaseAssetList(uploadSnapshot, meta: BottleMetadata): Promise<firebase.database.ThenableReference> {
+    let ref = firebase.database().ref('assets');
 
     return new Promise((resolve, reject) => {
 
       // we will save meta data of image in database
-      var dataToSave = {
-        'URL': _uploadSnapshot.downloadURL, // url to access file
-        'name': _uploadSnapshot.metadata.name, // name of the file
+      let dataToSave = {
+        'URL': uploadSnapshot.downloadURL, // url to access file
+        'name': uploadSnapshot.metadata.name, // name of the file
         'owner': firebase.auth().currentUser.uid,
         'email': firebase.auth().currentUser.email,
         'lastUpdated': new Date().getTime(),
+        'keywords': meta.keywords,
+        'subregion_label': meta.subregion_label,
+        'area_label': meta.area_label,
+        'nomCru': meta.nomCru,
       };
 
       ref.push(dataToSave, (_response) => {

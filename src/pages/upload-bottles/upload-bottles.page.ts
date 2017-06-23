@@ -5,7 +5,7 @@ import {File} from '@ionic-native/file';
 import {FilePath} from '@ionic-native/file-path';
 import * as _ from 'lodash';
 import {BottleFactory} from '../../model/bottle.factory';
-import {BottleService} from '../../service/bottle-firebase.service';
+import {BottleService} from '../../service/firebase-bottle.service';
 import {Bottle} from '../../model/bottle';
 import {CavusService} from '../../service/cavus.service';
 

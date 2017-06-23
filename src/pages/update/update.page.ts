@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {Bottle} from '../../model/bottle';
 import {AlertController, NavController, NavParams, Platform} from 'ionic-angular';
-import {BottleService} from '../../service/bottle-firebase.service';
+import {BottleService} from '../../service/firebase-bottle.service';
 import {Camera} from '@ionic-native/camera';
 import {FirebaseImageService} from '../../service/firebase-image.service';
 import {Subscription} from 'rxjs/Subscription';
@@ -77,7 +77,7 @@ export class UpdatePage implements OnInit {
 
     //let textType = /text.*/;
     let file = event.currentTarget.files[ 0 ];
-    this.imageService.uploadImage(file);
+    this.imageService.uploadImage(file, Bottle.getMetadata(this.bottle));
   }
 
   private presentAlert(title: string, text: string) {
@@ -101,7 +101,7 @@ export class UpdatePage implements OnInit {
                              targetHeight: 640,
                              correctOrientation: true
                            })
-      .then(imagePath => this.imageService.uploadPhoto(imagePath));
+      .then(imagePath => this.imageService.uploadImage(imagePath, Bottle.getMetadata(this.bottle)));
   }
 
   doGetPictureFromGallery() {
@@ -114,7 +114,6 @@ export class UpdatePage implements OnInit {
                              targetHeight: 640,
                              correctOrientation: true
                            })
-      .then(imagePath => this.imageService.uploadPhoto(imagePath));
+      .then(imagePath => this.imageService.uploadImage(imagePath, Bottle.getMetadata(this.bottle)));
   }
-
 }

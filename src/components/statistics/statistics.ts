@@ -1,7 +1,7 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {DistributeService} from '../../service/distribute.service';
 import {Chart, ChartElement} from 'chart.js';
-import {BottleService} from '../../service/bottle-firebase.service';
+import {BottleService} from '../../service/firebase-bottle.service';
 import {Bottle} from '../../model/bottle';
 import * as _ from 'lodash';
 import {FilterSet} from '../distribution/distribution';

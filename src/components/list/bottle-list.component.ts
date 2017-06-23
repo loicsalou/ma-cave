@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {BottleService} from '../../service/bottle-firebase.service';
+import {BottleService} from '../../service/firebase-bottle.service';
 import {Bottle} from '../../model/bottle';
 import {ListBottleEvent} from './bottle-list-event';
 import {ItemSliding, ToastController} from 'ionic-angular';

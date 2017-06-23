@@ -6,7 +6,7 @@ import {ContactPage} from '../pages/contact/contact';
 import {HomePage} from '../pages/home/home';
 import {TabsPage} from '../pages/tabs/tabs';
 import {BrowsePage} from '../pages/browse/browse.page';
-import {BottleService} from '../service/bottle-firebase.service';
+import {BottleService} from '../service/firebase-bottle.service';
 import {DistributeService} from '../service/distribute.service';
 import {DistributionComponent} from '../components/distribution/distribution';
 import {BottleIconPipe} from '../components/list/bottle-item-component/bottle-icon.pipe';
