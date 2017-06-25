@@ -1,9 +1,13 @@
-<ion-header class="header">
-  
-  <ion-navbar>
+<ion-header class="header" d-flex style="flex-direction: column">
+  <span style="display: flex;">
+    <button ion-button icon-only (click)="cancel()">
+      <ion-icon name="arrow-back"></ion-icon>
+    </button>
     <ion-title (click)="save()">Update</ion-title>
-  </ion-navbar>
-
+    <button ion-button (click)="save()">
+      <ion-icon name="checkmark-circle"></ion-icon>
+    </button>
+  </span>
 </ion-header>
 
 <ion-content scroll="true" class="page-update" padding-horizontal>
@@ -73,7 +77,8 @@
       <ion-label>{{'bottle.subregion_label' | translate}}</ion-label>
       <ion-select [(ngModel)]="bottle.subregion_label" required (ionChange)="loadRegionAreas()">
         <ion-option *ngFor="let regionData of bottles.aocByArea" [value]="regionData.key">{{regionData
-          .key}}</ion-option>
+          .key}}
+        </ion-option>
       </ion-select>
     </ion-item>
   </ion-row>
@@ -160,15 +165,12 @@
     </ion-item>
   </ion-row>
   
-  <img [src]="imgUrl" *ngIf="imgUrl">
-  <ion-slides style="height: 50vh">
-    <ion-slide *ngFor="let image of images">
+  <ion-slides style="height: 40vh" *ngIf="bottle.image_urls">
+    <ion-slide *ngFor="let url of bottle.image_urls">
       <ion-card>
-        <img [src]="image.src"/>
+        <img [src]="url"/>
       </ion-card>
     </ion-slide>
   </ion-slides>
   
-  <img #capture [src]="imgUrl" *ngIf="imgUrl">
-
 </ion-content>

@@ -23,4 +23,9 @@ export class EmailLoginPage extends LoginPage implements OnInit {
     this.loginService.login();
   }
 
+  keyup(event) {
+    if (event.keyCode==13) {
+      this.signin()
+    }
+  }
 }

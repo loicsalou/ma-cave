@@ -29,6 +29,7 @@ export class UpdatePage implements OnInit {
   private imagesSubscription: Subscription;
   private traces: string[] = [];
   private aoc: AocInfo[];
+  unchanged = false;
 
   constructor(private navCtrl: NavController, private navParams: NavParams, private bottleService: BottleService,
               private camera: Camera, private alertController: AlertController, private imageService: FirebaseImageService,
@@ -66,6 +67,30 @@ export class UpdatePage implements OnInit {
 
   save() {
     this.bottleService.update([ this.bottle ]);
+  }
+
+  cancel() {
+    let alert = this.alertController.create({
+                                        title: 'Annuler ?',
+                                        message: 'Vous aller perdre vos mises à jour',
+                                        buttons: [
+                                          {
+                                            text: 'Oups, non !',
+                                            role: 'cancel',
+                                            handler: () => {
+                                              console.log('on reste dans la modification');
+                                            }
+                                          },
+                                          {
+                                            text: 'Oui',
+                                            handler: () => {
+                                              console.log('Annulation confirmée');
+                                              this.navCtrl.pop();
+                                            }
+                                          }
+                                        ]
+                                      });
+    alert.present();
   }
 
   loadImage() {

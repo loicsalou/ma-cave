@@ -70,7 +70,11 @@ export class BottleService extends FirebaseService {
   public update(bottles: Bottle[]) {
     bottles.forEach(bottle => {
       this.firebaseRef.child(bottle['$key']).set(bottle, (
-        result => console.info(result)
+        err => {
+          if (err) {
+            this.showAlert('La mise à jour a échoué !', err);
+          }
+        }
       ))
     })
   }

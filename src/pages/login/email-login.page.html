@@ -11,7 +11,7 @@
     
     <ion-item>
       <ion-label floating>Mot de passe</ion-label>
-      <ion-input type="password" [(ngModel)]="psw"></ion-input>
+      <ion-input type="password" [(ngModel)]="psw" (keyup)="keyup($event)"></ion-input>
     </ion-item>
     
     <button ion-button icon-start margin-top align-items-center (click)="signin()">
