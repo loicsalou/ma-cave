@@ -1,11 +1,12 @@
-import {EventEmitter, Output} from '@angular/core';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Observable} from 'rxjs/Observable';
 /**
  * Created by loicsalou on 13.06.17.
  */
 
 export abstract class LoginService {
-  @Output()
-  public authentified: EventEmitter<string>=new EventEmitter();
+  private authentified: BehaviorSubject<string> = new BehaviorSubject(undefined);
+  public authentifiedObservable: Observable<string> = this.authentified.asObservable();
 
   private _user: string;
   private _psw: string;
@@ -33,8 +34,10 @@ export abstract class LoginService {
   }
 
   public success(user: string) {
-    this._user=user;
-    this.authentified.emit(user);
+    if (user) {
+      this._user = user;
+      this.authentified.next(user);
+    }
   }
 
 }

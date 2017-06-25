@@ -1,5 +1,5 @@
 import {ErrorHandler, NgModule} from '@angular/core';
-import {IonicApp, IonicErrorHandler, IonicModule, Platform} from 'ionic-angular';
+import {IonicApp, IonicErrorHandler, IonicModule} from 'ionic-angular';
 import {MyCaveApp} from './app.component';
 import {AboutPage} from '../pages/about/about';
 import {ContactPage} from '../pages/contact/contact';
@@ -33,10 +33,12 @@ import {StatisticsComponent} from '../components/statistics/statistics';
 import {LoginService} from '../service/login.service';
 import {ChartsModule} from 'ng2-charts';
 import '../../node_modules/chart.js/dist/Chart.bundle.min.js';
-import {EmailLoginService} from '../service/email-login.service';
 import {EmailLoginPage} from '../pages/login/email-login.page';
 import {FirebaseImageService} from '../service/firebase-image.service';
 import {AnonymousLoginService} from '../service/anonymous-login.service';
+import {Wines} from '../service/wines.service';
+import {Bottles} from '../components/config/Bottles';
+import {EmailLoginService} from '../service/email-login.service';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -97,16 +99,18 @@ export const fireConfig = {
             ],
             providers: [
               BottleFactory,
+              Bottles,
               Camera,
               //Platform,
               Statistics,
               StatusBar,
               SplashScreen,
               {provide: ErrorHandler, useClass: IonicErrorHandler},
-              {provide: LoginService, useClass: AnonymousLoginService},
+              {provide: LoginService, useClass: EmailLoginService},
               BottleService,
               DistributeService,
-              FirebaseImageService ]
+              FirebaseImageService
+            ]
           })
 export class AppModule {
 }

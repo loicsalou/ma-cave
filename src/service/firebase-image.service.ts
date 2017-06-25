@@ -13,9 +13,7 @@ import {Bottle, BottleMetadata} from '../model/bottle';
 import {FirebaseService} from './firebase-service';
 import {Observable} from 'rxjs/Observable';
 import {Image} from '../model/image';
-import {FilePath} from '@ionic-native/file-path';
 import {FileItem} from './file-item';
-import {Http} from '@angular/http';
 import {File as CordovaFile} from '@ionic-native/file';
 import Reference = firebase.database.Reference;
 import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
@@ -34,22 +32,16 @@ export class FirebaseImageService extends FirebaseService {
   public tracer: EventEmitter<string> = new EventEmitter();
 
   constructor(private angularFirebase: AngularFireDatabase, loadingCtrl: LoadingController,
-              alertController: AlertController, toastController: ToastController, private filepath: FilePath,
-              private loginService: LoginService, private http: Http, private file: CordovaFile) {
-    super(loadingCtrl, alertController, toastController);
-    if (loginService.user) {
-      this.initFirebase();
-    } else {
-      try {
-        loginService.authentified.subscribe(user => this.initFirebase());
-      } catch (ex) {
-        this.handleError(ex);
-      }
-    }
+              alertController: AlertController, toastController: ToastController, private file: CordovaFile,
+              loginService: LoginService) {
+    super(loadingCtrl, alertController, toastController, loginService);
+    loginService.authentifiedObservable.subscribe(user => this.initFirebase(user));
   }
 
-  initFirebase() {
-    this.storageRef = this.angularFirebase.app.storage().ref(this.USERS_ROOT + '/' + this.loginService.getUser() + '/' + this.IMAGES_FOLDER);
+  initFirebase(user) {
+    if (user) {
+      this.storageRef = this.angularFirebase.app.storage().ref(this.IMAGES_ROOT);
+    }
   }
 
   /**
@@ -69,7 +61,7 @@ export class FirebaseImageService extends FirebaseService {
     if (!bottle) {
       return items;
     }
-    items = this.angularFirebase.list(this.USERS_ROOT + '/' + this.loginService.getUser() + '/' + this.IMAGES_FOLDER, {
+    items = this.angularFirebase.list(this.XREF_ROOT, {
                                         query: {
                                           limitToFirst: 5,
                                           orderByChild: 'bottleId',
@@ -90,7 +82,7 @@ export class FirebaseImageService extends FirebaseService {
     let item: FileItem = new FileItem(file);
     item.isUploading = true;
     let self = this;
-    this.storageRef.child(`${this.IMAGES_FOLDER}/${item.file[ 'name' ]}`)
+    this.storageRef.child(`${this.IMAGES_ROOT}/${item.file[ 'name' ]}`)
       .delete()
       .then(function () {
               self.showToast('Image supprimée !')
@@ -101,69 +93,15 @@ export class FirebaseImageService extends FirebaseService {
       });
   }
 
-  //
-  //trace(msg, obj) {
-  //  this.tracer.emit(msg + ' ' + JSON.stringify(obj));
-  //}
-  //
-  ////fonctionne pour les navigateurs, mais pas pour Android malheureusement
-  //uploadImage(file: File) {
-  //  this.trace('uploadImage start - ', file);
-  //  let item: FileItem = new FileItem(file);
-  //  this.showInfo('file item is:' + JSON.stringify(item));
-  //  this.uploadImagesToFirebase([ item ]);
-  //  this.trace('uploadImage end - ', item);
-  //}
-  //
-  //private saveImage(image: any) {
-  //  let saveref = this.angularFirebase.database.ref(this.USERS_ROOT + '/' + this.loginService.getUser() + '/'
-  //                                                  + this.IMAGES_FOLDER);
-  //
-  //  saveref.push(image);
-  //  this.showToast('l\'image ' + image.name + ' a bien été sauvegardée !');
-  //}
-  //
-  //uploadImagesToFirebase(files: FileItem[]) {
-  //  _.each(files, (item: FileItem) => {
-  //    this.trace('uploadImagesToFirebase loop start - ', item);
-  //    item.isUploading = true;
-  //    try {
-  //      let uploadTask: firebase.storage.UploadTask = this.storageRef.child(item.file[ 'name' ]).put(item.file);
-  //      this.trace('uploadImagesToFirebase uploadTask created - ', '');
-  //
-  //      uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
-  //                    (snapshot) => {
-  //                      item.progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-  //                      this.trace('uploadImagesToFirebase progress - ', snapshot.bytesTransferred);
-  //                    },
-  //                    (error) => {
-  //                      this.trace('uploadImagesToFirebase ERROR - ', error);
-  //                      this.showAlert('uploadToFireBase planté !' + error);
-  //                    },
-  //                    () => {
-  //                      this.trace('uploadImagesToFirebase complete - ', '');
-  //                      item.url = uploadTask.snapshot.downloadURL;
-  //                      item.isUploading = false;
-  //                      this.trace('uploadImagesToFirebase before saveimage - ', '');
-  //                      this.saveImage({name: item.file[ 'name' ], url: item.url});
-  //                      this.trace('uploadImagesToFirebase after saveimage - ', '');
-  //
-  //                    }
-  //      );
-  //    } catch (err) {
-  //      this.trace('erreur !', err);
-  //    }
-  //  });
-  //}
-
-  // code pour Android
-
   /**
-   * upload a picture taken on the phone and push to firebase
+   * upload a picture and push to firebase
+   * @param image either an image (instanceof File) or an image on a mobile phone (actually something like an URI
+   * that must be translated to Blob before being uploaded)
+   * @param meta metadata to be attached to the image in Firebase
    */
-  public uploadImage(image: File | any, meta: BottleMetadata) {
+  public uploadImage(image: File | any, meta: BottleMetadata): Promise<UploadMetadata> {
     if (image instanceof File) {
-      this.uploadFileOrBlob(image, meta)
+      return this.uploadFileOrBlob(image, meta)
     } else {
       this.makeFileIntoBlob(image)
         .then((imageBlob) => {
@@ -173,8 +111,8 @@ export class FirebaseImageService extends FirebaseService {
     }
   }
 
-  private uploadFileOrBlob(fileOrBlob, meta: BottleMetadata) {
-    this.uploadToFirebase(fileOrBlob)
+  private uploadFileOrBlob(fileOrBlob, meta: BottleMetadata): Promise<UploadMetadata> {
+    return this.uploadToFirebase(fileOrBlob, meta.nomCru)
       .then((uploadSnapshot: any) => {
         //file uploaded successfully URL= uploadSnapshot.downloadURL
         // store reference to storage in database
@@ -194,7 +132,7 @@ export class FirebaseImageService extends FirebaseService {
           let reader = new FileReader();
           reader.onloadend = (evt: any) => {
             let imgBlob: any = new Blob([ evt.target.result ], {type: 'image/jpeg'});
-            imgBlob.name = 'sample.jpg';
+            imgBlob.name = 'blob.jpg';
             resolve(imgBlob);
           };
 
@@ -209,8 +147,8 @@ export class FirebaseImageService extends FirebaseService {
     });
   }
 
-  uploadToFirebase(imageBlob): Promise<UploadTaskSnapshot> {
-    let fileName = 'sample-' + new Date().getTime() + '.jpg';
+  private uploadToFirebase(imageBlob, name: string): Promise<UploadTaskSnapshot> {
+    let fileName = name + '-' + new Date().getTime() + '.jpg';
 
     return new Promise((resolve, reject) => {
 
@@ -220,48 +158,18 @@ export class FirebaseImageService extends FirebaseService {
       uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
                     (snapshot) => {
                       //item.progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                      //this.trace('uploadImagesToFirebase progress - ', (snapshot.bytesTransferred /
-                      // snapshot.totalBytes) * 100 + '%');
                     },
                     (error) => {
-                      //this.trace('uploadImagesToFirebase ERROR - ', error);
-                      this.showAlert('uploadToFireBase planté !' + error);
                       reject(error);
                     },
                     () => {
-                      //this.trace('uploadImagesToFirebase complete - ', '');
-                      //item.url = uploadTask.snapshot.downloadURL;
-                      //item.isUploading = false;
-                      //this.trace('uploadImagesToFirebase before saveimage - ', '');
-                      //this.saveImage({name: item.file[ 'name' ], url: item.url});
-                      //this.trace('uploadImagesToFirebase after saveimage - ', '');
                       resolve(uploadTask.snapshot);
                     })
     });
   }
 
-  //
-  //uploadToFirebase(_imageBlob) {
-  //  var fileName = 'sample-' + new Date().getTime() + '.jpg';
-  //
-  //  return new Promise((resolve, reject) => {
-  //    var fileRef = firebase.storage().ref('images/' + fileName);
-  //
-  //    var uploadTask = fileRef.put(_imageBlob);
-  //
-  //    uploadTask.on('state_changed', (_snapshot) => {
-  //      console.log('snapshot progess ' + _snapshot);
-  //    }, (_error) => {
-  //      reject(_error);
-  //    }, () => {
-  //      // completion...
-  //      resolve(uploadTask.snapshot);
-  //    });
-  //  });
-  //}
-
-  private saveToDatabaseAssetList(uploadSnapshot, meta: BottleMetadata): Promise<firebase.database.ThenableReference> {
-    let ref = firebase.database().ref('assets');
+  private saveToDatabaseAssetList(uploadSnapshot, meta: BottleMetadata): Promise<UploadMetadata> {
+    let ref = firebase.database().ref('assets/images');
 
     return new Promise((resolve, reject) => {
 
@@ -278,14 +186,34 @@ export class FirebaseImageService extends FirebaseService {
         'nomCru': meta.nomCru,
       };
 
-      ref.push(dataToSave, (_response) => {
-        resolve(_response);
+      ref.push(dataToSave, (response) => {
+        //la réponse est null, donc on renvoie ce qui nous intéresse
+        resolve(this.getUploadMeta(uploadSnapshot));
       }).catch((_error) => {
         reject(_error);
       });
     });
   }
 
+  private getUploadMeta(snap): UploadMetadata {
+    return {
+      downloadURL: snap.downloadURL,
+      imageName: snap.metadata.name,
+      contentType: snap.metadata.contentType,
+      totalBytes: snap.totalBytes,
+      updated: snap.metadata.updated,
+      timeCreated: snap.metadata.timeCreated,
+      uploadState: snap.state
+    }
+  }
 }
 
-
+export interface UploadMetadata {
+  downloadURL: string;
+  imageName: string;
+  contentType: string;
+  totalBytes: number;
+  updated: string;
+  timeCreated: string;
+  uploadState: string;
+}

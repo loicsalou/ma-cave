@@ -19,8 +19,10 @@ export class HomePage implements OnInit {
               private modalController: ModalController) {
     this.loginPage = this.modalController.create(EmailLoginPage);
     this.loginPage.present();
-    this.loginService.authentified.subscribe(user => {
-      this.loginPage.dismiss();
+    this.loginService.authentifiedObservable.subscribe(user => {
+      if (user) {
+        this.loginPage.dismiss();
+      }
     });
     if (this.loginService instanceof AnonymousLoginService) {
       this.loginService.login();

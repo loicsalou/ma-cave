@@ -14,6 +14,7 @@ import * as _ from 'lodash';
 import {LoginService} from './login.service';
 import {FirebaseService} from './firebase-service';
 import Reference = firebase.database.Reference;
+import {log} from 'util';
 
 /**
  * Services related to the bottles in the cellar.
@@ -34,16 +35,16 @@ export class BottleService extends FirebaseService {
 
   constructor(private bottleFactory: BottleFactory, private firebase: AngularFireDatabase,
               loadingCtrl: LoadingController, alertController: AlertController, toastController: ToastController,
-              private loginService: LoginService) {
-    super(loadingCtrl, alertController, toastController);
-    this.initFirebase();
-    loginService.authentified.asObservable().subscribe(user => this.initFirebase());
+              loginService: LoginService) {
+    super(loadingCtrl, alertController, toastController, loginService);
+    loginService.authentifiedObservable.subscribe(user => this.initFirebase(user));
   }
 
-  initFirebase() {
-    this.firebaseRef = this.firebase.database.ref(this.USERS_ROOT + '/' + this.loginService.getUser() + '/'
-                                                  + this.BOTTLES_FOLDER);
-    this.fetchAllBottles();
+  initFirebase(user) {
+    if (user) {
+      this.firebaseRef = this.firebase.database.ref(this.BOTTLES_ROOT);
+      this.fetchAllBottles();
+    }
   }
 
   public fetchAllBottles() {
@@ -51,7 +52,7 @@ export class BottleService extends FirebaseService {
       this._bottles.next(this.allBottlesArray);
     } else {
       this.showLoading();
-      let items = this.firebase.list(this.USERS_ROOT + '/' + this.loginService.getUser() + '/' + this.BOTTLES_FOLDER, {
+      let items = this.firebase.list(this.BOTTLES_ROOT, {
         query: {
           limitToFirst: 2000,
           orderByChild: 'quantite_courante',

@@ -1,19 +1,34 @@
 import {AlertController, Loading, LoadingController, ToastController} from 'ionic-angular';
 import {Observable} from 'rxjs/Observable';
+import {LoginService} from './login.service';
 /**
  * Created by loicsalou on 16.06.17.
  */
 
 export abstract class FirebaseService {
 
-  public USERS_ROOT = 'users';
-  public BOTTLES_FOLDER = 'bottles';
-  public IMAGES_FOLDER = 'images';
+  private USERS_FOLDER = 'users';
+  private BOTTLES_FOLDER = 'bottles';
+  private IMAGES_FOLDER = 'images';
+  private XREF_FOLDER = 'xref';
+
+  public BOTTLES_ROOT;
+  public XREF_ROOT;
+  public IMAGES_ROOT;
 
   private loading: Loading;
 
   constructor(private loadingCtrl: LoadingController, private alertController: AlertController,
-              private toastController: ToastController) {
+              private toastController: ToastController, private loginService: LoginService) {
+    loginService.authentifiedObservable.subscribe(user => this.initRoots(user));
+  }
+
+  initRoots(user) {
+    if (user) {
+      this.BOTTLES_ROOT = this.USERS_FOLDER + '/' + this.loginService.getUser() + '/' + this.BOTTLES_FOLDER;
+      this.IMAGES_ROOT = this.IMAGES_FOLDER;
+      this.XREF_ROOT = this.XREF_FOLDER;
+    }
   }
 
   showLoading(message?: string) {

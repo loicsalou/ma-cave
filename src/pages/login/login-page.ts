@@ -3,14 +3,17 @@
  */
 import {LoginService} from '../../service/login.service';
 import {AlertController} from 'ionic-angular';
+import {Subscription} from 'rxjs/Subscription';
 
 export abstract class LoginPage {
+
+  authSubscription: Subscription;
 
   user: string;
   psw: string;
 
   constructor(public loginService: LoginService, public alertController: AlertController) {
-    this.loginService.authentified.subscribe(
+    this.authSubscription = this.loginService.authentifiedObservable.subscribe(
       user => this.authenticated(user),
       error => this.authError(error)
     )
@@ -18,7 +21,12 @@ export abstract class LoginPage {
 
   abstract signin();
 
-  abstract authenticated(user: any);
+  public authenticated(user: any) {
+    if (user) {
+      //beware of initial value (undefined)
+      this.authSubscription.unsubscribe();
+    }
+  }
 
   private authError(err: any) {
     this.alertController.create({

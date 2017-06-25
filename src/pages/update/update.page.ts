@@ -3,10 +3,11 @@ import {Bottle} from '../../model/bottle';
 import {AlertController, NavController, NavParams, Platform} from 'ionic-angular';
 import {BottleService} from '../../service/firebase-bottle.service';
 import {Camera} from '@ionic-native/camera';
-import {FirebaseImageService} from '../../service/firebase-image.service';
+import {FirebaseImageService, UploadMetadata} from '../../service/firebase-image.service';
 import {Subscription} from 'rxjs/Subscription';
 import * as firebase from 'firebase/app';
-import {File as CordovaFile} from '@ionic-native/file';
+import * as _ from 'lodash';
+import {AocInfo, Bottles} from '../../components/config/Bottles';
 
 /*
  Generated class for the Update component.
@@ -28,11 +29,17 @@ export class UpdatePage implements OnInit {
   images: Array<{ src: String }> = [];
   private imagesSubscription: Subscription;
   private traces: string[] = [];
+  private aoc: AocInfo[];
 
   constructor(private navCtrl: NavController, private navParams: NavParams, private bottleService: BottleService,
-              private camera: Camera, private alertController: AlertController, private cordovaFile: CordovaFile,
-              private imageService: FirebaseImageService, private platform: Platform) {
-    this.bottle = navParams.data[ 'bottle' ];
+              private camera: Camera, private alertController: AlertController, private imageService: FirebaseImageService,
+              private platform: Platform, private bottles: Bottles) {
+    this.bottle = _.clone(navParams.data[ 'bottle' ]);
+    this.loadRegionAreas();
+  }
+
+  debug() {
+    console.info(JSON.stringify(this.bottle));
   }
 
   ngOnInit(): void {
@@ -44,18 +51,21 @@ export class UpdatePage implements OnInit {
             return {src: image.image}
           }
         );
-        console.info(this.images.length + ' images trouvées');
       }
     );
     this.navCtrl.viewWillLeave.subscribe(() => this.imagesSubscription.unsubscribe());
   }
 
-  save() {
-    this.bottleService.save([ this.bottle ]);
+  loadRegionAreas() {
+    this.aoc = undefined;
+    let aocs = this.bottles.aocByArea.filter(area => area.key === this.bottle.subregion_label);
+    if (aocs && aocs.length > 0) {
+      this.aoc = aocs[ 0 ].value;
+    }
   }
 
-  public platformIsCordova(): boolean {
-    return this.platform.is('cordova');
+  save() {
+    this.bottleService.save([ this.bottle ]);
   }
 
   loadImage() {
@@ -77,7 +87,48 @@ export class UpdatePage implements OnInit {
 
     //let textType = /text.*/;
     let file = event.currentTarget.files[ 0 ];
-    this.imageService.uploadImage(file, Bottle.getMetadata(this.bottle));
+    this.imageService.uploadImage(file, Bottle.getMetadata(this.bottle))
+      .then((meta: UploadMetadata) => {
+        console.info(JSON.stringify(meta));
+        this.presentAlert(meta.uploadState, 'L\'image ' + meta.imageName + ' a été uploadée avec l\'URL ' + meta.downloadURL + ' le ' + meta.updated);
+      })
+      .catch(err => this.presentAlert('Erreur !', 'l\'upload a échoué' + err));
+  }
+
+  // PHOTO CAPTURED DIRECTLY BA THE CAMERA
+  captureProfileImage() {
+    //let imageSource = (Device.isVirtual ? Camera.PictureSourceType.PHOTOLIBRARY : Camera.PictureSourceType.CAMERA);
+    //console.log(Device)
+    let imageSource = this.camera.PictureSourceType.CAMERA;
+    this.camera.getPicture({
+                             destinationType: this.camera.DestinationType.FILE_URI,
+                             sourceType: imageSource,
+                             targetHeight: 800,
+                             correctOrientation: true
+                           })
+      .then(imagePath => this.imageService.uploadImage(imagePath, Bottle.getMetadata(this.bottle)))
+      .then((meta: UploadMetadata) => {
+        console.info(JSON.stringify(meta));
+        this.presentAlert(meta.uploadState, 'L\'image ' + meta.imageName + ' a été uploadée avec l\'URL ' + meta.downloadURL + ' le ' + meta.updated);
+      })
+      .catch(err => this.presentAlert('Erreur !', 'l\'upload a échoué' + err));
+  }
+
+  // TAKE FROM THE EXISTING PHOTOS
+  chooseProfileImage() {
+    let imageSource = this.camera.PictureSourceType.PHOTOLIBRARY;
+    this.camera.getPicture({
+                             destinationType: this.camera.DestinationType.FILE_URI,
+                             sourceType: imageSource,
+                             targetHeight: 800,
+                             correctOrientation: true
+                           })
+      .then(imagePath => this.imageService.uploadImage(imagePath, Bottle.getMetadata(this.bottle)))
+      .then((meta: UploadMetadata) => {
+        console.info(JSON.stringify(meta));
+        this.presentAlert(meta.uploadState, 'L\'image ' + meta.imageName + ' a été uploadée avec l\'URL ' + meta.downloadURL + ' le ' + meta.updated);
+      })
+      .catch(err => this.presentAlert('Erreur !', 'l\'upload a échoué' + err));
   }
 
   private presentAlert(title: string, text: string) {
@@ -88,32 +139,5 @@ export class UpdatePage implements OnInit {
                                             }
     );
     alert.present();
-  }
-
-  //PHOTO
-  doGetPictureFromCamera() {
-    //let imageSource = (Device.isVirtual ? Camera.PictureSourceType.PHOTOLIBRARY : Camera.PictureSourceType.CAMERA);
-    //console.log(Device)
-    let imageSource = this.camera.PictureSourceType.CAMERA;
-    this.camera.getPicture({
-                             destinationType: this.camera.DestinationType.FILE_URI,
-                             sourceType: imageSource,
-                             targetHeight: 640,
-                             correctOrientation: true
-                           })
-      .then(imagePath => this.imageService.uploadImage(imagePath, Bottle.getMetadata(this.bottle)));
-  }
-
-  doGetPictureFromGallery() {
-    //let imageSource = (Device.isVirtual ? Camera.PictureSourceType.PHOTOLIBRARY : Camera.PictureSourceType.CAMERA);
-    //console.log(Device)
-    let imageSource = this.camera.PictureSourceType.PHOTOLIBRARY;
-    this.camera.getPicture({
-                             destinationType: this.camera.DestinationType.FILE_URI,
-                             sourceType: imageSource,
-                             targetHeight: 640,
-                             correctOrientation: true
-                           })
-      .then(imagePath => this.imageService.uploadImage(imagePath, Bottle.getMetadata(this.bottle)));
   }
 }

@@ -1,2 +1,27 @@
 .page-update {
+  ion-item {
+    justify-content: space-between;
+
+    img {
+      max-height:220px;
+      max-width:45%;
+    }
+
+    .text-input {
+      text-align: right;
+    }
+
+    & > ion-label {
+      float: left;
+    }
+
+    & > ion-datetime, & > ion-imput, & > ion-select {
+      float: right;
+    }
+  }
+
+  textarea.text-input {
+    resize:both;
+    height: 220px;
+  }
 }

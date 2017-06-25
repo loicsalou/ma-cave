@@ -4,6 +4,8 @@
 import * as _ from 'lodash';
 
 export class Bottle {
+  private static SPECIAL_CHARS_REMOVED = new RegExp(/[\.|\d|\n|\r|,|!|?|@]/g);
+
   id?: string;
   classe_age?: string;
   favorite?: boolean;
@@ -21,6 +23,8 @@ export class Bottle {
   millesime: string;
   nomCru: string;
   prix: string;
+  profile_image?: string;
+  images?: string[];
   quantite_achat: string;
   quantite_courante: string;
   subregion_label: string;
@@ -47,7 +51,11 @@ export class Bottle {
 
   private static extractKeywords(text: string): string[] {
     if (text) {
-      return text.split(' ').filter(keyword => keyword.length > 2)
+      let ret = text.replace(Bottle.SPECIAL_CHARS_REMOVED, ' ');
+      return ret
+        .split(' ')
+        .filter(keyword => keyword.length > 2)
+        .map(keyword => keyword.toLowerCase());
     } else {
       return []
     }

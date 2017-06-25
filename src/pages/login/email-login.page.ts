@@ -23,8 +23,4 @@ export class EmailLoginPage extends LoginPage implements OnInit {
     this.loginService.login();
   }
 
-  authenticated(user: any) {
-    this.loginService.authentified.unsubscribe();
-  }
-
 }
