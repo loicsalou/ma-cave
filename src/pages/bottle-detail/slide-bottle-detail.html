@@ -11,7 +11,8 @@
   <div>
     <div class="block" style="display:flex">
       <div class="icon">
-        <img src="{{ bottle.label | bottleIcon }}">
+        <img src="{{ bottle.label | bottleIcon }}" class="contain" *ngIf="! bottle.profile_image_url">
+        <img [src]="bottle.profile_image_url" class="contain" *ngIf="bottle.profile_image_url">
       </div>
       <!--<h3 *ngIf="showName">{{bottle.nomCru}}</h3>-->
     </div>

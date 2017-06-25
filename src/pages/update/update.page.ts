@@ -6,7 +6,6 @@ import {Camera} from '@ionic-native/camera';
 import {FirebaseImageService, UploadMetadata} from '../../service/firebase-image.service';
 import {Subscription} from 'rxjs/Subscription';
 import * as firebase from 'firebase/app';
-import * as _ from 'lodash';
 import {AocInfo, Bottles} from '../../components/config/Bottles';
 
 /*
@@ -34,7 +33,8 @@ export class UpdatePage implements OnInit {
   constructor(private navCtrl: NavController, private navParams: NavParams, private bottleService: BottleService,
               private camera: Camera, private alertController: AlertController, private imageService: FirebaseImageService,
               private platform: Platform, private bottles: Bottles) {
-    this.bottle = _.clone(navParams.data[ 'bottle' ]);
+    //don't clone to keep firebase key which is necessary to update
+    this.bottle = navParams.data[ 'bottle' ];
     this.loadRegionAreas();
   }
 
@@ -65,7 +65,7 @@ export class UpdatePage implements OnInit {
   }
 
   save() {
-    this.bottleService.save([ this.bottle ]);
+    this.bottleService.update([ this.bottle ]);
   }
 
   loadImage() {
@@ -106,6 +106,10 @@ export class UpdatePage implements OnInit {
 
   getProfileImage() {
     return this.bottle.profile_image_url;
+  }
+
+  removeProfileImage() {
+    this.bottle.profile_image_url = '';
   }
 
   // PHOTO CAPTURED DIRECTLY BA THE CAMERA

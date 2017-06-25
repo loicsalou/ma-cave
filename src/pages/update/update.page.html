@@ -10,8 +10,8 @@
   
   <ion-row d-flex>
     <ion-col>
-      <img (click)="debug()" src="{{ bottle.label | bottleIcon }}" *ngIf="! getProfileImage()">
-      <img (click)="debug()" [src]="getProfileImage()" *ngIf="getProfileImage()">
+      <img src="{{ bottle.label | bottleIcon }}" *ngIf="! getProfileImage()">
+      <img [src]="getProfileImage()" *ngIf="getProfileImage()">
     </ion-col>
     <ion-col style="margin-top: auto; margin-bottom: auto">
       <ion-item>
@@ -26,12 +26,16 @@
   </ion-row>
   
   <ion-row>
-    <ion-col showWhen="cordova">
-      <button float-left ion-button align-items-start round icon-only padding (click)="captureProfileImage()">
+    <!--<ion-col showWhen="cordova" d-flex style="justify-content: space-between">-->
+    <ion-col d-flex style="justify-content: space-between">
+      <button ion-button round icon-only padding-vertical (click)="captureProfileImage()">
         <ion-icon name="camera"></ion-icon>
       </button>
-      <button float-right ion-button align-items-end round icon-only padding (click)="chooseProfileImage()">
+      <button ion-button round icon-only padding-vertical (click)="chooseProfileImage()">
         <ion-icon name="folder"></ion-icon>
+      </button>
+      <button ion-button round icon-only padding-vertical (click)="removeProfileImage()">
+        <ion-icon name="trash"></ion-icon>
       </button>
     </ion-col>
     

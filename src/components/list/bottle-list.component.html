@@ -7,7 +7,10 @@
         <ion-col col-2 style="padding-right:10px;">
           <ion-avatar item-start (click)="switchSelected($event, bottle)">
             <img src="assets/icon/checked.png" *ngIf="isSelected(bottle)">
-            <img src="{{ bottle.label | bottleIcon }}" class="overridable logo" *ngIf="!isSelected(bottle)">
+            <img src="{{ bottle.label | bottleIcon }}" class="overridable logo"
+                 *ngIf="! bottle.profile_image_url && !isSelected(bottle)">
+            <img [src]="bottle.profile_image_url" class="overridable logo"
+                 *ngIf="bottle.profile_image_url && !isSelected(bottle)">
             <img src="assets/icon/starred.png" *ngIf="isBottleFavorite(bottle) && !isSelected(bottle)"
                  class="overridable logo">
             <img src="assets/icon/in-basket.png" *ngIf="isBottleInBasket(bottle) && !isSelected(bottle)"
