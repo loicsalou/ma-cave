@@ -10,7 +10,8 @@
   
   <ion-row d-flex>
     <ion-col>
-      <img (click)="debug()" src="{{ bottle.label | bottleIcon }}">
+      <img (click)="debug()" src="{{ bottle.label | bottleIcon }}" *ngIf="! getProfileImage()">
+      <img (click)="debug()" [src]="getProfileImage()" *ngIf="getProfileImage()">
     </ion-col>
     <ion-col style="margin-top: auto; margin-bottom: auto">
       <ion-item>

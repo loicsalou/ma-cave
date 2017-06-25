@@ -89,10 +89,23 @@ export class UpdatePage implements OnInit {
     let file = event.currentTarget.files[ 0 ];
     this.imageService.uploadImage(file, Bottle.getMetadata(this.bottle))
       .then((meta: UploadMetadata) => {
-        console.info(JSON.stringify(meta));
         this.presentAlert(meta.uploadState, 'L\'image ' + meta.imageName + ' a été uploadée avec l\'URL ' + meta.downloadURL + ' le ' + meta.updated);
+        this.setProfileImage(meta.downloadURL);
+
       })
       .catch(err => this.presentAlert('Erreur !', 'l\'upload a échoué' + err));
+  }
+
+  private setProfileImage(downloadURL: string) {
+    this.bottle.profile_image_url = downloadURL;
+    if (!this.bottle.image_urls) {
+      this.bottle.image_urls = []
+    }
+    this.bottle.image_urls.push(downloadURL);
+  }
+
+  getProfileImage() {
+    return this.bottle.profile_image_url;
   }
 
   // PHOTO CAPTURED DIRECTLY BA THE CAMERA
@@ -106,10 +119,13 @@ export class UpdatePage implements OnInit {
                              targetHeight: 800,
                              correctOrientation: true
                            })
-      .then(imagePath => this.imageService.uploadImage(imagePath, Bottle.getMetadata(this.bottle)))
+      .then((imagePath: UploadMetadata) => this.imageService.createBlobFromPath(imagePath))
+      .then((imageBlob: Blob) => {
+        // upload the blob
+        return this.imageService.uploadImage(imageBlob, Bottle.getMetadata(this.bottle));
+      })
       .then((meta: UploadMetadata) => {
-        console.info(JSON.stringify(meta));
-        this.presentAlert(meta.uploadState, 'L\'image ' + meta.imageName + ' a été uploadée avec l\'URL ' + meta.downloadURL + ' le ' + meta.updated);
+        this.setProfileImage(meta.downloadURL);
       })
       .catch(err => this.presentAlert('Erreur !', 'l\'upload a échoué' + err));
   }
@@ -123,10 +139,13 @@ export class UpdatePage implements OnInit {
                              targetHeight: 800,
                              correctOrientation: true
                            })
-      .then(imagePath => this.imageService.uploadImage(imagePath, Bottle.getMetadata(this.bottle)))
+      .then((imagePath: UploadMetadata) => this.imageService.createBlobFromPath(imagePath))
+      .then((imageBlob: Blob) => {
+        // upload the blob
+        return this.imageService.uploadImage(imageBlob, Bottle.getMetadata(this.bottle));
+      })
       .then((meta: UploadMetadata) => {
-        console.info(JSON.stringify(meta));
-        this.presentAlert(meta.uploadState, 'L\'image ' + meta.imageName + ' a été uploadée avec l\'URL ' + meta.downloadURL + ' le ' + meta.updated);
+        this.setProfileImage(meta.downloadURL);
       })
       .catch(err => this.presentAlert('Erreur !', 'l\'upload a échoué' + err));
   }
