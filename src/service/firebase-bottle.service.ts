@@ -2,7 +2,7 @@
  * Created by loicsalou on 28.02.17.
  */
 import {Injectable} from '@angular/core';
-import {Bottle, BottleMetadata} from '../model/bottle';
+import {Bottle} from '../model/bottle';
 import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {FilterSet} from '../components/distribution/distribution';
@@ -14,7 +14,6 @@ import * as _ from 'lodash';
 import {LoginService} from './login.service';
 import {FirebaseService} from './firebase-service';
 import Reference = firebase.database.Reference;
-import {log} from 'util';
 
 /**
  * Services related to the bottles in the cellar.
@@ -66,6 +65,14 @@ export class BottleService extends FirebaseService {
         this.dismissLoading();
       });
     }
+  }
+
+  public update(bottles: Bottle[]) {
+    bottles.forEach(bottle => {
+      this.firebaseRef.child(bottle['$key']).set(bottle, (
+        result => console.info(result)
+      ))
+    })
   }
 
   public save(bottles: Bottle[]) {

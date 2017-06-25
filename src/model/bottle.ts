@@ -23,8 +23,8 @@ export class Bottle {
   millesime: string;
   nomCru: string;
   prix: string;
-  profile_image?: string;
-  images?: string[];
+  profile_image_url?: string;
+  image_urls?: string[];
   quantite_achat: string;
   quantite_courante: string;
   subregion_label: string;

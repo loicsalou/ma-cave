@@ -16,6 +16,7 @@
     "nom": "Casier",
     "nomCru": "Nom du cru",
     "millesime": "Millésime",
+    "non-millesime": "Non-millésimé",
     "prix": "Prix",
     "quantite_achat": "Quantité achatée",
     "quantite_courante": "Stock",

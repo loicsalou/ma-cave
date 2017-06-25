@@ -100,14 +100,10 @@ export class FirebaseImageService extends FirebaseService {
    * @param meta metadata to be attached to the image in Firebase
    */
   public uploadImage(image: File | any, meta: BottleMetadata): Promise<UploadMetadata> {
-    if (image instanceof File) {
+    if (image instanceof Blob || image instanceof File) {
       return this.uploadFileOrBlob(image, meta)
     } else {
-      this.makeFileIntoBlob(image)
-        .then((imageBlob) => {
-          // upload the blob
-          return this.uploadFileOrBlob(imageBlob, meta);
-        })
+      this.showAlert('impossible d\'uploader l\'image dont le type est '+typeof image+' !');
     }
   }
 
@@ -122,7 +118,7 @@ export class FirebaseImageService extends FirebaseService {
       });
   }
 
-  private makeFileIntoBlob(imagePath): Promise<Blob> {
+  public createBlobFromPath(imagePath): Promise<Blob> {
     // REQUIRED PLUGIN - cordova plugin add cordova-plugin-file
     return new Promise((resolve, reject) => {
       (<any>window).resolveLocalFileSystemURL(imagePath, (fileEntry) => {
