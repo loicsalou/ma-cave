@@ -2,17 +2,19 @@
  * Created by loicsalou on 28.02.17.
  */
 import {Injectable} from '@angular/core';
-import {Bottle} from './bottle';
+import {Bottle, BottleMetadata} from '../model/bottle';
 import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {FilterSet} from '../distribution/distribution';
+import {FilterSet} from '../components/distribution/distribution';
 import {AngularFireDatabase} from 'angularfire2/database';
-import {BottleFactory} from '../../model/bottle.factory';
-import {AlertController, Loading, LoadingController} from 'ionic-angular';
+import {BottleFactory} from '../model/bottle.factory';
+import {AlertController, LoadingController, ToastController} from 'ionic-angular';
 import * as firebase from 'firebase/app';
 import * as _ from 'lodash';
-import {LoginService} from '../../pages/home/login.service';
+import {LoginService} from './login.service';
+import {FirebaseService} from './firebase-service';
 import Reference = firebase.database.Reference;
+import {log} from 'util';
 
 /**
  * Services related to the bottles in the cellar.
@@ -20,7 +22,7 @@ import Reference = firebase.database.Reference;
  * clicks on a region to filter bottles. Any change on either side must be propagated on the other side.
  */
 @Injectable()
-export class BottleService {
+export class BottleService extends FirebaseService {
   private firebaseRef: Reference;
   private cellarImported: boolean = false;
   private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
@@ -30,18 +32,19 @@ export class BottleService {
   private _filtersObservable: BehaviorSubject<FilterSet> = new BehaviorSubject<FilterSet>(new FilterSet());
   private filters: FilterSet = new FilterSet();
   private allBottlesArray: Bottle[];
-  private loading: Loading;
 
   constructor(private bottleFactory: BottleFactory, private firebase: AngularFireDatabase,
-              private loadingCtrl: LoadingController, private alertController: AlertController,
-              private loginService: LoginService) {
-    this.initFirebase();
-    loginService.authentified.asObservable().subscribe(user => this.initFirebase());
+              loadingCtrl: LoadingController, alertController: AlertController, toastController: ToastController,
+              loginService: LoginService) {
+    super(loadingCtrl, alertController, toastController, loginService);
+    loginService.authentifiedObservable.subscribe(user => this.initFirebase(user));
   }
 
-  initFirebase() {
-    this.firebaseRef = this.firebase.database.ref('users/' + this.loginService.getUser() + '/bottles');
-    this.fetchAllBottles();
+  initFirebase(user) {
+    if (user) {
+      this.firebaseRef = this.firebase.database.ref(this.BOTTLES_ROOT);
+      this.fetchAllBottles();
+    }
   }
 
   public fetchAllBottles() {
@@ -49,9 +52,9 @@ export class BottleService {
       this._bottles.next(this.allBottlesArray);
     } else {
       this.showLoading();
-      let items = this.firebase.list('users/' + this.loginService.getUser() + '/bottles', {
+      let items = this.firebase.list(this.BOTTLES_ROOT, {
         query: {
-          limitToFirst: 1000,
+          limitToFirst: 2000,
           orderByChild: 'quantite_courante',
           startAt: '0'
         }
@@ -70,29 +73,16 @@ export class BottleService {
   }
 
   public replaceBottle(bottle: Bottle) {
-    //let ref = this.firebase.database.ref('users/loicsalou/bottles/bottle');
-    //ref.
     this.firebaseRef.child(bottle[ '$key' ])
       .set(bottle,
            err => {
              if (err) {
-               this.alertController.create({
-                                             title: 'Echec',
-                                             subTitle: '_La sauvegarde a échoué ! ' + err,
-                                             buttons: [ 'Ok' ]
-                                           }).present()
+               this.showAlert('La sauvegarde a échoué ! ', err);
              }
            });
   }
 
   public initializeDB(bottles: Bottle[]) {
-    //this.firebaseRef.remove()
-    //  .then(function() {
-    //    console.log("Remove succeeded.")
-    //  })
-    //  .catch(function(error) {
-    //    console.log("Remove failed: " + error.message)
-    //  });
     bottles.forEach(bottle => this.firebaseRef.push(bottle));
   }
 
@@ -120,7 +110,6 @@ export class BottleService {
     if (!filters) {
       return;
     }
-    //console.info(Date.now()+" - filtering on "+filters.toString());
     if (this.allBottlesArray == undefined) {
       return;
     }
@@ -176,23 +165,6 @@ export class BottleService {
     this._bottles.next(bottles);
   }
 
-  private showLoading() {
-    if (this.loading == undefined) {
-      this.loading = this.loadingCtrl.create({
-                                               content: 'Chargement en cours...',
-                                               dismissOnPageChange: false
-                                             });
-      this.loading.present();
-    }
-  }
-
-  private dismissLoading() {
-    if (this.loading != undefined) {
-      this.loading.dismiss();
-      this.loading = undefined;
-    }
-  }
-
   /**
    * searches through the given bottles all that match all of the filters passed in
    * @param fromList array of bottles
@@ -221,7 +193,7 @@ export class BottleService {
     let keywordLower = keyword.toLocaleLowerCase();
     return list.filter(bottle => {
                          let matching = false;
-                         for (var key in bottle) {
+                         for (let key in bottle) {
                            if (bottle[ key ].toString().toLocaleLowerCase().indexOf(keywordLower) !== -1) {
                              matching = true;
                            }
@@ -238,23 +210,6 @@ export class BottleService {
       admissibleValues.forEach(admissibleValue => ret = ret && attrValue.indexOf(admissibleValue) !== -1);
       return ret;
     })
-  }
-
-  //private getAuth(): AuthConfiguration {
-  //  let me: AuthConfiguration = {
-  //    method: AuthMethods.Anonymous, provider: AuthProviders.Anonymous
-  //  };
-  //
-  //  return me;
-  //}
-
-  handleError(error: any) {
-    this.alertController.create({
-                                  title: 'Erreur !',
-                                  subTitle: 'Une erreur s\'est produite ! ' + error,
-                                  buttons: [ 'Ok' ]
-                                })
-    return Observable.throw(error.json().error || 'Server error');
   }
 
   private setFilters(filters: FilterSet) {

@@ -6,8 +6,8 @@ import {ContactPage} from '../pages/contact/contact';
 import {HomePage} from '../pages/home/home';
 import {TabsPage} from '../pages/tabs/tabs';
 import {BrowsePage} from '../pages/browse/browse.page';
-import {BottleService} from '../components/bottle/bottle-firebase.service';
-import {DistributeService} from '../components/distribution/distribute.service';
+import {BottleService} from '../service/firebase-bottle.service';
+import {DistributeService} from '../service/distribute.service';
 import {DistributionComponent} from '../components/distribution/distribution';
 import {BottleIconPipe} from '../components/list/bottle-item-component/bottle-icon.pipe';
 import {BottleListComponent} from '../components/list/bottle-list.component';
@@ -28,14 +28,17 @@ import {FilterPage} from '../pages/filters/filter.page';
 import {BottleFactory} from '../model/bottle.factory';
 import {UploadBottlesModule} from '../pages/upload-bottles/upload-bottles.page.module';
 import {UploadBottlesPage} from '../pages/upload-bottles/upload-bottles.page';
-import {Statistics} from '../components/bottle/statistics';
+import {Statistics} from '../model/statistics';
 import {StatisticsComponent} from '../components/statistics/statistics';
-import {LoginService} from '../pages/home/login.service';
+import {LoginService} from '../service/login.service';
 import {ChartsModule} from 'ng2-charts';
 import '../../node_modules/chart.js/dist/Chart.bundle.min.js';
-import {AnonymousLoginService} from '../pages/home/anonymous-login.service';
-import {EmailLoginService} from '../pages/home/email-login.service';
-import {EmailLoginPage} from '../pages/home/email-login.page';
+import {EmailLoginPage} from '../pages/login/email-login.page';
+import {FirebaseImageService} from '../service/firebase-image.service';
+import {AnonymousLoginService} from '../service/anonymous-login.service';
+import {Wines} from '../service/wines.service';
+import {Bottles} from '../components/config/Bottles';
+import {EmailLoginService} from '../service/email-login.service';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -96,13 +99,18 @@ export const fireConfig = {
             ],
             providers: [
               BottleFactory,
+              Bottles,
               Camera,
+              //Platform,
               Statistics,
               StatusBar,
               SplashScreen,
               {provide: ErrorHandler, useClass: IonicErrorHandler},
               {provide: LoginService, useClass: EmailLoginService},
-              BottleService, DistributeService ]
+              BottleService,
+              DistributeService,
+              FirebaseImageService
+            ]
           })
 export class AppModule {
 }

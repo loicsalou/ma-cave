@@ -1,10 +1,15 @@
 {
+  "cognac": "cognac",
+  "half-dry": "blanc moëlleux",
+  "liquorous": "blanc liquoreux",
   "red": "rouge",
   "rose": "rosé",
   "rose-sparkling": "rosé effervescent",
   "white": "blanc",
+  "white-sparkling": "blanc effervescent",
+  "vin blanc muté": "vin blanc muté",
   "yellow": "vin jaune",
-  "liquorous": "blanc liquoreux",
-  "cognac": "cognac",
-  "white-sparkling": "blanc effervescent"
+  "straw": "vin de paille",
+  "undefined": "vin indéfini",
+  "yellow": "vin jaune"
 }

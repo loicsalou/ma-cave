@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {BottleService} from '../bottle/bottle-firebase.service';
-import {Bottle} from '../bottle/bottle';
+import {BottleService} from '../../service/firebase-bottle.service';
+import {Bottle} from '../../model/bottle';
 import {ListBottleEvent} from './bottle-list-event';
 import {ItemSliding, ToastController} from 'ionic-angular';
 import {Subject} from 'rxjs/Subject';
@@ -17,12 +17,8 @@ export class BottleListComponent {
   @Output()
   showDetail: EventEmitter<ListBottleEvent> = new EventEmitter();
 
-  private dragItem = new Subject<SlidingBottle>();
 
   constructor(private bottlesService: BottleService, private toastCtrl: ToastController) {
-    this.dragItem.asObservable().debounceTime(50)
-      .distinctUntilChanged()
-      .subscribe(slidingBottle => this.addToFavoritesOrRemove(slidingBottle));
   }
 
   filter() {
@@ -36,7 +32,7 @@ export class BottleListComponent {
   ionDrag(bottle: Bottle, item: ItemSliding) {
     let percent = item.getSlidingPercent();
     if (percent < 0 && Math.abs(percent) > 0.05) {
-      this.dragItem.next(<SlidingBottle>{slidingItem: item, bottle: bottle});
+      //this.dragItem.next(<SlidingBottle>{slidingItem: item, bottle: bottle});
     }
   }
 

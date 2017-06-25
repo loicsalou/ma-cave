@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
 import * as _ from 'lodash';
-import {DistributeService} from './distribute.service';
-import {Bottle} from '../bottle/bottle';
+import {DistributeService} from '../../service/distribute.service';
+import {Bottle} from '../../model/bottle';
 
 /*
  Generated class for the Distribution component.

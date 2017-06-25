@@ -4,8 +4,9 @@ import {TranslateService} from '@ngx-translate/core';
 import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
 import {TabsPage} from '../pages/tabs/tabs';
-import {LoginService} from '../pages/home/login.service';
-import {EmailLoginService} from '../pages/home/email-login.service';
+import {LoginService} from '../service/login.service';
+import {EmailLoginService} from '../service/email-login.service';
+import {Wines} from '../service/wines.service';
 
 @Component({
              templateUrl: 'app.html'

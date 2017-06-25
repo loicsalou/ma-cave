@@ -27,12 +27,14 @@ export class Configuration {
     'rouge': 'red',
     'blanc': 'white',
     'blanc effervescent': 'bubbles',
-    'rosé effervescent': 'bubbles',
+    'cognac': 'cognac',
+    'demi-sec': 'white-halfdry',
+    'rosé effervescent': 'bubbles-rose',
     'rosé': 'rose',
     'vin jaune': 'yellow',
-    'vin blanc muté': 'yellow',
-    'blanc moëlleux': 'liquorous',
-    'vin de paille': 'liquorous',
+    'vin blanc muté': 'white-mutated',
+    'blanc moëlleux': 'white-halfdry',
+    'vin de paille': 'straw',
     'blanc liquoreux': 'liquorous'
   }
 

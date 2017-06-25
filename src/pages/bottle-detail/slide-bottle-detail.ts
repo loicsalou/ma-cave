@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {NavController} from 'ionic-angular';
-import {Bottle} from '../../components/bottle/bottle';
+import {Bottle} from '../../model/bottle';
 import {UpdatePage} from '../update/update.page';
 
 @Component({

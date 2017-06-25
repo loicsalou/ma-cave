@@ -20,7 +20,6 @@ import Reference = firebase.database.Reference;
 export class EmailLoginService extends LoginService {
 
   private _authenticated: boolean;
-  error: Error;
   private firebaseRef: firebase.database.Reference;
 
   constructor(private alertCtrl: AlertController, private firebaseAuth: AngularFireAuth, private platform: Platform,

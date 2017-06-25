@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {Modal, ModalController, NavController, Platform, ToastController} from 'ionic-angular';
 import {BrowsePage} from '../browse/browse.page';
-import {LoginService} from './login.service';
-import {AnonymousLoginService} from './anonymous-login.service';
-import {EmailLoginPage} from './email-login.page';
+import {LoginService} from '../../service/login.service';
+import {AnonymousLoginService} from '../../service/anonymous-login.service';
+import {EmailLoginPage} from '../login/email-login.page';
 
 @Component({
              selector: 'page-home',
@@ -19,8 +19,10 @@ export class HomePage implements OnInit {
               private modalController: ModalController) {
     this.loginPage = this.modalController.create(EmailLoginPage);
     this.loginPage.present();
-    this.loginService.authentified.subscribe(user => {
-      this.loginPage.dismiss();
+    this.loginService.authentifiedObservable.subscribe(user => {
+      if (user) {
+        this.loginPage.dismiss();
+      }
     });
     if (this.loginService instanceof AnonymousLoginService) {
       this.loginService.login();

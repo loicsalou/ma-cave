@@ -3,7 +3,7 @@ import {Component, OnInit} from '@angular/core';
 import {NavController, Platform} from 'ionic-angular';
 import {TranslateService} from '@ngx-translate/core';
 import {Camera, CameraOptions} from '@ionic-native/camera';
-import {Statistics} from '../../components/bottle/statistics';
+import {Statistics} from '../../model/statistics';
 
 @Component({
              selector: 'page-about',

@@ -1,6 +1,6 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {NavController, NavParams, Slides} from 'ionic-angular';
-import {Bottle} from '../../components/bottle/bottle';
+import {Bottle} from '../../model/bottle';
 import {ListBottleEvent} from '../../components/list/bottle-list-event';
 import {UpdatePage} from '../update/update.page';
 import * as _ from 'lodash';

@@ -8,7 +8,7 @@ import {Camera} from '@ionic-native/camera';
 import {BarcodeScanner} from '@ionic-native/barcode-scanner';
 import {FilePath} from '@ionic-native/file-path';
 import {HttpModule} from '@angular/http';
-import {CavusService} from './cavus.service';
+import {CavusService} from '../../service/cavus.service';
 
 @NgModule({
             declarations: [

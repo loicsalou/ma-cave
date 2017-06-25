@@ -5,11 +5,10 @@ import {Injectable} from '@angular/core';
 import {Bottle} from './bottle';
 import {FilterSet} from '../distribution/distribution';
 import {AngularFireAuth} from 'angularfire2/auth';
-import {AlertController, Platform} from 'ionic-angular';
+import {AlertController} from 'ionic-angular';
 import * as firebase from 'firebase/app';
-import {AngularFireDatabase} from 'angularfire2/database';
-import Reference = firebase.database.Reference;
 import {LoginService} from './login.service';
+import Reference = firebase.database.Reference;
 
 /**
  * Services related to the bottles in the cellar.
@@ -19,31 +18,15 @@ import {LoginService} from './login.service';
 @Injectable()
 export class AnonymousLoginService extends LoginService {
 
-  error: Error;
-  private firebaseRef: firebase.database.Reference;
-
-  constructor(private alertCtrl: AlertController, private firebaseAuth: AngularFireAuth, private platform: Platform,
-              private firebase: AngularFireDatabase, private alertController: AlertController) {
+  constructor(private alertCtrl: AlertController, private firebaseAuth: AngularFireAuth) {
     super();
-    this.firebaseRef = this.firebase.database.ref('users/');
   }
 
   public login() {
     this.firebaseAuth.auth.signInAnonymously()
       .then(
-        () => this.success('loicsalou')
+        () => this.success('businesssalou@gmailcom')
       )
-      .catch(
-        (a: Error) => this.error = a
-      );
-  }
-
-  private loginError(err) {
-    return {
-      title: 'Echec',
-      subTitle: 'l\'authentification a échoué: ' + err,
-      buttons: [ 'Ok' ]
-    }
   }
 }
 
