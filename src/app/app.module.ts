@@ -35,10 +35,12 @@ import {ChartsModule} from 'ng2-charts';
 import '../../node_modules/chart.js/dist/Chart.bundle.min.js';
 import {EmailLoginPage} from '../pages/login/email-login.page';
 import {FirebaseImageService} from '../service/firebase-image.service';
-import {AnonymousLoginService} from '../service/anonymous-login.service';
 import {Wines} from '../service/wines.service';
 import {Bottles} from '../components/config/Bottles';
+import {AnonymousLoginService} from '../service/anonymous-login.service';
 import {EmailLoginService} from '../service/email-login.service';
+import {FacebookLoginService} from '../service/facebook-login.service';
+import {Facebook} from '@ionic-native/facebook';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -105,8 +107,9 @@ export const fireConfig = {
               Statistics,
               StatusBar,
               SplashScreen,
+              Facebook,
               {provide: ErrorHandler, useClass: IonicErrorHandler},
-              {provide: LoginService, useClass: EmailLoginService},
+              {provide: LoginService, useClass: FacebookLoginService},
               BottleService,
               DistributeService,
               FirebaseImageService

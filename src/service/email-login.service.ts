@@ -31,7 +31,9 @@ export class EmailLoginService extends LoginService {
   public login() {
     let self = this;
     firebase.auth().signInWithEmailAndPassword(this.user, this.psw)
-      .then(() => self.success(self.user))
+      .then(
+        token => self.success(self.user)
+      )
       .catch(function (error) {
         firebase.auth().createUserWithEmailAndPassword(self.user, self.psw)
           .then(() => self.success(self.user))

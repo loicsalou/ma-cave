@@ -34,3 +34,12 @@ Conclusion: toutes les images, tous les fichiers contenus dans assets sont inclu
 - recherche par mot clé: demander la validation avant de lancer la recherche car trop rapide actuellement et ne fait pas de sens.
 - Améliorer le modèle: distinguer les bouteilles des lots de bouteilles (au niveau des compteurs cela doit être visible). Gérer les producteurs séparément car communs à tous les utilisateurs 
 - faire une synthèse graphique pour visualiser les trop pleins et les manques (en terme de région, couleur, millésimes...)
+
+
+#Notes techniques
+## Login FB
+plutôt compliqué ! une fois suivi le tutorial https://javebratt.com/ionic-2-facebook-login/ il faut impératibvement
+- autoriser une plateforme native (android / iOS par ex) dans le compte facebook developper
+- pour cela il faut pouvoir fournir les infos techniques réclamées par FB comme le "hashage clé". Je n'ai pas compris la procédure indiquée ici: https://forum.ionicframework.com/t/facebook-plugin-not-installed-error/88285 mais en essayant l'app sur Android j'ai obtenu un message d'erreur FB lors du login m'indiquant que le hash "5a+U3FWyFV0pQSZ6FeoA3nHxGZ0=" n'est pas autorisé. Je suis donc retourné sur le compte développeur FB dans l'app, Paramètres / Général, partie plateforme android, pour ajouter ce hash dans les "Cachages clés"
+
+==> ça a marché...

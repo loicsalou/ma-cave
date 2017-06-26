@@ -14,6 +14,12 @@
   <ion-card class="card-background">
     <statistics [axis]="'label'" [topMost]="5" [legend]="true"></statistics>
   </ion-card>
+ 
+  <ion-card class="card-background" (click)="login()">
+    <button ion-button icon-only>
+      <ion-icon name="aperture"></ion-icon>
+    </button>
+  </ion-card>
 
 </ion-content>
 

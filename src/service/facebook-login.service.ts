@@ -25,32 +25,32 @@ export class FacebookLoginService extends LoginService {
   }
 
   public login() {
-    this.provider = new firebase.auth.FacebookAuthProvider();
-    //this.provider.addScope('user_birthday');
-    let self = this;
-    //firebase.auth().signInWithPopup(this.provider).then(function (result) {
-    this.facebook.login([ 'email' ]).then(function (result) {
-      const fc = this.provider.auth.FacebookAuthProvider.credential(result.authResponse.accessToken);
-      // The signed-in user info.
-      // This gives you a Facebook Access Token. You can use it to access the Facebook API.
-      //self.facebookToken = result.credential.accessToken;
-      let user = result.authResponse.userID;
-      this.provider.auth().signinWithCredential(fc)
-        .then(fs => {
-          this.success(user);
-          this.toastMessage('login successful' + user);
+    this.facebook.login([ 'email' ]).then((response) => {
+      const facebookCredential = firebase.auth.FacebookAuthProvider
+        .credential(response.authResponse.accessToken);
+
+      firebase.auth().signInWithCredential(facebookCredential)
+        .then((success) => {
+          this.alertCtrl.create({
+                                  title: 'Succès !',
+                                  subTitle: 'Firebase success: ' + JSON.stringify(success),
+                                  buttons: [ 'Ok' ]
+                                }).present();
         })
-        .catch(fberr => this.loginError(fberr));
-    }).catch(error => {
-      // Handle Errors here.
-      //var errorCode = error.code;
-      let errorMessage = error.message;
-      self.alertCtrl.create().present()
-      // The email of the user's account used.
-      //var email = error.email;
-      // The firebase.auth.AuthCredential type that was used.
-      //var credential = error.credential;
-      // ...
+        .catch((error) => {
+          this.alertCtrl.create({
+                                  title: 'Echec',
+                                  subTitle: 'Firebase failure: ' + JSON.stringify(error),
+                                  buttons: [ 'Ok' ]
+                                }).present();
+        });
+
+    }).catch((error) => {
+      this.alertCtrl.create({
+                              title: 'Echec',
+                              subTitle: 'l\'authentification a échoué: ' + error,
+                              buttons: [ 'Ok' ]
+                            }).present();
     });
   }
 
@@ -71,5 +71,3 @@ export class FacebookLoginService extends LoginService {
     }
   }
 }
-
-

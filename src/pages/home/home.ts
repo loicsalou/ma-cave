@@ -17,8 +17,8 @@ export class HomePage implements OnInit {
   constructor(public navCtrl: NavController, public platform: Platform,
               public toastController: ToastController, public loginService: LoginService,
               private modalController: ModalController) {
-    this.loginPage = this.modalController.create(EmailLoginPage);
-    this.loginPage.present();
+    //this.loginPage = this.modalController.create(EmailLoginPage);
+    //this.loginPage.present();
     this.loginService.authentifiedObservable.subscribe(user => {
       if (user) {
         this.loginPage.dismiss();
@@ -27,6 +27,10 @@ export class HomePage implements OnInit {
     if (this.loginService instanceof AnonymousLoginService) {
       this.loginService.login();
     }
+  }
+
+  login() {
+    this.loginService.login();
   }
 
   ngOnInit(): void {
