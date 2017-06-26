@@ -28,6 +28,16 @@
     </div>
   </div>
   
+  <ion-slides #imgslides [pager]="true" [speed]="100" style="height: 40vh" *ngIf="bottle.image_urls"
+              (ionSlideDidChange)="imageChanged($event)" (ionSlideWillChange)="imageWillChange($event)"
+              [effect]="cube">
+    <ion-slide *ngFor="let url of bottle.image_urls">
+      <ion-card>
+        <img [src]="url"/>
+      </ion-card>
+    </ion-slide>
+  </ion-slides>
+  
   <h4>{{"bottle.details" | translate}}</h4>
   <div class="block">
     <ul class="circle">

@@ -21,6 +21,12 @@ export class BottleDetailSlide {
   constructor(public navCtrl: NavController) {
   }
 
+  imageChanged(event) {
+  }
+
+  imageWillChange(event) {
+  }
+
   getIndex() {
     return this.index + 1;
   }
