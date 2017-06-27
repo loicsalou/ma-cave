@@ -6,8 +6,10 @@ import {Bottle} from './bottle';
 import {FilterSet} from '../distribution/distribution';
 import {AlertController, Platform, ToastController} from 'ionic-angular';
 import * as firebase from 'firebase/app';
-import {LoginService} from './login.service';
+import {AbstractLoginService} from './abstract-login.service';
 import {Facebook} from '@ionic-native/facebook';
+import {User} from '../model/user';
+import {Observable} from 'rxjs/Observable';
 import Reference = firebase.database.Reference;
 
 /**
@@ -16,26 +18,23 @@ import Reference = firebase.database.Reference;
  * clicks on a region to filter bottles. Any change on either side must be propagated on the other side.
  */
 @Injectable()
-export class FacebookLoginService extends LoginService {
+export class FacebookLoginService extends AbstractLoginService {
   private provider: firebase.auth.FacebookAuthProvider;
-  private facebookToken;
 
   constructor(private alertCtrl: AlertController, private toastCtrl: ToastController, private platform: Platform, private facebook: Facebook) {
     super();
   }
 
-  public login() {
+  public login(): Observable<User> {
     this.facebook.login([ 'email' ]).then((response) => {
       const facebookCredential = firebase.auth.FacebookAuthProvider
         .credential(response.authResponse.accessToken);
 
       firebase.auth().signInWithCredential(facebookCredential)
         .then((success) => {
-          this.alertCtrl.create({
-                                  title: 'Succès !',
-                                  subTitle: 'Firebase success: ' + JSON.stringify(success),
-                                  buttons: [ 'Ok' ]
-                                }).present();
+          let user = new FacebookUser(success.user, success.email, success.photoURL);
+          this.toastMessage('Succès ! ' + JSON.stringify(user));
+          this.success(user);
         })
         .catch((error) => {
           this.alertCtrl.create({
@@ -52,6 +51,8 @@ export class FacebookLoginService extends LoginService {
                               buttons: [ 'Ok' ]
                             }).present();
     });
+
+    return this.authentifiedObservable;
   }
 
   private toastMessage(text) {
@@ -59,7 +60,7 @@ export class FacebookLoginService extends LoginService {
       {
         message: text,
         cssClass: 'success-message',
-        showCloseButton: true
+        duration: 3000
       }).present();
   }
 
@@ -69,5 +70,29 @@ export class FacebookLoginService extends LoginService {
       subTitle: 'l\'authentification a échoué: ' + err,
       buttons: [ 'Ok' ]
     }
+  }
+}
+
+export class FacebookUser implements User {
+  user: string;
+  email: string;
+  photoURL: string;
+
+  constructor(user: string, email: string, photoURL: string) {
+    this.user = user;
+    this.email = email;
+    this.photoURL = photoURL;
+  }
+
+  getUser(): string {
+    return this.user;
+  }
+
+  getEmail(): string {
+    return this.email;
+  }
+
+  getPhotoURL(): string {
+    return this.photoURL;
   }
 }

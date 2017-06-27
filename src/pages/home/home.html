@@ -14,10 +14,16 @@
   <ion-card class="card-background">
     <statistics [axis]="'label'" [topMost]="5" [legend]="true"></statistics>
   </ion-card>
- 
-  <ion-card class="card-background" (click)="login()">
-    <button ion-button icon-only>
-      <ion-icon name="aperture"></ion-icon>
+  
+  <ion-card class="card-background">
+    <button ion-button icon-only (click)="facebookLogin()">
+      <img src="../../assets/icon/social_facebook_box_blue.png" style="width:25px; height: 25px;"/>
+    </button>
+    <button ion-button icon-only (click)="emailLogin()">
+      <ion-icon name="mail"></ion-icon>
+    </button>
+    <button ion-button icon-only (click)="anonymousLogin()">
+      <img src="../../assets/icon/anonymous.png" style="width:25px; height: 25px;"/>
     </button>
   </ion-card>
 

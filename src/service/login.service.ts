@@ -1,43 +1,53 @@
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
+import {User} from '../model/user';
+import {AnonymousLoginService} from './anonymous-login.service';
+import {EmailLoginService} from './email-login.service';
+import {FacebookLoginService} from './facebook-login.service';
 /**
  * Created by loicsalou on 13.06.17.
  */
+export class LoginService {
+  private authentified: BehaviorSubject<User> = new BehaviorSubject(undefined);
+  public authentifiedObservable: Observable<User> = this.authentified.asObservable();
 
-export abstract class LoginService {
-  private authentified: BehaviorSubject<string> = new BehaviorSubject(undefined);
-  public authentifiedObservable: Observable<string> = this.authentified.asObservable();
+  private _user: User;
 
-  private _user: string;
-  private _psw: string;
+  constructor(private anoLogin: AnonymousLoginService, private mailLogin: EmailLoginService, private fbLogin: FacebookLoginService) {
+  }
 
-  public abstract login();
+  public anonymousLogin() {
+    this.anoLogin.login().subscribe((user: User) => this.initUser(user));
+  }
 
-  public getUser(): string {
+  public emailLogin(login: string, psw: string) {
+    this.mailLogin.username = login;
+    this.mailLogin.psw = psw;
+    this.mailLogin.login().subscribe((user: User) => this.initUser(user));
+  }
+
+  public facebookLogin() {
+    this.fbLogin.login().subscribe((user: User) => this.initUser(user));
+  }
+
+  get user(): User {
     return this._user;
   }
 
-  get user(): string {
-    return this._user;
-  }
-
-  get psw(): string {
-    return this._psw;
-  }
-
-  set user(value: string) {
+  set user(value: User) {
     this._user = value;
   }
 
-  set psw(value: string) {
-    this._psw = value;
-  }
-
-  public success(user: string) {
+  public success(user: User) {
     if (user) {
+
       this._user = user;
       this.authentified.next(user);
     }
   }
 
+  private initUser(user: User) {
+    this.user = user;
+    this.authentified.next(user);
+  }
 }

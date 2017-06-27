@@ -7,7 +7,9 @@ import {FilterSet} from '../distribution/distribution';
 import {AngularFireAuth} from 'angularfire2/auth';
 import {AlertController} from 'ionic-angular';
 import * as firebase from 'firebase/app';
-import {LoginService} from './login.service';
+import {AbstractLoginService} from './abstract-login.service';
+import {User} from '../model/user';
+import {Observable} from 'rxjs/Observable';
 import Reference = firebase.database.Reference;
 
 /**
@@ -16,18 +18,48 @@ import Reference = firebase.database.Reference;
  * clicks on a region to filter bottles. Any change on either side must be propagated on the other side.
  */
 @Injectable()
-export class AnonymousLoginService extends LoginService {
+export class AnonymousLoginService extends AbstractLoginService {
+
+  anoUser: User;
 
   constructor(private alertCtrl: AlertController, private firebaseAuth: AngularFireAuth) {
     super();
   }
 
-  public login() {
+  public login(): Observable<User> {
     this.firebaseAuth.auth.signInAnonymously()
       .then(
-        () => this.success('businesssalou@gmailcom')
+        () => {
+          this.anoUser = new AnonymousUser();
+          this.success(this.anoUser);
+        }
       )
+
+    return this.authentifiedObservable;
   }
 }
 
+export class AnonymousUser implements User {
+  private user: string;
+  private email: string;
+  private photoURL: string;
+
+  constructor() {
+    this.user = 'caveexplorer@gmailcom';
+    this.email = 'cave.explorer@gmail.com';
+    this.photoURL = null;
+  }
+
+  getUser(): string {
+    return this.user;
+  }
+
+  getEmail(): string {
+    return this.email;
+  }
+
+  getPhotoURL(): string {
+    return this.photoURL;
+  }
+}
 

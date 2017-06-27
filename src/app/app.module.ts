@@ -30,7 +30,6 @@ import {UploadBottlesModule} from '../pages/upload-bottles/upload-bottles.page.m
 import {UploadBottlesPage} from '../pages/upload-bottles/upload-bottles.page';
 import {Statistics} from '../model/statistics';
 import {StatisticsComponent} from '../components/statistics/statistics';
-import {LoginService} from '../service/login.service';
 import {ChartsModule} from 'ng2-charts';
 import '../../node_modules/chart.js/dist/Chart.bundle.min.js';
 import {EmailLoginPage} from '../pages/login/email-login.page';
@@ -39,8 +38,9 @@ import {Wines} from '../service/wines.service';
 import {Bottles} from '../components/config/Bottles';
 import {AnonymousLoginService} from '../service/anonymous-login.service';
 import {EmailLoginService} from '../service/email-login.service';
-import {FacebookLoginService} from '../service/facebook-login.service';
 import {Facebook} from '@ionic-native/facebook';
+import {LoginService} from '../service/login.service';
+import {FacebookLoginService} from '../service/facebook-login.service';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -108,8 +108,15 @@ export const fireConfig = {
               StatusBar,
               SplashScreen,
               Facebook,
+              AnonymousLoginService,
+              EmailLoginService,
+              FacebookLoginService,
               {provide: ErrorHandler, useClass: IonicErrorHandler},
-              {provide: LoginService, useClass: FacebookLoginService},
+              {
+                provide: LoginService,
+                useFactory: (createLoginFactory),
+                deps: [ AnonymousLoginService, EmailLoginService, FacebookLoginService ]
+              },
               BottleService,
               DistributeService,
               FirebaseImageService
@@ -120,4 +127,8 @@ export class AppModule {
 
 export function createTranslateLoader(http: Http) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
+}
+
+export function createLoginFactory(ano: AnonymousLoginService, ema: EmailLoginService, fac: FacebookLoginService) {
+  return new LoginService(ano, ema, fac);
 }
