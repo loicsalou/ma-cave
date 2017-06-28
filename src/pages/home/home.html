@@ -15,16 +15,27 @@
     <statistics [axis]="'label'" [topMost]="5" [legend]="true"></statistics>
   </ion-card>
   
-  <ion-card class="card-background">
-    <button ion-button icon-only (click)="facebookLogin()">
-      <img src="../../assets/icon/social_facebook_box_blue.png" style="width:25px; height: 25px;"/>
-    </button>
-    <button ion-button icon-only (click)="emailLogin()">
-      <ion-icon name="mail"></ion-icon>
-    </button>
-    <button ion-button icon-only (click)="anonymousLogin()">
-      <img src="../../assets/icon/anonymous.png" style="width:25px; height: 25px;"/>
-    </button>
+  <ion-card class="card-background" *ngIf="!authenticated">
+    <div d-flex style="justify-content: space-between">
+      <button ion-button icon-only (click)="facebookLogin()">
+        <img src="assets/icon/social_facebook_box_blue.png" style="width:35px; height: 35px;"/>
+      </button>
+      <button ion-button icon-only (click)="emailLogin()">
+        <ion-icon name="mail"></ion-icon>
+      </button>
+      <button ion-button icon-only (click)="anonymousLogin()">
+        <img src="assets/icon/anonymous.png" style="width:35px; height: 35px;"/>
+      </button>
+    </div>
+  
+  </ion-card>
+  
+  <ion-card class="card-background" *ngIf="authenticated">
+    <div d-flex style="justify-content: center">
+      <button ion-button icon-only (click)="logout()">
+        <ion-icon name="close-circle">Logout</ion-icon>
+      </button>
+    </div>
   </ion-card>
 
 </ion-content>

@@ -50,4 +50,8 @@ export class LoginService {
     this.user = user;
     this.authentified.next(user);
   }
+
+  logout() {
+    this.initUser(undefined);
+  }
 }
