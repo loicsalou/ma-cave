@@ -41,6 +41,10 @@ import {EmailLoginService} from '../service/email-login.service';
 import {Facebook} from '@ionic-native/facebook';
 import {LoginService} from '../service/login.service';
 import {FacebookLoginService} from '../service/facebook-login.service';
+import {DashboardComponent} from '../components/dashboard/dashboard';
+import {HeaderComponent} from '../components/header/header';
+import {FooterComponent} from '../components/footer/footer';
+import {DashboardPage} from '../pages/dashboard/dashboard';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -58,6 +62,7 @@ export const fireConfig = {
               ContactPage,
               EmailLoginPage,
               FilterPage,
+              DashboardPage,
               HomePage,
               BrowsePage,
               BottleDetailPage,
@@ -67,7 +72,7 @@ export const fireConfig = {
               BottleListComponent,
               TabsPage,
               UpdatePage,
-              StatisticsComponent
+              StatisticsComponent,
             ],
             imports: [
               IonicModule.forRoot(MyCaveApp),
@@ -92,6 +97,7 @@ export const fireConfig = {
               EmailLoginPage,
               AboutPage,
               ContactPage,
+              DashboardPage,
               HomePage,
               BrowsePage,
               TabsPage,

@@ -1,9 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {Modal, ModalController, NavController, Platform, ToastController} from 'ionic-angular';
-import {BrowsePage} from '../browse/browse.page';
 import {LoginService} from '../../service/login.service';
 import {EmailLoginPage} from '../login/email-login.page';
 import {User} from '../../model/user';
+import {TabsPage} from '../tabs/tabs';
+import {Subscription} from 'rxjs/Subscription';
 
 @Component({
              selector: 'page-home',
@@ -15,9 +16,9 @@ export class HomePage implements OnInit {
   private loginPage: Modal;
 
   private authenticated = false;
+  private loginSubscription: Subscription;
 
-  constructor(public navCtrl: NavController, public platform: Platform,
-              public toastController: ToastController, public loginService: LoginService,
+  constructor(public navCtrl: NavController, public platform: Platform, public loginService: LoginService,
               private modalController: ModalController) {
   }
 
@@ -27,43 +28,30 @@ export class HomePage implements OnInit {
 
   facebookLogin() {
     this.loginService.facebookLogin();
-    this.loginService.authentifiedObservable.subscribe(user => {
+    this.loginSubscription=this.loginService.authentifiedObservable.subscribe(user => {
       this.handleLoginEvent(user);
       if (user) {
-        this.authenticated=true;
+        this.authenticated = true;
       }
     });
   }
 
   emailLogin() {
-    this.loginPage = this.modalController.create(EmailLoginPage);
-    this.loginPage.present();
-    this.loginService.authentifiedObservable.subscribe(user => {
+    this.loginSubscription=this.loginService.authentifiedObservable.subscribe(user => {
       this.handleLoginEvent(user);
       if (user) {
         this.loginPage.dismiss();
       }
     });
+    this.loginPage = this.modalController.create(EmailLoginPage);
+    this.loginPage.present();
   }
 
   anonymousLogin() {
-    this.loginService.anonymousLogin();
-    this.loginService.authentifiedObservable.subscribe(user => {
+    this.loginSubscription=this.loginService.authentifiedObservable.subscribe(user => {
       this.handleLoginEvent(user);
     });
-  }
-
-  filterOnText(event: any) {
-    let text = event.target.value;
-    if (text != undefined && text.length != 0) {
-      this.navCtrl.push(BrowsePage, {
-        text: text
-      })
-    }
-  }
-
-  browseCellar() {
-    this.navCtrl.push(BrowsePage);
+    this.loginService.anonymousLogin();
   }
 
   logout() {
@@ -71,6 +59,10 @@ export class HomePage implements OnInit {
   }
 
   private handleLoginEvent(user: User) {
-    this.authenticated=(user!==undefined);
+    this.authenticated = (user !== undefined);
+    if (this.authenticated) {
+      this.navCtrl.push(TabsPage);
+      this.loginSubscription.unsubscribe();
+    }
   }
 }

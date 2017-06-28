@@ -7,6 +7,8 @@ import {FirebaseImageService, UploadMetadata} from '../../service/firebase-image
 import {Subscription} from 'rxjs/Subscription';
 import * as firebase from 'firebase/app';
 import {AocInfo, Bottles} from '../../components/config/Bottles';
+import {LoginService} from '../../service/login.service';
+import {HomePage} from '../home/home';
 
 /*
  Generated class for the Update component.
@@ -33,7 +35,7 @@ export class UpdatePage implements OnInit {
 
   constructor(private navCtrl: NavController, private navParams: NavParams, private bottleService: BottleService,
               private camera: Camera, private alertController: AlertController, private imageService: FirebaseImageService,
-              private platform: Platform, private bottles: Bottles) {
+              private loginService: LoginService, private bottles: Bottles) {
     //don't clone to keep firebase key which is necessary to update
     this.bottle = navParams.data[ 'bottle' ];
     this.loadRegionAreas();
@@ -55,6 +57,11 @@ export class UpdatePage implements OnInit {
       }
     );
     this.navCtrl.viewWillLeave.subscribe(() => this.imagesSubscription.unsubscribe());
+  }
+
+  logout() {
+    this.loginService.logout();
+    this.navCtrl.push(HomePage);
   }
 
   loadRegionAreas() {

@@ -6,8 +6,9 @@ import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
 import {ListBottleEvent} from '../../components/list/bottle-list-event';
 import {FilterSet} from '../../components/distribution/distribution';
 import {Subscription} from 'rxjs/Subscription';
-import {Statistics} from '../../model/statistics';
 import * as _ from 'lodash';
+import {LoginService} from '../../service/login.service';
+import {HomePage} from '../home/home';
 
 @Component({
              selector: 'page-browse',
@@ -25,7 +26,7 @@ export class BrowsePage implements OnInit, OnDestroy {
   private nbOfBottles: number = 0;
 
   constructor(private toastCtrl: ToastController, public navCtrl: NavController, public platform: Platform,
-              private bottlesService: BottleService, private stats: Statistics, params?: NavParams) {
+              private bottlesService: BottleService, private loginService: LoginService, params?: NavParams) {
     this.navParams = params;
   }
 
@@ -67,6 +68,11 @@ export class BrowsePage implements OnInit, OnDestroy {
     this.trace('destroying browse page instance');
     //this.filterSubscription.unsubscribe();
     this.bottleSubscription.unsubscribe();
+  }
+
+  logout() {
+    this.loginService.logout();
+    this.navCtrl.push(HomePage);
   }
 
   private showMessage(s: string) {

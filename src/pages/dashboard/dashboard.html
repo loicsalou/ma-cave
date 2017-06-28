@@ -1,0 +1,21 @@
+<ion-header style="display: flex" class="dashboard header">
+  <ion-searchbar [placeholder]="Chercher" [autocomplete]="on" [autocorrect]="on" [animated]="true"
+                 (search)="filterOnText($event)">
+  </ion-searchbar>
+  <img src="assets/icon/primary-logout.png" icon-only (click)="logout()"/>
+</ion-header>
+
+<ion-content align-items-center class="dashboard card-background-page page">
+  
+  <ion-card class="card-background" (click)="browseCellar()">
+    <img src="assets/img/cave-sur-mesure.jpg"/>
+    <ion-card-title class="card-title">Explorer la cave</ion-card-title>
+  </ion-card>
+  
+  <ion-card class="card-background">
+    <statistics [axis]="'label'" [topMost]="5" [legend]="true"></statistics>
+  </ion-card>
+
+</ion-content>
+
+<ion-footer text-right padding-horizontal>version {{version}}</ion-footer>
