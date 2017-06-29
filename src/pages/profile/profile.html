@@ -1,0 +1,18 @@
+<ion-header style="display: flex" class="dashboard header">
+  <ion-searchbar [placeholder]="Chercher" [autocomplete]="on" [autocorrect]="on" [animated]="true"
+                 (search)="filterOnText($event)">
+  </ion-searchbar>
+  <img src="assets/icon/primary-logout.png" icon-only (click)="logout()"/>
+</ion-header>
+
+<ion-content align-items-center class="profile card-background-page page">
+  
+  <ion-card class="card-background">
+  </ion-card>
+  
+  <ion-card class="card-background">
+  </ion-card>
+
+</ion-content>
+
+<ion-footer text-right padding-horizontal>version {{version}}</ion-footer>

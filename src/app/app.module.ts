@@ -45,6 +45,7 @@ import {DashboardComponent} from '../components/dashboard/dashboard';
 import {HeaderComponent} from '../components/header/header';
 import {FooterComponent} from '../components/footer/footer';
 import {DashboardPage} from '../pages/dashboard/dashboard';
+import {ProfilePageModule} from '../pages/profile/profile.module';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -88,6 +89,7 @@ export const fireConfig = {
               AngularFireModule.initializeApp(fireConfig),
               AngularFireAuthModule,
               AngularFireDatabaseModule,
+              ProfilePageModule,
               UploadBottlesModule,
               ChartsModule
             ],

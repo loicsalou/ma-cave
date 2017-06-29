@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Modal, ModalController, NavController, Platform, ToastController} from 'ionic-angular';
+import {Modal, ModalController, NavController, Platform} from 'ionic-angular';
 import {LoginService} from '../../service/login.service';
 import {EmailLoginPage} from '../login/email-login.page';
 import {User} from '../../model/user';
@@ -28,7 +28,7 @@ export class HomePage implements OnInit {
 
   facebookLogin() {
     this.loginService.facebookLogin();
-    this.loginSubscription=this.loginService.authentifiedObservable.subscribe(user => {
+    this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
       this.handleLoginEvent(user);
       if (user) {
         this.authenticated = true;
@@ -37,7 +37,7 @@ export class HomePage implements OnInit {
   }
 
   emailLogin() {
-    this.loginSubscription=this.loginService.authentifiedObservable.subscribe(user => {
+    this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
       this.handleLoginEvent(user);
       if (user) {
         this.loginPage.dismiss();
@@ -48,7 +48,7 @@ export class HomePage implements OnInit {
   }
 
   anonymousLogin() {
-    this.loginSubscription=this.loginService.authentifiedObservable.subscribe(user => {
+    this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
       this.handleLoginEvent(user);
     });
     this.loginService.anonymousLogin();
@@ -63,6 +63,11 @@ export class HomePage implements OnInit {
     if (this.authenticated) {
       this.navCtrl.push(TabsPage);
       this.loginSubscription.unsubscribe();
+    }
+    else {
+      if (this.navCtrl.length() > 1) {
+        this.navCtrl.first();
+      }
     }
   }
 }
