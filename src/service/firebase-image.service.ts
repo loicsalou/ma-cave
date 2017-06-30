@@ -5,7 +5,7 @@ import {EventEmitter, Injectable} from '@angular/core';
 import {FilterSet} from '../distribution/distribution';
 import {AngularFireDatabase} from 'angularfire2/database';
 import {BottleFactory} from '../../model/bottle.factory';
-import {AlertController, LoadingController, ToastController} from 'ionic-angular';
+import {LoadingController} from 'ionic-angular';
 import * as firebase from 'firebase/app';
 import 'firebase/storage';
 import {LoginService} from './login.service';
@@ -15,6 +15,8 @@ import {Observable} from 'rxjs/Observable';
 import {Image} from '../model/image';
 import {FileItem} from './file-item';
 import {File as CordovaFile} from '@ionic-native/file';
+import {NotificationService} from './notification.service';
+import {TranslateService} from '@ngx-translate/core';
 import Reference = firebase.database.Reference;
 import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
 
@@ -32,9 +34,9 @@ export class FirebaseImageService extends FirebaseService {
   public tracer: EventEmitter<string> = new EventEmitter();
 
   constructor(private angularFirebase: AngularFireDatabase, loadingCtrl: LoadingController,
-              alertController: AlertController, toastController: ToastController, private file: CordovaFile,
-              loginService: LoginService) {
-    super(loadingCtrl, alertController, toastController, loginService);
+              notificationService: NotificationService, private file: CordovaFile, loginService: LoginService,
+              translateService: TranslateService) {
+    super(loadingCtrl, notificationService, loginService, translateService);
     loginService.authentifiedObservable.subscribe(user => this.initFirebase(user));
   }
 
@@ -72,7 +74,7 @@ export class FirebaseImageService extends FirebaseService {
     items.subscribe(
       (images: Image[]) => console.info(images.length + ' images reçues'),
       err => {
-        this.handleError(err);
+        this.handleError('liste des images disponibles', err);
       }
     );
     return items;
@@ -85,11 +87,11 @@ export class FirebaseImageService extends FirebaseService {
     this.storageRef.child(`${this.IMAGES_ROOT}/${item.file[ 'name' ]}`)
       .delete()
       .then(function () {
-              self.showToast('Image supprimée !')
+              self.notificationService.information('Image supprimée !')
             }
       )
       .catch(function (error) {
-        self.showAlert('L\'image n\'a pas pu être supprimée ! ', error);
+        self.notificationService.error('L\'image n\'a pas pu être supprimée ! ', error);
       });
   }
 
@@ -103,7 +105,7 @@ export class FirebaseImageService extends FirebaseService {
     if (image instanceof Blob || image instanceof File) {
       return this.uploadFileOrBlob(image, meta)
     } else {
-      this.showAlert('impossible d\'uploader l\'image dont le type est '+typeof image+' !');
+      this.notificationService.warning('impossible d\'uploader l\'image dont le type est ' + typeof image + ' !');
     }
   }
 
@@ -114,7 +116,7 @@ export class FirebaseImageService extends FirebaseService {
         // store reference to storage in database
         return this.saveToDatabaseAssetList(uploadSnapshot, meta);
       }, (error) => {
-        this.showAlert('Error during push to firebase of the picture', error);
+        this.notificationService.error('Error during push to firebase of the picture', error);
       });
   }
 

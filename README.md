@@ -29,6 +29,10 @@ Conclusion: toutes les images, tous les fichiers contenus dans assets sont inclu
 | chargement | effectuer le chargement en background pour plus de fluidité, par blocs de 50 ? | oui |
 
 
+# Conception
+- pour l'instant je suis contraint pas les données issues de cavus. Le problème est que ce sont des libellés qui sont stockés. Il faudrait extraire les libellés dans des tables / json statiques livrés avec l'appli et changer les données pour utiliser des IDs qui pointent vers ces données.
+- cela serait plus propre et éviterait les dysfonctionnements lors des recherches de régions par exemple.
+- pour cela il faut modifier l'importation assez profondément. Chaque bouteille importée doit passer dans un importateur qui transforme les libellés en code. Peut être pas si lourd pour finir.
 
 # Améliorations
 - recherche par mot clé: demander la validation avant de lancer la recherche car trop rapide actuellement et ne fait pas de sens. FAIT

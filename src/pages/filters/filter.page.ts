@@ -9,7 +9,6 @@ import {MenuController} from 'ionic-angular';
              templateUrl: 'filter.page.html'
            })
 export class FilterPage implements OnInit, OnChanges {
-  //public sortAxis = [ 'Quantité', 'Millésime', 'Région' ];
 
   public sortAxis = [
     {id: 'qty', name: 'Quantité', col: 'quantite_courante'},

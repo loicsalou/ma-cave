@@ -23,8 +23,7 @@ export class AboutPage implements OnInit {
 
   images: Array<{ src: String }>;
 
-  constructor(public navCtrl: NavController, private camera: Camera, private platform: Platform,
-              public i18n: TranslateService) {
+  constructor(public navCtrl: NavController, private camera: Camera, public i18n: TranslateService) {
     this.images = [];
   }
 
@@ -36,29 +35,6 @@ export class AboutPage implements OnInit {
 
   choosePicture(event) {
     event.stopPropagation();
-    /*
-     console.info('zone ' + event.currentTarget.title + ' cliquée');
-     let options = { destinationType: Camera.DestinationType.NATIVE_URI, encodingType: Camera.EncodingType.JPEG, mediaType: Camera.MediaType.PICTURE, sourceType: 1, saveToPhotoAlbum: false, correctOrientation: true };
-     Camera.getPicture(options).then((imageData) => {
-     let base64Image = 'data:image/jpeg;base64,' + imageData;
-     this.message='image capturée !';
-     }, (err) => {
-     console.error('Erreur lors de la prise de la photo !');
-     this.message='Erreur lors de la prise de la photo ! '+err;
-     });
-     */
-    //ImagePicker.getPictures({maximumImagesCount: 3}).then((results) => {
-    //                                                        for (var i = 0; i < results.length; i++) {
-    //                                                          this.imagePath = results[ i ];
-    //                                                          this.message = this.imagePath;
-    //                                                        }
-    //                                                      }
-    //  ,
-    //                                                      (err) => {
-    //                                                        this.message = "Erreur d'accès à la photo ! " + err;
-    //                                                      }
-    //)
-    //;
   }
 
   showTrads() {
@@ -69,29 +45,6 @@ export class AboutPage implements OnInit {
     event.stopPropagation();
     this.imagePath = null;
   }
-
-  //
-  //onclick(event: any) {
-  //  console.info('zone ' + event.currentTarget.title + ' cliquée');
-  //  this.platform.ready().then(() => {
-  //    let options = {
-  //      quality: 80,
-  //      destinationType: Camera.DestinationType.DATA_URL,
-  //      sourceType: Camera.PictureSourceType.CAMERA,
-  //      allowEdit: false,
-  //      encodingType: Camera.EncodingType.JPEG,
-  //      saveToPhotoAlbum: false
-  //    };
-  //    // https://github.com/apache/cordova-plugin-camera#module_camera.getPicture
-  //    Camera.getPicture(options).then((imageData) => {
-  //      let base64Image = 'data:image/jpeg;base64,' + imageData;
-  //      this.message = 'image capturée ! ' + imageData;
-  //    }, (err) => {
-  //      console.error('Erreur lors de la prise de la photo !');
-  //      this.message = 'Erreur lors de la prise de la photo ! ' + err;
-  //    });
-  //  });
-  //}
 
   takePhoto() {
     const options: CameraOptions = {

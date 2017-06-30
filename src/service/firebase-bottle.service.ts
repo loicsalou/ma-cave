@@ -8,11 +8,13 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {FilterSet} from '../components/distribution/distribution';
 import {AngularFireDatabase} from 'angularfire2/database';
 import {BottleFactory} from '../model/bottle.factory';
-import {AlertController, LoadingController, ToastController} from 'ionic-angular';
+import {LoadingController} from 'ionic-angular';
 import * as firebase from 'firebase/app';
 import * as _ from 'lodash';
 import {LoginService} from './login.service';
 import {FirebaseService} from './firebase-service';
+import {NotificationService} from './notification.service';
+import {TranslateService} from '@ngx-translate/core';
 import Reference = firebase.database.Reference;
 
 /**
@@ -33,9 +35,11 @@ export class BottleService extends FirebaseService {
   private allBottlesArray: Bottle[];
 
   constructor(private bottleFactory: BottleFactory, private firebase: AngularFireDatabase,
-              loadingCtrl: LoadingController, alertController: AlertController, toastController: ToastController,
-              loginService: LoginService) {
-    super(loadingCtrl, alertController, toastController, loginService);
+              loadingCtrl: LoadingController,
+              notificationService: NotificationService,
+              loginService: LoginService,
+              translateService: TranslateService) {
+    super(loadingCtrl, notificationService, loginService, translateService);
     loginService.authentifiedObservable.subscribe(user => this.initFirebase(user));
   }
 
@@ -69,10 +73,10 @@ export class BottleService extends FirebaseService {
 
   public update(bottles: Bottle[]) {
     bottles.forEach(bottle => {
-      this.firebaseRef.child(bottle['$key']).set(bottle, (
+      this.firebaseRef.child(bottle[ '$key' ]).set(bottle, (
         err => {
           if (err) {
-            this.showAlert('La mise à jour a échoué !', err);
+            this.notificationService.failed('La mise à jour a échoué !', err);
           }
         }
       ))
@@ -88,7 +92,7 @@ export class BottleService extends FirebaseService {
       .set(bottle,
            err => {
              if (err) {
-               this.showAlert('La sauvegarde a échoué ! ', err);
+               this.notificationService.failed('La sauvegarde a échoué ! ', err);
              }
            });
   }

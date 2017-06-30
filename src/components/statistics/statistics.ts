@@ -29,7 +29,6 @@ export class StatisticsComponent implements OnInit {
 
   ready=false;
 
-//  static DEFAULT_AXIS = [ 'label', 'subregion_label', 'classe_age' ];
   static STANDARD_COLORS = [
     'blue', 'red', 'orange', 'aqua', 'aquamarine', 'blueviolet', 'green', 'cornsilk', 'fuchsia', 'grey', 'black'
   ];
@@ -49,9 +48,6 @@ export class StatisticsComponent implements OnInit {
   };
 
   totalNumberOfBottles: number = 0;
-//
-//  @ViewChild('chart') canvas;
-//  chart: any;
   private totalNumberOfLots: number;
 
   // Doughnut
@@ -78,15 +74,12 @@ export class StatisticsComponent implements OnInit {
 
   private createChart(bottles: Bottle[]) {
     let distribution: Distribution[] = this.distributionService.distributeBy(bottles, [ this.axis ]);
-    //console.info('distribution de ' + bottles.length + ' faite');
     if (bottles.length !== 0) {
       this.totalNumberOfLots = bottles.length;
       this.totalNumberOfBottles = bottles.reduce((tot: number, btl: Bottle) => tot + +btl.quantite_courante, 0);
       if (this.axis == 'label') {
         this.createColorChart(distribution[ 0 ]);
         this.ready=true;
-      //} else if (this.axis == 'subregion_label') {
-      //  this.createRegionChart(distribution[ 0 ]);
       }
     }
   }
@@ -157,7 +150,6 @@ export class StatisticsComponent implements OnInit {
   }
 
   public chartHovered(e:any):void {
-    //console.log(e);
   }
 
 }

@@ -74,8 +74,6 @@ export class DistributionComponent implements OnChanges, OnInit {
     axis = axis ? axis.trim() : '';
     let filterValue = $event.currentTarget.textContent.split(':')[ 0 ];
     filterValue = filterValue ? filterValue.trim() : '';
-    //let value = {value: filterValue, axis: axis};
-    //this.badgeClicked.emit(value);
     //update filterSet
     if (!this.filterSet[ axis ]) {
       this.filterSet[ axis ] = [];
