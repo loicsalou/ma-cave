@@ -8,9 +8,13 @@
 <ion-content align-items-center class="profile card-background-page page">
   
   <ion-card class="card-background">
+    <h2>{{user.getUser()}}</h2>
+    <img [src]="user.getPhotoURL()">
+    <h4>{{user.getEmail()}}</h4>
   </ion-card>
   
   <ion-card class="card-background">
+    <p>{{properties()}}</p>
   </ion-card>
 
 </ion-content>

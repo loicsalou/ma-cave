@@ -20,6 +20,7 @@ import Reference = firebase.database.Reference;
 @Injectable()
 export class FacebookLoginService extends AbstractLoginService {
   private provider: firebase.auth.FacebookAuthProvider;
+  userString: string;
 
   constructor(private alertCtrl: AlertController, private toastCtrl: ToastController, private platform: Platform, private facebook: Facebook) {
     super();
@@ -33,7 +34,7 @@ export class FacebookLoginService extends AbstractLoginService {
       firebase.auth().signInWithCredential(facebookCredential)
         .then((success) => {
           let user = new FacebookUser(success.user, success.email, success.photoURL);
-          this.toastMessage('Succès ! ' + JSON.stringify(user));
+          this.userString = JSON.stringify(user);
           this.success(user);
         })
         .catch((error) => {
