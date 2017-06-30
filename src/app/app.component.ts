@@ -3,7 +3,6 @@ import {Platform} from 'ionic-angular';
 import {TranslateService} from '@ngx-translate/core';
 import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
-import {Wines} from '../service/wines.service';
 import {HomePage} from '../pages/home/home';
 
 @Component({

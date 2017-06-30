@@ -14,7 +14,6 @@ export class BottleIconPipe implements PipeTransform {
   }
 
   getColor(label: string): string {
-    let ret = '-' + Configuration.colorsText2Code[ label.toLowerCase() ];
-    return ret;
+    return '-' + Configuration.colorsText2Code[ label.toLowerCase() ];
   }
 }

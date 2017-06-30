@@ -1,4 +1,3 @@
-import {User} from '../model/user';
 import {AlertController, ToastController} from 'ionic-angular';
 import {TranslateService} from '@ngx-translate/core';
 import {Observable} from 'rxjs/Observable';
@@ -7,7 +6,6 @@ import {Subject} from 'rxjs/Subject';
  * Created by loicsalou on 13.06.17.
  */
 export class NotificationService {
-  private _user: User;
 
   constructor(private alertController: AlertController, private toastController: ToastController, private translateService: TranslateService) {
   }
@@ -44,9 +42,8 @@ export class NotificationService {
                                 })
   }
 
-  ask(title: string, message: string, ): Observable<boolean> {
-    let choice: boolean;
-    let response: Subject<boolean>=new Subject();
+  ask(title: string, message: string,): Observable<boolean> {
+    let response: Subject<boolean> = new Subject();
     let alert = this.alertController.create({
                                               title: title,
                                               message: message,

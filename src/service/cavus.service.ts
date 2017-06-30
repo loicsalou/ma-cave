@@ -35,10 +35,10 @@ export class CavusService {
     let opts: RequestOptionsArgs = {headers: headers};
 
     let obs: Observable<Response> = this.http.get('http://www.cavusvinifera.com/', opts)
-    obs.subscribe(response => this.analyzeReaponse(response));
+    obs.subscribe(response => this.analyzeResponse(response));
   }
 
-  private analyzeReaponse(response: Response) {
+  private analyzeResponse(response: Response) {
     this.notificationService.information(response.toString());
 
   }

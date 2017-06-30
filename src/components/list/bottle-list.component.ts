@@ -3,7 +3,6 @@ import {BottleService} from '../../service/firebase-bottle.service';
 import {Bottle} from '../../model/bottle';
 import {ListBottleEvent} from './bottle-list-event';
 import {ItemSliding, ToastController} from 'ionic-angular';
-import {Subject} from 'rxjs/Subject';
 
 @Component({
              selector: 'bottle-list',
@@ -16,7 +15,6 @@ export class BottleListComponent {
   bottles: Bottle[];
   @Output()
   showDetail: EventEmitter<ListBottleEvent> = new EventEmitter();
-
 
   constructor(private bottlesService: BottleService, private toastCtrl: ToastController) {
   }

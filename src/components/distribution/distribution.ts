@@ -200,7 +200,7 @@ export class FilterSet {
    */
   isEmpty() {
     return (!this.hasText() && !this.hasAppellations() && !this.hasAges() && !this.hasCouleurs() && !this.hasMillesimes()
-            && !this.hasRegions() && this.history && !this.favoriteOnly);
+    && !this.hasRegions() && this.history && !this.favoriteOnly);
   }
 
   reset() {

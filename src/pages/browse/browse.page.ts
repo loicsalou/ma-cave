@@ -47,7 +47,7 @@ export class BrowsePage implements OnInit, OnDestroy {
         _.chunk(received, 30).forEach(
           (chunk: any[], ix) => {
             this.notificationService.traceInfo('itération ' + ix + ' Traitement des bouteilles reçues après timeout' +
-            chunk.length);
+                                               chunk.length);
             setTimeout(
               () => {
                 this.notificationService.traceInfo('Dans l\'itération ' + ix + ' Traitement des bouteilles reçues' +
@@ -108,10 +108,6 @@ export class BrowsePage implements OnInit, OnDestroy {
 
   public isFiltering() {
     return !this.filterSet.isEmpty()
-  }
-
-  private setBottles(bottles: Bottle[ ]) {
-    this.bottles = bottles;
   }
 
   filterOnText(event: any) {

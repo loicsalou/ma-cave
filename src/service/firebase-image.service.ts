@@ -2,9 +2,7 @@
  * Created by loicsalou on 28.02.17.
  */
 import {EventEmitter, Injectable} from '@angular/core';
-import {FilterSet} from '../distribution/distribution';
 import {AngularFireDatabase} from 'angularfire2/database';
-import {BottleFactory} from '../../model/bottle.factory';
 import {LoadingController} from 'ionic-angular';
 import * as firebase from 'firebase/app';
 import 'firebase/storage';
@@ -14,7 +12,6 @@ import {FirebaseService} from './firebase-service';
 import {Observable} from 'rxjs/Observable';
 import {Image} from '../model/image';
 import {FileItem} from './file-item';
-import {File as CordovaFile} from '@ionic-native/file';
 import {NotificationService} from './notification.service';
 import {TranslateService} from '@ngx-translate/core';
 import Reference = firebase.database.Reference;
@@ -34,8 +31,7 @@ export class FirebaseImageService extends FirebaseService {
   public tracer: EventEmitter<string> = new EventEmitter();
 
   constructor(private angularFirebase: AngularFireDatabase, loadingCtrl: LoadingController,
-              notificationService: NotificationService, private file: CordovaFile, loginService: LoginService,
-              translateService: TranslateService) {
+              notificationService: NotificationService, loginService: LoginService, translateService: TranslateService) {
     super(loadingCtrl, notificationService, loginService, translateService);
     loginService.authentifiedObservable.subscribe(user => this.initFirebase(user));
   }

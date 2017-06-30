@@ -1,8 +1,7 @@
 import {Component} from '@angular/core';
-import {AlertController, IonicPage, NavController, ToastController} from 'ionic-angular';
+import {IonicPage, NavController} from 'ionic-angular';
 import {Camera, CameraOptions} from '@ionic-native/camera';
 import {BarcodeScanner, BarcodeScannerOptions, BarcodeScanResult} from '@ionic-native/barcode-scanner';
-import {CavusService} from './cavus.service';
 import {NotificationService} from '../../service/notification.service';
 
 /**
