@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {AlertController, IonicPage, NavController, ToastController, Platform} from 'ionic-angular';
+import {IonicPage, NavController, Platform} from 'ionic-angular';
 import {FileChooser} from '@ionic-native/file-chooser';
 import {File} from '@ionic-native/file';
 import {FilePath} from '@ionic-native/file-path';
@@ -8,6 +8,7 @@ import {BottleFactory} from '../../model/bottle.factory';
 import {BottleService} from '../../service/firebase-bottle.service';
 import {Bottle} from '../../model/bottle';
 import {CavusService} from '../../service/cavus.service';
+import {NotificationService} from '../../service/notification.service';
 
 /**
  * Generated class for the UploadBottles page.
@@ -28,14 +29,13 @@ export class UploadBottlesPage {
   viewNb: number = 0;
   private bottles: Bottle[] = null;
   encoding: string; // forcer l'encoding
-  optionsVisibles: boolean=false; // forcer l'encoding
+  optionsVisibles: boolean = false; // forcer l'encoding
 
   constructor(public navCtrl: NavController,
               private file: File,
               private filepath: FilePath,
               private fileChooser: FileChooser,
-              private alertController: AlertController,
-              private toastController: ToastController,
+              private notificationService: NotificationService,
               private bottleService: BottleService,
               private bottleFactory: BottleFactory,
               private platform: Platform,
@@ -47,20 +47,19 @@ export class UploadBottlesPage {
   }
 
   public switchAdvancedOptions() {
-    this.optionsVisibles=!this.optionsVisibles;
+    this.optionsVisibles = !this.optionsVisibles;
   }
 
   public chooseFile() {
     this.fileChooser.open()
       .then(uri => {
-        //this.presentAlert('Succès !', 'l uri choisie est ' + uri);
         this.filepath.resolveNativePath(uri).then((result) => {
           let nativepath = result;
           this.readFile(nativepath);
         });
       })
-      .catch(e => {
-        this.presentAlert('Echec... !', 'erreur chooseFile ' + e);
+      .catch(error => {
+        this.notificationService.error('Erreur lors du choix du fichier', error);
       });
   }
 
@@ -68,17 +67,15 @@ export class UploadBottlesPage {
     try {
       this.bottleService.initializeDB(this.bottles);
       this.bottles = null;
-    } catch (ex) {
-      this.presentAlert('Error !', 'La sauvegarde des données a échoué: ' + ex);
+    } catch (error) {
+      this.notificationService.error('La sauvegarde des données a échoué', error);
     }
   }
 
   private readBrowserFile(event: any) {
-    //let textType = /text.*/;
     let file = event.currentTarget.files[ 0 ];
     let isXls = file.name.toLowerCase().endsWith('.xls');
     let encoding = isXls ? 'windows-1252' : 'utf-8';
-    //console.info(event.currentTarget.files[ 0 ]);
     let reader = new FileReader();
     let self = this;
     reader.onload = function (evt) {
@@ -91,7 +88,7 @@ export class UploadBottlesPage {
       self.saveBottles();
     }
     reader.onerror = function (evt) {
-      alert('cannot read the file ! ' + file);
+      self.notificationService.error('Le fichier ne peut pas être lu: ' + file, evt);
     };
     reader.readAsText(file, encoding);
   }
@@ -115,17 +112,8 @@ export class UploadBottlesPage {
                                                   this.saveBottles();
                                                 }
                                               })
-                                            }, err => this.presentAlert('Echec... !', 'erreur readFile ' + err)
+                                            }, err => this.notificationService.failed('La lecture du fichier ' + nativepath + ' a échoué' + err)
     );
-  }
-
-  private presentAlert(title: string, text: string) {
-    let alert = this.alertController.create({
-                                              title: title,
-                                              subTitle: text,
-                                              buttons: [ 'Ok' ]
-                                            });
-    alert.present();
   }
 
   private parseContentCSV() {
@@ -140,17 +128,18 @@ export class UploadBottlesPage {
         try {
           let btl: Bottle = <Bottle>buildObject(row, keys);
           return self.bottleFactory.create(btl);
-        } catch (ex) {
-          self.showError('Parsing error enreg ' + row + ex);
+        } catch (error) {
+          this.notificationService.error('Erreur d\'analyse de l\'enregistrement: '+ row, error);
         }
       }, {});
-    } catch (ex2) {
-      self.showError('Parsing global error enreg ' + ex2);
+    } catch (error2) {
+      this.notificationService.error('Erreur de parcours du fichier CSV', error2);
     }
     this.bottleService.setCellarContent(bottles);
     this.bottles = bottles;
-    this.presentAlert('Parsing OK', 'CSV parsé au format ' + this.encoding + ' nombre lu ' + csvarray.length + ' chargé '
-                      + (bottles == null ? 'KO' + ' !' : bottles.length));
+    this.notificationService.information('Le chargement (CSV) de ' + csvarray.length + ' fichiers a été effectué.' +
+                                         ' Nombre' +
+                                         ' de lots' + (bottles == null ? 'KO' + ' !' : bottles.length));
 
     return this.bottles;
   }
@@ -167,36 +156,14 @@ export class UploadBottlesPage {
       try {
         let btl: Bottle = <Bottle>buildObjectFromXLS(row, keys);
         return this.bottleFactory.create(btl);
-      } catch (ex) {
-        this.showError('Parsing error enreg ' + row + ex);
+      } catch (error) {
+        this.notificationService.error('Erreur d\'analyse de l\'enregistrement: '+ row, error);
       }
-    }, err => this.showError('Parsing global error enreg ' + err));
+    }, error2 => this.notificationService.error('Erreur de parcours du fichier', error2));
     this.bottleService.setCellarContent(bottles);
     this.bottles = bottles;
-    this.presentAlert('Parsing OK', 'XLS parsé au format ' + this.encoding + ' nombre lu ' + csvarray.length + ' chargé '
-                      + (bottles == null ? 'KO' + ' !' : bottles.length));
-  }
-
-  //public parseContentXLS2(event: any) {
-  //  let file = event.currentTarget.files[ 0 ];
-  //  let reader = new FileReader();
-  //  reader.onload = function (evt) {
-  //    let buf = new Uint8Array(evt.target['result']);
-  //    let dec = new decoder.TextDecoder('ascii');
-  //    let s=dec.decode(buf);
-  //    console.info('ooo');
-  //    //buf = buf.map((byte) => byte-65);
-  //  }
-  //  reader.readAsArrayBuffer(file);
-  //}
-
-  private showError(s: string) {
-    let basketToast = this.toastController.create({
-                                                    message: s,
-                                                    cssClass: 'error-message',
-                                                    showCloseButton: true
-                                                  });
-    basketToast.present();
+    this.notificationService.information('Le chargement (XLS) de ' + csvarray.length + ' fichiers a été effectué.' +
+                                         ' Nombre de lots' + (bottles == null ? 'KO' + ' !' : bottles.length));
   }
 }
 

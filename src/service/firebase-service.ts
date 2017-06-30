@@ -1,6 +1,8 @@
 import {AlertController, Loading, LoadingController, ToastController} from 'ionic-angular';
 import {Observable} from 'rxjs/Observable';
 import {LoginService} from './login.service';
+import {NotificationService} from './notification.service';
+import {TranslateService} from '@ngx-translate/core';
 /**
  * Created by loicsalou on 16.06.17.
  */
@@ -12,14 +14,14 @@ export abstract class FirebaseService {
   private IMAGES_FOLDER = 'images';
   private XREF_FOLDER = 'xref';
 
-  public BOTTLES_ROOT;
-  public XREF_ROOT;
-  public IMAGES_ROOT;
+  public BOTTLES_ROOT: string;
+  public XREF_ROOT: string;
+  public IMAGES_ROOT: string;
 
   private loading: Loading;
 
-  constructor(private loadingCtrl: LoadingController, private alertController: AlertController,
-              private toastController: ToastController, private loginService: LoginService) {
+  constructor(private loadingCtrl: LoadingController, protected notificationService: NotificationService,
+              private loginService: LoginService, private translateService: TranslateService) {
     loginService.authentifiedObservable.subscribe(user => this.initRoots(user));
   }
 
@@ -34,7 +36,7 @@ export abstract class FirebaseService {
   showLoading(message?: string) {
     if (this.loading == undefined) {
       this.loading = this.loadingCtrl.create({
-                                               content: message ? message : 'Chargement en cours...',
+                                               content: message ? message : this.translateService.instant('loading'),
                                                dismissOnPageChange: false
                                              });
       this.loading.present();
@@ -48,37 +50,9 @@ export abstract class FirebaseService {
     }
   }
 
-  showInfo(message: string) {
-    this.alertController.create({
-                                  title: 'Information',
-                                  subTitle: message,
-                                  buttons: [ 'Ok' ]
-                                }).present()
-
-  }
-
-  showToast(message: string) {
-    this.toastController.create({
-                                  message: message
-                                }).present()
-  }
-
-  showAlert(message: string, err?: any) {
-    this.alertController.create({
-                                  title: 'Echec',
-                                  subTitle: message + err,
-                                  buttons: [ 'Ok' ]
-                                }).present()
-
-  }
-
-  handleError(error: any, message?: string) {
-    this.alertController.create({
-                                  title: 'Erreur !',
-                                  subTitle: message ? message + error : 'Une erreur s\'est produite ! ' + error,
-                                  buttons: [ 'Ok' ]
-                                })
-    return Observable.throw(error.json().error || 'Database error');
+  protected handleError(message: string, error: any) {
+    this.notificationService.error(message, error);
+    return Observable.throw(error.json().error || 'Firebase error');
   }
 
 }

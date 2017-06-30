@@ -1,6 +1,7 @@
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {User} from '../model/user';
+import {NotificationService} from './notification.service';
 /**
  * Created by loicsalou on 13.06.17.
  */
@@ -8,8 +9,14 @@ import {User} from '../model/user';
 export abstract class AbstractLoginService {
   private authentified: BehaviorSubject<User> = new BehaviorSubject(undefined);
   public authentifiedObservable: Observable<User> = this.authentified.asObservable();
+  protected notificationService: NotificationService;
 
   private _user: User;
+
+
+  constructor(notificationService: NotificationService) {
+    this.notificationService = notificationService;
+  }
 
   public abstract login();
 

@@ -11,12 +11,10 @@ export class Bottles {
   public static aocData = require('../../assets/json/regions-appellations.json');
 
   public colors = [];
-  //public regions = [];
   public aocByArea = [];
 
   constructor() {
     this.initColors();
-    //this.initRegions();
     this.initAoc();
   }
 

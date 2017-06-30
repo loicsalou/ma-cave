@@ -4,12 +4,12 @@
 import {Injectable} from '@angular/core';
 import {Bottle} from './bottle';
 import {FilterSet} from '../distribution/distribution';
-import {AlertController, Platform, ToastController} from 'ionic-angular';
 import * as firebase from 'firebase/app';
 import {AbstractLoginService} from './abstract-login.service';
 import {Facebook} from '@ionic-native/facebook';
 import {User} from '../model/user';
 import {Observable} from 'rxjs/Observable';
+import {NotificationService} from './notification.service';
 import Reference = firebase.database.Reference;
 
 /**
@@ -22,8 +22,8 @@ export class FacebookLoginService extends AbstractLoginService {
   private provider: firebase.auth.FacebookAuthProvider;
   userString: string;
 
-  constructor(private alertCtrl: AlertController, private toastCtrl: ToastController, private platform: Platform, private facebook: Facebook) {
-    super();
+  constructor(notificationService: NotificationService, private facebook: Facebook) {
+    super(notificationService);
   }
 
   public login(): Observable<User> {
@@ -37,40 +37,11 @@ export class FacebookLoginService extends AbstractLoginService {
           this.userString = JSON.stringify(user);
           this.success(user);
         })
-        .catch((error) => {
-          this.alertCtrl.create({
-                                  title: 'Echec',
-                                  subTitle: 'Firebase failure: ' + JSON.stringify(error),
-                                  buttons: [ 'Ok' ]
-                                }).present();
-        });
+        .catch(error => this.notificationService.failed('Firebase failure', error));
 
-    }).catch((error) => {
-      this.alertCtrl.create({
-                              title: 'Echec',
-                              subTitle: 'l\'authentification a échoué: ' + error,
-                              buttons: [ 'Ok' ]
-                            }).present();
-    });
+    }).catch(error => this.notificationService.failed('l\'authentification a échoué', error));
 
     return this.authentifiedObservable;
-  }
-
-  private toastMessage(text) {
-    this.toastCtrl.create(
-      {
-        message: text,
-        cssClass: 'success-message',
-        duration: 3000
-      }).present();
-  }
-
-  private loginError(err) {
-    return {
-      title: 'Echec',
-      subTitle: 'l\'authentification a échoué: ' + err,
-      buttons: [ 'Ok' ]
-    }
   }
 }
 

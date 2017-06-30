@@ -1,7 +1,12 @@
 {
   "app": {
     "please-login": "Authentification",
-    "title": "Cave-Explorer"
+    "title": "Cave-Explorer",
+    "information": "Information",
+    "error": "Erreur !",
+    "failed": "Echec !",
+    "warning": "Attention",
+    "loading": "Chargement en cours..."
   },
   "bottle": {
     "area_label": "Appellation",

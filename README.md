@@ -23,12 +23,17 @@ Conclusion: toutes les images, tous les fichiers contenus dans assets sont inclu
 | gérer le login | identifier l'utilisateur (FB, tweeter, mail...) | mail, FB, ano |
 | authentifier l'utilisateur | gérer l'empreinte digitale | non |
 | mise à jour| mise à jour d'un lot de bouteille | partiel |
+| détail| lister les photos liées à une bouteille | non |
 | retirer une bouteille | mettre à jour le nombre de bouteilles restantes, saisir un court formulaire d'impression sur la bouteille | non |
 | ranger les bouteilles | faciliter le travail pour retrouver les bouteilles rangées. Cela mérite beaucoup d'attentions: photographier les casiers ? pointer les emplacements ? d'n'd pour déplacer ? etc. | non |
 |recherche|compléter avec options 'bouteilles actuellement en cave' et 'vaforites seulement' | oui |
 | chargement | effectuer le chargement en background pour plus de fluidité, par blocs de 50 ? | oui |
 
 
+# Conception
+- pour l'instant je suis contraint pas les données issues de cavus. Le problème est que ce sont des libellés qui sont stockés. Il faudrait extraire les libellés dans des tables / json statiques livrés avec l'appli et changer les données pour utiliser des IDs qui pointent vers ces données.
+- cela serait plus propre et éviterait les dysfonctionnements lors des recherches de régions par exemple.
+- pour cela il faut modifier l'importation assez profondément. Chaque bouteille importée doit passer dans un importateur qui transforme les libellés en code. Peut être pas si lourd pour finir.
 
 # Améliorations
 - recherche par mot clé: demander la validation avant de lancer la recherche car trop rapide actuellement et ne fait pas de sens. FAIT
@@ -37,10 +42,16 @@ Conclusion: toutes les images, tous les fichiers contenus dans assets sont inclu
 - login FB mettre infos utilisateur dans une page profil utilisateur avec toutes les infos FB
 - ChartJs: remplacer le chart sur les bouteilles par couleur ou ajouter au moins un deuxième par région + accorder les couleurs en fonction des bouteilles 
 - gérer les anomalies correctement
-- homogénéiser les messages envoyés
+- homogénéiser les messages envoyés FAIT
   - erreurs: alert
   - infos: toasts
+- upload des images si suffisamment volumineuses: mettre progressBar
 
+# Architecture soft
+- partage d'un contexte commun applicatif ? pour contenir diverses choses comme le user, la version etc.
+
+# Modernisation
+- Remplacer les Promises par des obeservables (upload des images notamment mais peut-être ailleurs aussi ?)
 
 #Notes techniques
 ## Login FB

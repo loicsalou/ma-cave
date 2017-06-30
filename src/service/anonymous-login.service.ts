@@ -5,11 +5,11 @@ import {Injectable} from '@angular/core';
 import {Bottle} from './bottle';
 import {FilterSet} from '../distribution/distribution';
 import {AngularFireAuth} from 'angularfire2/auth';
-import {AlertController} from 'ionic-angular';
 import * as firebase from 'firebase/app';
 import {AbstractLoginService} from './abstract-login.service';
 import {User} from '../model/user';
 import {Observable} from 'rxjs/Observable';
+import {NotificationService} from './notification.service';
 import Reference = firebase.database.Reference;
 
 /**
@@ -22,8 +22,8 @@ export class AnonymousLoginService extends AbstractLoginService {
 
   anoUser: User;
 
-  constructor(private alertCtrl: AlertController, private firebaseAuth: AngularFireAuth) {
-    super();
+  constructor(notificationService: NotificationService, private firebaseAuth: AngularFireAuth) {
+    super(notificationService);
   }
 
   public login(): Observable<User> {

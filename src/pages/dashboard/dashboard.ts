@@ -5,6 +5,7 @@ import {LoginService} from '../../service/login.service';
 import {EmailLoginPage} from '../login/email-login.page';
 import {User} from '../../model/user';
 import {HomePage} from '../home/home';
+import {NotificationService} from '../../service/notification.service';
 
 @Component({
              selector: 'page-dashboard',
@@ -14,9 +15,7 @@ import {HomePage} from '../home/home';
 export class DashboardPage implements OnInit {
   version: any;
 
-  constructor(public navCtrl: NavController, public platform: Platform,
-              public toastController: ToastController, public loginService: LoginService,
-              private modalController: ModalController) {
+  constructor(public navCtrl: NavController, public loginService: LoginService) {
   }
 
   ngOnInit(): void {

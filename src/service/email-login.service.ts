@@ -4,13 +4,12 @@
 import {Injectable} from '@angular/core';
 import {Bottle} from './bottle';
 import {FilterSet} from '../distribution/distribution';
-import {AngularFireAuth} from 'angularfire2/auth';
-import {AlertController, Platform} from 'ionic-angular';
 import * as firebase from 'firebase/app';
 import {AngularFireDatabase} from 'angularfire2/database';
 import {AbstractLoginService} from './abstract-login.service';
 import {User} from '../model/user';
 import {Observable} from 'rxjs/Observable';
+import {NotificationService} from './notification.service';
 import Reference = firebase.database.Reference;
 
 /**
@@ -26,9 +25,9 @@ export class EmailLoginService extends AbstractLoginService {
 
   private firebaseRef: firebase.database.Reference;
 
-  constructor(private alertCtrl: AlertController, private firebaseAuth: AngularFireAuth, private platform: Platform,
-              private firebase: AngularFireDatabase, private alertController: AlertController) {
-    super();
+  constructor(notificationService: NotificationService,
+              private firebase: AngularFireDatabase) {
+    super(notificationService);
     this.firebaseRef = this.firebase.database.ref('users/');
   }
 
@@ -60,20 +59,12 @@ export class EmailLoginService extends AbstractLoginService {
         firebase.auth().createUserWithEmailAndPassword(self.user.getUser(), self.psw)
           .then(() => self.success(self.user))
           .catch(function (error2) {
-            self.loginError(error);
+            self.notificationService.failed('la création du compte utilisateur a échoué', error2)
           });
-        self.loginError(error);
+        self.notificationService.error('L\'authentification a échoué', error);
       });
 
     return this.authentifiedObservable;
-  }
-
-  private loginError(err) {
-    this.alertCtrl.create({
-                            title: 'Echec',
-                            subTitle: 'l\'authentification a échoué: ' + err,
-                            buttons: [ 'Ok' ]
-                          }).present();
   }
 }
 

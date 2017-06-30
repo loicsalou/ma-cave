@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {NavController, NavParams, Platform, ToastController} from 'ionic-angular';
+import {NavController, NavParams, Platform} from 'ionic-angular';
 import {BottleService} from '../../service/firebase-bottle.service';
 import {Bottle} from '../../model/bottle';
 import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
@@ -9,6 +9,7 @@ import {Subscription} from 'rxjs/Subscription';
 import * as _ from 'lodash';
 import {LoginService} from '../../service/login.service';
 import {HomePage} from '../home/home';
+import {NotificationService} from '../../service/notification.service';
 
 @Component({
              selector: 'page-browse',
@@ -25,30 +26,32 @@ export class BrowsePage implements OnInit, OnDestroy {
   private navParams: NavParams;
   private nbOfBottles: number = 0;
 
-  constructor(private toastCtrl: ToastController, public navCtrl: NavController, public platform: Platform,
-              private bottlesService: BottleService, private loginService: LoginService, params?: NavParams) {
+  constructor(public navCtrl: NavController, public platform: Platform, private bottlesService: BottleService,
+              private loginService: LoginService, private notificationService: NotificationService, params?: NavParams) {
     this.navParams = params;
   }
 
   ngOnInit() {
-    this.trace('initializing browse page instance');
+    this.notificationService.traceInfo('Initialisation de la page de browse');
     this.setFilter();
     this.filterSubscription = this.bottlesService.filtersObservable.subscribe(
       filterSet => {
-        this.trace('receiving filter');
+        this.notificationService.traceInfo('Nouveau filtre reçu: ' + filterSet);
         this.setFilterSet(filterSet);
       });
     this.bottleSubscription = this.bottlesService.filteredBottlesObservable.subscribe(
       (received: Bottle[]) => {
-        this.trace('receiving bottles');
+        this.notificationService.traceInfo('Réception des bouteilles');
         this.bottles = [];
         this.nbOfBottles = 0;
         _.chunk(received, 30).forEach(
           (chunk: any[], ix) => {
-            this.trace('iteration ' + ix + ' processing bottles after timeout ' + chunk.length);
+            this.notificationService.traceInfo('itération ' + ix + ' Traitement des bouteilles reçues après timeout' +
+            chunk.length);
             setTimeout(
               () => {
-                this.trace('inside iteration ' + ix + ' processing bottles after timeout ' + chunk.length);
+                this.notificationService.traceInfo('Dans l\'itération ' + ix + ' Traitement des bouteilles reçues' +
+                                                   ' après timeout ' + chunk.length);
                 this.nbOfBottles += chunk.reduce(
                   (tot: number, btl2: Bottle) => tot + +btl2.quantite_courante,
                   0
@@ -59,14 +62,13 @@ export class BrowsePage implements OnInit, OnDestroy {
           }
         )
       },
-      error => this.showMessage('error ! ' + error),
-      () => this.showMessage('completed!')
+      error => this.notificationService.error('Erreur lors de l\'accès à la base de données' + error),
+      () => this.notificationService.traceInfo('Récupération de ' + this.nbOfBottles + ' bouteilles terminée')
     );
   }
 
   ngOnDestroy(): void {
-    this.trace('destroying browse page instance');
-    //this.filterSubscription.unsubscribe();
+    this.notificationService.traceInfo('Libération de la page de browse');
     this.bottleSubscription.unsubscribe();
   }
 
@@ -75,18 +77,9 @@ export class BrowsePage implements OnInit, OnDestroy {
     this.navCtrl.push(HomePage);
   }
 
-  private showMessage(s: string) {
-    let basketToast = this.toastCtrl.create({
-                                              message: s,
-                                              cssClass: 'information-message',
-                                              showCloseButton: true
-                                            });
-    basketToast.present();
-  }
-
   // in case user navigated to here from the home page then we have search param ==> filter on this text
   private setFilter() {
-    this.trace('checking nav params');
+    this.notificationService.traceInfo('Vérification des paramètres du filtre');
     if (this.navParams != undefined) {
       if (this.navParams.data[ 'text' ] != null) {
         this.filterSet.text = this.navParams.data[ 'text' ].split(' ');
@@ -95,10 +88,6 @@ export class BrowsePage implements OnInit, OnDestroy {
       }
     }
     this.bottlesService.filterOn(this.filterSet);
-  }
-
-  private trace(text: string) {
-    //console.info(text);
   }
 
   public isSearchVisible(): boolean {
@@ -111,7 +100,6 @@ export class BrowsePage implements OnInit, OnDestroy {
 
   public numberOfBottles(): number {
     return this.nbOfBottles;
-    //return this.bottles == undefined ? 0 : this.bottles.length;
   }
 
   public numberOfLots(): number {
@@ -132,7 +120,6 @@ export class BrowsePage implements OnInit, OnDestroy {
     if (filter) {
       this.filterSet.text = filter.split(' ');
     }
-    //this.showLoading();
     this.bottlesService.filterOn(this.filterSet);
   }
 

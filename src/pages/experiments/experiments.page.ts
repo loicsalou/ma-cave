@@ -3,6 +3,7 @@ import {AlertController, IonicPage, NavController, ToastController} from 'ionic-
 import {Camera, CameraOptions} from '@ionic-native/camera';
 import {BarcodeScanner, BarcodeScannerOptions, BarcodeScanResult} from '@ionic-native/barcode-scanner';
 import {CavusService} from './cavus.service';
+import {NotificationService} from '../../service/notification.service';
 
 /**
  * Generated class for the UploadBottles page.
@@ -21,8 +22,7 @@ export class ExperimentsPage {
   images: Array<{ src: String }> = [];
 
   constructor(public navCtrl: NavController,
-              private alertController: AlertController,
-              private toastController: ToastController,
+              private notificationService: NotificationService,
               private barcodeScanner: BarcodeScanner,
               private camera: Camera) {
   }
@@ -43,8 +43,8 @@ export class ExperimentsPage {
       this.images.unshift({
                             src: base64Image
                           })
-    }, (err) => {
-      this.presentAlert('Error !', err);
+    }, error => {
+      this.notificationService.error('Error !', error);
     });
   }
 
@@ -61,29 +61,9 @@ export class ExperimentsPage {
         this.qrCode = value;
         this.qrCodeText = value.text;
       })
-      .catch(err => {
-        this.presentAlert('Echec !', 'le scan a échoué: ' + err);
-        this.qrCodeText = err;
+      .catch(error => {
+        this.notificationService.failed('Le scan a échoué: ' + error);
+        this.qrCodeText = error;
       });
-  }
-
-  private presentAlert(title: string, text: string) {
-    let alert = this.alertController.create(
-      {
-        title: title,
-        subTitle: text,
-        buttons: [ 'Ok' ]
-      }
-    );
-    alert.present();
-  }
-
-  private showError(s: string) {
-    let basketToast = this.toastController.create({
-                                                    message: s,
-                                                    cssClass: 'error-message',
-                                                    showCloseButton: true
-                                                  });
-    basketToast.present();
   }
 }

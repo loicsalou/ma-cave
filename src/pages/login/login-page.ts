@@ -2,8 +2,8 @@
  * Created by loicsalou on 16.06.17.
  */
 import {LoginService} from '../../service/login.service';
-import {AlertController} from 'ionic-angular';
 import {Subscription} from 'rxjs/Subscription';
+import {NotificationService} from '../../service/notification.service';
 
 export abstract class LoginPage {
 
@@ -12,7 +12,7 @@ export abstract class LoginPage {
   user: string;
   psw: string;
 
-  constructor(public loginService: LoginService, public alertController: AlertController) {
+  constructor(public loginService: LoginService, protected notificationService: NotificationService) {
     this.authSubscription = this.loginService.authentifiedObservable.subscribe(
       user => this.authenticated(user),
       error => this.authError(error)
@@ -28,11 +28,7 @@ export abstract class LoginPage {
     }
   }
 
-  private authError(err: any) {
-    this.alertController.create({
-                                  title: 'Echec',
-                                  subTitle: 'L\'authentification a échoué ! ' + err,
-                                  buttons: [ 'Ok' ]
-                                }).present()
+  private authError(error: any) {
+    this.notificationService.failed('L\'authentification a échoué ! ', error)
   }
 }

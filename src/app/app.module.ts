@@ -1,7 +1,6 @@
 import {ErrorHandler, NgModule} from '@angular/core';
-import {IonicApp, IonicErrorHandler, IonicModule} from 'ionic-angular';
+import {AlertController, IonicApp, IonicErrorHandler, IonicModule, ToastController} from 'ionic-angular';
 import {MyCaveApp} from './app.component';
-import {AboutPage} from '../pages/about/about';
 import {ContactPage} from '../pages/contact/contact';
 import {HomePage} from '../pages/home/home';
 import {TabsPage} from '../pages/tabs/tabs';
@@ -11,7 +10,7 @@ import {DistributeService} from '../service/distribute.service';
 import {DistributionComponent} from '../components/distribution/distribution';
 import {BottleIconPipe} from '../components/list/bottle-item-component/bottle-icon.pipe';
 import {BottleListComponent} from '../components/list/bottle-list.component';
-import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
+import {TranslateLoader, TranslateModule, TranslateService} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {Http, HttpModule} from '@angular/http';
 import {BottleDetailPage} from '../pages/bottle-detail/page-bottle-detail';
@@ -46,6 +45,7 @@ import {HeaderComponent} from '../components/header/header';
 import {FooterComponent} from '../components/footer/footer';
 import {DashboardPage} from '../pages/dashboard/dashboard';
 import {ProfilePageModule} from '../pages/profile/profile.module';
+import {NotificationService} from '../service/notification.service';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -59,7 +59,6 @@ export const fireConfig = {
 @NgModule({
             declarations: [
               MyCaveApp,
-              AboutPage,
               ContactPage,
               EmailLoginPage,
               FilterPage,
@@ -97,7 +96,6 @@ export const fireConfig = {
             entryComponents: [
               MyCaveApp,
               EmailLoginPage,
-              AboutPage,
               ContactPage,
               DashboardPage,
               HomePage,
@@ -127,7 +125,12 @@ export const fireConfig = {
               },
               BottleService,
               DistributeService,
-              FirebaseImageService
+              FirebaseImageService,
+              {
+                provide: NotificationService,
+                useFactory: (createNotificationFactory),
+                deps: [ AlertController, ToastController, TranslateService ]
+              }
             ]
           })
 export class AppModule {
@@ -137,6 +140,11 @@ export function createTranslateLoader(http: Http) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
 }
 
-export function createLoginFactory(ano: AnonymousLoginService, ema: EmailLoginService, fac: FacebookLoginService) {
-  return new LoginService(ano, ema, fac);
+export function createLoginFactory(ano: AnonymousLoginService, ema: EmailLoginService, fac: FacebookLoginService,
+                                   ns: NotificationService) {
+  return new LoginService(ano, ema, fac, ns);
+}
+
+export function createNotificationFactory(alrt: AlertController, toast: ToastController, translate: TranslateService) {
+  return new NotificationService(alrt, toast, translate);
 }
