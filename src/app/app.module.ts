@@ -1,7 +1,6 @@
 import {ErrorHandler, NgModule} from '@angular/core';
 import {AlertController, IonicApp, IonicErrorHandler, IonicModule, ToastController} from 'ionic-angular';
 import {MyCaveApp} from './app.component';
-import {AboutPage} from '../pages/about/about';
 import {ContactPage} from '../pages/contact/contact';
 import {HomePage} from '../pages/home/home';
 import {TabsPage} from '../pages/tabs/tabs';
@@ -60,7 +59,6 @@ export const fireConfig = {
 @NgModule({
             declarations: [
               MyCaveApp,
-              AboutPage,
               ContactPage,
               EmailLoginPage,
               FilterPage,
@@ -98,7 +96,6 @@ export const fireConfig = {
             entryComponents: [
               MyCaveApp,
               EmailLoginPage,
-              AboutPage,
               ContactPage,
               DashboardPage,
               HomePage,
@@ -143,8 +140,9 @@ export function createTranslateLoader(http: Http) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
 }
 
-export function createLoginFactory(ano: AnonymousLoginService, ema: EmailLoginService, fac: FacebookLoginService) {
-  return new LoginService(ano, ema, fac);
+export function createLoginFactory(ano: AnonymousLoginService, ema: EmailLoginService, fac: FacebookLoginService,
+                                   ns: NotificationService) {
+  return new LoginService(ano, ema, fac, ns);
 }
 
 export function createNotificationFactory(alrt: AlertController, toast: ToastController, translate: TranslateService) {

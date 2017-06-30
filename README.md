@@ -41,10 +41,16 @@ Conclusion: toutes les images, tous les fichiers contenus dans assets sont inclu
 - login FB mettre infos utilisateur dans une page profil utilisateur avec toutes les infos FB
 - ChartJs: remplacer le chart sur les bouteilles par couleur ou ajouter au moins un deuxième par région + accorder les couleurs en fonction des bouteilles 
 - gérer les anomalies correctement
-- homogénéiser les messages envoyés
+- homogénéiser les messages envoyés FAIT
   - erreurs: alert
   - infos: toasts
+- upload des images si suffisamment volumineuses: mettre progressBar
 
+# Architecture soft
+- partage d'un contexte commun applicatif ? pour contenir diverses choses comme le user, la version etc.
+
+# Modernisation
+- Remplacer les Promises par des obeservables (upload des images notamment mais peut-être ailleurs aussi ?)
 
 #Notes techniques
 ## Login FB

@@ -4,6 +4,7 @@ import {User} from '../model/user';
 import {AnonymousLoginService} from './anonymous-login.service';
 import {EmailLoginService} from './email-login.service';
 import {FacebookLoginService} from './facebook-login.service';
+import {NotificationService} from './notification.service';
 /**
  * Created by loicsalou on 13.06.17.
  */
@@ -13,7 +14,8 @@ export class LoginService {
 
   private _user: User;
 
-  constructor(private anoLogin: AnonymousLoginService, private mailLogin: EmailLoginService, private fbLogin: FacebookLoginService) {
+  constructor(private anoLogin: AnonymousLoginService, private mailLogin: EmailLoginService,
+              private fbLogin: FacebookLoginService, private notificationService: NotificationService) {
   }
 
   public anonymousLogin() {
@@ -23,11 +25,17 @@ export class LoginService {
   public emailLogin(login: string, psw: string) {
     this.mailLogin.username = login;
     this.mailLogin.psw = psw;
-    this.mailLogin.login().subscribe((user: User) => this.initUser(user));
+    this.mailLogin.login().subscribe(
+      (user: User) => this.initUser(user),
+      error => this.notificationService.failed('L\'authentification a échoué, veuillez vérifier votre saisie')
+    );
   }
 
   public facebookLogin() {
-    this.fbLogin.login().subscribe((user: User) => this.initUser(user));
+    this.fbLogin.login().subscribe(
+      (user: User) => this.initUser(user),
+      error => this.notificationService.failed('L\'authentification Facebook a échoué, veuillez vérifier votre compte')
+    );
   }
 
   get user(): User {
@@ -40,7 +48,6 @@ export class LoginService {
 
   public success(user: User) {
     if (user) {
-
       this._user = user;
       this.authentified.next(user);
     }

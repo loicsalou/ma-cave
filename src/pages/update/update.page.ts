@@ -41,10 +41,6 @@ export class UpdatePage implements OnInit {
     this.loadRegionAreas();
   }
 
-  debug() {
-    console.info(JSON.stringify(this.bottle));
-  }
-
   ngOnInit(): void {
     let imagesObservable = this.imageService.getList(this.bottle);
     this.imagesSubscription = imagesObservable.subscribe(

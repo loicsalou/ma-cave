@@ -65,14 +65,14 @@ export class FirebaseImageService extends FirebaseService {
     }
     items = this.angularFirebase.list(this.XREF_ROOT, {
                                         query: {
-                                          limitToFirst: 5,
+                                          limitToFirst: 10,
                                           orderByChild: 'bottleId',
                                           equalTo: bottle[ '$key' ]
                                         }
                                       }
     );
     items.subscribe(
-      (images: Image[]) => console.info(images.length + ' images reçues'),
+      (images: Image[]) => this.notificationService.traceInfo(images.length + ' images reçues'),
       err => {
         this.handleError('liste des images disponibles', err);
       }
@@ -134,9 +134,9 @@ export class FirebaseImageService extends FirebaseService {
             resolve(imgBlob);
           };
 
-          reader.onerror = (e) => {
-            console.log('Failed file read: ' + e.toString());
-            reject(e);
+          reader.onerror = (error) => {
+            this.notificationService.error('LA création du BLOB à partir du fichier a échoué: ', error);
+            reject(error);
           };
 
           reader.readAsArrayBuffer(resFile);
