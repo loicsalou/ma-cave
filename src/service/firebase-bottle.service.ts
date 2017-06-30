@@ -76,7 +76,7 @@ export class BottleService extends FirebaseService {
       this.firebaseRef.child(bottle[ '$key' ]).set(bottle, (
         err => {
           if (err) {
-            this.notificationService.failed('La mise à jour a échoué !', err);
+            this.notificationService.failed('La mise à jour de la bouteille a échoué !', err);
           }
         }
       ))

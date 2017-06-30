@@ -50,14 +50,6 @@ export class FirebaseImageService extends FirebaseService {
    * liste des images d'une bouteille
    * @param bottle
    */
-  public getImage(name: string): firebase.Promise<any> {
-    return this.storageRef.child(name).getDownloadURL();
-  }
-
-  /**
-   * liste des images d'une bouteille
-   * @param bottle
-   */
   public getList(bottle: Bottle): Observable<Image[]> {
     let items = new Observable();
     if (!bottle) {
@@ -73,10 +65,9 @@ export class FirebaseImageService extends FirebaseService {
     );
     items.subscribe(
       (images: Image[]) => this.notificationService.traceInfo(images.length + ' images reçues'),
-      err => {
-        this.handleError('liste des images disponibles', err);
-      }
+      error => this.handleError('liste des images disponibles', error)
     );
+
     return items;
   }
 
@@ -111,36 +102,37 @@ export class FirebaseImageService extends FirebaseService {
 
   private uploadFileOrBlob(fileOrBlob, meta: BottleMetadata): Promise<UploadMetadata> {
     return this.uploadToFirebase(fileOrBlob, meta.nomCru)
-      .then((uploadSnapshot: any) => {
-        //file uploaded successfully URL= uploadSnapshot.downloadURL
-        // store reference to storage in database
-        return this.saveToDatabaseAssetList(uploadSnapshot, meta);
-      }, (error) => {
-        this.notificationService.error('Error during push to firebase of the picture', error);
-      });
+      .then(
+        (uploadSnapshot: any) => {
+          //file uploaded successfully URL= uploadSnapshot.downloadURL store reference to storage in database
+          return this.saveToDatabaseAssetList(uploadSnapshot, meta);
+        }, (error) => {
+          this.notificationService.error('Une erreur s\'est produite en tentant d\enregistrer l\image dans la base de' +
+                                         ' données', error);
+        });
   }
 
   public createBlobFromPath(imagePath): Promise<Blob> {
     // REQUIRED PLUGIN - cordova plugin add cordova-plugin-file
     return new Promise((resolve, reject) => {
       (<any>window).resolveLocalFileSystemURL(imagePath, (fileEntry) => {
+        fileEntry.file(
+          (resFile) => {
+            let reader = new FileReader();
+            reader.onloadend = (evt: any) => {
+              let imgBlob: any = new Blob([ evt.target.result ], {type: 'image/jpeg'});
+              imgBlob.name = 'blob.jpg';
+              resolve(imgBlob);
+            };
 
-        fileEntry.file((resFile) => {
+            reader.onerror = (error) => {
+              this.notificationService.error('LA création du BLOB à partir du fichier a échoué: ', error);
+              reject(error);
+            };
 
-          let reader = new FileReader();
-          reader.onloadend = (evt: any) => {
-            let imgBlob: any = new Blob([ evt.target.result ], {type: 'image/jpeg'});
-            imgBlob.name = 'blob.jpg';
-            resolve(imgBlob);
-          };
-
-          reader.onerror = (error) => {
-            this.notificationService.error('LA création du BLOB à partir du fichier a échoué: ', error);
-            reject(error);
-          };
-
-          reader.readAsArrayBuffer(resFile);
-        });
+            reader.readAsArrayBuffer(resFile);
+          },
+          (error) => this.notificationService.error('La résolution du nom local du fichier choisi a échoué', error));
       });
     });
   }
@@ -167,7 +159,7 @@ export class FirebaseImageService extends FirebaseService {
   }
 
   private saveToDatabaseAssetList(uploadSnapshot, meta: BottleMetadata): Promise<UploadMetadata> {
-    let ref = firebase.database().ref('assets/images');
+    let ref = firebase.database().ref(this.XREF_ROOT);
 
     return new Promise((resolve, reject) => {
 

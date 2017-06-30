@@ -14,9 +14,9 @@ export abstract class FirebaseService {
   private IMAGES_FOLDER = 'images';
   private XREF_FOLDER = 'xref';
 
-  public BOTTLES_ROOT;
-  public XREF_ROOT;
-  public IMAGES_ROOT;
+  public BOTTLES_ROOT: string;
+  public XREF_ROOT: string;
+  public IMAGES_ROOT: string;
 
   private loading: Loading;
 
