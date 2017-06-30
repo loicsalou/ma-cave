@@ -1,4 +1,8 @@
 {
+  "app": {
+    "please-login": "Authentification",
+    "title": "Cave-Explorer"
+  },
   "bottle": {
     "area_label": "Appellation",
     "canal_vente": "Canal d'achat",

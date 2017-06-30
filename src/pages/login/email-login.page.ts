@@ -18,9 +18,7 @@ export class EmailLoginPage extends LoginPage implements OnInit {
   }
 
   public signin() {
-    this.loginService.user = this.user;
-    this.loginService.psw = this.psw;
-    this.loginService.login();
+    this.loginService.emailLogin(this.user, this.psw);
   }
 
   keyup(event) {

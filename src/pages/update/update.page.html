@@ -1,16 +1,22 @@
-<ion-header class="header" d-flex style="flex-direction: column">
-  <span style="display: flex;">
+<ion-header class="header flex-container">
+  <span class="flex-container flex-grow">
     <button ion-button icon-only (click)="cancel()">
       <ion-icon name="arrow-back"></ion-icon>
     </button>
     <ion-title (click)="save()">Update</ion-title>
-    <button ion-button (click)="save()">
-      <ion-icon name="checkmark-circle"></ion-icon>
-    </button>
   </span>
+  
+  <img src="assets/icon/primary-logout.png" icon-only (click)="logout()" class="action-image toolbar-background-md"/>
 </ion-header>
 
 <ion-content scroll="true" class="page-update" padding-horizontal>
+  <ion-fab bottom right>
+    <button ion-fab><ion-icon name="menu"></ion-icon></button>
+    <ion-fab-list side="top">
+      <button ion-fab><ion-icon name="checkmark" (click)="save()"></ion-icon></button>
+      <button ion-fab><ion-icon name="close" (click)="cancel()"></ion-icon></button>
+    </ion-fab-list>
+  </ion-fab>
   
   <ion-row d-flex>
     <ion-col>
@@ -43,7 +49,7 @@
       </button>
     </ion-col>
     
-    <ion-col HideWhen="cordova">
+    <ion-col hideWhen="cordova">
       <input type="file" id="input" (change)="readBrowserFile($event)">
     </ion-col>
   </ion-row>

@@ -4,6 +4,8 @@ import {Bottle} from '../../model/bottle';
 import {ListBottleEvent} from '../../components/list/bottle-list-event';
 import {UpdatePage} from '../update/update.page';
 import * as _ from 'lodash';
+import {LoginService} from '../../service/login.service';
+import {HomePage} from '../home/home';
 
 /*
  Generated class for the BottleDetail page.
@@ -34,7 +36,7 @@ export class BottleDetailPage implements OnInit {
   currentIndex: number;
   private originalIndex: number;
 
-  constructor(public navCtrl: NavController, navParams: NavParams) {
+  constructor(public navCtrl: NavController, navParams: NavParams, private loginService: LoginService) {
     let bottleEvent: ListBottleEvent = navParams.data[ 'bottleEvent' ];
     this.wholeSelection = bottleEvent.bottles;
     this.bottle = bottleEvent.bottle;
@@ -43,6 +45,11 @@ export class BottleDetailPage implements OnInit {
 
   ngOnInit(): void {
     this.slideBottles = this.extractSlideBottles(this.wholeSelection, this.originalIndex);
+  }
+
+  logout() {
+    this.loginService.logout();
+    this.navCtrl.push(HomePage);
   }
 
   private extractSlideBottles(bottles: Bottle[], targetIndex: number): Bottle[] {

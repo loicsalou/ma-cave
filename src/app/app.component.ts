@@ -3,19 +3,16 @@ import {Platform} from 'ionic-angular';
 import {TranslateService} from '@ngx-translate/core';
 import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
-import {TabsPage} from '../pages/tabs/tabs';
-import {LoginService} from '../service/login.service';
-import {EmailLoginService} from '../service/email-login.service';
 import {Wines} from '../service/wines.service';
+import {HomePage} from '../pages/home/home';
 
 @Component({
              templateUrl: 'app.html'
            })
 export class MyCaveApp {
-  rootPage = TabsPage;
+  rootPage = HomePage;
 
-  constructor(platform: Platform, translate: TranslateService, statusBar: StatusBar, splashScreen: SplashScreen,
-              private loginService: LoginService) {
+  constructor(platform: Platform, translate: TranslateService, statusBar: StatusBar, splashScreen: SplashScreen) {
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
@@ -26,12 +23,6 @@ export class MyCaveApp {
 
       // the lang to use, if the lang isn't available, it will use the current loader to get them
       translate.use('fr');
-
-      // login
-      //if (this.loginService instanceof EmailLoginService) {
-      //  (<EmailLoginService>this.loginService).setLogin('business.salou@gmail.com','!2bgbne1');
-      //  this.loginService.login();
-      //}
     });
   }
 

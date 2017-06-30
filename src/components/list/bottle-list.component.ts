@@ -29,13 +29,6 @@ export class BottleListComponent {
     this.showDetail.emit(<ListBottleEvent>{bottle: bottle, bottles: this.bottles, index: index});
   }
 
-  ionDrag(bottle: Bottle, item: ItemSliding) {
-    let percent = item.getSlidingPercent();
-    if (percent < 0 && Math.abs(percent) > 0.05) {
-      //this.dragItem.next(<SlidingBottle>{slidingItem: item, bottle: bottle});
-    }
-  }
-
   switchSelected(event: Event, bottle: Bottle) {
     event.stopPropagation();
     bottle[ 'selected' ] = bottle[ 'selected' ] ? !bottle[ 'selected' ] : true;
@@ -43,12 +36,10 @@ export class BottleListComponent {
 
   isSelected(bottle) {
     return bottle[ 'selected' ];
-    //return this.selected.filter(item => item.id === bottle.id).length == 1;
   }
 
   isBottleFavorite(bottle: Bottle): boolean {
     return bottle.favorite;
-    //return this.favorites.filter(item => item.id === bottle.id).length == 1;
   }
 
   addToFavoritesOrRemove(slidingBottle: SlidingBottle) {
@@ -63,7 +54,6 @@ export class BottleListComponent {
 
   isBottleInBasket(bottle: Bottle): boolean {
     return bottle[ 'in-basket' ];
-    //return this.basket.filter(item => item.id === bottle.id).length == 1;
   }
 
   addToBasketOrRemove(event: Event, slidingItem: ItemSliding, bottle: Bottle) {
@@ -71,22 +61,20 @@ export class BottleListComponent {
     slidingItem.close();
     bottle[ 'in-basket' ] = bottle[ 'in-basket' ] ? !bottle[ 'in-basket' ] : true;
     if (this.isBottleInBasket(bottle)) {
-      //this.basket = this.basket.filter(btl => btl.id != bottle.id);
       let basketToast = this.toastCtrl.create({
                                                 message: 'la bouteille ' + bottle.nomCru + ' a été placée dans le' +
                                                 ' panier',
                                                 cssClass: 'information-message',
                                                 duration: 2000,
-                                                position: 'middle'
+                                                position: 'top'
                                               });
       basketToast.present();
     } else {
-      //this.basket.push(bottle);
       let basketToast = this.toastCtrl.create({
                                                 message: 'la bouteille ' + bottle.nomCru + ' a été retirée du panier',
                                                 cssClass: 'information-message',
                                                 duration: 2000,
-                                                position: 'middle'
+                                                position: 'top'
                                               });
       basketToast.present();
     }

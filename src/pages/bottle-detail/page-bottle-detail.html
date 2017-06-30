@@ -4,11 +4,12 @@
   See http://ionicframework.com/docs/v2/components/#navigation for more info on
   Ionic pages and navigation.
 -->
-<ion-header class="header">
+<ion-header class="header flex-container toolbar-background-md">
   
   <ion-navbar>
-    <ion-title>{{bottle.nomCru}}</ion-title>
+    <ion-title text-wrap>{{bottle.nomCru}}</ion-title>
   </ion-navbar>
+  <img src="assets/icon/primary-logout.png" icon-only (click)="logout()" class="action-image"/>
 
 </ion-header>
 

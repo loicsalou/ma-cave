@@ -1,9 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {Modal, ModalController, NavController, Platform, ToastController} from 'ionic-angular';
-import {BrowsePage} from '../browse/browse.page';
+import {Modal, ModalController, NavController, Platform} from 'ionic-angular';
 import {LoginService} from '../../service/login.service';
-import {AnonymousLoginService} from '../../service/anonymous-login.service';
 import {EmailLoginPage} from '../login/email-login.page';
+import {User} from '../../model/user';
+import {TabsPage} from '../tabs/tabs';
+import {Subscription} from 'rxjs/Subscription';
 
 @Component({
              selector: 'page-home',
@@ -14,35 +15,59 @@ export class HomePage implements OnInit {
   version: any;
   private loginPage: Modal;
 
-  constructor(public navCtrl: NavController, public platform: Platform,
-              public toastController: ToastController, public loginService: LoginService,
+  private authenticated = false;
+  private loginSubscription: Subscription;
+
+  constructor(public navCtrl: NavController, public platform: Platform, public loginService: LoginService,
               private modalController: ModalController) {
-    this.loginPage = this.modalController.create(EmailLoginPage);
-    this.loginPage.present();
-    this.loginService.authentifiedObservable.subscribe(user => {
-      if (user) {
-        this.loginPage.dismiss();
-      }
-    });
-    if (this.loginService instanceof AnonymousLoginService) {
-      this.loginService.login();
-    }
   }
 
   ngOnInit(): void {
     this.version = require('../../../package.json').version;
   }
 
-  filterOnText(event: any) {
-    let text = event.target.value;
-    if (text != undefined && text.length != 0) {
-      this.navCtrl.push(BrowsePage, {
-        text: text
-      })
-    }
+  facebookLogin() {
+    this.loginService.facebookLogin();
+    this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
+      this.handleLoginEvent(user);
+      if (user) {
+        this.authenticated = true;
+      }
+    });
   }
 
-  browseCellar() {
-    this.navCtrl.push(BrowsePage);
+  emailLogin() {
+    this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
+      this.handleLoginEvent(user);
+      if (user) {
+        this.loginPage.dismiss();
+      }
+    });
+    this.loginPage = this.modalController.create(EmailLoginPage);
+    this.loginPage.present();
+  }
+
+  anonymousLogin() {
+    this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
+      this.handleLoginEvent(user);
+    });
+    this.loginService.anonymousLogin();
+  }
+
+  logout() {
+    this.loginService.logout();
+  }
+
+  private handleLoginEvent(user: User) {
+    this.authenticated = (user !== undefined);
+    if (this.authenticated) {
+      this.navCtrl.push(TabsPage);
+      this.loginSubscription.unsubscribe();
+    }
+    else {
+      if (this.navCtrl.length() > 1) {
+        this.navCtrl.first();
+      }
+    }
   }
 }

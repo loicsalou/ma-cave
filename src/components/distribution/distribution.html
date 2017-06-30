@@ -13,7 +13,7 @@
     <button *ngIf="!isOpen(dimension.axis)" ion-button color="light" icon-only>
       <ion-icon name='arrow-dropright'></ion-icon>
     </button>
-    {{dimension.axis| translate}}
+    {{'bottle.'+dimension.axis| translate}}
   </p>
   <div *ngIf="isOpen(dimension.axis)">
     <ion-badge (click)="valueClicked($event, dimension.axis)" item-right *ngFor="let value of dimension.values"

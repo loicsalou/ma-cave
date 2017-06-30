@@ -30,15 +30,22 @@ import {UploadBottlesModule} from '../pages/upload-bottles/upload-bottles.page.m
 import {UploadBottlesPage} from '../pages/upload-bottles/upload-bottles.page';
 import {Statistics} from '../model/statistics';
 import {StatisticsComponent} from '../components/statistics/statistics';
-import {LoginService} from '../service/login.service';
 import {ChartsModule} from 'ng2-charts';
 import '../../node_modules/chart.js/dist/Chart.bundle.min.js';
 import {EmailLoginPage} from '../pages/login/email-login.page';
 import {FirebaseImageService} from '../service/firebase-image.service';
-import {AnonymousLoginService} from '../service/anonymous-login.service';
 import {Wines} from '../service/wines.service';
 import {Bottles} from '../components/config/Bottles';
+import {AnonymousLoginService} from '../service/anonymous-login.service';
 import {EmailLoginService} from '../service/email-login.service';
+import {Facebook} from '@ionic-native/facebook';
+import {LoginService} from '../service/login.service';
+import {FacebookLoginService} from '../service/facebook-login.service';
+import {DashboardComponent} from '../components/dashboard/dashboard';
+import {HeaderComponent} from '../components/header/header';
+import {FooterComponent} from '../components/footer/footer';
+import {DashboardPage} from '../pages/dashboard/dashboard';
+import {ProfilePageModule} from '../pages/profile/profile.module';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -56,6 +63,7 @@ export const fireConfig = {
               ContactPage,
               EmailLoginPage,
               FilterPage,
+              DashboardPage,
               HomePage,
               BrowsePage,
               BottleDetailPage,
@@ -65,7 +73,7 @@ export const fireConfig = {
               BottleListComponent,
               TabsPage,
               UpdatePage,
-              StatisticsComponent
+              StatisticsComponent,
             ],
             imports: [
               IonicModule.forRoot(MyCaveApp),
@@ -81,6 +89,7 @@ export const fireConfig = {
               AngularFireModule.initializeApp(fireConfig),
               AngularFireAuthModule,
               AngularFireDatabaseModule,
+              ProfilePageModule,
               UploadBottlesModule,
               ChartsModule
             ],
@@ -90,6 +99,7 @@ export const fireConfig = {
               EmailLoginPage,
               AboutPage,
               ContactPage,
+              DashboardPage,
               HomePage,
               BrowsePage,
               TabsPage,
@@ -105,8 +115,16 @@ export const fireConfig = {
               Statistics,
               StatusBar,
               SplashScreen,
+              Facebook,
+              AnonymousLoginService,
+              EmailLoginService,
+              FacebookLoginService,
               {provide: ErrorHandler, useClass: IonicErrorHandler},
-              {provide: LoginService, useClass: EmailLoginService},
+              {
+                provide: LoginService,
+                useFactory: (createLoginFactory),
+                deps: [ AnonymousLoginService, EmailLoginService, FacebookLoginService ]
+              },
               BottleService,
               DistributeService,
               FirebaseImageService
@@ -117,4 +135,8 @@ export class AppModule {
 
 export function createTranslateLoader(http: Http) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
+}
+
+export function createLoginFactory(ano: AnonymousLoginService, ema: EmailLoginService, fac: FacebookLoginService) {
+  return new LoginService(ano, ema, fac);
 }

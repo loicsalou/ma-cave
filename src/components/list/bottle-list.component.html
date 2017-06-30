@@ -1,6 +1,6 @@
 <ion-list sliding="true" class="bottle-page">
   
-  <ion-item-sliding (click)="triggerDetail(bottle,ix)" (ionDrag)="ionDrag(bottle, item)" #item
+  <ion-item-sliding (click)="triggerDetail(bottle,ix)" #item
                     *ngFor="let bottle of bottles; let ix=index">
     <ion-item>
       <ion-row>
@@ -28,10 +28,6 @@
         </ion-col>
       </ion-row>
     </ion-item>
-    
-    <ion-item-options side="left">
-      <ion-icon name="star"></ion-icon>
-    </ion-item-options>
     
     <ion-item-options side="right">
       <button ion-button (click)="addToBasketOrRemove($event, item, bottle)">

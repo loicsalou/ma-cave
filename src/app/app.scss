@@ -26,6 +26,14 @@ $header-color2: rgba(51, 51, 51, .8);
   color: white;
 }
 
+.action-image {
+  width: 35px;
+  height: 35px;
+  margin: 4px 4px 4px 0;
+  background-color: transparent;
+  align-self: center;
+}
+
 .header {
   opacity: .97;
 }
