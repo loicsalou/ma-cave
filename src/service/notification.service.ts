@@ -46,12 +46,12 @@ export class NotificationService {
       .present();
   }
 
-  debugAlert(message: string, error?: any) {
-    this.alertController.create({
-                                  title: this.translateService.instant('debug'),
-                                  subTitle: message ? message + error : error,
-                                  buttons: [ 'Ok' ]
-                                })
+  debugAlert(message: string, obj?: any, debug: boolean=false) {
+    if (debug) {
+      alert(message + ' ' + (obj ? JSON.stringify(obj) : '-'));
+    } else {
+
+    }
   }
 
   ask(title: string, message: string,): Observable<boolean> {
@@ -78,6 +78,11 @@ export class NotificationService {
   traceInfo(trace: string) {
     // à remplacer par un log si nécessaire
     console.info(trace);
+  }
+
+  traceDebug(trace: string) {
+    // à remplacer par un log si nécessaire
+    console.debug(trace);
   }
 
   traceWarn(trace: string) {

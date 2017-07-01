@@ -2,19 +2,20 @@
   <ion-searchbar [placeholder]="Chercher" [autocomplete]="on" [autocorrect]="on" [animated]="true"
                  (search)="filterOnText($event)">
   </ion-searchbar>
-  <img src="assets/icon/primary-logout.png" icon-only (click)="logout()"/>
+  <img src="assets/icon/primary-logout.png" icon-only (click)="logout()" style=" width: 35px; height: 35px; margin: 
+  8px 8px 8px 0; align-self: center;"/>
 </ion-header>
 
 <ion-content align-items-center class="profile card-background-page page">
+  <div style="display: flex; justify-content: center;">
+    <img [src]="user.photoURL" style="width: 100%; height: 100%;">
+  </div>
   
   <ion-card class="card-background">
-    <h2>{{user.getUser()}}</h2>
-    <img [src]="user.getPhotoURL()">
-    <h4>{{user.getEmail()}}</h4>
-  </ion-card>
-  
-  <ion-card class="card-background">
-    <p>{{properties()}}</p>
+    <h2>Bienvenue {{user.displayName}}</h2>
+    <h3>Utilisateur cave-explorer: {{user.user}}</h3>
+    <h4>{{user.email}}</h4>
+    <h4>{{user.phoneNumber}}</h4>
   </ion-card>
 
 </ion-content>

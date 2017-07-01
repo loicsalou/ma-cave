@@ -100,12 +100,20 @@
         </ion-list>
       </ion-row>
     </ion-card>
-    <button *ngIf="platformIsCordova()" ion-button align-items-start round icon-only block (click)="chooseFile()">
-      <ion-icon name="cloud-upload"></ion-icon>
-      Importer depuis fichier
-    </button>
+    <div *ngIf="platformIsCordova()">
+      <ion-checkbox id="debugMode" [(ngModel)]="debugMode"></ion-checkbox>
+      <button ion-button align-items-start round icon-only block (click)="chooseFile()">
+        <ion-icon name="cloud-upload"></ion-icon>
+        Importer depuis fichier
+      </button>
+    </div>
+    <label>Mode debug</label>
+    <p>{{debugMode}}</p>
     <input *ngIf="! platformIsCordova()" type="file" id="input" (change)="readBrowserFile($event)">
-    <p>{{bottleService.loginService.user.getUser()}}</p>
+    <label>Vidage de la base avant importation</label>
+    <ion-checkbox id="deleteBefore" [(ngModel)]="deleteBefore"></ion-checkbox>
+  
+    <p>{{bottleService.loginService.user.user}}</p>
   </div>
   <!--<button ion-button align-items-start round icon-only block (click)="saveBottles()">-->
   <!--<ion-icon name="folder"></ion-icon>-->
