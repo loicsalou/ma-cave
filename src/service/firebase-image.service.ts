@@ -47,7 +47,7 @@ export class FirebaseImageService extends FirebaseService {
    * @param bottle
    */
   public getList(bottle: Bottle): Observable<Image[]> {
-    let items = new Observable();
+    let items = new Observable<Image[]>();
     if (!bottle) {
       return items;
     }
@@ -88,7 +88,7 @@ export class FirebaseImageService extends FirebaseService {
    * that must be translated to Blob before being uploaded)
    * @param meta metadata to be attached to the image in Firebase
    */
-  public uploadImage(image: File | any, meta: BottleMetadata): Promise<UploadMetadata> {
+  public uploadImage(image: File | any, meta: BottleMetadata): Promise<void | UploadMetadata> {
     if (image instanceof Blob || image instanceof File) {
       return this.uploadFileOrBlob(image, meta)
     } else {
@@ -96,13 +96,14 @@ export class FirebaseImageService extends FirebaseService {
     }
   }
 
-  private uploadFileOrBlob(fileOrBlob, meta: BottleMetadata): Promise<UploadMetadata> {
+  private uploadFileOrBlob(fileOrBlob, meta: BottleMetadata): Promise<void | UploadMetadata> {
     return this.uploadToFirebase(fileOrBlob, meta.nomCru)
       .then(
         (uploadSnapshot: any) => {
           //file uploaded successfully URL= uploadSnapshot.downloadURL store reference to storage in database
           return this.saveToDatabaseAssetList(uploadSnapshot, meta);
-        }, (error) => {
+        },
+        (error) => {
           this.notificationService.error('Une erreur s\'est produite en tentant d\enregistrer l\image dans la base de' +
                                          ' données', error);
         });
@@ -136,7 +137,7 @@ export class FirebaseImageService extends FirebaseService {
   private uploadToFirebase(imageBlob, name: string): Promise<UploadTaskSnapshot> {
     let fileName = name + '-' + new Date().getTime() + '.jpg';
 
-    return new Promise((resolve, reject) => {
+    return new Promise<UploadTaskSnapshot>((resolve, reject) => {
 
       let fileRef = this.storageRef.child(fileName);
       let uploadTask = fileRef.put(imageBlob);

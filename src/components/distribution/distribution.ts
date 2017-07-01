@@ -214,6 +214,10 @@ export class FilterSet {
   }
 
   toString() {
+    return JSON.stringify(this);
+  }
+
+  toMessage() {
     let strings = [];
 
     if (this.hasText()) {

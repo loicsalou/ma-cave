@@ -91,6 +91,29 @@ export class UploadBottlesPage {
     );
   }
 
+  private readBrowserFile(event: any) {
+    //let textType = /text.*/;
+    let file = event.currentTarget.files[ 0 ];
+    let isXls = file.name.toLowerCase().endsWith('.xls');
+    let encoding = isXls ? 'windows-1252' : 'utf-8';
+    //console.info(event.currentTarget.files[ 0 ]);
+    let reader = new FileReader();
+    let self = this;
+    reader.onload = function (evt) {
+      self.fileContent = evt.target[ 'result' ];
+      if (isXls) {
+        self.parseContentXLS();
+      } else {
+        self.parseContentCSV();
+      }
+      self.saveBottles();
+    }
+    reader.onerror = function (evt) {
+      alert('cannot read the file ! ' + file);
+    };
+    reader.readAsText(file, encoding);
+  }
+
   private parseContentCSV() {
     let csvarray = this.fileContent.split('\n');
     let keys = _.first(csvarray).split(';');
