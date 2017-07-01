@@ -105,6 +105,7 @@
       Importer depuis fichier
     </button>
     <input *ngIf="! platformIsCordova()" type="file" id="input" (change)="readBrowserFile($event)">
+    <p>{{bottleService.loginService.user.getUser()}}</p>
   </div>
   <!--<button ion-button align-items-start round icon-only block (click)="saveBottles()">-->
   <!--<ion-icon name="folder"></ion-icon>-->

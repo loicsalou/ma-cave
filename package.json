@@ -1,6 +1,6 @@
 {
     "name": "ma-cave",
-    "version": "5.6.5",
+    "version": "5.6.8",
     "author": "Loic Salou",
     "homepage": "http://ionicframework.com/",
     "private": true,
@@ -61,7 +61,8 @@
         "rxjs": "5.4.1",
         "sw-toolbox": "3.6.0",
         "text-encoding": "0.6.4",
-        "zone.js": "0.8.12"
+        "zone.js": "0.8.12",
+        "com.megster.cordova.FileChooser": "http://github.com/don/cordova-filechooser.git"
     },
     "devDependencies": {
         "@angular/cli": "1.2.0",

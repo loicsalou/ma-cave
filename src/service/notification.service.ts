@@ -15,7 +15,8 @@ export class NotificationService {
                                   message: message,
                                   duration: delay ? delay : 3000,
                                   position: position ? position : 'top'
-                                }).present()
+                                })
+      .present()
   }
 
   error(message: string, error?: any) {
@@ -24,6 +25,7 @@ export class NotificationService {
                                   subTitle: message ? message + error : 'Une erreur s\'est produite ! ' + error,
                                   buttons: [ 'Ok' ]
                                 })
+      .present();
   }
 
   failed(message: string, error?: any) {
@@ -32,6 +34,7 @@ export class NotificationService {
                                   subTitle: message ? message + error : 'l\'opération a échoué' + error,
                                   buttons: [ 'Ok' ]
                                 })
+      .present();
   }
 
   warning(message: string, error?: any) {
@@ -40,6 +43,7 @@ export class NotificationService {
                                   subTitle: message ? message + error : error,
                                   buttons: [ 'Ok' ]
                                 })
+      .present();
   }
 
   ask(title: string, message: string,): Observable<boolean> {

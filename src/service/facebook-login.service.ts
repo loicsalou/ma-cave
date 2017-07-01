@@ -33,9 +33,13 @@ export class FacebookLoginService extends AbstractLoginService {
           this.userString = JSON.stringify(user);
           this.success(user);
         })
-        .catch(error => this.notificationService.failed('Firebase failure', error));
+        .catch(
+          error => this.notificationService.failed('Firebase failure', error)
+        );
 
-    }).catch(error => this.notificationService.failed('l\'authentification a échoué', error));
+    }).catch(
+      error => this.notificationService.failed('l\'authentification a échoué', error)
+    );
 
     return this.authentifiedObservable;
   }
