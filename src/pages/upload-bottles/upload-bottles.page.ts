@@ -47,9 +47,12 @@ export class UploadBottlesPage {
   }
 
   public chooseFile() {
+
     this.fileChooser.open()
       .then(uri => {
+        this.notificationService.debugAlert('fichier choisi: ' + uri);
         this.filepath.resolveNativePath(uri).then((result) => {
+          this.notificationService.debugAlert('resolve OK: ' + result);
           let nativepath = result;
           this.readFile(nativepath);
         });
@@ -61,6 +64,7 @@ export class UploadBottlesPage {
 
   public saveBottles() {
     try {
+      this.notificationService.debugAlert('sauvegarde de ' + this.bottles.length + ' bouteilles');
       this.bottleService.initializeDB(this.bottles);
       this.bottles = null;
     } catch (error) {
@@ -69,26 +73,33 @@ export class UploadBottlesPage {
   }
 
   private readFile(nativepath: any) {
-    (<any>window).resolveLocalFileSystemURL(nativepath, (res) => {
-                                              res.file((resFile) => {
-                                                let reader = new FileReader();
-                                                let isXls = resFile.name.toLowerCase().endsWith('.xls');
-                                                if (this.encoding == null) {
-                                                  this.encoding = isXls ? 'windows-1252' : 'utf-8';
-                                                }
-                                                reader.readAsText(resFile, this.encoding);
-                                                reader.onloadend = (evt: any) => {
-                                                  this.fileContent = evt.target.result;
-                                                  if (isXls) {
-                                                    this.parseContentXLS();
-                                                  } else {
-                                                    this.parseContentCSV();
+    try {
+      let self = this;
+      (<any>window).resolveLocalFileSystemURL(nativepath, (res) => {
+                                                this.notificationService.debugAlert('resolve local ok ' + res);
+                                                res.file((resFile) => {
+                                                  self.notificationService.debugAlert('reading file ' + resFile);
+                                                  let reader = new FileReader();
+                                                  let isXls = resFile.name.toLowerCase().endsWith('.xls');
+                                                  if (this.encoding == null) {
+                                                    this.encoding = isXls ? 'windows-1252' : 'utf-8';
                                                   }
-                                                  this.saveBottles();
-                                                }
-                                              })
-                                            }, err => this.notificationService.failed('La lecture du fichier ' + nativepath + ' a échoué' + err)
-    );
+                                                  reader.readAsText(resFile, this.encoding);
+                                                  reader.onloadend = (evt: any) => {
+                                                    this.fileContent = evt.target.result;
+                                                    if (isXls) {
+                                                      this.parseContentXLS();
+                                                    } else {
+                                                      this.parseContentCSV();
+                                                    }
+                                                    this.saveBottles();
+                                                  }
+                                                })
+                                              }, err => this.notificationService.failed('La lecture du fichier ' + nativepath + ' a échoué' + err)
+      );
+    } catch (error) {
+      this.notificationService.error('Le readFile(' + nativepath + ') a échoué', error);
+    }
   }
 
   private readBrowserFile(event: any) {

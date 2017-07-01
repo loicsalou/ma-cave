@@ -46,6 +46,14 @@ export class NotificationService {
       .present();
   }
 
+  debugAlert(message: string, error?: any) {
+    this.alertController.create({
+                                  title: this.translateService.instant('debug'),
+                                  subTitle: message ? message + error : error,
+                                  buttons: [ 'Ok' ]
+                                })
+  }
+
   ask(title: string, message: string,): Observable<boolean> {
     let response: Subject<boolean> = new Subject();
     let alert = this.alertController.create({

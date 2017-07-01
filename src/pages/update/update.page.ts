@@ -120,7 +120,8 @@ export class UpdatePage implements OnInit {
     this.camera.getPicture({
                              destinationType: this.camera.DestinationType.FILE_URI,
                              sourceType: imageSource,
-                             targetHeight: 800,
+                             targetHeight: 1024,
+                             quality: 80,
                              correctOrientation: true
                            })
       .then((imagePath: UploadMetadata) => this.imageService.createBlobFromPath(imagePath))
