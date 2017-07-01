@@ -6,16 +6,25 @@ import {User} from '../../model/user';
 
 @Component({
              selector: 'page-profile',
-             templateUrl: './profile.html'
+             templateUrl: './profile.html',
+             styleUrls: ['/profile.scss']
            })
 export class ProfilePage implements OnInit {
   version: any;
+  userData: any;
+  private userDataKeys: string[];
+  private userDataValues: any[];
 
   constructor(public loginService: LoginService, private navCtrl: NavController) {
   }
 
   ngOnInit(): void {
     this.version = require('../../../package.json').version;
+    this.userDataKeys = Object.keys(this.loginService.user);
+    this.userDataValues = [];
+    this.userDataKeys.forEach(key => {
+      this.userDataValues.push(this.loginService.user[ key ])
+    });
   }
 
   get user(): User {
@@ -27,6 +36,10 @@ export class ProfilePage implements OnInit {
   }
 
   filterOnText(event: any) {
+  }
+
+  data(): string[] {
+    return this.userData;
   }
 
   logout() {

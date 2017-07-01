@@ -29,8 +29,11 @@ export class FacebookLoginService extends AbstractLoginService {
 
       firebase.auth().signInWithCredential(facebookCredential)
         .then((success) => {
-          let user = new FacebookUser(success.user, success.email, success.photoURL);
-          this.userString = JSON.stringify(user);
+          let user: User = new FacebookUser(success.user, success.email, success.photoURL,
+                                            success.displayName, success.uid, success.phoneNumber);
+          //let keys = Object.keys(success);
+          //keys.forEach(key => user[ key ] = success[ key ]);
+
           this.success(user);
         })
         .catch(
@@ -45,26 +48,17 @@ export class FacebookLoginService extends AbstractLoginService {
   }
 }
 
-export class FacebookUser implements User {
-  user: string;
-  email: string;
-  photoURL: string;
+export class FacebookUser extends User {
 
-  constructor(user: string, email: string, photoURL: string) {
-    this.user = user;
+  constructor(user: string, email: string, photoURL: string, displayName: string, uid: string, phoneNumber: string) {
+    super();
+    this.user = email.replace(/[\.]/g, '');
+    this.user = this.user.replace(/[#.]/g, '');
     this.email = email;
     this.photoURL = photoURL;
+    this.uid = uid;
+    this.phoneNumber = phoneNumber;
+    this.displayName = displayName;
   }
 
-  getUser(): string {
-    return this.user;
-  }
-
-  getEmail(): string {
-    return this.email;
-  }
-
-  getPhotoURL(): string {
-    return this.photoURL;
-  }
 }

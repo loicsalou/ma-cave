@@ -28,6 +28,8 @@ export class UploadBottlesPage {
   private bottles: Bottle[] = null;
   encoding: string; // forcer l'encoding
   optionsVisibles: boolean = false; // forcer l'encoding
+  debugMode: boolean = false;
+  deleteBefore: boolean = true;
 
   constructor(public navCtrl: NavController,
               private filepath: FilePath,
@@ -50,12 +52,13 @@ export class UploadBottlesPage {
 
     this.fileChooser.open()
       .then(uri => {
-        this.notificationService.debugAlert('fichier choisi: ' + uri);
+        this.notificationService.debugAlert('fichier choisi: ', uri, this.debugMode);
         this.filepath.resolveNativePath(uri).then((result) => {
           this.notificationService.debugAlert('resolve OK: ' + result);
           let nativepath = result;
           this.readFile(nativepath);
-        });
+        })
+          .catch(error => this.notificationService.error('uri incorrecte ' + uri + ' error:' + error));
       })
       .catch(error => {
         this.notificationService.error('Erreur lors du choix du fichier', error);
@@ -64,7 +67,11 @@ export class UploadBottlesPage {
 
   public saveBottles() {
     try {
-      this.notificationService.debugAlert('sauvegarde de ' + this.bottles.length + ' bouteilles');
+      if (this.deleteBefore) {
+        this.notificationService.debugAlert('suppression de la base avant importation');
+        this.bottleService.deleteBottles();
+      }
+      this.notificationService.debugAlert('sauvegarde de ' + this.bottles.length + ' bouteilles', this.debugMode);
       this.bottleService.initializeDB(this.bottles);
       this.bottles = null;
     } catch (error) {
@@ -76,22 +83,26 @@ export class UploadBottlesPage {
     try {
       let self = this;
       (<any>window).resolveLocalFileSystemURL(nativepath, (res) => {
-                                                this.notificationService.debugAlert('resolve local ok ' + res);
+                                                this.notificationService.debugAlert('resolve local ok ', res, this.debugMode);
                                                 res.file((resFile) => {
-                                                  self.notificationService.debugAlert('reading file ' + resFile);
+                                                  self.notificationService.debugAlert('reading file ', resFile, this.debugMode);
                                                   let reader = new FileReader();
                                                   let isXls = resFile.name.toLowerCase().endsWith('.xls');
                                                   if (this.encoding == null) {
                                                     this.encoding = isXls ? 'windows-1252' : 'utf-8';
                                                   }
+                                                  this.notificationService.debugAlert('lecture as text...', this.debugMode);
                                                   reader.readAsText(resFile, this.encoding);
                                                   reader.onloadend = (evt: any) => {
+                                                    this.notificationService.debugAlert('load ended...', evt, this.debugMode);
                                                     this.fileContent = evt.target.result;
+                                                    this.notificationService.debugAlert('taille contenu ', this.fileContent.length, this.debugMode);
                                                     if (isXls) {
                                                       this.parseContentXLS();
                                                     } else {
                                                       this.parseContentCSV();
                                                     }
+                                                    this.notificationService.debugAlert('save...', this.debugMode);
                                                     this.saveBottles();
                                                   }
                                                 })
@@ -120,7 +131,7 @@ export class UploadBottlesPage {
       self.saveBottles();
     }
     reader.onerror = function (evt) {
-      alert('cannot read the file ! ' + file);
+      self.notificationService.debugAlert('cannot read the file ! ' + file, self.debugMode);
     };
     reader.readAsText(file, encoding);
   }
@@ -155,6 +166,7 @@ export class UploadBottlesPage {
 
   public parseContentXLS() {
     //let textType = /text.*/;
+    this.notificationService.debugAlert('parsing XLS...', this.debugMode);
     let nbread = this.nbRead;
     let nbfrom = this.from;
     let csvarray = this.fileContent.split(/\r\n|\n/);

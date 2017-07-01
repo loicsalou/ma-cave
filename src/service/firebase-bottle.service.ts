@@ -97,6 +97,12 @@ export class BottleService extends FirebaseService {
            });
   }
 
+  public deleteBottles() {
+    this.firebaseRef.remove(
+      error => this.notificationService.failed('La suppression des bouteilles a échoué', error)
+    )
+  }
+
   public initializeDB(bottles: Bottle[]) {
     bottles.forEach(bottle => this.firebaseRef.push(bottle));
   }

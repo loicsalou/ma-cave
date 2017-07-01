@@ -53,7 +53,7 @@ export class EmailLoginService extends AbstractLoginService {
         }
       )
       .catch(function (error) {
-        firebase.auth().createUserWithEmailAndPassword(self.user.getUser(), self.psw)
+        firebase.auth().createUserWithEmailAndPassword(self.user.user, self.psw)
           .then(() => self.success(self.user))
           .catch(function (error2) {
             self.notificationService.failed('la création du compte utilisateur a échoué', error2)
@@ -65,28 +65,17 @@ export class EmailLoginService extends AbstractLoginService {
   }
 }
 
-export class EmailLoginUser implements User {
-  private user: string;
-  private email: string;
-  private photoURL: string;
+export class EmailLoginUser extends User {
 
   constructor(user: string, email: string, photoUrl: string) {
+    super();
     this.user = user.replace(/[\.]/g, '');
     this.user = this.user.replace(/[#.]/g, '');
     this.email = email;
-    this.photoURL = photoUrl;
-  }
-
-  getUser(): string {
-    return this.user;
-  }
-
-  getEmail(): string {
-    return this.email;
-  }
-
-  getPhotoURL(): string {
-    return this.photoURL;
+    this.photoURL = undefined;
+    this.displayName = email.split('@')[0];
+    this.uid = undefined;
+    this.phoneNumber=undefined;
   }
 }
 

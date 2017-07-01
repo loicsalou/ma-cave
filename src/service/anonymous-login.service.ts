@@ -36,27 +36,17 @@ export class AnonymousLoginService extends AbstractLoginService {
   }
 }
 
-export class AnonymousUser implements User {
-  private user: string;
-  private email: string;
-  private photoURL: string;
+export class AnonymousUser extends User {
 
   constructor() {
+    super();
     this.user = 'caveexplorer@gmailcom';
     this.email = 'cave.explorer@gmail.com';
-    this.photoURL = null;
+    this.photoURL = 'assets/icon/anonymous2.jpg';
+    this.uid=undefined;
+    this.phoneNumber='00-12-00-34-99';
+    this.displayName='Ano Nymous';
   }
 
-  getUser(): string {
-    return this.user;
-  }
-
-  getEmail(): string {
-    return this.email;
-  }
-
-  getPhotoURL(): string {
-    return this.photoURL;
-  }
 }
 

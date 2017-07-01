@@ -27,7 +27,7 @@ export abstract class FirebaseService {
 
   initRoots(user) {
     if (user) {
-      this.BOTTLES_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.getUser() + '/' + this.BOTTLES_FOLDER;
+      this.BOTTLES_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + this.BOTTLES_FOLDER;
       this.IMAGES_ROOT = this.IMAGES_FOLDER;
       this.XREF_ROOT = this.XREF_FOLDER;
     }
