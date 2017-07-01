@@ -1,4 +1,4 @@
-import {AlertController, Loading, LoadingController, ToastController} from 'ionic-angular';
+import {Loading, LoadingController} from 'ionic-angular';
 import {Observable} from 'rxjs/Observable';
 import {LoginService} from './login.service';
 import {NotificationService} from './notification.service';

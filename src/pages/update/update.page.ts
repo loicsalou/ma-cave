@@ -33,7 +33,7 @@ export class UpdatePage implements OnInit {
   private aoc: AocInfo[];
   unchanged = false;
 
-  constructor(private navCtrl: NavController, private navParams: NavParams, private bottleService: BottleService,
+  constructor(private navCtrl: NavController, navParams: NavParams, private bottleService: BottleService,
               private camera: Camera, private notificationService: NotificationService, private imageService: FirebaseImageService,
               private loginService: LoginService, private bottles: Bottles) {
     //don't clone to keep firebase key which is necessary to update

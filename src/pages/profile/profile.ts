@@ -23,7 +23,7 @@ export class ProfilePage implements OnInit {
   }
 
   properties() {
-    return this.loginService['userrString'];
+    return this.loginService[ 'userrString' ];
   }
 
   filterOnText(event: any) {

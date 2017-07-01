@@ -1,7 +1,6 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {LoginPage} from './login-page';
 import {LoginService} from '../../service/login.service';
-import {AlertController} from 'ionic-angular';
 import {NotificationService} from '../../service/notification.service';
 
 @Component({
@@ -9,13 +8,10 @@ import {NotificationService} from '../../service/notification.service';
              templateUrl: 'email-login.page.html'
            })
 
-export class EmailLoginPage extends LoginPage implements OnInit {
+export class EmailLoginPage extends LoginPage {
 
   constructor(loginService: LoginService, notificationService: NotificationService) {
     super(loginService, notificationService);
-  }
-
-  ngOnInit() {
   }
 
   public signin() {
@@ -23,7 +19,7 @@ export class EmailLoginPage extends LoginPage implements OnInit {
   }
 
   keyup(event) {
-    if (event.keyCode==13) {
+    if (event.keyCode == 13) {
       this.signin()
     }
   }

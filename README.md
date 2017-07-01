@@ -49,6 +49,7 @@ Conclusion: toutes les images, tous les fichiers contenus dans assets sont inclu
 
 # Architecture soft
 - partage d'un contexte commun applicatif ? pour contenir diverses choses comme le user, la version etc.
+- modulariser avec @NgModule
 
 # Modernisation
 - Remplacer les Promises par des obeservables (upload des images notamment mais peut-être ailleurs aussi ?)

@@ -2,7 +2,6 @@
  * Created by loicsalou on 15.03.17.
  */
 import {Bottle} from '../../model/bottle';
-import {Observable} from 'rxjs/Observable';
 /**
  * Evénement de sélection d'une bouteille dans la liste.
  * Contient les attributs

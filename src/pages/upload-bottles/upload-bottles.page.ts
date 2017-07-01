@@ -1,13 +1,11 @@
 import {Component} from '@angular/core';
 import {IonicPage, NavController, Platform} from 'ionic-angular';
 import {FileChooser} from '@ionic-native/file-chooser';
-import {File} from '@ionic-native/file';
 import {FilePath} from '@ionic-native/file-path';
 import * as _ from 'lodash';
 import {BottleFactory} from '../../model/bottle.factory';
 import {BottleService} from '../../service/firebase-bottle.service';
 import {Bottle} from '../../model/bottle';
-import {CavusService} from '../../service/cavus.service';
 import {NotificationService} from '../../service/notification.service';
 
 /**
@@ -32,14 +30,12 @@ export class UploadBottlesPage {
   optionsVisibles: boolean = false; // forcer l'encoding
 
   constructor(public navCtrl: NavController,
-              private file: File,
               private filepath: FilePath,
               private fileChooser: FileChooser,
               private notificationService: NotificationService,
               private bottleService: BottleService,
               private bottleFactory: BottleFactory,
-              private platform: Platform,
-              private cavusService: CavusService) {
+              private platform: Platform) {
   }
 
   public platformIsCordova(): boolean {
@@ -72,27 +68,6 @@ export class UploadBottlesPage {
     }
   }
 
-  private readBrowserFile(event: any) {
-    let file = event.currentTarget.files[ 0 ];
-    let isXls = file.name.toLowerCase().endsWith('.xls');
-    let encoding = isXls ? 'windows-1252' : 'utf-8';
-    let reader = new FileReader();
-    let self = this;
-    reader.onload = function (evt) {
-      self.fileContent = evt.target[ 'result' ];
-      if (isXls) {
-        self.parseContentXLS();
-      } else {
-        self.parseContentCSV();
-      }
-      self.saveBottles();
-    }
-    reader.onerror = function (evt) {
-      self.notificationService.error('Le fichier ne peut pas être lu: ' + file, evt);
-    };
-    reader.readAsText(file, encoding);
-  }
-
   private readFile(nativepath: any) {
     (<any>window).resolveLocalFileSystemURL(nativepath, (res) => {
                                               res.file((resFile) => {
@@ -116,6 +91,29 @@ export class UploadBottlesPage {
     );
   }
 
+  private readBrowserFile(event: any) {
+    //let textType = /text.*/;
+    let file = event.currentTarget.files[ 0 ];
+    let isXls = file.name.toLowerCase().endsWith('.xls');
+    let encoding = isXls ? 'windows-1252' : 'utf-8';
+    //console.info(event.currentTarget.files[ 0 ]);
+    let reader = new FileReader();
+    let self = this;
+    reader.onload = function (evt) {
+      self.fileContent = evt.target[ 'result' ];
+      if (isXls) {
+        self.parseContentXLS();
+      } else {
+        self.parseContentCSV();
+      }
+      self.saveBottles();
+    }
+    reader.onerror = function (evt) {
+      alert('cannot read the file ! ' + file);
+    };
+    reader.readAsText(file, encoding);
+  }
+
   private parseContentCSV() {
     let csvarray = this.fileContent.split('\n');
     let keys = _.first(csvarray).split(';');
@@ -129,7 +127,7 @@ export class UploadBottlesPage {
           let btl: Bottle = <Bottle>buildObject(row, keys);
           return self.bottleFactory.create(btl);
         } catch (error) {
-          this.notificationService.error('Erreur d\'analyse de l\'enregistrement: '+ row, error);
+          this.notificationService.error('Erreur d\'analyse de l\'enregistrement: ' + row, error);
         }
       }, {});
     } catch (error2) {
@@ -157,7 +155,7 @@ export class UploadBottlesPage {
         let btl: Bottle = <Bottle>buildObjectFromXLS(row, keys);
         return this.bottleFactory.create(btl);
       } catch (error) {
-        this.notificationService.error('Erreur d\'analyse de l\'enregistrement: '+ row, error);
+        this.notificationService.error('Erreur d\'analyse de l\'enregistrement: ' + row, error);
       }
     }, error2 => this.notificationService.error('Erreur de parcours du fichier', error2));
     this.bottleService.setCellarContent(bottles);

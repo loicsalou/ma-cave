@@ -1,11 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {Modal, ModalController, NavController, Platform, ToastController} from 'ionic-angular';
+import {NavController} from 'ionic-angular';
 import {BrowsePage} from '../browse/browse.page';
 import {LoginService} from '../../service/login.service';
-import {EmailLoginPage} from '../login/email-login.page';
-import {User} from '../../model/user';
 import {HomePage} from '../home/home';
-import {NotificationService} from '../../service/notification.service';
 
 @Component({
              selector: 'page-dashboard',

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {DistributeService} from '../../service/distribute.service';
 import {Chart, ChartElement} from 'chart.js';
 import {BottleService} from '../../service/firebase-bottle.service';
@@ -27,7 +27,7 @@ export class StatisticsComponent implements OnInit {
   @Input()
   topMost: number = 6;
 
-  ready=false;
+  ready = false;
 
   static STANDARD_COLORS = [
     'blue', 'red', 'orange', 'aqua', 'aquamarine', 'blueviolet', 'green', 'cornsilk', 'fuchsia', 'grey', 'black'
@@ -51,15 +51,15 @@ export class StatisticsComponent implements OnInit {
   private totalNumberOfLots: number;
 
   // Doughnut
-  public doughnutChartLabels:string[] = ['Download Sales', 'In-Store Sales', 'Mail-Order Sales'];
-  public doughnutChartData:number[] = [350, 450, 100];
-  public doughnutChartType:string = 'doughnut';
+  public doughnutChartLabels: string[] = [ 'Download Sales', 'In-Store Sales', 'Mail-Order Sales' ];
+  public doughnutChartData: number[] = [ 350, 450, 100 ];
+  public doughnutChartType: string = 'doughnut';
   public doughnutColors: Array<string> = new Array();
   public doughnutOptions = {
     scaleShowVerticalLines: false,
     responsive: true,
     legend: {
-      position:'left'
+      position: 'left'
     }
   };
 
@@ -79,7 +79,7 @@ export class StatisticsComponent implements OnInit {
       this.totalNumberOfBottles = bottles.reduce((tot: number, btl: Bottle) => tot + +btl.quantite_courante, 0);
       if (this.axis == 'label') {
         this.createColorChart(distribution[ 0 ]);
-        this.ready=true;
+        this.ready = true;
       }
     }
   }
@@ -137,19 +137,19 @@ export class StatisticsComponent implements OnInit {
   }
 
   // events
-  public chartClicked(e:any):void {
+  public chartClicked(e: any): void {
     if (e.active) {
-      let axisIndex=e.active[0]['_index'];
-      let color=this.doughnutChartLabels[axisIndex];
-      let fs:FilterSet= new FilterSet();
-      fs.label=[color];
+      let axisIndex = e.active[ 0 ][ '_index' ];
+      let color = this.doughnutChartLabels[ axisIndex ];
+      let fs: FilterSet = new FilterSet();
+      fs.label = [ color ];
 
-      this.nav.push(BrowsePage,{filterSet: fs});
+      this.nav.push(BrowsePage, {filterSet: fs});
       this.bottlesService.filterOn(fs);
     }
   }
 
-  public chartHovered(e:any):void {
+  public chartHovered(e: any): void {
   }
 
 }

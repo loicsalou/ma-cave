@@ -2,15 +2,12 @@
  * Created by loicsalou on 28.02.17.
  */
 import {Injectable} from '@angular/core';
-import {Bottle} from './bottle';
-import {FilterSet} from '../distribution/distribution';
 import * as firebase from 'firebase/app';
 import {AngularFireDatabase} from 'angularfire2/database';
 import {AbstractLoginService} from './abstract-login.service';
 import {User} from '../model/user';
 import {Observable} from 'rxjs/Observable';
 import {NotificationService} from './notification.service';
-import Reference = firebase.database.Reference;
 
 /**
  * Services related to the bottles in the cellar.

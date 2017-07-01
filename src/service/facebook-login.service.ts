@@ -2,15 +2,12 @@
  * Created by loicsalou on 28.02.17.
  */
 import {Injectable} from '@angular/core';
-import {Bottle} from './bottle';
-import {FilterSet} from '../distribution/distribution';
 import * as firebase from 'firebase/app';
 import {AbstractLoginService} from './abstract-login.service';
 import {Facebook} from '@ionic-native/facebook';
 import {User} from '../model/user';
 import {Observable} from 'rxjs/Observable';
 import {NotificationService} from './notification.service';
-import Reference = firebase.database.Reference;
 
 /**
  * Services related to the bottles in the cellar.
@@ -19,7 +16,6 @@ import Reference = firebase.database.Reference;
  */
 @Injectable()
 export class FacebookLoginService extends AbstractLoginService {
-  private provider: firebase.auth.FacebookAuthProvider;
   userString: string;
 
   constructor(notificationService: NotificationService, private facebook: Facebook) {

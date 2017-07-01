@@ -2,9 +2,7 @@
  * Created by loicsalou on 28.02.17.
  */
 import {EventEmitter, Injectable} from '@angular/core';
-import {FilterSet} from '../distribution/distribution';
 import {AngularFireDatabase} from 'angularfire2/database';
-import {BottleFactory} from '../../model/bottle.factory';
 import {LoadingController} from 'ionic-angular';
 import * as firebase from 'firebase/app';
 import 'firebase/storage';
@@ -14,7 +12,6 @@ import {FirebaseService} from './firebase-service';
 import {Observable} from 'rxjs/Observable';
 import {Image} from '../model/image';
 import {FileItem} from './file-item';
-import {File as CordovaFile} from '@ionic-native/file';
 import {NotificationService} from './notification.service';
 import {TranslateService} from '@ngx-translate/core';
 import Reference = firebase.database.Reference;
@@ -34,8 +31,7 @@ export class FirebaseImageService extends FirebaseService {
   public tracer: EventEmitter<string> = new EventEmitter();
 
   constructor(private angularFirebase: AngularFireDatabase, loadingCtrl: LoadingController,
-              notificationService: NotificationService, private file: CordovaFile, loginService: LoginService,
-              translateService: TranslateService) {
+              notificationService: NotificationService, loginService: LoginService, translateService: TranslateService) {
     super(loadingCtrl, notificationService, loginService, translateService);
     loginService.authentifiedObservable.subscribe(user => this.initFirebase(user));
   }
@@ -51,7 +47,7 @@ export class FirebaseImageService extends FirebaseService {
    * @param bottle
    */
   public getList(bottle: Bottle): Observable<Image[]> {
-    let items = new Observable();
+    let items = new Observable<Image[]>();
     if (!bottle) {
       return items;
     }
@@ -92,7 +88,7 @@ export class FirebaseImageService extends FirebaseService {
    * that must be translated to Blob before being uploaded)
    * @param meta metadata to be attached to the image in Firebase
    */
-  public uploadImage(image: File | any, meta: BottleMetadata): Promise<UploadMetadata> {
+  public uploadImage(image: File | any, meta: BottleMetadata): Promise<void | UploadMetadata> {
     if (image instanceof Blob || image instanceof File) {
       return this.uploadFileOrBlob(image, meta)
     } else {
@@ -100,13 +96,14 @@ export class FirebaseImageService extends FirebaseService {
     }
   }
 
-  private uploadFileOrBlob(fileOrBlob, meta: BottleMetadata): Promise<UploadMetadata> {
+  private uploadFileOrBlob(fileOrBlob, meta: BottleMetadata): Promise<void | UploadMetadata> {
     return this.uploadToFirebase(fileOrBlob, meta.nomCru)
       .then(
         (uploadSnapshot: any) => {
           //file uploaded successfully URL= uploadSnapshot.downloadURL store reference to storage in database
           return this.saveToDatabaseAssetList(uploadSnapshot, meta);
-        }, (error) => {
+        },
+        (error) => {
           this.notificationService.error('Une erreur s\'est produite en tentant d\enregistrer l\image dans la base de' +
                                          ' données', error);
         });
@@ -140,7 +137,7 @@ export class FirebaseImageService extends FirebaseService {
   private uploadToFirebase(imageBlob, name: string): Promise<UploadTaskSnapshot> {
     let fileName = name + '-' + new Date().getTime() + '.jpg';
 
-    return new Promise((resolve, reject) => {
+    return new Promise<UploadTaskSnapshot>((resolve, reject) => {
 
       let fileRef = this.storageRef.child(fileName);
       let uploadTask = fileRef.put(imageBlob);
