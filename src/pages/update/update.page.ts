@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewEncapsulation, OnDestroy} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
 import {Bottle} from '../../model/bottle';
 import {NavController, NavParams} from 'ionic-angular';
 import {BottleService} from '../../service/firebase-bottle.service';
@@ -7,8 +7,8 @@ import {FirebaseImageService, UploadMetadata} from '../../service/firebase-image
 import {Subscription} from 'rxjs/Subscription';
 import {AocInfo, Bottles} from '../../components/config/Bottles';
 import {LoginService} from '../../service/login.service';
-import {HomePage} from '../home/home';
 import {NotificationService} from '../../service/notification.service';
+import * as _ from 'lodash';
 
 /*
  Generated class for the Update component.
@@ -32,6 +32,8 @@ export class UpdatePage implements OnInit, OnDestroy {
   unchanged = false;
   loadingInProgress: boolean = false;
   progress: number = 0;
+  private missingImages: string[] = [];
+  private progressSubscription: Subscription;
 
   constructor(private navCtrl: NavController, navParams: NavParams, private bottleService: BottleService,
               private camera: Camera, private notificationService: NotificationService, private imageService: FirebaseImageService,
@@ -41,8 +43,12 @@ export class UpdatePage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.cleanupSubscriptions();
+  }
+
+  cleanupSubscriptions(): void {
     this.imagesSubscription.unsubscribe();
-    this.imageService.progressEvent.unsubscribe();
+    this.progressSubscription.unsubscribe();
   }
 
   ngOnInit(): void {
@@ -57,14 +63,28 @@ export class UpdatePage implements OnInit, OnDestroy {
         );
       }
     );
-    this.imageService.progressEvent.subscribe(
+    this.progressSubscription=this.imageService.progressEvent.subscribe(
       value => this.progress = value
     );
   }
 
+  ionViewCanLeave() {
+    return new Promise((resolve, reject) => {
+      this.notificationService.ask('Confirmation', 'Attention, les changements faits seront perdus')
+        .subscribe(
+          response => resolve(response),
+          error => reject(error)
+        );
+    });
+  }
+
+  ionViewDidLeave() {
+    this.cleanupSubscriptions();
+  }
+
   logout() {
     this.loginService.logout();
-    this.navCtrl.push(HomePage);
+    this.navCtrl.popToRoot();
   }
 
   loadRegionAreas() {
@@ -80,13 +100,17 @@ export class UpdatePage implements OnInit, OnDestroy {
   }
 
   cancel() {
-    this.notificationService.ask('Confirmation', 'Attention, les changements faits seront perdus').subscribe(
-      result => {
-        if (result) {
-          this.cancel()
-        }
-      }
-    )
+    this.navCtrl.pop();
+  }
+
+  // =============================
+  // IMAGE AVAILABILITY MANAGEMENT
+  imageIsAvailable(url: string): boolean {
+    return _.indexOf(this.missingImages, url) === -1;
+  }
+
+  declareMissingImage(url: string) {
+    this.missingImages.push(url);
   }
 
   readBrowserFile(event: any) {
@@ -106,6 +130,8 @@ export class UpdatePage implements OnInit, OnDestroy {
       );
   }
 
+  // =============
+  // PROFILE IMAGE
   private setProfileImage(downloadURL: string) {
     this.bottle.profile_image_url = downloadURL;
     if (!this.bottle.image_urls) {
@@ -122,6 +148,7 @@ export class UpdatePage implements OnInit, OnDestroy {
     this.bottle.profile_image_url = '';
   }
 
+  // =====================================
   // PHOTO CAPTURED DIRECTLY BY THE CAMERA
   captureProfileImage() {
     let imageSource = this.camera.PictureSourceType.CAMERA;

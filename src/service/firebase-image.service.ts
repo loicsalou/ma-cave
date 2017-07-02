@@ -16,6 +16,7 @@ import {NotificationService} from './notification.service';
 import {TranslateService} from '@ngx-translate/core';
 import Reference = firebase.database.Reference;
 import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
+import {Subject} from 'rxjs/Subject';
 
 //import { FirebaseApp } from 'angularfire2';
 
@@ -28,7 +29,8 @@ import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
 export class FirebaseImageService extends FirebaseService {
 
   private storageRef: firebase.storage.Reference;
-  private _progressEvent: EventEmitter<number>=new EventEmitter<number>();
+  private _progressEvent: Subject<number>=new Subject<number>();
+  private progressEvent$: Observable<number>=this._progressEvent.asObservable();
 
   constructor(private angularFirebase: AngularFireDatabase, loadingCtrl: LoadingController,
               notificationService: NotificationService, loginService: LoginService, translateService: TranslateService) {
@@ -42,8 +44,8 @@ export class FirebaseImageService extends FirebaseService {
     }
   }
 
-  get progressEvent(): EventEmitter<number> {
-    return this._progressEvent;
+  get progressEvent(): Observable<number> {
+    return this.progressEvent$;
   }
 
   /**
@@ -149,7 +151,7 @@ export class FirebaseImageService extends FirebaseService {
       uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
                     (snapshot) => {
                       let progress=(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                      this._progressEvent.emit(progress);
+                      this._progressEvent.next(Math.round(progress));
                     },
                     (error) => {
                       reject(error);
