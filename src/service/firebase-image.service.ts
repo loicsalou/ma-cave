@@ -35,7 +35,11 @@ export class FirebaseImageService extends FirebaseService {
   constructor(private angularFirebase: AngularFireDatabase, loadingCtrl: LoadingController,
               notificationService: NotificationService, loginService: LoginService, translateService: TranslateService) {
     super(loadingCtrl, notificationService, loginService, translateService);
-    loginService.authentifiedObservable.subscribe(user => this.initFirebase(user));
+    if (loginService.user !== undefined) {
+      this.initFirebase(loginService.user);
+    } else {
+      loginService.authentifiedObservable.subscribe(user => this.initFirebase(user));
+    }
   }
 
   initFirebase(user) {

@@ -22,7 +22,11 @@ export abstract class FirebaseService {
 
   constructor(private loadingCtrl: LoadingController, protected notificationService: NotificationService,
               private loginService: LoginService, private translateService: TranslateService) {
-    loginService.authentifiedObservable.subscribe(user => this.initRoots(user));
+    if (loginService.user !== undefined) {
+      this.initRoots(loginService.user);
+    } else {
+      loginService.authentifiedObservable.subscribe(user => this.initRoots(user));
+    }
   }
 
   initRoots(user) {

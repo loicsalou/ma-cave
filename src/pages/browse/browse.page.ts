@@ -74,7 +74,7 @@ export class BrowsePage implements OnInit, OnDestroy {
 
   logout() {
     this.loginService.logout();
-    this.navCtrl.push(HomePage);
+    this.navCtrl.popToRoot();
   }
 
   // in case user navigated to here from the home page then we have search param ==> filter on this text

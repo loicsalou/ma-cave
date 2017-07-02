@@ -34,6 +34,7 @@ export class UpdatePage implements OnInit, OnDestroy {
   progress: number = 0;
   private missingImages: string[] = [];
   private progressSubscription: Subscription;
+  private forceLeave: boolean = true;
 
   constructor(private navCtrl: NavController, navParams: NavParams, private bottleService: BottleService,
               private camera: Camera, private notificationService: NotificationService, private imageService: FirebaseImageService,
@@ -63,19 +64,21 @@ export class UpdatePage implements OnInit, OnDestroy {
         );
       }
     );
-    this.progressSubscription=this.imageService.progressEvent.subscribe(
+    this.progressSubscription = this.imageService.progressEvent.subscribe(
       value => this.progress = value
     );
   }
 
   ionViewCanLeave() {
-    return new Promise((resolve, reject) => {
-      this.notificationService.ask('Confirmation', 'Attention, les changements faits seront perdus')
-        .subscribe(
-          response => resolve(response),
-          error => reject(error)
-        );
-    });
+    if (!this.forceLeave) {
+      return new Promise((resolve, reject) => {
+        this.notificationService.ask('Confirmation', 'Attention, les changements faits seront perdus')
+          .subscribe(
+            response => resolve(response),
+            error => reject(error)
+          );
+      });
+    }
   }
 
   ionViewDidLeave() {
@@ -83,8 +86,8 @@ export class UpdatePage implements OnInit, OnDestroy {
   }
 
   logout() {
+    this.forceLeave=true; // évite l'avertissement lors du changement d'écran puisqu'on est de toute façon déloggé
     this.loginService.logout();
-    this.navCtrl.popToRoot();
   }
 
   loadRegionAreas() {

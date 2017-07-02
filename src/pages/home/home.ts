@@ -62,12 +62,10 @@ export class HomePage implements OnInit {
     this.authenticated = (user !== undefined);
     if (this.authenticated) {
       this.navCtrl.push(TabsPage);
-      this.loginSubscription.unsubscribe();
     }
-    else {
-      if (this.navCtrl.length() > 1) {
-        this.navCtrl.first();
-      }
+    else if (this.navCtrl.length() > 1) {
+      this.navCtrl.popToRoot();
+      this.loginSubscription.unsubscribe();
     }
   }
 }

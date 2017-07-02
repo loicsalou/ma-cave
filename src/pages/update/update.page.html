@@ -183,8 +183,8 @@
   
   <ion-slides style="height: 40vh" *ngIf="bottle.image_urls">
     <ion-slide *ngFor="let url of bottle.image_urls">
-      <ion-card>
-        <img [src]="url"/>
+      <ion-card *ngIf="imageIsAvailable(url)">
+        <img [src]="url" (error)="declareMissingImage(url)"/>
       </ion-card>
     </ion-slide>
   </ion-slides>

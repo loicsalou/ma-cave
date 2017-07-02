@@ -1,38 +1,40 @@
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
+import {Subject} from 'rxjs/Subject';
 import {User} from '../model/user';
 import {AnonymousLoginService} from './anonymous-login.service';
 import {EmailLoginService} from './email-login.service';
 import {FacebookLoginService} from './facebook-login.service';
 import {NotificationService} from './notification.service';
+import {Subscription} from 'rxjs/Subscription';
 /**
  * Created by loicsalou on 13.06.17.
  */
 export class LoginService {
-  private authentified: BehaviorSubject<User> = new BehaviorSubject(undefined);
+  private authentified: Subject<User> = new Subject();
   public authentifiedObservable: Observable<User> = this.authentified.asObservable();
 
   private _user: User;
+  private loginSub: Subscription;
 
   constructor(private anoLogin: AnonymousLoginService, private mailLogin: EmailLoginService,
               private fbLogin: FacebookLoginService, private notificationService: NotificationService) {
   }
 
   public anonymousLogin() {
-    this.anoLogin.login().subscribe((user: User) => this.initUser(user));
+    this.loginSub = this.anoLogin.login().subscribe((user: User) => this.initUser(user));
   }
 
   public emailLogin(login: string, psw: string) {
     this.mailLogin.username = login;
     this.mailLogin.psw = psw;
-    this.mailLogin.login().subscribe(
+    this.loginSub = this.mailLogin.login().subscribe(
       (user: User) => this.initUser(user),
       error => this.notificationService.failed('L\'authentification a échoué, veuillez vérifier votre saisie')
     );
   }
 
   public facebookLogin() {
-    this.fbLogin.login().subscribe(
+    this.loginSub = this.fbLogin.login().subscribe(
       (user: User) => this.initUser(user),
       error => this.notificationService.failed('L\'authentification Facebook a échoué, veuillez vérifier votre compte')
     );
@@ -59,6 +61,8 @@ export class LoginService {
   }
 
   logout() {
+    this.loginSub.unsubscribe();
+    this.loginSub = undefined;
     this.initUser(undefined);
   }
 }

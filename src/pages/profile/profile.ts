@@ -3,6 +3,7 @@ import {NavController} from 'ionic-angular';
 import {LoginService} from '../../service/login.service';
 import {HomePage} from '../home/home';
 import {User} from '../../model/user';
+import Platform = NodeJS.Platform;
 
 @Component({
              selector: 'page-profile',
@@ -44,6 +45,5 @@ export class ProfilePage implements OnInit {
 
   logout() {
     this.loginService.logout();
-    this.navCtrl.push(HomePage);
   }
 }
