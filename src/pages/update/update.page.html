@@ -10,11 +10,21 @@
 </ion-header>
 
 <ion-content scroll="true" class="page-update" padding-horizontal>
+  
+  <progress-bar *ngIf="loadingInProgress" [progress]="progress" [thickness]="'1px'"
+                [showPercentage]="false"></progress-bar>
+  
   <ion-fab bottom right>
-    <button ion-fab><ion-icon name="menu"></ion-icon></button>
+    <button ion-fab>
+      <ion-icon name="menu"></ion-icon>
+    </button>
     <ion-fab-list side="top">
-      <button ion-fab><ion-icon name="checkmark" (click)="save()"></ion-icon></button>
-      <button ion-fab><ion-icon name="close" (click)="cancel()"></ion-icon></button>
+      <button ion-fab>
+        <ion-icon name="checkmark" (click)="save()"></ion-icon>
+      </button>
+      <button ion-fab>
+        <ion-icon name="close" (click)="cancel()"></ion-icon>
+      </button>
     </ion-fab-list>
   </ion-fab>
   
@@ -178,5 +188,5 @@
       </ion-card>
     </ion-slide>
   </ion-slides>
-  
+
 </ion-content>
