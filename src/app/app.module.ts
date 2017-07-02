@@ -71,8 +71,7 @@ export const fireConfig = {
               BottleListComponent,
               TabsPage,
               UpdatePage,
-              StatisticsComponent,
-              ImageAttacherComponent
+              StatisticsComponent
             ],
             imports: [
               IonicModule.forRoot(MyCaveApp),

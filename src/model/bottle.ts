@@ -60,7 +60,6 @@ export class Bottle {
       return []
     }
   }
-
 }
 
 export interface BottleMetadata {
