@@ -42,6 +42,7 @@ import {FacebookLoginService} from '../service/facebook-login.service';
 import {DashboardPage} from '../pages/dashboard/dashboard';
 import {ProfilePageModule} from '../pages/profile/profile.module';
 import {NotificationService} from '../service/notification.service';
+import {ProgressBarComponentModule} from '../components/progress-bar/progress-bar.module';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -68,7 +69,7 @@ export const fireConfig = {
               BottleListComponent,
               TabsPage,
               UpdatePage,
-              StatisticsComponent,
+              StatisticsComponent
             ],
             imports: [
               IonicModule.forRoot(MyCaveApp),
@@ -86,7 +87,8 @@ export const fireConfig = {
               AngularFireDatabaseModule,
               ProfilePageModule,
               UploadBottlesModule,
-              ChartsModule
+              ChartsModule,
+              ProgressBarComponentModule
             ],
             bootstrap: [ IonicApp ],
             entryComponents: [

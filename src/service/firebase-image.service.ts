@@ -28,7 +28,7 @@ import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
 export class FirebaseImageService extends FirebaseService {
 
   private storageRef: firebase.storage.Reference;
-  public tracer: EventEmitter<string> = new EventEmitter();
+  private _progressEvent: EventEmitter<number>=new EventEmitter<number>();
 
   constructor(private angularFirebase: AngularFireDatabase, loadingCtrl: LoadingController,
               notificationService: NotificationService, loginService: LoginService, translateService: TranslateService) {
@@ -40,6 +40,10 @@ export class FirebaseImageService extends FirebaseService {
     if (user) {
       this.storageRef = this.angularFirebase.app.storage().ref(this.IMAGES_ROOT);
     }
+  }
+
+  get progressEvent(): EventEmitter<number> {
+    return this._progressEvent;
   }
 
   /**
@@ -123,7 +127,7 @@ export class FirebaseImageService extends FirebaseService {
             };
 
             reader.onerror = (error) => {
-              this.notificationService.error('LA création du BLOB à partir du fichier a échoué: ', error);
+              this.notificationService.error('La création du BLOB à partir du fichier a échoué: ', error);
               reject(error);
             };
 
@@ -144,7 +148,8 @@ export class FirebaseImageService extends FirebaseService {
 
       uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
                     (snapshot) => {
-                      //item.progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                      let progress=(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                      this._progressEvent.emit(progress);
                     },
                     (error) => {
                       reject(error);

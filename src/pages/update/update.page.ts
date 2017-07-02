@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, OnInit, ViewEncapsulation, OnDestroy} from '@angular/core';
 import {Bottle} from '../../model/bottle';
 import {NavController, NavParams} from 'ionic-angular';
 import {BottleService} from '../../service/firebase-bottle.service';
@@ -23,25 +23,30 @@ import {NotificationService} from '../../service/notification.service';
              // warning: few browsers support shadow DOM encapsulation at this time
              encapsulation: ViewEncapsulation.Emulated
            })
-export class UpdatePage implements OnInit {
+export class UpdatePage implements OnInit, OnDestroy {
 
   bottle: Bottle;
-  imgUrl: string;
   images: Array<{ src: String }> = [];
   private imagesSubscription: Subscription;
-  private traces: string[] = [];
   private aoc: AocInfo[];
   unchanged = false;
+  loadingInProgress: boolean = false;
+  progress: number = 0;
 
   constructor(private navCtrl: NavController, navParams: NavParams, private bottleService: BottleService,
               private camera: Camera, private notificationService: NotificationService, private imageService: FirebaseImageService,
               private loginService: LoginService, private bottles: Bottles) {
-    //don't clone to keep firebase key which is necessary to update
+    //don't clone to keep firebase '$key' which is necessary to update
     this.bottle = navParams.data[ 'bottle' ];
-    this.loadRegionAreas();
+  }
+
+  ngOnDestroy(): void {
+    this.imagesSubscription.unsubscribe();
+    this.imageService.progressEvent.unsubscribe();
   }
 
   ngOnInit(): void {
+    this.loadRegionAreas();
     let imagesObservable = this.imageService.getList(this.bottle);
     this.imagesSubscription = imagesObservable.subscribe(
       images => {
@@ -52,7 +57,9 @@ export class UpdatePage implements OnInit {
         );
       }
     );
-    this.navCtrl.viewWillLeave.subscribe(() => this.imagesSubscription.unsubscribe());
+    this.imageService.progressEvent.subscribe(
+      value => this.progress = value
+    );
   }
 
   logout() {
@@ -83,19 +90,20 @@ export class UpdatePage implements OnInit {
   }
 
   readBrowserFile(event: any) {
-    this.imageService.tracer.subscribe(
-      message => this.traces.push(message)
-    );
-
     //let textType = /text.*/;
     let file = event.currentTarget.files[ 0 ];
+    this.loadingInProgress = true;
     this.imageService.uploadImage(file, Bottle.getMetadata(this.bottle))
       .then((meta: UploadMetadata) => {
         this.notificationService.information('L\'image ' + meta.imageName + ' a été correctement enregistrée');
         this.setProfileImage(meta.downloadURL);
-
+        this.loadingInProgress = false;
       })
-      .catch(error => this.notificationService.error('l\'enregistrement de l\'image a échoué' + error));
+      .catch(error => {
+               this.notificationService.error('l\'enregistrement de l\'image a échoué' + error);
+               this.loadingInProgress = false;
+             }
+      );
   }
 
   private setProfileImage(downloadURL: string) {
@@ -114,7 +122,7 @@ export class UpdatePage implements OnInit {
     this.bottle.profile_image_url = '';
   }
 
-  // PHOTO CAPTURED DIRECTLY BA THE CAMERA
+  // PHOTO CAPTURED DIRECTLY BY THE CAMERA
   captureProfileImage() {
     let imageSource = this.camera.PictureSourceType.CAMERA;
     this.camera.getPicture({
