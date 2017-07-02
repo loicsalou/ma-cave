@@ -114,8 +114,9 @@ export class UpdatePage implements OnInit, OnDestroy {
     return _.indexOf(this.missingImages, url) === -1;
   }
 
-  declareMissingImage(url: string) {
-    this.missingImages.push(url);
+  declareMissingImage(event) {
+    //console.info(event.currentTarget.src);
+    this.missingImages.push(event.currentTarget.src);
   }
 
   // =============

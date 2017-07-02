@@ -4,8 +4,8 @@
 import {Injectable} from '@angular/core';
 import {Bottle} from './bottle';
 import {TranslateService} from '@ngx-translate/core';
-import {UUID} from 'angular2-uuid';
 import {Statistics} from './statistics';
+import {BottleIconPipe} from '../components/list/bottle-item-component/bottle-icon.pipe';
 
 /**
  * Instanciation des bouteilles.
@@ -21,13 +21,18 @@ export class BottleFactory {
   }
 
   public create(btl: Bottle): Bottle {
-    this.checkId(btl).setClasseAge(btl);
+    this.setClasseAge(btl).setDefaultImage(btl);
 
     return btl;
   }
 
   get stats(): Statistics {
     return this._stats;
+  }
+
+  private setDefaultImage(bottle: Bottle): BottleFactory {
+    bottle.defaultImage = BottleIconPipe.prototype.transform(bottle.label);
+    return this;
   }
 
   private setClasseAge(bottle: Bottle): BottleFactory {
@@ -46,13 +51,6 @@ export class BottleFactory {
       bottle[ 'classe_age' ] = this.i18n.instant('very-old');
     }
 
-    return this;
-  }
-
-  private checkId(bottle: Bottle): BottleFactory {
-    if (bottle.id == undefined || bottle.id == null) {
-      bottle[ 'id' ] = UUID.UUID();
-    }
     return this;
   }
 }

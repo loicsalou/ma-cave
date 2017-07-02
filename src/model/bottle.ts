@@ -2,8 +2,10 @@
  * Created by loicsalou on 01.03.17.
  */
 import * as _ from 'lodash';
+import {ImgDefaultable} from '../directives/default-image/img-defaultable';
 
-export class Bottle {
+export class Bottle implements ImgDefaultable {
+
   private static SPECIAL_CHARS_REMOVED = new RegExp(/[\.|\d|\n|\r|,|!|?|@]/g);
 
   id?: string;
@@ -31,6 +33,11 @@ export class Bottle {
   suggestion: string;
   volume: string;
   metadata?: BottleMetadata;
+  defaultImage ?: string;
+
+  getDefaultImageSrc(): string {
+    return;
+  }
 
   public static getMetadata(bottle: Bottle | any): BottleMetadata {
     let keywords = [];
