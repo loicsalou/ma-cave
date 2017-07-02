@@ -1,8 +1,8 @@
 <ion-header class="header flex-container">
   <span class="flex-container flex-grow">
-    <!--<button ion-button icon-only>-->
-      <!--<ion-icon name="arrow-back"></ion-icon>-->
-    <!--</button>-->
+    <button ion-button icon-only>
+      <ion-icon name="arrow-back"></ion-icon>
+    </button>
     <ion-title (click)="save()">Update</ion-title>
   </span>
   
@@ -10,9 +10,6 @@
 </ion-header>
 
 <ion-content scroll="true" class="page-update" padding-horizontal>
-  
-  <progress-bar *ngIf="loadingInProgress" [progress]="progress" [thickness]="'1px'"
-                [showPercentage]="false"></progress-bar>
   
   <ion-fab bottom right>
     <button ion-fab>
@@ -45,24 +42,8 @@
     </ion-col>
   </ion-row>
   
-  <ion-row>
-    <!--<ion-col showWhen="cordova" d-flex style="justify-content: space-between">-->
-    <ion-col d-flex style="justify-content: space-between">
-      <button ion-button round icon-only padding-vertical (click)="captureProfileImage()">
-        <ion-icon name="camera"></ion-icon>
-      </button>
-      <button ion-button round icon-only padding-vertical (click)="chooseProfileImage()">
-        <ion-icon name="folder"></ion-icon>
-      </button>
-      <button ion-button round icon-only padding-vertical (click)="removeProfileImage()">
-        <ion-icon name="trash"></ion-icon>
-      </button>
-    </ion-col>
-    
-    <ion-col hideWhen="cordova">
-      <input type="file" id="input" (change)="readBrowserFile($event)">
-    </ion-col>
-  </ion-row>
+  <image-attacher (imageUrl)="setProfileImage($event)" (error)="error($event)"
+                  [metadata]="metadata"></image-attacher>
   
   <ion-row>
     <ion-item>

@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
-import {Bottle} from '../../model/bottle';
+import {Bottle, BottleMetadata} from '../../model/bottle';
 import {NavController, NavParams} from 'ionic-angular';
 import {BottleService} from '../../service/firebase-bottle.service';
 import {Camera} from '@ionic-native/camera';
@@ -35,12 +35,14 @@ export class UpdatePage implements OnInit, OnDestroy {
   private missingImages: string[] = [];
   private progressSubscription: Subscription;
   private forceLeave: boolean = true;
+  private metadata: BottleMetadata;
 
   constructor(private navCtrl: NavController, navParams: NavParams, private bottleService: BottleService,
               private camera: Camera, private notificationService: NotificationService, private imageService: FirebaseImageService,
               private loginService: LoginService, private bottles: Bottles) {
     //don't clone to keep firebase '$key' which is necessary to update
     this.bottle = navParams.data[ 'bottle' ];
+    this.metadata = Bottle.getMetadata(this.bottle);
   }
 
   ngOnDestroy(): void {
@@ -86,7 +88,7 @@ export class UpdatePage implements OnInit, OnDestroy {
   }
 
   logout() {
-    this.forceLeave=true; // évite l'avertissement lors du changement d'écran puisqu'on est de toute façon déloggé
+    this.forceLeave = true; // évite l'avertissement lors du changement d'écran puisqu'on est de toute façon déloggé
     this.loginService.logout();
   }
 
@@ -116,26 +118,9 @@ export class UpdatePage implements OnInit, OnDestroy {
     this.missingImages.push(url);
   }
 
-  readBrowserFile(event: any) {
-    //let textType = /text.*/;
-    let file = event.currentTarget.files[ 0 ];
-    this.loadingInProgress = true;
-    this.imageService.uploadImage(file, Bottle.getMetadata(this.bottle))
-      .then((meta: UploadMetadata) => {
-        this.notificationService.information('L\'image ' + meta.imageName + ' a été correctement enregistrée');
-        this.setProfileImage(meta.downloadURL);
-        this.loadingInProgress = false;
-      })
-      .catch(error => {
-               this.notificationService.error('l\'enregistrement de l\'image a échoué' + error);
-               this.loadingInProgress = false;
-             }
-      );
-  }
-
   // =============
   // PROFILE IMAGE
-  private setProfileImage(downloadURL: string) {
+  setProfileImage(downloadURL: string) {
     this.bottle.profile_image_url = downloadURL;
     if (!this.bottle.image_urls) {
       this.bottle.image_urls = []
@@ -151,45 +136,7 @@ export class UpdatePage implements OnInit, OnDestroy {
     this.bottle.profile_image_url = '';
   }
 
-  // =====================================
-  // PHOTO CAPTURED DIRECTLY BY THE CAMERA
-  captureProfileImage() {
-    let imageSource = this.camera.PictureSourceType.CAMERA;
-    this.camera.getPicture({
-                             destinationType: this.camera.DestinationType.FILE_URI,
-                             sourceType: imageSource,
-                             targetHeight: 1024,
-                             quality: 80,
-                             correctOrientation: true
-                           })
-      .then((imagePath: UploadMetadata) => this.imageService.createBlobFromPath(imagePath))
-      .then((imageBlob: Blob) => {
-        // upload the blob
-        return this.imageService.uploadImage(imageBlob, Bottle.getMetadata(this.bottle));
-      })
-      .then((meta: UploadMetadata) => {
-        this.setProfileImage(meta.downloadURL);
-      })
-      .catch(error => this.notificationService.error('l\'enregistrement de l\'image a échoué' + error));
-  }
-
-  // TAKE FROM THE EXISTING PHOTOS
-  chooseProfileImage() {
-    let imageSource = this.camera.PictureSourceType.PHOTOLIBRARY;
-    this.camera.getPicture({
-                             destinationType: this.camera.DestinationType.FILE_URI,
-                             sourceType: imageSource,
-                             targetHeight: 800,
-                             correctOrientation: true
-                           })
-      .then((imagePath: UploadMetadata) => this.imageService.createBlobFromPath(imagePath))
-      .then((imageBlob: Blob) => {
-        // upload the blob
-        return this.imageService.uploadImage(imageBlob, Bottle.getMetadata(this.bottle));
-      })
-      .then((meta: UploadMetadata) => {
-        this.setProfileImage(meta.downloadURL);
-      })
-      .catch(error => this.notificationService.error('l\'enregistrement de l\'image a échoué' + error));
+  error(error) {
+    this.notificationService.error('Erreur lors de l\'upload !', error);
   }
 }

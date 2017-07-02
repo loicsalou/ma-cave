@@ -43,6 +43,8 @@ import {DashboardPage} from '../pages/dashboard/dashboard';
 import {ProfilePageModule} from '../pages/profile/profile.module';
 import {NotificationService} from '../service/notification.service';
 import {ProgressBarComponentModule} from '../components/progress-bar/progress-bar.module';
+import {ImageAttacherComponent} from '../components/image-attacher/image-attacher';
+import {ImageAttacherComponentModule} from '../components/image-attacher/image-attacher.module';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -88,7 +90,8 @@ export const fireConfig = {
               ProfilePageModule,
               UploadBottlesModule,
               ChartsModule,
-              ProgressBarComponentModule
+              ProgressBarComponentModule,
+              ImageAttacherComponentModule
             ],
             bootstrap: [ IonicApp ],
             entryComponents: [
