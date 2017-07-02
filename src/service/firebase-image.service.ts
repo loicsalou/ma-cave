@@ -1,7 +1,7 @@
 /**
  * Created by loicsalou on 28.02.17.
  */
-import {EventEmitter, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {AngularFireDatabase} from 'angularfire2/database';
 import {LoadingController} from 'ionic-angular';
 import * as firebase from 'firebase/app';
@@ -14,6 +14,7 @@ import {Image} from '../model/image';
 import {FileItem} from './file-item';
 import {NotificationService} from './notification.service';
 import {TranslateService} from '@ngx-translate/core';
+import {Subject} from 'rxjs/Subject';
 import Reference = firebase.database.Reference;
 import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
 
@@ -28,22 +29,26 @@ import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
 export class FirebaseImageService extends FirebaseService {
 
   private storageRef: firebase.storage.Reference;
-  private _progressEvent: EventEmitter<number>=new EventEmitter<number>();
+  private _progressEvent: Subject<number> = new Subject<number>();
+  private progressEvent$: Observable<number> = this._progressEvent.asObservable();
 
-  constructor(private angularFirebase: AngularFireDatabase, loadingCtrl: LoadingController,
+  constructor(angularFirebase: AngularFireDatabase, loadingCtrl: LoadingController,
               notificationService: NotificationService, loginService: LoginService, translateService: TranslateService) {
-    super(loadingCtrl, notificationService, loginService, translateService);
-    loginService.authentifiedObservable.subscribe(user => this.initFirebase(user));
+    super(angularFirebase, loadingCtrl, notificationService, loginService, translateService);
   }
 
-  initFirebase(user) {
-    if (user) {
-      this.storageRef = this.angularFirebase.app.storage().ref(this.IMAGES_ROOT);
-    }
+  initialize(user) {
+    super.initialize(user);
+    this.storageRef = this.angularFirebase.app.storage().ref(this.IMAGES_ROOT);
   }
 
-  get progressEvent(): EventEmitter<number> {
-    return this._progressEvent;
+  cleanup() {
+    super.cleanup();
+    this.storageRef = undefined;
+  }
+
+  get progressEvent(): Observable<number> {
+    return this.progressEvent$;
   }
 
   /**
@@ -148,8 +153,8 @@ export class FirebaseImageService extends FirebaseService {
 
       uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
                     (snapshot) => {
-                      let progress=(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                      this._progressEvent.emit(progress);
+                      let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                      this._progressEvent.next(Math.round(progress));
                     },
                     (error) => {
                       reject(error);

@@ -34,20 +34,24 @@ export class BottleService extends FirebaseService {
   private filters: FilterSet = new FilterSet();
   private allBottlesArray: Bottle[];
 
-  constructor(private bottleFactory: BottleFactory, private firebase: AngularFireDatabase,
+  constructor(private bottleFactory: BottleFactory, firebase: AngularFireDatabase,
               loadingCtrl: LoadingController,
               notificationService: NotificationService,
               loginService: LoginService,
               translateService: TranslateService) {
-    super(loadingCtrl, notificationService, loginService, translateService);
-    loginService.authentifiedObservable.subscribe(user => this.initFirebase(user));
+    super(firebase, loadingCtrl, notificationService, loginService, translateService);
   }
 
-  initFirebase(user) {
-    if (user) {
-      this.firebaseRef = this.firebase.database.ref(this.BOTTLES_ROOT);
-      this.fetchAllBottles();
-    }
+  initialize(user) {
+    super.initialize(user);
+    this.firebaseRef = this.angularFirebase.database.ref(this.BOTTLES_ROOT);
+    this.fetchAllBottles();
+  }
+
+  cleanup() {
+    super.cleanup();
+    this.allBottlesArray = undefined;
+    this.filters = undefined;
   }
 
   public fetchAllBottles() {
@@ -55,7 +59,7 @@ export class BottleService extends FirebaseService {
       this._bottles.next(this.allBottlesArray);
     } else {
       this.showLoading();
-      let items = this.firebase.list(this.BOTTLES_ROOT, {
+      let items = this.angularFirebase.list(this.BOTTLES_ROOT, {
         query: {
           limitToFirst: 2000,
           orderByChild: 'quantite_courante',

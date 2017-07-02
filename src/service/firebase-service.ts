@@ -3,6 +3,7 @@ import {Observable} from 'rxjs/Observable';
 import {LoginService} from './login.service';
 import {NotificationService} from './notification.service';
 import {TranslateService} from '@ngx-translate/core';
+import {AngularFireDatabase} from 'angularfire2/database';
 /**
  * Created by loicsalou on 16.06.17.
  */
@@ -20,17 +21,34 @@ export abstract class FirebaseService {
 
   private loading: Loading;
 
-  constructor(private loadingCtrl: LoadingController, protected notificationService: NotificationService,
+  constructor(protected angularFirebase: AngularFireDatabase, private loadingCtrl: LoadingController, protected notificationService: NotificationService,
               private loginService: LoginService, private translateService: TranslateService) {
-    loginService.authentifiedObservable.subscribe(user => this.initRoots(user));
+    loginService.authentifiedObservable.subscribe(
+      user => {
+        if (loginService.user !== undefined) {
+          this.initialize(loginService.user);
+        } else {
+          this.cleanup();
+        }
+      }
+    );
+    if (loginService.user !== undefined) {
+      this.initialize(loginService.user);
+    } else {
+      this.cleanup();
+    }
   }
 
-  initRoots(user) {
-    if (user) {
+  protected initialize(user) {
       this.BOTTLES_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + this.BOTTLES_FOLDER;
       this.IMAGES_ROOT = this.IMAGES_FOLDER;
       this.XREF_ROOT = this.XREF_FOLDER;
-    }
+  }
+
+  protected cleanup() {
+    this.BOTTLES_ROOT = undefined;
+    this.IMAGES_ROOT = undefined;
+    this.XREF_ROOT = undefined;
   }
 
   showLoading(message?: string) {

@@ -34,6 +34,6 @@ export class DashboardPage implements OnInit {
 
   logout() {
     this.loginService.logout();
-    this.navCtrl.push(HomePage);
+    this.navCtrl.popToRoot();
   }
 }

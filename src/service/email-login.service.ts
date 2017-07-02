@@ -49,11 +49,13 @@ export class EmailLoginService extends AbstractLoginService {
     firebase.auth().signInWithEmailAndPassword(this.username, this.psw)
       .then(
         token => {
-          self.success(new EmailLoginUser(this.username, this.psw, null));
+          let displayName = token[ 'displayName' ];
+          let email = token[ 'email' ];
+          self.success(new EmailLoginUser(this.username, email, displayName, null));
         }
       )
       .catch(function (error) {
-        firebase.auth().createUserWithEmailAndPassword(self.user.user, self.psw)
+        firebase.auth().createUserWithEmailAndPassword(self.username, self.psw)
           .then(() => self.success(self.user))
           .catch(function (error2) {
             self.notificationService.failed('la création du compte utilisateur a échoué', error2)
@@ -67,15 +69,15 @@ export class EmailLoginService extends AbstractLoginService {
 
 export class EmailLoginUser extends User {
 
-  constructor(user: string, email: string, photoUrl: string) {
+  constructor(user: string, email: string, displayName: string, photoUrl: string) {
     super();
     this.user = user.replace(/[\.]/g, '');
     this.user = this.user.replace(/[#.]/g, '');
     this.email = email;
     this.photoURL = undefined;
-    this.displayName = email.split('@')[0];
+    this.displayName = displayName ? displayName : email.split('@')[ 0 ];
     this.uid = undefined;
-    this.phoneNumber=undefined;
+    this.phoneNumber = undefined;
   }
 }
 

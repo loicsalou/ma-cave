@@ -49,7 +49,6 @@ export class BottleDetailPage implements OnInit {
 
   logout() {
     this.loginService.logout();
-    this.navCtrl.push(HomePage);
   }
 
   private extractSlideBottles(bottles: Bottle[], targetIndex: number): Bottle[] {
