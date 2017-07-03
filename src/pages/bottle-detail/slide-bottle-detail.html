@@ -6,15 +6,13 @@
     </button>
   </ion-fab>
   
-  <!--<div class="index">{{getIndex()}}</div>-->
-  
   <div>
     <div class="block" style="display:flex">
-      <div class="icon">
-        <img src="{{ bottle.label | bottleIcon }}" class="contain" *ngIf="! bottle.profile_image_url">
-        <img [src]="bottle.profile_image_url" [defaultImage]="bottle" class="contain" *ngIf="bottle.profile_image_url">
+      <div class="icon" style="text-align: left">
+        <img src="{{ bottle.label | bottleIcon }}" class="contain profile-image" *ngIf="! bottle.profile_image_url">
+        <img [src]="bottle.profile_image_url" [defaultImage]="bottle" class="contain profile-image"
+             *ngIf="bottle.profile_image_url">
       </div>
-      <!--<h3 *ngIf="showName">{{bottle.nomCru}}</h3>-->
     </div>
     <div class="description">
       <ul class="circle">
@@ -27,23 +25,24 @@
       </ul>
     </div>
   </div>
-  
-  <ion-slides #imgslides [pager]="true" [speed]="100" style="height: 40vh" *ngIf="bottle.image_urls"
-              (ionSlideDidChange)="imageChanged($event)" (ionSlideWillChange)="imageWillChange($event)"
-              [effect]="cube">
-    <ion-slide *ngFor="let url of bottle.image_urls">
-      <ion-card style="max-height: 100%">
-        <img [defaultImage]="bottle" [src]="url"/>
-      </ion-card>
-    </ion-slide>
-  </ion-slides>
+  <!---->
+  <!--<ion-slides #imgslides [pager]="true" [speed]="100" style="height: 40vh" *ngIf="bottle.image_urls"-->
+              <!--(ionSlideDidChange)="imageChanged($event)" (ionSlideWillChange)="imageWillChange($event)"-->
+              <!--[effect]="cube">-->
+    <!--<ion-slide *ngFor="let url of bottle.image_urls">-->
+      <!--<ion-card style="max-height: 100%">-->
+        <!--<img [defaultImage]="bottle" [src]="url" style="max-width: 45%; margin-right: auto; margin-left: auto;"/>-->
+      <!--</ion-card>-->
+    <!--</ion-slide>-->
+  <!--</ion-slides>-->
   
   <h4>{{"bottle.details" | translate}}</h4>
   <div class="block">
     <ul class="circle">
       <li>{{ "bottle.date_achat" | translate }} {{ bottle.date_achat }}, {{ bottle.lieu_achat }}</li>
       <li>{{ "bottle.prix" | translate }} {{ bottle.prix }} € / {{ bottle.cote }} €</li>
-      <li>{{ "bottle.garde" | translate }} {{ bottle.garde_min }} {{ "ans" | translate }} / {{ bottle.garde_max }} {{ "ans"
+      <li>{{ "bottle.garde" | translate }} {{ bottle.garde_min }} {{ "ans" | translate }} / {{ bottle.garde_max }} {{
+        "ans"
         | translate }}
       </li>
       <li>{{ "bottle.garde_optimum" | translate }} {{ bottle.garde_min }} {{ "ans" | translate }}</li>

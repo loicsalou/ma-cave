@@ -3,7 +3,7 @@ import {IonicPageModule} from 'ionic-angular';
 import {ProfilePage} from './profile';
 import {BrowserModule} from '@angular/platform-browser';
 import {FormsModule} from '@angular/forms';
-import {DirectiveModule} from '../../directives/directive.module';
+import {SharedModule} from '../../components/shared.module';
 
 @NgModule({
             declarations: [
@@ -12,7 +12,7 @@ import {DirectiveModule} from '../../directives/directive.module';
             imports: [
               BrowserModule,
               FormsModule,
-              DirectiveModule,
+              SharedModule,
               IonicPageModule.forChild(ProfilePage),
             ],
             exports: [
