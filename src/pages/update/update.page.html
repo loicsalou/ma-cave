@@ -26,7 +26,7 @@
   </ion-fab>
   
   <ion-row d-flex>
-    <ion-col>
+    <ion-col style="text-align: center;">
       <img src="{{ bottle.label | bottleIcon }}" *ngIf="! getProfileImage()">
       <img [src]="getProfileImage()" [defaultImage]="'/assets/img/missing-image.jpg'" *ngIf="getProfileImage()">
     </ion-col>
@@ -78,6 +78,7 @@
         </ion-option>
       </ion-select>
     </ion-item>
+    {{bottle.subregion_label}}
   </ion-row>
   
   <ion-row>
@@ -90,6 +91,7 @@
           </span></ion-option>
       </ion-select>
     </ion-item>
+    {{bottle.area_label}}
   </ion-row>
   
   <ion-row>
