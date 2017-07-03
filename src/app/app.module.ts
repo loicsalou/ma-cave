@@ -27,8 +27,6 @@ import {FilterPage} from '../pages/filters/filter.page';
 import {BottleFactory} from '../model/bottle.factory';
 import {UploadBottlesModule} from '../pages/upload-bottles/upload-bottles.page.module';
 import {UploadBottlesPage} from '../pages/upload-bottles/upload-bottles.page';
-import {Statistics} from '../model/statistics';
-import {StatisticsComponent} from '../components/statistics/statistics';
 import {ChartsModule} from 'ng2-charts';
 import '../../node_modules/chart.js/dist/Chart.bundle.min.js';
 import {EmailLoginPage} from '../pages/login/email-login.page';
@@ -45,6 +43,11 @@ import {NotificationService} from '../service/notification.service';
 import {ProgressBarComponentModule} from '../components/progress-bar/progress-bar.module';
 import {ImageAttacherComponentModule} from '../components/image-attacher/image-attacher.module';
 import {DefaultImageDirective} from '../directives/default-image/default-image';
+import {DashboardPageModule} from '../pages/dashboard/dashboard.module';
+import {StatisticsComponentModule} from '../components/statistics/statistics.module';
+import {StatisticsComponent} from '../components/statistics/statistics';
+import {Statistics} from '../model/statistics';
+import {DirectiveModule} from '../directives/directive.module';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -61,7 +64,6 @@ export const fireConfig = {
               ContactPage,
               EmailLoginPage,
               FilterPage,
-              DashboardPage,
               HomePage,
               BrowsePage,
               BottleDetailPage,
@@ -70,9 +72,7 @@ export const fireConfig = {
               BottleIconPipe,
               BottleListComponent,
               TabsPage,
-              UpdatePage,
-              StatisticsComponent,
-              DefaultImageDirective
+              UpdatePage
             ],
             imports: [
               IonicModule.forRoot(MyCaveApp),
@@ -84,14 +84,17 @@ export const fireConfig = {
                                         }
                                       }),
               BrowserModule,
+              DashboardPageModule,
               HttpModule,
               AngularFireModule.initializeApp(fireConfig),
               AngularFireAuthModule,
               AngularFireDatabaseModule,
               ProfilePageModule,
+              DirectiveModule,
               UploadBottlesModule,
               ChartsModule,
               ProgressBarComponentModule,
+              StatisticsComponentModule,
               ImageAttacherComponentModule
             ],
             bootstrap: [ IonicApp ],
@@ -111,9 +114,7 @@ export const fireConfig = {
               BottleFactory,
               Bottles,
               Camera,
-              DefaultImageDirective,
               //Platform,
-              Statistics,
               StatusBar,
               SplashScreen,
               Facebook,
@@ -127,6 +128,7 @@ export const fireConfig = {
                 deps: [ AnonymousLoginService, EmailLoginService, FacebookLoginService ]
               },
               BottleService,
+              Statistics,
               DistributeService,
               FirebaseImageService,
               {
@@ -134,6 +136,9 @@ export const fireConfig = {
                 useFactory: (createNotificationFactory),
                 deps: [ AlertController, ToastController, TranslateService ]
               }
+            ], exports: [
+              StatisticsComponent,
+              DefaultImageDirective
             ]
           })
 export class AppModule {

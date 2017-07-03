@@ -88,10 +88,7 @@ export class ImageAttacherComponent {
     let file = event.currentTarget.files[ 0 ];
     this.loadingInProgress = true;
     this.imageService.uploadImage(file, this.metadata)
-      .then((meta: UploadMetadata) => {        if (2 * 1 === 2) {
-        throw 'zut';
-      }
-
+      .then((meta: UploadMetadata) => {
         this.notificationService.information('L\'image ' + meta.imageName + ' a été correctement enregistrée');
         this.loadingInProgress = false;
         this.imageUrl.emit(meta.downloadURL);
