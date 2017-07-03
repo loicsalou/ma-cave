@@ -87,5 +87,4 @@ export class BottleDetailPage implements OnInit {
 
   firstSlideReached(event) {
   }
-
 }

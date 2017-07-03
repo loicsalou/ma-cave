@@ -30,8 +30,4 @@ export class BottleDetailSlide {
   getIndex() {
     return this.index + 1;
   }
-
-  update() {
-    this.navCtrl.push(UpdatePage, {bottle: this.bottle});
-  }
 }
