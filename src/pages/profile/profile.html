@@ -8,7 +8,8 @@
 
 <ion-content align-items-center class="profile card-background-page page" *ngIf="user">
   <div style="display: flex; justify-content: center;" *ngIf="user.photoURL">
-    <img [src]="user.photoURL" style="width: 100%; height: 100%;">
+    <!--<img [src]="user.photoURL" style="width: 100%; height: 100%;">-->
+    <img [src]="user.photoURL" [defaultImage]="'/assets/icon/anonymous.png'" style="width: 100%; height: 100%;">
   </div>
   
   <ion-card class="card-background">

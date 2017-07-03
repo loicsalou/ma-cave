@@ -9,7 +9,7 @@
             <img src="assets/icon/checked.png" *ngIf="isSelected(bottle)">
             <img src="{{ bottle.label | bottleIcon }}" class="overridable logo"
                  *ngIf="! bottle.profile_image_url && !isSelected(bottle)">
-            <img [src]="bottle.profile_image_url" class="overridable logo"
+            <img [src]="bottle.profile_image_url" [defaultImage]="bottle" class="overridable logo"
                  *ngIf="bottle.profile_image_url && !isSelected(bottle)">
             <img src="assets/icon/starred.png" *ngIf="isBottleFavorite(bottle) && !isSelected(bottle)"
                  class="overridable logo">

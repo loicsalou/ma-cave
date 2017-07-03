@@ -1,9 +1,9 @@
 <ion-header class="header flex-container">
   <span class="flex-container flex-grow">
-    <button ion-button icon-only>
+    <button ion-button icon-only (click)="cancel()">
       <ion-icon name="arrow-back"></ion-icon>
     </button>
-    <ion-title (click)="save()">Update</ion-title>
+    <ion-title>Mise à jour</ion-title>
   </span>
   
   <img src="assets/icon/primary-logout.png" icon-only (click)="logout()" class="action-image toolbar-background-md"/>
@@ -28,7 +28,7 @@
   <ion-row d-flex>
     <ion-col>
       <img src="{{ bottle.label | bottleIcon }}" *ngIf="! getProfileImage()">
-      <img [src]="getProfileImage()" *ngIf="getProfileImage()">
+      <img [src]="getProfileImage()" [defaultImage]="'/assets/img/missing-image.jpg'" *ngIf="getProfileImage()">
     </ion-col>
     <ion-col style="margin-top: auto; margin-bottom: auto">
       <ion-item>
@@ -164,8 +164,8 @@
   
   <ion-slides style="height: 40vh" *ngIf="bottle.image_urls">
     <ion-slide *ngFor="let url of bottle.image_urls">
-      <ion-card *ngIf="imageIsAvailable(url)">
-        <img [src]="url" (error)="declareMissingImage(url)"/>
+      <ion-card *ngIf="imageIsAvailable(url)" style="may-height: 100%">
+        <img [src]="url" [defaultImage]="'/assets/img/missing-image.jpg'" (error)="declareMissingImage($event)"/>
       </ion-card>
     </ion-slide>
   </ion-slides>
