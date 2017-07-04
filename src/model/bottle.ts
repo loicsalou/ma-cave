@@ -1,14 +1,10 @@
 /**
  * Created by loicsalou on 01.03.17.
  */
-import * as _ from 'lodash';
 import {ImgDefaultable} from '../directives/default-image/img-defaultable';
 
 export class Bottle implements ImgDefaultable {
 
-  private static SPECIAL_CHARS_REMOVED = new RegExp(/[\.|\d|\n|\r|,|!|?|@]/g);
-
-  id?: string;
   classe_age?: string;
   favorite?: boolean;
   area_label: string;
@@ -36,41 +32,13 @@ export class Bottle implements ImgDefaultable {
   defaultImage ?: string;
 
   getDefaultImageSrc(): string {
-    return;
-  }
-
-  public static getMetadata(bottle: Bottle | any): BottleMetadata {
-    let keywords = [];
-    keywords.push(Bottle.extractKeywords(bottle.comment));
-    keywords.push(Bottle.extractKeywords(bottle.suggestion));
-    keywords.push(Bottle.extractKeywords(bottle.area_label));
-    keywords.push(Bottle.extractKeywords(bottle.label));
-    keywords.push(Bottle.extractKeywords(bottle.subregion_label));
-    keywords = _.uniq(_.flatten(keywords));
-
-    return {
-      area_label: bottle.area_label,
-      nomCru: bottle.nomCru,
-      subregion_label: bottle.subregion_label,
-      keywords: keywords
-    }
-  }
-
-  private static extractKeywords(text: string): string[] {
-    if (text) {
-      let ret = text.replace(Bottle.SPECIAL_CHARS_REMOVED, ' ');
-      return ret
-        .split(' ')
-        .filter(keyword => keyword.length > 2)
-        .map(keyword => keyword.toLowerCase());
-    } else {
-      return []
-    }
+    return this.defaultImage;
   }
 }
 
 export interface BottleMetadata {
   area_label: string;
+  area_label_search: string;
   nomCru: string;
   subregion_label: string;
   keywords: string[];

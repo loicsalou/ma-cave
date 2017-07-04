@@ -138,7 +138,7 @@ export class StatisticsComponent implements OnInit {
 
   // events
   public chartClicked(e: any): void {
-    if (e.active) {
+    if (e.active && e.active.length > 0) {
       let axisIndex = e.active[ 0 ][ '_index' ];
       let color = this.doughnutChartLabels[ axisIndex ];
       let fs: FilterSet = new FilterSet();

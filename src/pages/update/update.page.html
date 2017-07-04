@@ -26,7 +26,7 @@
   </ion-fab>
   
   <ion-row d-flex>
-    <ion-col>
+    <ion-col style="text-align: center;">
       <img src="{{ bottle.label | bottleIcon }}" *ngIf="! getProfileImage()">
       <img [src]="getProfileImage()" [defaultImage]="'/assets/img/missing-image.jpg'" *ngIf="getProfileImage()">
     </ion-col>
@@ -73,8 +73,7 @@
     <ion-item>
       <ion-label>{{'bottle.subregion_label' | translate}}</ion-label>
       <ion-select [(ngModel)]="bottle.subregion_label" required (ionChange)="loadRegionAreas()">
-        <ion-option *ngFor="let regionData of bottles.aocByArea" [value]="regionData.key">{{regionData
-          .key}}
+        <ion-option *ngFor="let regionData of bottles.aocByArea" [value]="regionData.key">{{regionData.key}}
         </ion-option>
       </ion-select>
     </ion-item>
@@ -83,8 +82,8 @@
   <ion-row>
     <ion-item>
       <ion-label>{{'bottle.area_label' | translate}}</ion-label>
-      <ion-select [(ngModel)]="bottle.area_label" required *ngIf="aoc">
-        <ion-option *ngFor="let data of aoc" [value]="data.area_label">
+      <ion-select [(ngModel)]="metadata.area_label_search" required *ngIf="aoc" (ionChange)="setAreaLabelFromMetadata()">
+      <ion-option *ngFor="let data of aoc" [value]="data.appellationSearched">
           <span>{{data.appellation}}
             <span *ngIf="data.subdivision">- [{{data.subdivision}}]</span>
           </span></ion-option>

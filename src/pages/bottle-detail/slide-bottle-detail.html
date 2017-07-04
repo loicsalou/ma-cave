@@ -1,16 +1,10 @@
 <div class="slide-bottle-detail">
   
-  <ion-fab center edge (click)="update()">
-    <button ion-fab mini>
-      <ion-icon name="create"></ion-icon>
-    </button>
-  </ion-fab>
-  
   <div>
     <div class="block" style="display:flex">
-      <div class="icon" style="text-align: left">
-        <img src="{{ bottle.label | bottleIcon }}" class="contain profile-image" *ngIf="! bottle.profile_image_url">
-        <img [src]="bottle.profile_image_url" [defaultImage]="bottle" class="contain profile-image"
+      <div class="icon">
+        <img src="{{ bottle.label | bottleIcon }}" class="profile-image" *ngIf="! bottle.profile_image_url">
+        <img [src]="bottle.profile_image_url" [defaultImage]="bottle" class="profile-image"
              *ngIf="bottle.profile_image_url">
       </div>
     </div>
@@ -25,16 +19,6 @@
       </ul>
     </div>
   </div>
-  <!---->
-  <!--<ion-slides #imgslides [pager]="true" [speed]="100" style="height: 40vh" *ngIf="bottle.image_urls"-->
-              <!--(ionSlideDidChange)="imageChanged($event)" (ionSlideWillChange)="imageWillChange($event)"-->
-              <!--[effect]="cube">-->
-    <!--<ion-slide *ngFor="let url of bottle.image_urls">-->
-      <!--<ion-card style="max-height: 100%">-->
-        <!--<img [defaultImage]="bottle" [src]="url" style="max-width: 45%; margin-right: auto; margin-left: auto;"/>-->
-      <!--</ion-card>-->
-    <!--</ion-slide>-->
-  <!--</ion-slides>-->
   
   <h4>{{"bottle.details" | translate}}</h4>
   <div class="block">

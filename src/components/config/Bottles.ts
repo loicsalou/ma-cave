@@ -2,6 +2,7 @@
  * Created by loicsalou on 08.03.17.
  */
 import {Injectable} from '@angular/core';
+import {Configuration} from './Configuration';
 
 @Injectable()
 export class Bottles {
@@ -37,6 +38,7 @@ export class Bottles {
       return {
         'subdivision': aoc.Subdivisions,
         'appellation': aoc.Appellations,
+        'appellationSearched': Configuration.getSearchStringFor(aoc.Appellations),
         'types': aoc[ 'Type de vins produit' ],
         'dryness': aoc[ 'Teneur en sucre' ]
       }
@@ -50,6 +52,8 @@ export interface AocInfo {
   subdivision;
   // ex: chablis, chablis grand cru...
   appellation;
+  //appellation en minuscules et dont on a retiré les caractères spéciaux
+  appellationSearched;
   //ex: rouge, blanc...
   types;
   //ex: Liquoreux, moëlleux...
