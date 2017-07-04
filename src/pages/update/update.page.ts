@@ -3,12 +3,13 @@ import {Bottle, BottleMetadata} from '../../model/bottle';
 import {NavController, NavParams} from 'ionic-angular';
 import {BottleService} from '../../service/firebase-bottle.service';
 import {Camera} from '@ionic-native/camera';
-import {FirebaseImageService, UploadMetadata} from '../../service/firebase-image.service';
+import {FirebaseImageService} from '../../service/firebase-image.service';
 import {Subscription} from 'rxjs/Subscription';
 import {AocInfo, Bottles} from '../../components/config/Bottles';
 import {LoginService} from '../../service/login.service';
 import {NotificationService} from '../../service/notification.service';
 import * as _ from 'lodash';
+import {Configuration} from '../../components/config/Configuration';
 
 /*
  Generated class for the Update component.
@@ -42,7 +43,7 @@ export class UpdatePage implements OnInit, OnDestroy {
               private loginService: LoginService, private bottles: Bottles) {
     //don't clone to keep firebase '$key' which is necessary to update
     this.bottle = navParams.data[ 'bottle' ];
-    this.metadata = Bottle.getMetadata(this.bottle);
+    this.metadata = Configuration.getMetadata(this.bottle);
   }
 
   ngOnDestroy(): void {
@@ -97,6 +98,21 @@ export class UpdatePage implements OnInit, OnDestroy {
     let aocs = this.bottles.aocByArea.filter(area => area.key === this.bottle.subregion_label);
     if (aocs && aocs.length > 0) {
       this.aoc = aocs[ 0 ].value;
+    }
+  }
+
+  /**
+   * l'utilisateur a choisi une appellation (en fait sa search string), qui se trouve maintenannt dans
+   * metadata.area_label_search il faut donc à partir de metadata.area_label_search retrouver le area_label qui
+   * correspond dans les AOC et modifier la bouteille pour renseigner la nouvelle appellation.
+   */
+  setAreaLabelFromMetadata() {
+    let chosenAoc: AocInfo[] = this.aoc.filter(anAoc => anAoc.appellationSearched === this.metadata.area_label_search);
+    if (chosenAoc && chosenAoc.length === 1) {
+      this.bottle.area_label = chosenAoc[ 0 ].appellation;
+    } else {
+      let nb = chosenAoc ? chosenAoc.length : 0;
+      this.notificationService.warning('Mise à jour de l\'appellation impossible: ' + nb + ' appellations trouvées');
     }
   }
 

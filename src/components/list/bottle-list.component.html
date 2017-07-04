@@ -5,12 +5,13 @@
     <ion-item>
       <ion-row>
         <ion-col col-2 style="padding-right:10px;">
-          <ion-avatar item-start (click)="switchSelected($event, bottle)">
+          <ion-avatar item-start (click)="switchSelected($event, bottle)" style="text-align: center">
             <img src="assets/icon/checked.png" *ngIf="isSelected(bottle)">
             <img src="{{ bottle.label | bottleIcon }}" class="overridable logo"
                  *ngIf="! bottle.profile_image_url && !isSelected(bottle)">
             <img [src]="bottle.profile_image_url" [defaultImage]="bottle" class="overridable logo"
-                 *ngIf="bottle.profile_image_url && !isSelected(bottle)">
+                 *ngIf="bottle.profile_image_url && !isSelected(bottle)" style="max-width: 100%; max-height: 100%;
+                 height:initial; width:initial">
             <img src="assets/icon/starred.png" *ngIf="isBottleFavorite(bottle) && !isSelected(bottle)"
                  class="overridable logo">
             <img src="assets/icon/in-basket.png" *ngIf="isBottleInBasket(bottle) && !isSelected(bottle)"

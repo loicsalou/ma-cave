@@ -18,6 +18,10 @@
     & > ion-datetime, & > ion-imput, & > ion-select {
       float: right;
     }
+
+    ion-select {
+      max-width: 70%;
+    }
   }
 
   textarea.text-input {

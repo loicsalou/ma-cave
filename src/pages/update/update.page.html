@@ -73,25 +73,22 @@
     <ion-item>
       <ion-label>{{'bottle.subregion_label' | translate}}</ion-label>
       <ion-select [(ngModel)]="bottle.subregion_label" required (ionChange)="loadRegionAreas()">
-        <ion-option *ngFor="let regionData of bottles.aocByArea" [value]="regionData.key">{{regionData
-          .key}}
+        <ion-option *ngFor="let regionData of bottles.aocByArea" [value]="regionData.key">{{regionData.key}}
         </ion-option>
       </ion-select>
     </ion-item>
-    {{bottle.subregion_label}}
   </ion-row>
   
   <ion-row>
     <ion-item>
       <ion-label>{{'bottle.area_label' | translate}}</ion-label>
-      <ion-select [(ngModel)]="bottle.area_label" required *ngIf="aoc">
-        <ion-option *ngFor="let data of aoc" [value]="data.area_label">
+      <ion-select [(ngModel)]="metadata.area_label_search" required *ngIf="aoc" (ionChange)="setAreaLabelFromMetadata()">
+      <ion-option *ngFor="let data of aoc" [value]="data.appellationSearched">
           <span>{{data.appellation}}
             <span *ngIf="data.subdivision">- [{{data.subdivision}}]</span>
           </span></ion-option>
       </ion-select>
     </ion-item>
-    {{bottle.area_label}}
   </ion-row>
   
   <ion-row>
