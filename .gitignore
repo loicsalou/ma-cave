@@ -31,5 +31,5 @@ $RECYCLE.BIN/
 Thumbs.db
 UserInterfaceState.xcuserstate
 src/components/detail/
-src/assets/init/cavus-export-utf8.csv
-src/assets/init/cavusvinifera-export-csv-win.csv
+_creation_data/init/cavus-export-utf8.csv
+_creation_data/init/cavusvinifera-export-csv-win.csv
