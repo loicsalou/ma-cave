@@ -2,30 +2,32 @@
 
 ion-header.home {
   background-color: #FFFFFF;
+  border: thin solid map-get($colors, light);
+
+  & > ion-title {
+    text-align: center;
+  }
 }
 
-.home {
+ion-content.home {
 
-  img.welcome-image {
-    background-color: white;
-    border: thin solid black;
-    padding: 5px;
-    margin: 10px;
-    width: 70%;
-    margin-left: 15%;
-    margin-bottom: 30px;
+  div.login {
+    background: transparentize(map-get($colors, light),.3);
+    margin-top: 70%;
   }
 
-  div.scroll-content {
-    flex-direction: row;
-    justify-content: flex-end;
+  legend {
+    color: map-get($colors, light);
+    font-size: 2em;
+    background: transparent;
   }
 
   button[badge] {
     height: 60px;
     width: 60px;
     border-radius: 50%;
-    background-color: lighten(map-get($colors, primary), .2);
+    background-color: map-get($colors, light);
+    color: map-get($colors, primary);
   }
 
   div[d-flex] {

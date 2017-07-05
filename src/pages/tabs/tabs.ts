@@ -3,6 +3,7 @@ import {UploadBottlesPage} from '../upload-bottles/upload-bottles.page';
 import {DashboardPage} from '../dashboard/dashboard';
 import {HomePage} from '../home/home';
 import {ProfilePage} from '../profile/profile';
+import {BrowsePage} from '../browse/browse.page';
 
 @Component({
              templateUrl: 'tabs.html'
@@ -12,6 +13,7 @@ export class TabsPage {
   // should be each tab's root Page
   loginRoot: any = HomePage;
   userRoot: any = ProfilePage;
+  browseRoot: any = BrowsePage;
   dashboardRoot: any = DashboardPage;
   adminRoot: any = UploadBottlesPage;
 

@@ -4,11 +4,7 @@
 
 <ion-content align-items-center class="home card-background-page page">
   
-  <div>
-    <img src="assets/img/cave-Hélicave1.jpg" class="welcome-image">
-  </div>
-  
-  <div>
+  <div class="login">
     <fieldset>
       <legend><h2>{{'app.please-login' | translate}}</h2></legend>
       <div d-flex>
@@ -16,7 +12,7 @@
           <img icon-only src="assets/icon/social_facebook_box_blue.png"/>
         </button>
         <button ion-button badge (click)="emailLogin()">
-          <ion-icon name="mail"></ion-icon>
+          <ion-icon name="mail" style="font-size: 2.4em;"></ion-icon>
         </button>
         <button ion-button badge (click)="anonymousLogin()">
           <img icon-only src="assets/icon/anonymous.png"/>

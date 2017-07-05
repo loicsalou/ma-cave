@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
 import { DashboardPage } from './dashboard';
 import {StatisticsComponentModule} from '../../components/statistics/statistics.module';
+import {TranslateModule} from '@ngx-translate/core';
 
 @NgModule({
   declarations: [
@@ -9,7 +10,8 @@ import {StatisticsComponentModule} from '../../components/statistics/statistics.
   ],
   imports: [
     IonicPageModule.forChild(DashboardPage),
-    StatisticsComponentModule
+    StatisticsComponentModule,
+    TranslateModule
   ],
   exports: [
     DashboardPage

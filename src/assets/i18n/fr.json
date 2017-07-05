@@ -1,7 +1,7 @@
 {
   "app": {
     "please-login": "Authentification",
-    "title": "Cave-Explorer",
+    "title": "L'assistant caviste",
     "information": "Information",
     "error": "Erreur !",
     "failed": "Echec !",
@@ -33,9 +33,12 @@
     "suggestion": "Suggestions",
     "volume": "Format"
   },
+  "statistics": {
+    "repartition-par-type": "Répartition par type de vin"
+  },
   "ans": "ans",
   "bottle-detail": "Informations détaillées",
-  "bottles": "bouteilles",
+  "bottles": "Bouteilles",
   "details": "Détails",
   "infos": "Informations pratiques",
   "middle": "Age moyen",
