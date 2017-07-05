@@ -7,12 +7,15 @@
 
 <ion-content align-items-center class="dashboard card-background-page page">
   
-  <ion-card class="card-background" (click)="browseCellar()">
-    <img src="assets/img/cave-sur-mesure.jpg"/>
-    <ion-card-title class="card-title">Explorer la cave</ion-card-title>
+  <ion-card class="card-background" *ngIf="bottles">
+    <ion-item>
+      <label>{{'bottles' | translate}}</label>
+      <span>{{bottles.length}}</span>
+    </ion-item>
   </ion-card>
   
   <ion-card class="card-background">
+    <ion-title>{{'repartition-par-type'| translate}}</ion-title>
     <statistics [axis]="'label'" [topMost]="5" [legend]="true"></statistics>
   </ion-card>
 

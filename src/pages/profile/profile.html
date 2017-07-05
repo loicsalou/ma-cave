@@ -14,11 +14,20 @@
   
   <ion-card class="card-background">
     <h2>Bienvenue {{user.displayName}}</h2>
-    <h3>Utilisateur cave-explorer: {{user.user}}</h3>
-    <h4>{{user.email}}</h4>
-    <h4>{{user.phoneNumber}}</h4>
+    <ion-item>
+      <label for="user">Votre nom d'utilisateur:</label>
+      <h3 id="user">{{user.user}}</h3>
+    </ion-item>
+    <ion-item>
+      <label for="email">e-mail</label>
+      <h4 id="email">{{user.email}}</h4>
+    </ion-item>
+    <ion-item>
+      <label for="tel">tél</label>
+      <h4 id="tel">{{user.phoneNumber}}</h4>
+    </ion-item>
   </ion-card>
-  
+
 </ion-content>
 
 <ion-footer text-right padding-horizontal>version {{version}}</ion-footer>

@@ -2,7 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {NavController} from 'ionic-angular';
 import {BrowsePage} from '../browse/browse.page';
 import {LoginService} from '../../service/login.service';
-import {HomePage} from '../home/home';
+import {BottleService} from '../../service/firebase-bottle.service';
+import {Bottle} from '../../model/bottle';
 
 @Component({
              selector: 'page-dashboard',
@@ -11,12 +12,14 @@ import {HomePage} from '../home/home';
            })
 export class DashboardPage implements OnInit {
   version: any;
+  bottles: Bottle[];
 
-  constructor(public navCtrl: NavController, public loginService: LoginService) {
+  constructor(public navCtrl: NavController, public loginService: LoginService, private bottleService: BottleService) {
   }
 
   ngOnInit(): void {
     this.version = require('../../../package.json').version;
+    this.bottleService.allBottlesObservable.subscribe((bottles: Bottle[]) => this.bottles = bottles);
   }
 
   filterOnText(event: any) {

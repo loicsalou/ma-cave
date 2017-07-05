@@ -42,6 +42,11 @@ $header-color2: rgba(51, 51, 51, .8);
   background: url('../assets/img/background/background2.jpeg');
 }
 
+ion-content.home {
+  background-image: url('../assets/img/background/splash-background.png');
+  background-size: cover;
+}
+
 .flex-container {
   display: flex;
   flex-direction: row;

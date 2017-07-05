@@ -1,6 +1,6 @@
 {
-    "name": "ma-cave",
-    "version": "5.7.9",
+    "name": "assistant-caviste",
+    "version": "5.8.1",
     "author": "Loic Salou",
     "homepage": "http://ionicframework.com/",
     "private": true,
@@ -96,7 +96,7 @@
             "locator": "ios"
         }
     ],
-    "description": "myApp: An Ionic project",
+    "description": "L'assistant caviste: ne perdez plus vos bouteilles !",
     "cordova": {
         "platforms": [
             "android"
