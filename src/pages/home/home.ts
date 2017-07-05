@@ -1,17 +1,19 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {Modal, ModalController, NavController, Platform} from 'ionic-angular';
 import {LoginService} from '../../service/login.service';
 import {EmailLoginPage} from '../login/email-login.page';
 import {User} from '../../model/user';
 import {TabsPage} from '../tabs/tabs';
 import {Subscription} from 'rxjs/Subscription';
+import {SplashScreen} from '@ionic-native/splash-screen';
 
 @Component({
              selector: 'page-home',
              templateUrl: 'home.html',
              styleUrls: [ '/home.scss' ]
            })
-export class HomePage implements OnInit {
+export class HomePage implements OnInit, AfterViewInit {
+
   version: any;
   private loginPage: Modal;
 
@@ -19,11 +21,17 @@ export class HomePage implements OnInit {
   private loginSubscription: Subscription;
 
   constructor(public navCtrl: NavController, public platform: Platform, public loginService: LoginService,
-              private modalController: ModalController) {
+              private modalController: ModalController, private splashScreen: SplashScreen) {
   }
 
   ngOnInit(): void {
     this.version = require('../../../package.json').version;
+  }
+
+  ngAfterViewInit(): void {
+    this.platform.ready().then(() => {
+      this.splashScreen.hide();
+    });
   }
 
   facebookLogin() {
