@@ -16,7 +16,12 @@
   
   <ion-card class="card-background">
     <ion-title>{{'repartition-par-type'| translate}}</ion-title>
-    <statistics [axis]="'label'" [topMost]="5" [legend]="true"></statistics>
+    <statistics [axis]="'label'" [topMost]="5" [legend]="'none'"></statistics>
+  </ion-card>
+  
+  <ion-card class="card-background">
+    <ion-title>{{'repartition-par-region'| translate}}</ion-title>
+    <statistics [type]="'doughnut'" [axis]="'subregion_label'" [topMost]="7" [legend]="'bottom'"></statistics>
   </ion-card>
 
 </ion-content>
