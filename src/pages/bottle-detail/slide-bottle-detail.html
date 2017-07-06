@@ -3,14 +3,14 @@
   <div>
     <div class="block" style="display:flex">
       <div class="icon">
-        <img src="{{ bottle.axisValue | bottleIcon }}" class="profile-image" *ngIf="! bottle.profile_image_url">
+        <img src="{{ bottle.label | bottleIcon }}" class="profile-image" *ngIf="! bottle.profile_image_url">
         <img [src]="bottle.profile_image_url" [defaultImage]="bottle" class="profile-image"
              *ngIf="bottle.profile_image_url">
       </div>
     </div>
     <div class="description">
       <ul class="circle">
-        <li>{{bottle.axisValue}}</li>
+        <li>{{bottle.label}}</li>
         <li>{{bottle.country_label}}, {{bottle.subregion_label}}, {{bottle.area_label}}</li>
         <li>{{bottle.classe_age }} ({{bottle.millesime}})</li>
         <li>{{ "bottle.quantite_courante" | translate }}: {{ bottle.quantite_courante }} sur {{bottle
