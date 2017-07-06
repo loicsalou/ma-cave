@@ -7,6 +7,9 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 export class ChartComponent implements OnInit {
 
   @Input()
+  axis: string;
+
+  @Input()
   labels: string[];
 
   @Input()
@@ -83,8 +86,9 @@ export class ChartComponent implements OnInit {
   private getChartEvent( index: number ): ChartEvent {
     return <ChartEvent> {
       index: index,
+      axis: this.axis,
       value: (index < this.data.length ? this.data[ index ] : undefined),
-      label: (index < this.labels.length ? this.labels[ index ] : undefined)
+      axisValue: (index < this.labels.length ? this.labels[ index ] : undefined)
     };
   }
 }
@@ -103,6 +107,7 @@ export enum ChartType {
 
 export interface ChartEvent {
   index: number;
+  axis: string;
   value: any;
-  label: string;
+  axisValue: string;
 }

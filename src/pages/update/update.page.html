@@ -27,7 +27,7 @@
   
   <ion-row d-flex>
     <ion-col style="text-align: center;">
-      <img src="{{ bottle.label | bottleIcon }}" *ngIf="! getProfileImage()">
+      <img src="{{ bottle.axisValue | bottleIcon }}" *ngIf="! getProfileImage()">
       <img [src]="getProfileImage()" [defaultImage]="'/assets/img/missing-image.jpg'" *ngIf="getProfileImage()">
     </ion-col>
     <ion-col style="margin-top: auto; margin-bottom: auto">
@@ -47,8 +47,8 @@
   
   <ion-row>
     <ion-item>
-      <ion-label float-left>{{'bottle.label' | translate}}</ion-label>
-      <ion-select [(ngModel)]="bottle.label">
+      <ion-label float-left>{{'bottle.axisValue' | translate}}</ion-label>
+      <ion-select [(ngModel)]="bottle.axisValue">
         <ion-option *ngFor="let colorPair of bottles.colors" [value]="colorPair.value">{{colorPair.value}}
         </ion-option>
       </ion-select>

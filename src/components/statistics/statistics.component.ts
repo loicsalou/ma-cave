@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DistributeService} from '../../service/distribute.service';
 import {Chart, ChartElement} from 'chart.js';
 import {BottleService} from '../../service/firebase-bottle.service';
@@ -7,6 +7,7 @@ import * as _ from 'lodash';
 import {FilterSet} from '../distribution/distribution';
 import {NavController} from 'ionic-angular';
 import {BrowsePage} from '../../pages/browse/browse.page';
+import {ChartEvent} from '../chart/chart.component';
 
 /**
  * Generated class for the StatisticsComponent component.
@@ -28,6 +29,9 @@ export class StatisticsComponent implements OnInit {
   topMost: number = 6;
   @Input()
   type: string = 'bar';
+
+  @Output()
+  filterApplied: EventEmitter<FilterSet> = new EventEmitter<FilterSet>();
 
   ready = false;
 
@@ -259,15 +263,14 @@ export class StatisticsComponent implements OnInit {
   }
 
   // events
-  public chartClicked(e: any): void {
-    if (e.active && e.active.length > 0) {
-      let axisIndex = e.active[ 0 ][ '_index' ];
-      let color = this.chartLabels[ axisIndex ];
+  public chartClicked(chartEvent: ChartEvent): void {
+    if (chartEvent) {
+      let axis = chartEvent.axis;
+      let axisValue = chartEvent.axisValue;
       let fs: FilterSet = new FilterSet();
-      fs.label = [ color ];
+      fs[ axis ] = [ axisValue ];
 
-      this.nav.push(BrowsePage, {filterSet: fs});
-      this.bottlesService.filterOn(fs);
+      this.filterApplied.emit(fs);
     }
   }
 
