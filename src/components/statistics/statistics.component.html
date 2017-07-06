@@ -1,0 +1,10 @@
+<div style="display: block" *ngIf="ready">
+  <chart *ngIf="ready"
+             [data]="chartData"
+             [axis]="axis"
+             [labels]="chartLabels"
+             [legend]="legend"
+             [colors]="chartColors"
+             [type]="type"
+             (portionSelected)="chartClicked($event)"></chart>
+</div>

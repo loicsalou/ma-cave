@@ -34,7 +34,8 @@
     "volume": "Format"
   },
   "statistics": {
-    "repartition-par-type": "Répartition par type de vin"
+    "repartition-par-type": "Répartition par type de vin",
+    "repartition-par-region": "Répartition par région"
   },
   "ans": "ans",
   "bottle-detail": "Informations détaillées",

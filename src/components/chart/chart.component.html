@@ -1,0 +1,13 @@
+<div class="chart-component" style="display: block">
+  <div *ngIf="ready" [class]="chartClass">
+    <canvas baseChart
+            [datasets]="dataset"
+            [labels]="labels"
+            [colors]="colors"
+            [legend]="legend"
+            [options]="options"
+            [chartType]="type"
+            (chartHover)="chartHovered($event)"
+            (chartClick)="chartClicked($event)"></canvas>
+  </div>
+</div>

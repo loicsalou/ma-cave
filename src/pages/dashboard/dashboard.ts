@@ -4,6 +4,7 @@ import {BrowsePage} from '../browse/browse.page';
 import {LoginService} from '../../service/login.service';
 import {BottleService} from '../../service/firebase-bottle.service';
 import {Bottle} from '../../model/bottle';
+import {FilterSet} from '../../components/distribution/distribution';
 
 @Component({
              selector: 'page-dashboard',
@@ -29,6 +30,11 @@ export class DashboardPage implements OnInit {
         text: text
       })
     }
+  }
+
+  browse(chosenFilter: FilterSet) {
+    this.navCtrl.push(BrowsePage, {filterSet: chosenFilter});
+    //this.bottleService.filterOn(chosenFilter);
   }
 
   browseCellar() {
