@@ -232,8 +232,8 @@ export class BottleService extends FirebaseService {
     return fromList.filter(bottle => {
       let ret = true;
       let attrValue = bottle[ attribute ].toString();
-      admissibleValues.forEach(admissibleValue => ret = ret && attrValue.indexOf(admissibleValue) !== -1);
-      return ret;
+      //admissibleValues.forEach(admissibleValue => ret = ret && attrValue.indexOf(admissibleValue) !== -1);
+      return admissibleValues.indexOf(attrValue) !== -1;
     })
   }
 
