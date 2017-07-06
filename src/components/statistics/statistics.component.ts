@@ -6,8 +6,7 @@ import {Bottle} from '../../model/bottle';
 import * as _ from 'lodash';
 import {FilterSet} from '../distribution/distribution';
 import {NavController} from 'ionic-angular';
-import {BrowsePage} from '../../pages/browse/browse.page';
-import {ChartComponent, ChartEvent} from '../chart/chart.component';
+import {ChartEvent} from '../chart/chart.component';
 
 /**
  * Generated class for the StatisticsComponent component.
@@ -68,6 +67,7 @@ export class StatisticsComponent implements OnInit {
       position: this.legend ? this.legend : 'none'
     }
   };
+  private others: KeyValue[];
 
   constructor(private distributionService: DistributeService, private bottlesService: BottleService, private nav: NavController) {
   }
@@ -100,7 +100,9 @@ export class StatisticsComponent implements OnInit {
     }
 
     //on enlève / regroupe les bouteilles représentant un pourcentage inférieur au seuil minimal d'importance
-    let significantData = this.reduceDistributionToSignificant(distribution, 0.02, this.topMost);
+    let splitted = this.splitData(distribution, 0.02, this.topMost);
+    let significantData = splitted.selected;
+    this.others = splitted.others;
     //on extrait les indexes (couleur du vin par ex)
     this.chartLabels = significantData.map(kv => kv.key);
     //on affecte les couleurs des portions du chart
@@ -118,7 +120,9 @@ export class StatisticsComponent implements OnInit {
     }
 
     //on enlève / regroupe les bouteilles représentant un pourcentage inférieur au seuil minimal d'importance
-    let significantData = this.reduceDistributionToSignificant(distribution, 0.02, this.topMost);
+    let splitted = this.splitData(distribution, 0.02, this.topMost);
+    let significantData = splitted.selected;
+    this.others = splitted.others;
     //on extrait les indexes (couleur du vin par ex)
     this.chartLabels = significantData.map(kv => kv.key);
     //on affecte les couleurs des portions du chart
@@ -137,7 +141,7 @@ export class StatisticsComponent implements OnInit {
    * @param onlyTop number of highest values to be in the chart
    * @returns {KeyValue[]}
    */
-  private reduceDistributionToSignificant(distribution: Distribution, minPercent: number, onlyTop: number): KeyValue[] {
+  private splitData(distribution: Distribution, minPercent: number, onlyTop: number): TopBelow {
     let nonSignificantNumber = 0
     if (onlyTop < 1 || minPercent > 1 || minPercent < 0) {
       throw new RangeError('onlyTop must be > 0, minPercent must be >= 0 and <=1');
@@ -148,6 +152,10 @@ export class StatisticsComponent implements OnInit {
       if (!keep) {
         nonSignificantNumber += value.value
       }
+      return keep;
+    });
+    let nonSignificantData = distribution.values.filter((value: KeyValue) => {
+      let keep = !(value.value / this.totalNumberOfBottles > minPercent);
       return keep;
     });
 
@@ -161,7 +169,7 @@ export class StatisticsComponent implements OnInit {
       significantData.push(<KeyValue> {key: 'autres', value: nonSignificantNumber});
     }
 
-    return significantData;
+    return {selected: significantData, others: nonSignificantData};
   }
 
   // events
@@ -170,7 +178,11 @@ export class StatisticsComponent implements OnInit {
       let axis = chartEvent.axis;
       let axisValue = chartEvent.axisValue;
       let fs: FilterSet = new FilterSet();
-      fs[ axis ] = [ axisValue ];
+      if (axisValue === 'autres') {
+        fs[ axis ] = this.others.map(keyValue => keyValue.key);
+      } else {
+        fs[ axis ] = [ axisValue ];
+      }
 
       this.filterApplied.emit(fs);
     }
@@ -179,4 +191,9 @@ export class StatisticsComponent implements OnInit {
   public chartHovered(e: any): void {
   }
 
+}
+
+interface TopBelow {
+  selected: KeyValue[];
+  others: KeyValue[];
 }
