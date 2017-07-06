@@ -1,11 +1,11 @@
-<ion-header style="display: flex" class="dashboard header">
+<ion-header style="display: flex" class="page-dashboard header">
   <ion-searchbar [placeholder]="Chercher" [autocomplete]="on" [autocorrect]="on" [animated]="true"
                  (search)="filterOnText($event)">
   </ion-searchbar>
   <img src="assets/icon/primary-logout.png" icon-only (click)="logout()"/>
 </ion-header>
 
-<ion-content align-items-center class="dashboard card-background-page page">
+<ion-content align-items-center class="page-dashboard card-background-page page">
   
   <ion-card class="card-background" *ngIf="bottles">
     <ion-item>
@@ -14,15 +14,15 @@
     </ion-item>
   </ion-card>
   
-  <ion-card class="card-background">
-    <ion-title>{{'repartition-par-type'| translate}}</ion-title>
+  <ion-card class="card-background by-label">
+    <ion-title>{{'statistics.repartition-par-type'| translate}}</ion-title>
     <statistics [type]="'bar'" [axis]="'label'" [topMost]="5" [legend]="'none'"
                 (filterApplied)="browse($event)"></statistics>
   </ion-card>
   
-  <ion-card class="card-background">
-    <ion-title>{{'repartition-par-region'| translate}}</ion-title>
-    <statistics [type]="'doughnut'" [axis]="'subregion_label'" [topMost]="7" [legend]="'bottom'"
+  <ion-card class="card-background by-region">
+    <ion-title>{{'statistics.repartition-par-region'| translate}}</ion-title>
+    <statistics [type]="'doughnut'" [axis]="'subregion_label'" [topMost]="7" [legend]="'right'"
                 (filterApplied)="browse($event)"></statistics>
   </ion-card>
 

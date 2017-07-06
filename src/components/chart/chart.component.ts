@@ -1,10 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 @Component({
-  selector: 'chart',
-  templateUrl: './chart.component.html'
-})
+             selector: 'chart',
+             templateUrl: './chart.component.html'
+           })
 export class ChartComponent implements OnInit {
+
+  private static LEGEND_POSITIONS = [ 'none', 'top', 'right', 'bottom', 'left' ];
 
   @Input()
   axis: string;
@@ -37,12 +39,16 @@ export class ChartComponent implements OnInit {
 
   ready = false;
 
-
   constructor() {
     this.portionSelected = new EventEmitter();
   }
 
   ngOnInit(): void {
+    if (this.legend) {
+      if (ChartComponent.LEGEND_POSITIONS.indexOf(this.legend) < 0) {
+        this.legend='top';
+      }
+    }
     this.dataset = [ {
       labels: this.labels, //apparemment pas utilisé,
       data: this.data,
@@ -50,7 +56,7 @@ export class ChartComponent implements OnInit {
       borderColor: 'black',
       borderWidth: 1
     } ];
-    //this.options = this.getOptions();
+    this.options = this.getOptions();
     this.ready = true;
   }
 
@@ -58,20 +64,21 @@ export class ChartComponent implements OnInit {
     return {
       responsive: true,
       responsiveAnimationDuration: 100,
+
       legend: {
-        display: this.legend !== 'none',
-        position: this.legend !== 'none' ? this.legend : ''
+        display: this.legend !== undefined,
+        position: this.legend !== undefined ? this.legend : 'top'
       }
     };
   }
 
-  chartHovered( event: any ) {
+  chartHovered(event: any) {
     let active = event[ 'active' ];
     let element: any = active !== undefined && active.length > 0 ? active[ 0 ] : undefined;
     this.trace('hover');
   }
 
-  chartClicked( event: any ) {
+  chartClicked(event: any) {
     let active = event[ 'active' ];
     let index = active !== undefined && active.length > 0 ? active[ 0 ][ '_index' ] : undefined;
     if (index !== undefined) {
@@ -79,11 +86,11 @@ export class ChartComponent implements OnInit {
     }
   }
 
-  trace( msg: string ) {
+  trace(msg: string) {
     // console.info(msg);
   }
 
-  private getChartEvent( index: number ): ChartEvent {
+  private getChartEvent(index: number): ChartEvent {
     return <ChartEvent> {
       index: index,
       axis: this.axis,

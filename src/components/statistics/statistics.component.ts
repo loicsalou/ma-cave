@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import {FilterSet} from '../distribution/distribution';
 import {NavController} from 'ionic-angular';
 import {BrowsePage} from '../../pages/browse/browse.page';
-import {ChartEvent} from '../chart/chart.component';
+import {ChartComponent, ChartEvent} from '../chart/chart.component';
 
 /**
  * Generated class for the StatisticsComponent component.
@@ -52,104 +52,6 @@ export class StatisticsComponent implements OnInit {
     'vin de paille': '#ffbf00',
     'vin jaune': '#ffff00'
   };
-  //static COLORS_BY_WINECOLOR = {
-  //  'autres':     {
-  //    backgroundColor: 'rgba(148,159,177,0.2)',
-  //    borderColor: 'rgba(148,159,177,1)',
-  //    pointBackgroundColor: 'rgba(148,159,177,1)',
-  //    pointBorderColor: '#fff',
-  //    pointHoverBackgroundColor: '#fff',
-  //    pointHoverBorderColor: 'rgba(148,159,177,0.8)'
-  //  },
-  //  'blanc': {
-  //    backgroundColor: '#f7f7d4',
-  //    borderColor: 'rgba(148,159,177,1)',
-  //    pointBackgroundColor: 'rgba(148,159,177,1)',
-  //    pointBorderColor: '#fff',
-  //    pointHoverBackgroundColor: '#fff',
-  //    pointHoverBorderColor: 'rgba(148,159,177,0.8)'
-  //  },
-  //  'blanc effervescent': {
-  //    backgroundColor: '#b3e87d',
-  //    borderColor: 'rgba(148,159,177,1)',
-  //    pointBackgroundColor: 'rgba(148,159,177,1)',
-  //    pointBorderColor: '#fff',
-  //    pointHoverBackgroundColor: '#fff',
-  //    pointHoverBorderColor: 'rgba(148,159,177,0.8)'
-  //  },
-  //  'blanc liquoreux': {
-  //    backgroundColor: '#f99806',
-  //    borderColor: 'rgba(148,159,177,1)',
-  //    pointBackgroundColor: 'rgba(148,159,177,1)',
-  //    pointBorderColor: '#fff',
-  //    pointHoverBackgroundColor: '#fff',
-  //    pointHoverBorderColor: 'rgba(148,159,177,0.8)'
-  //  },
-  //  'blanc moëlleux': {
-  //    backgroundColor: '#ffffcc',
-  //    borderColor: 'rgba(148,159,177,1)',
-  //    pointBackgroundColor: 'rgba(148,159,177,1)',
-  //    pointBorderColor: '#fff',
-  //    pointHoverBackgroundColor: '#fff',
-  //    pointHoverBorderColor: 'rgba(148,159,177,0.8)'
-  //  },
-  //  'cognac': {
-  //    backgroundColor: '#c76605',
-  //    borderColor: 'rgba(148,159,177,1)',
-  //    pointBackgroundColor: 'rgba(148,159,177,1)',
-  //    pointBorderColor: '#fff',
-  //    pointHoverBackgroundColor: '#fff',
-  //    pointHoverBorderColor: 'rgba(148,159,177,0.8)'
-  //  },
-  //  'rosé': {
-  //    backgroundColor: '#e619e6',
-  //    borderColor: 'rgba(148,159,177,1)',
-  //    pointBackgroundColor: 'rgba(148,159,177,1)',
-  //    pointBorderColor: '#fff',
-  //    pointHoverBackgroundColor: '#fff',
-  //    pointHoverBorderColor: 'rgba(148,159,177,0.8)'
-  //  },
-  //  'rosé effervescent': {
-  //    backgroundColor: '#b946b9',
-  //    borderColor: 'rgba(148,159,177,1)',
-  //    pointBackgroundColor: 'rgba(148,159,177,1)',
-  //    pointBorderColor: '#fff',
-  //    pointHoverBackgroundColor: '#fff',
-  //    pointHoverBorderColor: 'rgba(148,159,177,0.8)'
-  //  },
-  //  'rouge': {
-  //    backgroundColor: '#e61919',
-  //    borderColor: 'rgba(148,159,177,1)',
-  //    pointBackgroundColor: 'rgba(148,159,177,1)',
-  //    pointBorderColor: '#fff',
-  //    pointHoverBackgroundColor: '#fff',
-  //    pointHoverBorderColor: 'rgba(148,159,177,0.8)'
-  //  },
-  // 'vin blanc muté': {
-  //    backgroundColor: '#9e662e',
-  //    borderColor: 'rgba(148,159,177,1)',
-  //    pointBackgroundColor: 'rgba(148,159,177,1)',
-  //    pointBorderColor: '#fff',
-  //    pointHoverBackgroundColor: '#fff',
-  //    pointHoverBorderColor: 'rgba(148,159,177,0.8)'
-  //  },
-  // 'vin de paille': {
-  //    backgroundColor: '#ffbf00',
-  //    borderColor: 'rgba(148,159,177,1)',
-  //    pointBackgroundColor: 'rgba(148,159,177,1)',
-  //    pointBorderColor: '#fff',
-  //    pointHoverBackgroundColor: '#fff',
-  //    pointHoverBorderColor: 'rgba(148,159,177,0.8)'
-  //  },
-  // 'vin jaune': {
-  //    backgroundColor: '#ffff00',
-  //    borderColor: 'rgba(148,159,177,1)',
-  //    pointBackgroundColor: 'rgba(148,159,177,1)',
-  //    pointBorderColor: '#fff',
-  //    pointHoverBackgroundColor: '#fff',
-  //    pointHoverBorderColor: 'rgba(148,159,177,0.8)'
-  //  }
-  //};
 
   totalNumberOfBottles: number = 0;
   private totalNumberOfLots: number;
