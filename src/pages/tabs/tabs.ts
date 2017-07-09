@@ -4,6 +4,7 @@ import {DashboardPage} from '../dashboard/dashboard';
 import {HomePage} from '../home/home';
 import {ProfilePage} from '../profile/profile';
 import {BrowsePage} from '../browse/browse.page';
+import {CellarPage} from '../cellar/cellar.page';
 
 @Component({
              templateUrl: 'tabs.html'
@@ -14,6 +15,7 @@ export class TabsPage {
   loginRoot: any = HomePage;
   userRoot: any = ProfilePage;
   browseRoot: any = BrowsePage;
+  cellarRoot: any = CellarPage;
   dashboardRoot: any = DashboardPage;
   adminRoot: any = UploadBottlesPage;
 

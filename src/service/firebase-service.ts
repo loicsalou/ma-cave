@@ -10,19 +10,15 @@ import {AngularFireDatabase} from 'angularfire2/database';
 
 export abstract class FirebaseService {
 
-  private USERS_FOLDER = 'users';
-  private BOTTLES_FOLDER = 'bottles';
-  private IMAGES_FOLDER = 'images';
-  private XREF_FOLDER = 'xref';
+  protected USERS_FOLDER = 'users';
+  protected XREF_FOLDER = 'xref';
 
-  public BOTTLES_ROOT: string;
   public XREF_ROOT: string;
-  public IMAGES_ROOT: string;
 
   private loading: Loading;
 
   constructor(protected angularFirebase: AngularFireDatabase, private loadingCtrl: LoadingController, protected notificationService: NotificationService,
-              private loginService: LoginService, private translateService: TranslateService) {
+              protected loginService: LoginService, private translateService: TranslateService) {
     loginService.authentifiedObservable.subscribe(
       user => {
         if (loginService.user !== undefined) {
@@ -40,14 +36,10 @@ export abstract class FirebaseService {
   }
 
   protected initialize(user) {
-      this.BOTTLES_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + this.BOTTLES_FOLDER;
-      this.IMAGES_ROOT = this.IMAGES_FOLDER;
       this.XREF_ROOT = this.XREF_FOLDER;
   }
 
   protected cleanup() {
-    this.BOTTLES_ROOT = undefined;
-    this.IMAGES_ROOT = undefined;
     this.XREF_ROOT = undefined;
   }
 

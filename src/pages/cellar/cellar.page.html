@@ -1,0 +1,23 @@
+<ion-header class="cellar-page">
+  
+  <ion-navbar>
+    <ion-title>cellar</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content padding class="cellar-page">
+  
+  <ion-row *ngIf="chosenLocker">
+    <locker [locker]="chosenLocker"></locker>
+  </ion-row>
+  
+  <ion-row>
+    <ion-slides>
+      <ion-slide *ngFor="let locker of otherLockers">
+        <locker [locker]="locker" (click)="chooseLocker(locker)"></locker>
+      </ion-slide>
+    </ion-slides>
+  </ion-row>
+  
+</ion-content>
