@@ -62,8 +62,8 @@ export class MockCellarService implements CellarService {
       type: LockerType.double, // frigo, étagère, filaire...
       material: LockerMaterial.fridge, //utile ? texture plutôt ? à voir
       dimensions: {
-        x: 6,
-        y: 10
+        x: 4,
+        y: 16
       },
       defaultImage: '', // une image par défaut si par d'imageUrl
       bottleSizeCompatibility: [

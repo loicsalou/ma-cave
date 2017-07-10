@@ -1,3 +1,15 @@
-cellar-page {
+.cellar-page {
 
+  div.slide-zoom {
+    height: 100%;
+  }
+
+  ion-row {
+    height: 50%;
+  }
+  ion-scroll {
+    height: 100%;
+    width: 100%;
+    white-space: nowrap;
+  }
 }

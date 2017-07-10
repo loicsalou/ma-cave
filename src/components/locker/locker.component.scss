@@ -1,3 +1,17 @@
-locker-component {
+.locker-component {
+  max-height: 40vh;
+  min-height: 30vh;
+  display: flex;
+  flex-direction: column;
 
+  .locker {
+
+    div.locker-cell {
+      background-color: transparent;
+      background-image: url("/assets/img/cell-color/verre-blanc.png");
+      background-size: contain;
+      min-height: 20px;
+      min-width: 20px;
+    }
+  }
 }

@@ -9,15 +9,19 @@
 <ion-content padding class="cellar-page">
   
   <ion-row *ngIf="chosenLocker">
-    <locker [locker]="chosenLocker"></locker>
+    <ion-scroll scrollX="true" scrollY="true" zoom="true" maxZoom="3">
+      <locker [locker]="chosenLocker"></locker>
+    </ion-scroll>
   </ion-row>
   
   <ion-row>
     <ion-slides>
       <ion-slide *ngFor="let locker of otherLockers">
-        <locker [locker]="locker" (click)="chooseLocker(locker)"></locker>
+        <ion-scroll scrollX="true" scrollY="true" zoom="true" maxZoom="3">
+          <locker [locker]="locker" (click)="chooseLocker(locker)"></locker>
+        </ion-scroll>
       </ion-slide>
     </ion-slides>
   </ion-row>
-  
+
 </ion-content>
