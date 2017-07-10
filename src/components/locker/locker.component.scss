@@ -8,10 +8,66 @@
 
     div.locker-cell {
       background-color: transparent;
-      background-image: url("/assets/img/cell-color/verre-blanc.png");
       background-size: contain;
       min-height: 20px;
       min-width: 20px;
+      border: thin solid black;
+
+      &.cognac {
+        background-image: url("../assets/img/cell-color/verre-cognac.png");
+      }
+
+      &.half-dry {
+        background-image: url("../assets/img/cell-color/verre-demi-sec.png");
+      }
+
+      &.liquorous {
+        background-image: url("../assets/img/cell-color/verre-yquem.png");
+      }
+
+      &.red {
+        background-image: url("../assets/img/cell-color/verre-rouge.png");
+      }
+
+      &.rose {
+        background-image: url("../assets/img/cell-color/verre-rose.png");
+      }
+
+      &.rose-sparkling {
+        background-image: url("../assets/img/cell-color/verre-champagne-rose.png");
+      }
+
+      &.straw {
+        background-image: url("../assets/img/cell-color/vin-de-paille.png");
+      }
+
+      &.undefined {
+        background-image: url("../assets/img/cell-color/verre-inconnu.png");
+      }
+
+      &.white {
+        background-image: url("../assets/img/cell-color/verre-blanc.png");
+      }
+
+      &.white-mutated {
+        background-image: url("../assets/img/cell-color/verre-blanc-mute.png");
+      }
+
+      &.red-mutated {
+        background-image: url("../assets/img/cell-color/verre-rouge-mute.png");
+      }
+
+      &.white {
+        background-image: url("../assets/img/cell-color/verre-blanc.png");
+      }
+
+      &.white-sparkling {
+        background-image: url("../assets/img/cell-color/verre-champagne.png");
+      }
+
+      &.yellow {
+        background-image: url("../assets/img/cell-color/vin-jaune.png");
+      }
     }
   }
 }
