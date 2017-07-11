@@ -1,20 +1,12 @@
 <!-- Generated template for the LockerComponent component -->
 <div class="locker-component">
-  <p (onchange)="change()">{{locker.name}}-{{locker.dimensions.x}}-{{locker.dimensions.y}}</p>
   <div class="locker">
     <div class="container">
       <div class="row" *ngFor="let row of rows">
         <div *ngFor="let cell of row.cells">
-          <div class="cell" [ngClass]="cell.cellClass" (click)="cellClicked(cell)"></div>
+          <div class="cell" [ngClass]="cell.cellClass" (click)="cellSelected(cell)"></div>
         </div>
       </div>
     </div>
-    <!--<table>-->
-    <!--<tr *ngFor="let row of rows">-->
-    <!--<td *ngFor="let cell of row.cells">-->
-    <!--<div class="locker-cell" [ngClass]="cell.cellClass" (click)="cellClicked(cell)"></div>-->
-    <!--</td>-->
-    <!--</tr>-->
-    <!--</table>-->
   </div>
 </div>

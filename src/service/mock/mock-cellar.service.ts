@@ -5,11 +5,13 @@ import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {LoadingController} from 'ionic-angular';
-import {BottleSize, Locker, LockerMaterial, LockerType} from '../../model/locker';
 import {LockerFactory} from '../../model/locker.factory';
 import {NotificationService} from '../notification.service';
 import {LoginService} from '../login.service';
 import {CellarService} from '../cellar.service';
+import {FridgeLocker} from '../../model/fridge-locker';
+import {SimpleLocker} from '../../model/simple-locker';
+import {BottleSize, Locker, LockerType} from '../../model/locker';
 
 /**
  * Services related to the cellar itself, locker and place of the lockers.
@@ -20,7 +22,7 @@ import {CellarService} from '../cellar.service';
 export class MockCellarService implements CellarService {
   private _lockers: BehaviorSubject<Locker[]> = new BehaviorSubject<Locker[]>([]);
   private _allLockersObservable: Observable<Locker[]> = this._lockers.asObservable();
-  private allLockersArray: Locker[]=[];
+  private allLockersArray: Locker[] = [];
 
   constructor(private loadingCtrl: LoadingController,
               private lockerFactory: LockerFactory,
@@ -33,70 +35,55 @@ export class MockCellarService implements CellarService {
     this._lockers.next(this.allLockersArray);
   }
 
-  get allLockersObservable(): Observable<Locker[]> {
+  get allLockersObservable(): Observable<SimpleLocker[]> {
     return this._allLockersObservable;
   }
 
   private initMocks() {
-    let locker: Locker = {
-      name: 'casier 1',
-      type: LockerType.simple, // frigo, étagère, filaire...
-      material: LockerMaterial.polystyrene, //utile ? texture plutôt ? à voir
-      dimensions: {
-        x: 6,
-        y: 10
-      },
-      defaultImage: '', // une image par défaut si par d'imageUrl
-      bottleSizeCompatibility: [
-        BottleSize.normale,
-        BottleSize.clavelin
+    let locker = new SimpleLocker('casier 1',
+                                  LockerType.simple,
+                                  {
+                                    x: 12,
+                                    y: 10,
+                                  },
+                                  'casier numéro 1',
+    );
+    let locker2=new FridgeLocker(
+      'Frigo',
+      LockerType.fridge, // frigo, étagère, filaire...
+      [
+        {
+          x: 6,
+          y: 2
+        },
+        {
+          x: 6,
+          y: 4
+        },
+        {
+          x: 6,
+          y: 5
+        },
+        {
+          x: 6,
+          y: 3
+        },
+        {
+          x: 6,
+          y: 2
+        }
       ],
-      comment: 'casier numéro 1',
+      'Frigo cave'
+    );
+    let locker3 = new SimpleLocker('Grand rangement',
+                                  LockerType.shifted,
+                                  {
+                                    x: 16,
+                                    y: 20,
+                                  },
+                                  'Empilement de cellules polystyrène',
+    );
 
-      getDefaultImageSrc(): string {
-        return this.defaultImage;
-      }
-    };
-    let locker2: Locker = {
-      name: 'Frigo',
-      type: LockerType.double, // frigo, étagère, filaire...
-      material: LockerMaterial.fridge, //utile ? texture plutôt ? à voir
-      dimensions: {
-        x: 4,
-        y: 16
-      },
-      defaultImage: '', // une image par défaut si par d'imageUrl
-      bottleSizeCompatibility: [
-        BottleSize.normale,
-        BottleSize.clavelin,
-        BottleSize.demie
-      ],
-      comment: 'Frigo cave',
-
-      getDefaultImageSrc(): string {
-        return this.defaultImage;
-      }
-    };
-    let locker3: Locker = {
-      name: 'Grand rangement',
-      type: LockerType.shifted, // frigo, étagère, filaire...
-      material: LockerMaterial.polystyrene, //utile ? texture plutôt ? à voir
-      dimensions: {
-        x: 16,
-        y: 12
-      },
-      defaultImage: '', // une image par défaut si par d'imageUrl
-      bottleSizeCompatibility: [
-        BottleSize.normale,
-        BottleSize.clavelin,
-        BottleSize.demie
-      ],
-      comment: 'Empilement de cellules polystyrène',
-
-      getDefaultImageSrc(): string {
-        return this.defaultImage;
-      }
-    };
     this.allLockersArray.push(locker);
     this.allLockersArray.push(locker2);
     this.allLockersArray.push(locker3);

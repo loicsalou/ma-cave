@@ -7,11 +7,13 @@ import {MockCellarService} from '../../service/mock/mock-cellar.service';
 import {FirebaseCellarService} from '../../service/firebase-cellar.service';
 import {CommonModule} from '@angular/common';
 import {BrowserModule} from '@angular/platform-browser';
+import {FridgeLockerComponent} from '../../components/locker/fridge-locker.component';
 
 @NgModule({
             declarations: [
               CellarPage,
-              LockerComponent
+              LockerComponent,
+              FridgeLockerComponent
             ],
             imports: [
               BrowserModule,
@@ -22,7 +24,8 @@ import {BrowserModule} from '@angular/platform-browser';
             ],
             exports: [
               CellarPage,
-              LockerComponent
+              LockerComponent,
+              FridgeLockerComponent
             ],
             providers: [
               {provide: FirebaseCellarService, useClass: MockCellarService}

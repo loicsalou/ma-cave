@@ -2,7 +2,7 @@
  * Created by loicsalou on 28.02.17.
  */
 import {Injectable} from '@angular/core';
-import {Locker} from '../model/locker';
+import {SimpleLocker} from '../model/simple-locker';
 import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {AngularFireDatabase} from 'angularfire2/database';
@@ -27,9 +27,9 @@ export class FirebaseCellarService extends FirebaseService implements CellarServ
   private CELLAR_ROOT: string;
 
   private firebaseRef: Reference;
-  private _lockers: BehaviorSubject<Locker[]> = new BehaviorSubject<Locker[]>([]);
-  private _allLockersObservable: Observable<Locker[]> = this._lockers.asObservable();
-  private allLockersArray: Locker[];
+  private _lockers: BehaviorSubject<SimpleLocker[]> = new BehaviorSubject<SimpleLocker[]>([]);
+  private _allLockersObservable: Observable<SimpleLocker[]> = this._lockers.asObservable();
+  private allLockersArray: SimpleLocker[];
 
   constructor(firebase: AngularFireDatabase,
               loadingCtrl: LoadingController,
@@ -61,8 +61,8 @@ export class FirebaseCellarService extends FirebaseService implements CellarServ
           orderByChild: 'name',
         }
       });
-      items.subscribe((lockers: Locker[]) => {
-        lockers.forEach((locker: Locker) => this.lockerFactory.create(locker));
+      items.subscribe((lockers: SimpleLocker[]) => {
+        lockers.forEach((locker: SimpleLocker) => this.lockerFactory.create(locker));
         this.setallLockersArray(lockers);
         this.dismissLoading();
       });
@@ -72,7 +72,7 @@ export class FirebaseCellarService extends FirebaseService implements CellarServ
     }
   }
 
-  public update(lockers: Locker[]) {
+  public update(lockers: SimpleLocker[]) {
     lockers.forEach(locker => {
       this.firebaseRef.child(locker[ '$key' ]).set(locker, (
         err => {
@@ -84,11 +84,11 @@ export class FirebaseCellarService extends FirebaseService implements CellarServ
     })
   }
 
-  public save(lockers: Locker[]) {
+  public save(lockers: SimpleLocker[]) {
     lockers.forEach(locker => this.firebaseRef.push(locker));
   }
 
-  public replaceLocker(locker: Locker) {
+  public replaceLocker(locker: SimpleLocker) {
     this.firebaseRef.child(locker[ '$key' ])
       .set(locker,
            err => {
@@ -104,15 +104,15 @@ export class FirebaseCellarService extends FirebaseService implements CellarServ
     )
   }
 
-  public initializeDB(lockers: Locker[]) {
+  public initializeDB(lockers: SimpleLocker[]) {
     lockers.forEach(locker => this.firebaseRef.push(locker));
   }
 
-  get allLockersObservable(): Observable<Locker[]> {
+  get allLockersObservable(): Observable<SimpleLocker[]> {
     return this._allLockersObservable;
   }
 
-  private setallLockersArray(lockers: Locker[]) {
+  private setallLockersArray(lockers: SimpleLocker[]) {
     this.allLockersArray = lockers;
     this._lockers.next(lockers);
   }
@@ -123,7 +123,7 @@ export class FirebaseCellarService extends FirebaseService implements CellarServ
    * @param keywords an array of searched keywords
    * @returns array of matching lockers
    */
-  private getLockersByKeywords(fromList: Locker[], keywords: string[]): any {
+  private getLockersByKeywords(fromList: SimpleLocker[], keywords: string[]): any {
     if (!keywords || keywords.length == 0) {
       return fromList;
     }
@@ -155,7 +155,7 @@ export class FirebaseCellarService extends FirebaseService implements CellarServ
     );
   }
 
-  private filterByAttribute(fromList: Locker[ ], attribute: string, admissibleValues: string[ ]) {
+  private filterByAttribute(fromList: SimpleLocker[ ], attribute: string, admissibleValues: string[ ]) {
     return fromList.filter(locker => {
       let ret = true;
       let attrValue = locker[ attribute ].toString();

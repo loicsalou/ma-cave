@@ -1,27 +1,44 @@
 <ion-header class="cellar-page">
   
   <ion-navbar>
-    <ion-title>cellar</ion-title>
+    <span class="title">
+      <ion-title>cellar</ion-title>
+      <div *ngIf="paginatedLocker">
+        <p *ngIf="chosenLocker">{{chosenLocker.name}}</p>
+        <p>{{paginatedLocker.name}}</p>
+      </div>
+    </span>
   </ion-navbar>
 
 </ion-header>
 
 <ion-content padding class="cellar-page">
   
-  <ion-row *ngIf="chosenLocker">
-    <ion-scroll scrollX="true" scrollY="true" zoom="true" maxZoom="3">
-      <locker [locker]="chosenLocker"></locker>
+  <ion-row>
+    <ion-scroll scrollX="true" scrollY="true" [zoom]="true" [maxZoom]="3" *ngIf="chosenLocker">
+      <locker [locker]="chosenLocker" *ngIf="!chosenLocker.isFridge()" (selected)="cellSelected($event)"></locker>
+      <fridge-locker [fridge]="chosenLocker" *ngIf="chosenLocker.isFridge()"
+                     (selected)="cellSelected($event)"></fridge-locker>
     </ion-scroll>
   </ion-row>
   
   <ion-row>
-    <ion-slides>
+    <ion-slides [zoom]="true" [pager]="true" (ionSlideDidChange)="slideChanged()">
       <ion-slide *ngFor="let locker of otherLockers">
-        <ion-scroll scrollX="true" scrollY="true" zoom="true" maxZoom="3">
-          <locker [locker]="locker" (click)="chooseLocker(locker)"></locker>
+        <ion-scroll scrollX="true" scrollY="true" [zoom]="true" [maxZoom]="3">
+          <locker [locker]="locker" *ngIf="!locker.isFridge()"
+                  (selected)="cellSelected($event)"></locker>
+          <fridge-locker [fridge]="locker" *ngIf="locker.isFridge()"
+                         (selected)="cellSelected($event)"></fridge-locker>
         </ion-scroll>
       </ion-slide>
     </ion-slides>
   </ion-row>
+  
+  <ion-fab bottom right>
+    <button ion-fab (click)="chooseLocker(paginatedLocker)">
+      <ion-icon name="arrow-dropup"></ion-icon>
+    </button>
+  </ion-fab>
 
 </ion-content>

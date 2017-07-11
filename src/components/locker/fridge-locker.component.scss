@@ -1,0 +1,10 @@
+.fridge-locker-component {
+  .rack {
+    display: flex;
+    flex-direction: column;
+
+    locker .container {
+      border-bottom: 3px solid map-get($colors, brown);
+    }
+  }
+}
