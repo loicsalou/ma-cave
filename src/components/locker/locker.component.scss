@@ -1,17 +1,30 @@
 .locker-component {
   max-height: 40vh;
   min-height: 30vh;
-  display: flex;
-  flex-direction: column;
 
   .locker {
 
-    div.locker-cell {
-      background-color: transparent;
+    .container {
+      background: url("../assets/img/background/tex-bois.jpeg");
+      display: inline-flex;
+      flex-direction: column;
+      flex-shrink: 1;
+      padding: 5px;
+    }
+
+    .row {
+      flex-wrap: nowrap;
+    }
+
+    .cell {
+      background-color: rgba(245,245,220,20%);
       background-size: contain;
       min-height: 20px;
       min-width: 20px;
-      border: thin solid black;
+      border: thin solid darken(white, 20%);
+      border-radius: 50% 50%;
+      margin-left: 1px;
+      margin-bottom: 1px;
 
       &.bubbles {
         background-image: url("../assets/img/cell-color/bubbles.png");
