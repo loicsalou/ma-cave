@@ -5,7 +5,7 @@
       <ion-title>cellar</ion-title>
       <div *ngIf="paginatedLocker">
         <p *ngIf="chosenLocker">{{chosenLocker.name}}</p>
-        <p>{{paginatedLocker.name}}</p>
+        <p>{{paginatedLocker.name}} - {{selectedCell ? selectedCell.color : 'none'}}</p>
       </div>
     </span>
   </ion-navbar>
@@ -38,6 +38,12 @@
   <ion-fab bottom right>
     <button ion-fab (click)="chooseLocker(paginatedLocker)">
       <ion-icon name="arrow-dropup"></ion-icon>
+    </button>
+  </ion-fab>
+  
+  <ion-fab top right *ngIf="pendingCell">
+    <button ion-fab class="pending-bottle">
+      <img src="{{ pendingCell.bottle.label | bottleIcon }}">
     </button>
   </ion-fab>
 

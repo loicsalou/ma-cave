@@ -8,6 +8,7 @@ import {FirebaseCellarService} from '../../service/firebase-cellar.service';
 import {CommonModule} from '@angular/common';
 import {BrowserModule} from '@angular/platform-browser';
 import {FridgeLockerComponent} from '../../components/locker/fridge-locker.component';
+import {SharedModule} from '../../components/shared.module';
 
 @NgModule({
             declarations: [
@@ -20,6 +21,7 @@ import {FridgeLockerComponent} from '../../components/locker/fridge-locker.compo
               CommonModule,
               IonicModule,
               IonicPageModule.forChild(CellarPage),
+              SharedModule,
               TranslateModule
             ],
             exports: [

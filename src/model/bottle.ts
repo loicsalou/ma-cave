@@ -24,7 +24,7 @@ export class Bottle implements ImgDefaultable {
   profile_image_url?: string;
   image_urls?: string[];
   quantite_achat: string;
-  quantite_courante: string;
+  quantite_courante: number;
   subregion_label: string;
   suggestion: string;
   volume: string;

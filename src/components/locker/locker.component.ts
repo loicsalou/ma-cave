@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {SimpleLocker} from '../../model/simple-locker';
 import {Configuration} from '../config/Configuration';
 import {LockerType} from '../../model/locker';
+import {Bottle} from '../../model/bottle';
 
 /**
  * Generated class for the LockerComponent component.
@@ -62,68 +63,97 @@ export class LockerComponent implements OnInit {
 
   cellSelected(cell: Cell) {
     if (cell) {
-      cell.switchSelected();
       this.selected.emit(cell);
     }
   }
 
-  label() {
+  mockBottle() {
+    let label = undefined;
     let ix = Math.round(Math.random() * 12);
-    if (ix > LockerComponent.COLORS.length) {
-      return undefined; // emplacement vide
+    if (ix < LockerComponent.COLORS.length) {
+      label = LockerComponent.COLORS[ ix ];
     } else {
-      return LockerComponent.COLORS[ ix ];
+      return undefined;
     }
+    let bottle = new Bottle();
+    bottle.label = label;
+    bottle.area_label = 'area_label';
+    bottle.subregion_label = 'subregion_label';
+    bottle.nomCru = 'nomCru';
+    bottle.quantite_courante = 1;
+    return bottle;
   }
 
   private resetComponent() {
     this.rows = [];
     for (let i = 0; i < this.locker.dimension.y; i++) {
-      this.rows[ i ] = this.initRow(this.locker.dimension.x);
+      this.rows[ i ] = this.initRow(this.locker.dimension.x, i);
     }
   }
 
-  private initRow(nbcells: number): Row {
+  private initRow(nbcells: number, rowNumber: number): Row {
     let cells: Cell[] = [];
+    let rowId = this.locker.name + '-' + rowNumber;
     for (let i = 0; i < nbcells; i++) {
-      cells[ i ] = new Cell(this.label());
+      cells[ i ] = new Cell(this.mockBottle(), rowId + '-' + i);
     }
-    return new Row(cells);
-  }
-
-  private initCell(): Cell {
-    return new Cell(this.label());
+    return new Row(cells, rowId);
   }
 }
 
 class Row {
 
-  constructor(cells: Cell[]) {
+  private id: string;
+  cells: Cell[];
+
+  constructor(cells: Cell[], id: string) {
     this.cells = cells;
+    this.id = id;
   }
 
-  cells: Cell[];
 }
 
 export class Cell {
+  id: string;
+  bottle: Bottle;
   cellClass: string;
-  empty: boolean = true;
   selected = false;
 
-  constructor(color: string) {
-    if (color) {
-      this.empty = false;
-      this.cellClass = Configuration.colorsText2Code[ color.toLowerCase() ];
-    } else {
+  constructor(bottle: Bottle, id: string) {
+    this.id = id;
+    this.storeBottle(bottle);
+  }
+
+  public isEmpty(): boolean {
+    return this.bottle === undefined;
+  }
+
+  public withdraw(): any {
+    let btl = this.bottle;
+    this.bottle = undefined;
+    this.cellClass = 'empty';
+    return btl;
+  }
+
+  public storeBottle(bottle: Bottle) {
+    this.bottle = bottle;
+    if (this.isEmpty()) {
       this.cellClass = 'empty';
+    } else {
+      if (bottle.label === undefined) {
+        console.info();
+      } else {
+        this.cellClass = Configuration.colorsText2Code[ bottle.label.toLowerCase() ];
+      }
     }
   }
 
-  switchSelected() {
-    if (this.empty) {
-      return;
-    }
-    this.selected = !this.selected;
+  /**
+   * cellule cliquée ==> remonter l'information jusqu'à la page pour qu'une éventuelle bouteille en transit soit
+   * affectée à la cellule cliquée
+   */
+  setSelected(selected: boolean) {
+    this.selected = selected;
     if (this.selected) {
       this.cellClass += ' selected';
     } else {

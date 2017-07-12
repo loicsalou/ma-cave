@@ -130,9 +130,9 @@ export const fireConfig = {
               Statistics,
               StatusBar
             ], exports: [
-    StatisticsComponent,
-    DefaultImageDirective
-  ]
+              StatisticsComponent,
+              DefaultImageDirective
+            ]
           })
 export class AppModule {
 }

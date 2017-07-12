@@ -4,6 +4,8 @@ import {SimpleLocker} from '../../model/simple-locker';
 import {FirebaseCellarService} from '../../service/firebase-cellar.service';
 import {Locker} from '../../model/locker';
 import {Cell} from '../../components/locker/locker.component';
+import {NotificationService} from '../../service/notification.service';
+import * as _ from 'lodash';
 
 /**
  * Generated class for the CellarPage page.
@@ -23,9 +25,10 @@ export class CellarPage implements OnInit {
   private chosenLocker: Locker;
   private paginatedLocker: Locker;
   @ViewChild(Slides) slides: Slides;
-  private selectedCell: Cell;
 
-  constructor(private cellarService: FirebaseCellarService) {
+  pendingCell: Cell;
+
+  constructor(private cellarService: FirebaseCellarService, private notificationService: NotificationService) {
   }
 
   ngOnInit(): void {
@@ -41,7 +44,9 @@ export class CellarPage implements OnInit {
   resetPaginatedLocker() {
     if (this.otherLockers.length > 0) {
       let ix = this.slides.getActiveIndex();
-      if (ix==undefined) ix=0;
+      if (ix == undefined) {
+        ix = 0;
+      }
       this.paginatedLocker = this.otherLockers[ ix ];
     }
   }
@@ -59,9 +64,39 @@ export class CellarPage implements OnInit {
     this.resetPaginatedLocker();
   }
 
-  cellSelected(cell: Cell) {
-    if (cell) {
-      this.selectedCell = cell;
+  cellSelected(selectedCell: Cell) {
+    if (selectedCell) {
+      if (this.pendingCell) {
+        if (selectedCell.id === this.pendingCell.id) {
+          this.pendingCell = undefined;
+          selectedCell.setSelected(false);
+          return;
+        }
+        // une cellule était déjà sélectionnée qui contenait une bouteille
+        // - déplacer cette bouteille dans la nouvelle cellule et déselectionner les 2 cellules
+        // - si la nouvelle cellule contient aussi une bouteille alors la cellule sélectionnée devient cette
+        // nouvelle cellule, sinon on déplace la bouteille et on déselectionne les 2 cellules
+        let incomingCell = _.clone(selectedCell);
+        //on déplace la bouteille pré-enregistrée dans la cellule choisie
+        selectedCell.storeBottle(this.pendingCell.withdraw());
+        //plus de cellule sélectionnée
+        this.pendingCell.setSelected(false);
+        this.pendingCell = undefined;
+        if (!incomingCell.isEmpty()) {
+          this.pendingCell = incomingCell;
+          this.pendingCell.setSelected(true);
+        }
+      } else {
+        //aucune cellule n'était sélectionnée
+        if (selectedCell.isEmpty()) {
+          //cellule vide mais rien en transit ==> erreur
+          this.notificationService.warning('La cellule sélectionnée est vide');
+        } else {
+          //nouvelle bouteille en transit ==> on marque la cellule comme en transit et on stocke localement
+          selectedCell.setSelected(true);
+          this.pendingCell = selectedCell;
+        }
+      }
     }
   }
 }
