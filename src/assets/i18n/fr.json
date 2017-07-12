@@ -37,6 +37,13 @@
     "repartition-par-type": "Répartition par type de vin",
     "repartition-par-region": "Répartition par région"
   },
+  "tabs": {
+    "admin": "Admin",
+    "browse": "Recherche",
+    "home": "Accueil",
+    "cellar": "Cave",
+    "profile": "Profile"
+  },
   "ans": "ans",
   "bottle-detail": "Informations détaillées",
   "bottles": "Bouteilles",

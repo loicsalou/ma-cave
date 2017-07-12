@@ -27,6 +27,8 @@ import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
  */
 @Injectable()
 export class FirebaseImageService extends FirebaseService {
+  private IMAGES_FOLDER = 'images';
+  public IMAGES_ROOT: string;
 
   private storageRef: firebase.storage.Reference;
   private _progressEvent: Subject<number> = new Subject<number>();
@@ -39,11 +41,13 @@ export class FirebaseImageService extends FirebaseService {
 
   initialize(user) {
     super.initialize(user);
+    this.IMAGES_ROOT = this.IMAGES_FOLDER;
     this.storageRef = this.angularFirebase.app.storage().ref(this.IMAGES_ROOT);
   }
 
   cleanup() {
     super.cleanup();
+    this.IMAGES_ROOT = undefined;
     this.storageRef = undefined;
   }
 

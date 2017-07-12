@@ -1,0 +1,29 @@
+.cellar-page {
+
+  div.slide-zoom {
+    height: 100%;
+  }
+
+  ion-fab > button.pending-bottle {
+    background-color: map-get($colors, light);
+    border: thin solid black;
+
+    img {
+      height: 40px;
+      width: 40px;
+    }
+  }
+
+  ion-row {
+    height: 50%;
+  }
+  ion-scroll {
+    height: 100%;
+    width: 100%;
+    white-space: nowrap;
+  }
+
+  span.title {
+    display: flex;
+  }
+}

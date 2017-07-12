@@ -1,0 +1,6 @@
+<!-- Generated template for the LockerComponent component -->
+<div class="fridge-locker-component">
+  <div class="rack">
+    <locker *ngFor="let rack of fridge.racks" [locker]="rack" (selected)="cellSelected($event)"></locker>
+  </div>
+</div>

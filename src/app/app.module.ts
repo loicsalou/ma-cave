@@ -43,6 +43,10 @@ import {Statistics} from '../model/statistics';
 import {SharedModule} from '../components/shared.module';
 import {BrowseModule} from '../pages/browse/browse.module';
 import {BottleDetailModule} from '../pages/bottle-detail/bottle-detail.module';
+import { LockerComponent } from '../components/locker/locker.component';
+import {LockerFactory} from '../model/locker.factory';
+import {CellarPage} from '../pages/cellar/cellar.page';
+import {CellarPageModule} from '../pages/cellar/cellar.page.module';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -63,6 +67,19 @@ export const fireConfig = {
             ],
             imports: [
               IonicModule.forRoot(MyCaveApp),
+              AngularFireModule.initializeApp(fireConfig),
+              AngularFireAuthModule,
+              AngularFireDatabaseModule,
+              BottleDetailModule,
+              BrowseModule,
+              BrowserModule,
+              CellarPageModule,
+              ChartsModule,
+              DashboardPageModule,
+              HttpModule,
+              ProfilePageModule,
+              SharedModule,
+              StatisticsComponentModule,
               TranslateModule.forRoot({
                                         loader: {
                                           provide: TranslateLoader,
@@ -70,63 +87,52 @@ export const fireConfig = {
                                           deps: [ Http ]
                                         }
                                       }),
-              BrowserModule,
-              DashboardPageModule,
-              HttpModule,
-              BrowseModule,
-              BottleDetailModule,
-              AngularFireModule.initializeApp(fireConfig),
-              AngularFireAuthModule,
-              AngularFireDatabaseModule,
-              ProfilePageModule,
-              SharedModule,
-              UploadBottlesModule,
-              ChartsModule,
-              StatisticsComponentModule
+              UploadBottlesModule
             ],
             bootstrap: [ IonicApp ],
             entryComponents: [
-              MyCaveApp,
-              EmailLoginPage,
+              BottleDetailPage,
+              BrowsePage,
+              CellarPage,
               ContactPage,
               DashboardPage,
+              EmailLoginPage,
               HomePage,
-              BrowsePage,
+              MyCaveApp,
               TabsPage,
               UploadBottlesPage,
-              BottleDetailPage,
               UpdatePage
             ],
             providers: [
+              AnonymousLoginService,
               BottleFactory,
               Bottles,
+              BottleService,
               Camera,
-              //Platform,
-              StatusBar,
-              SplashScreen,
-              Facebook,
-              AnonymousLoginService,
+              DistributeService,
               EmailLoginService,
-              FacebookLoginService,
               {provide: ErrorHandler, useClass: IonicErrorHandler},
+              Facebook,
+              FacebookLoginService,
+              FirebaseImageService,
+              LockerFactory,
               {
                 provide: LoginService,
                 useFactory: (createLoginFactory),
                 deps: [ AnonymousLoginService, EmailLoginService, FacebookLoginService ]
               },
-              BottleService,
-              Statistics,
-              DistributeService,
-              FirebaseImageService,
               {
                 provide: NotificationService,
                 useFactory: (createNotificationFactory),
                 deps: [ AlertController, ToastController, TranslateService ]
-              }
+              },
+              SplashScreen,
+              Statistics,
+              StatusBar
             ], exports: [
-    StatisticsComponent,
-    DefaultImageDirective
-  ]
+              StatisticsComponent,
+              DefaultImageDirective
+            ]
           })
 export class AppModule {
 }

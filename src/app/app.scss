@@ -64,8 +64,23 @@ ion-content.home {
   text-align: center;
 }
 
-// ICONS
+div.stretchy-wrapper {
+  width: 100%;
+  padding-bottom: 100%; /* 16:9 */
+  position: relative;
+  background: lightgrey;
 
+  > div {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    color: white;
+  }
+}
+
+// ICONS
 .ion-ios-planete:before,
 .ion-ios-planete-circle:before,
 .ion-ios-planete-circle-outline:before,
@@ -83,3 +98,4 @@ ion-content.home {
 .ion-md-planete-outline:before {
   content: '../assets/icon/planete-512.png';
 }
+

@@ -5,11 +5,11 @@
   "red": "rouge",
   "rose": "rosé",
   "rose-sparkling": "rosé effervescent",
-  "white": "blanc",
-  "white-sparkling": "blanc effervescent",
-  "vin blanc muté": "vin blanc muté",
-  "yellow": "vin jaune",
   "straw": "vin de paille",
   "undefined": "vin indéfini",
+  "white-mutated": "vin blanc muté",
+  "red-mutated": "vin rouge muté",
+  "white": "blanc",
+  "white-sparkling": "blanc effervescent",
   "yellow": "vin jaune"
 }

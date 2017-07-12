@@ -10,10 +10,10 @@ export class BottleIconPipe implements PipeTransform {
 
   transform(value: string): string {
     let color = this.getColor(value);
-    return 'assets/img/bottle-color/bouteille' + color + '.png';
+    return 'assets/img/bottle-color/' + color + '.png';
   }
 
   getColor(label: string): string {
-    return '-' + Configuration.colorsText2Code[ label.toLowerCase() ];
+    return Configuration.colorsText2Code[ label.toLowerCase() ];
   }
 }

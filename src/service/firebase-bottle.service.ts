@@ -24,6 +24,9 @@ import Reference = firebase.database.Reference;
  */
 @Injectable()
 export class BottleService extends FirebaseService {
+  private static BOTTLES_FOLDER = 'bottles';
+  private BOTTLES_ROOT: string;
+
   private firebaseRef: Reference;
   private cellarImported: boolean = false;
   private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
@@ -44,12 +47,15 @@ export class BottleService extends FirebaseService {
 
   initialize(user) {
     super.initialize(user);
+    this.BOTTLES_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + BottleService.BOTTLES_FOLDER;
+    this.XREF_ROOT = this.XREF_FOLDER;
     this.firebaseRef = this.angularFirebase.database.ref(this.BOTTLES_ROOT);
     this.fetchAllBottles();
   }
 
   cleanup() {
     super.cleanup();
+    this.BOTTLES_ROOT = undefined;
     this.allBottlesArray = undefined;
     this.filters = undefined;
   }
@@ -67,11 +73,12 @@ export class BottleService extends FirebaseService {
         }
       });
       items.subscribe((bottles: Bottle[]) => {
-        bottles.forEach((bottle: Bottle) => this.bottleFactory.create(bottle));
-        this.setAllBottlesArray(bottles);
-        this.filterOn(this.filters);
-        this.dismissLoading();
-      });
+                        bottles.forEach((bottle: Bottle) => this.bottleFactory.create(bottle));
+                        this.setAllBottlesArray(bottles);
+                        this.filterOn(this.filters);
+                        this.dismissLoading();
+                      },
+                      error => this.notificationService.error('L\'accès à la liste des bouteilles a échoué !', error));
     }
   }
 
