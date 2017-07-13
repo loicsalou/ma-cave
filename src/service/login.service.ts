@@ -16,16 +16,19 @@ export class LoginService {
 
   private _user: User;
   private loginSub: Subscription;
+  private loadingPopup: any;
 
   constructor(private anoLogin: AnonymousLoginService, private mailLogin: EmailLoginService,
               private fbLogin: FacebookLoginService, private notificationService: NotificationService) {
   }
 
   public anonymousLogin() {
+    this.loadingPopup=this.notificationService.createLoadingPopup('checking-login');
     this.loginSub = this.anoLogin.login().subscribe((user: User) => this.initUser(user));
   }
 
   public emailLogin(login: string, psw: string) {
+    this.loadingPopup=this.notificationService.createLoadingPopup('checking-login');
     this.mailLogin.username = login;
     this.mailLogin.psw = psw;
     this.loginSub = this.mailLogin.login().subscribe(
@@ -35,6 +38,7 @@ export class LoginService {
   }
 
   public facebookLogin() {
+    this.loadingPopup=this.notificationService.createLoadingPopup('checking-login');
     this.loginSub = this.fbLogin.login().subscribe(
       (user: User) => this.initUser(user),
       error => this.notificationService.failed('L\'authentification Facebook a échoué, veuillez vérifier votre compte')
@@ -57,6 +61,9 @@ export class LoginService {
   }
 
   private initUser(user: User) {
+    if (this.loadingPopup) {
+      this.loadingPopup.dismiss();
+    }
     this.user = user;
     this.authentified.next(user);
   }

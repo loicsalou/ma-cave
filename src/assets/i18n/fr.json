@@ -1,6 +1,7 @@
 {
   "app": {
     "please-login": "Authentification",
+    "checking-login": "Authentification en cours...",
     "title": "L'assistant caviste",
     "information": "Information",
     "error": "Erreur !",

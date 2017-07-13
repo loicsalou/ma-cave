@@ -7,7 +7,7 @@ import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {FilterSet} from '../components/distribution/distribution';
 import {BottleFactory} from '../model/bottle.factory';
-import {LoadingController} from 'ionic-angular';
+import {Loading, LoadingController} from 'ionic-angular';
 import * as firebase from 'firebase/app';
 import * as _ from 'lodash';
 import {LoginService} from './login.service';
@@ -67,13 +67,11 @@ export class BottlePersistenceService extends PersistenceService {
     if (this.cellarImported) {
       this._bottles.next(this.allBottlesArray);
     } else {
-      this.showLoading();
       let items = this.dataConnection.allBottlesObservable;
       items.subscribe((bottles: Bottle[]) => {
                         bottles.forEach((bottle: Bottle) => this.bottleFactory.create(bottle));
                         this.setAllBottlesArray(bottles);
                         this.filterOn(this.filters);
-                        this.dismissLoading();
                       },
                       error => this.notificationService.error('L\'accès à la liste des bouteilles a échoué !', error));
     }

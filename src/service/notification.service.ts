@@ -1,13 +1,15 @@
-import {AlertController, ToastController} from 'ionic-angular';
+import {AlertController, Loading, LoadingController, ToastController} from 'ionic-angular';
 import {TranslateService} from '@ngx-translate/core';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
+
 /**
  * Created by loicsalou on 13.06.17.
  */
 export class NotificationService {
 
-  constructor(private alertController: AlertController, private toastController: ToastController, private translateService: TranslateService) {
+  constructor(private alertController: AlertController, private toastController: ToastController,
+              private translateService: TranslateService, private loadingCtrl: LoadingController) {
   }
 
   information(message: string, delay?: number, position?: string) {
@@ -46,7 +48,7 @@ export class NotificationService {
       .present();
   }
 
-  debugAlert(message: string, obj?: any, debug: boolean=false) {
+  debugAlert(message: string, obj?: any, debug: boolean = false) {
     if (debug) {
       alert(message + ' ' + (obj ? JSON.stringify(obj) : '-'));
     } else {
@@ -73,6 +75,15 @@ export class NotificationService {
                                             });
     alert.present();
     return response.asObservable();
+  }
+
+  createLoadingPopup(messageKey: string): Loading {
+    let popup: Loading = this.loadingCtrl.create({
+                                                   content: this.translateService.instant(messageKey),
+                                                   dismissOnPageChange: false
+                                                 });
+    popup.present();
+    return popup;
   }
 
   traceInfo(trace: string) {

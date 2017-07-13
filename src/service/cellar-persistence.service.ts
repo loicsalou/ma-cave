@@ -7,14 +7,14 @@ import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {AngularFireDatabase} from 'angularfire2/database';
 import {LockerFactory} from '../model/locker.factory';
-import {LoadingController} from 'ionic-angular';
+import {Loading, LoadingController} from 'ionic-angular';
 import * as firebase from 'firebase/app';
 import {LoginService} from './login.service';
 import {PersistenceService} from './persistence.service';
 import {NotificationService} from './notification.service';
 import {TranslateService} from '@ngx-translate/core';
-import Reference = firebase.database.Reference;
 import {CellarService} from './cellar.service';
+import Reference = firebase.database.Reference;
 
 /**
  * Services related to the cellar itself, locker and place of the lockers.
@@ -54,7 +54,7 @@ export class CellarPersistenceService extends PersistenceService implements Cell
   }
 
   public fetchAllLockers() {
-    this.showLoading();
+    let popup: Loading = this.notificationService.createLoadingPopup('loading');
     try {
       let items = this.angularFirebase.list(this.CELLAR_ROOT, {
         query: {
@@ -64,10 +64,10 @@ export class CellarPersistenceService extends PersistenceService implements Cell
       items.subscribe((lockers: SimpleLocker[]) => {
         lockers.forEach((locker: SimpleLocker) => this.lockerFactory.create(locker));
         this.setallLockersArray(lockers);
-        this.dismissLoading();
+        popup.dismiss();
       });
     } catch (error) {
-      this.dismissLoading();
+      popup.dismiss();
       this.handleError('Impossible de charger les casiers', error)
     }
   }

@@ -12,9 +12,10 @@ import {Image} from '../model/image';
 import {FileItem} from './file-item';
 import {UploadMetadata} from './image-persistence.service';
 import {NotificationService} from './notification.service';
+import {Subject} from 'rxjs/Subject';
+import {Loading} from 'ionic-angular';
 import Reference = firebase.database.Reference;
 import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
-import {Subject} from 'rxjs/Subject';
 
 /**
  * Services related to the bottles in the cellar.
@@ -182,6 +183,8 @@ export class FirebaseConnectionService {
   }
 
   public fetchAllBottles() {
+    let popup: Loading = this.notificationService.createLoadingPopup('loading');
+
     let items = this.angularFirebase.list(this.BOTTLES_ROOT, {
       query: {
         limitToFirst: 2000,
@@ -190,13 +193,19 @@ export class FirebaseConnectionService {
       }
     });
     items.subscribe(
-      (bottles: Bottle[]) => this._bottles.next(bottles),
-      error => this._bottles.error(error),
+      (bottles: Bottle[]) => {
+        this._bottles.next(bottles);
+        popup.dismiss();
+      },
+      error => {
+        this._bottles.error(error);
+        popup.dismiss();
+      },
       () => this._bottles.complete()
     );
   }
 
-  public update(bottles: Bottle[]): Promise<any> {
+  public update(bottles: Bottle[ ]): Promise<any> {
     return new Promise((resolve, reject) => {
       bottles.forEach(bottle => {
         this.bottlesRootRef.child(bottle[ '$key' ]).set(bottle, (
@@ -212,7 +221,7 @@ export class FirebaseConnectionService {
     })
   }
 
-  public save(bottles: Bottle[]): Promise<any> {
+  public save(bottles: Bottle[ ]): Promise<any> {
     return new Promise((resolve, reject) => {
       bottles.forEach(bottle => {
         this.bottlesRootRef.push(bottle, (

@@ -1,5 +1,12 @@
 import {ErrorHandler, NgModule} from '@angular/core';
-import {AlertController, IonicApp, IonicErrorHandler, IonicModule, ToastController} from 'ionic-angular';
+import {
+  AlertController,
+  IonicApp,
+  IonicErrorHandler,
+  IonicModule,
+  LoadingController,
+  ToastController
+} from 'ionic-angular';
 import {MyCaveApp} from './app.component';
 import {ContactPage} from '../pages/contact/contact';
 import {HomePage} from '../pages/home/home';
@@ -43,7 +50,6 @@ import {Statistics} from '../model/statistics';
 import {SharedModule} from '../components/shared.module';
 import {BrowseModule} from '../pages/browse/browse.module';
 import {BottleDetailModule} from '../pages/bottle-detail/bottle-detail.module';
-import { LockerComponent } from '../components/locker/locker.component';
 import {LockerFactory} from '../model/locker.factory';
 import {CellarPage} from '../pages/cellar/cellar.page';
 import {CellarPageModule} from '../pages/cellar/cellar.page.module';
@@ -121,20 +127,20 @@ export const fireConfig = {
               {
                 provide: LoginService,
                 useFactory: (createLoginFactory),
-                deps: [ AnonymousLoginService, EmailLoginService, FacebookLoginService ]
+                deps: [ AnonymousLoginService, EmailLoginService, FacebookLoginService, NotificationService ]
               },
               {
                 provide: NotificationService,
                 useFactory: (createNotificationFactory),
-                deps: [ AlertController, ToastController, TranslateService ]
+                deps: [ AlertController, ToastController, TranslateService, LoadingController ]
               },
               SplashScreen,
               Statistics,
               StatusBar
             ], exports: [
-              StatisticsComponent,
-              DefaultImageDirective
-            ]
+    StatisticsComponent,
+    DefaultImageDirective
+  ]
           })
 export class AppModule {
 }
@@ -148,6 +154,7 @@ export function createLoginFactory(ano: AnonymousLoginService, ema: EmailLoginSe
   return new LoginService(ano, ema, fac, ns);
 }
 
-export function createNotificationFactory(alrt: AlertController, toast: ToastController, translate: TranslateService) {
-  return new NotificationService(alrt, toast, translate);
+export function createNotificationFactory(alrt: AlertController, toast: ToastController, translate: TranslateService,
+                                          loadingCtrl: LoadingController) {
+  return new NotificationService(alrt, toast, translate, loadingCtrl);
 }

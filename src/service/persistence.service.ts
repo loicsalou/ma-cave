@@ -37,23 +37,6 @@ export abstract class PersistenceService {
     this.XREF_ROOT = undefined;
   }
 
-  showLoading(message?: string) {
-    if (this.loading == undefined) {
-      this.loading = this.loadingCtrl.create({
-                                               content: message ? message : this.translateService.instant('loading'),
-                                               dismissOnPageChange: false
-                                             });
-      this.loading.present();
-    }
-  }
-
-  dismissLoading() {
-    if (this.loading != undefined) {
-      this.loading.dismiss();
-      this.loading = undefined;
-    }
-  }
-
   protected handleError(message: string, error: any) {
     this.notificationService.error(message, error);
     return Observable.throw(error.json().error || 'Firebase error');
