@@ -6,6 +6,7 @@ import {EmailLoginService} from './email-login.service';
 import {FacebookLoginService} from './facebook-login.service';
 import {NotificationService} from './notification.service';
 import {Subscription} from 'rxjs/Subscription';
+import {FirebaseConnectionService} from './firebase-connection.service';
 /**
  * Created by loicsalou on 13.06.17.
  */

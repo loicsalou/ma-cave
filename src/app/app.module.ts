@@ -5,7 +5,7 @@ import {ContactPage} from '../pages/contact/contact';
 import {HomePage} from '../pages/home/home';
 import {TabsPage} from '../pages/tabs/tabs';
 import {BrowsePage} from '../pages/browse/browse.page';
-import {BottleService} from '../service/firebase-bottle.service';
+import {BottlePersistenceService} from '../service/bottle-persistence.service';
 import {DistributeService} from '../service/distribute.service';
 import {TranslateLoader, TranslateModule, TranslateService} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
@@ -25,7 +25,7 @@ import {UploadBottlesPage} from '../pages/upload-bottles/upload-bottles.page';
 import {ChartsModule} from 'ng2-charts';
 import '../../node_modules/chart.js/dist/Chart.bundle.min.js';
 import {EmailLoginPage} from '../pages/login/email-login.page';
-import {FirebaseImageService} from '../service/firebase-image.service';
+import {ImagePersistenceService} from '../service/image-persistence.service';
 import {Bottles} from '../components/config/Bottles';
 import {AnonymousLoginService} from '../service/anonymous-login.service';
 import {EmailLoginService} from '../service/email-login.service';
@@ -47,6 +47,7 @@ import { LockerComponent } from '../components/locker/locker.component';
 import {LockerFactory} from '../model/locker.factory';
 import {CellarPage} from '../pages/cellar/cellar.page';
 import {CellarPageModule} from '../pages/cellar/cellar.page.module';
+import {FirebaseConnectionService} from '../service/firebase-connection.service';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -107,14 +108,15 @@ export const fireConfig = {
               AnonymousLoginService,
               BottleFactory,
               Bottles,
-              BottleService,
+              BottlePersistenceService,
               Camera,
               DistributeService,
               EmailLoginService,
               {provide: ErrorHandler, useClass: IonicErrorHandler},
               Facebook,
               FacebookLoginService,
-              FirebaseImageService,
+              ImagePersistenceService,
+              FirebaseConnectionService,
               LockerFactory,
               {
                 provide: LoginService,

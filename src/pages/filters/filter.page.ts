@@ -1,7 +1,7 @@
 import {Bottle} from '../../model/bottle';
 import {Component, Input, OnChanges, OnInit} from '@angular/core';
 import {FilterSet} from '../../components/distribution/distribution';
-import {BottleService} from '../../service/firebase-bottle.service';
+import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {MenuController} from 'ionic-angular';
 
 @Component({
@@ -24,7 +24,7 @@ export class FilterPage implements OnInit, OnChanges {
   historyVisible = false;
   ascending: boolean = true;
 
-  constructor(private bottlesService: BottleService, private menuController: MenuController) {
+  constructor(private bottlesService: BottlePersistenceService, private menuController: MenuController) {
   }
 
   ngOnInit(): void {

@@ -10,7 +10,7 @@ import {LockerFactory} from '../model/locker.factory';
 import {LoadingController} from 'ionic-angular';
 import * as firebase from 'firebase/app';
 import {LoginService} from './login.service';
-import {FirebaseService} from './firebase-service';
+import {PersistenceService} from './persistence.service';
 import {NotificationService} from './notification.service';
 import {TranslateService} from '@ngx-translate/core';
 import Reference = firebase.database.Reference;
@@ -22,7 +22,7 @@ import {CellarService} from './cellar.service';
  * clicks on a region to filter lockers. Any change on either side must be propagated on the other side.
  */
 @Injectable()
-export class FirebaseCellarService extends FirebaseService implements CellarService {
+export class CellarPersistenceService extends PersistenceService implements CellarService {
   private CELLAR_FOLDER = 'cellar';
   private CELLAR_ROOT: string;
 
@@ -31,13 +31,13 @@ export class FirebaseCellarService extends FirebaseService implements CellarServ
   private _allLockersObservable: Observable<SimpleLocker[]> = this._lockers.asObservable();
   private allLockersArray: SimpleLocker[];
 
-  constructor(firebase: AngularFireDatabase,
+  constructor(private angularFirebase: AngularFireDatabase,
               loadingCtrl: LoadingController,
               private lockerFactory: LockerFactory,
               notificationService: NotificationService,
               loginService: LoginService,
               translateService: TranslateService) {
-    super(firebase, loadingCtrl, notificationService, loginService, translateService);
+    super(loadingCtrl, notificationService, loginService, translateService);
   }
 
   initialize(user) {

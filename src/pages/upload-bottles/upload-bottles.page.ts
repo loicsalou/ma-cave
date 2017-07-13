@@ -4,7 +4,7 @@ import {FileChooser} from '@ionic-native/file-chooser';
 import {FilePath} from '@ionic-native/file-path';
 import * as _ from 'lodash';
 import {BottleFactory} from '../../model/bottle.factory';
-import {BottleService} from '../../service/firebase-bottle.service';
+import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {Bottle} from '../../model/bottle';
 import {NotificationService} from '../../service/notification.service';
 
@@ -35,7 +35,7 @@ export class UploadBottlesPage {
               private filepath: FilePath,
               private fileChooser: FileChooser,
               private notificationService: NotificationService,
-              private bottleService: BottleService,
+              private bottleService: BottlePersistenceService,
               private bottleFactory: BottleFactory,
               private platform: Platform) {
   }

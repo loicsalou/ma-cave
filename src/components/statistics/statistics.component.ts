@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DistributeService} from '../../service/distribute.service';
 import {Chart, ChartElement} from 'chart.js';
-import {BottleService} from '../../service/firebase-bottle.service';
+import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {Bottle} from '../../model/bottle';
 import * as _ from 'lodash';
 import {FilterSet} from '../distribution/distribution';
@@ -69,7 +69,7 @@ export class StatisticsComponent implements OnInit {
   };
   private others: KeyValue[];
 
-  constructor(private distributionService: DistributeService, private bottlesService: BottleService, private nav: NavController) {
+  constructor(private distributionService: DistributeService, private bottlesService: BottlePersistenceService, private nav: NavController) {
   }
 
   ngOnInit(): void {

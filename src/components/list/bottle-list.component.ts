@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {BottleService} from '../../service/firebase-bottle.service';
+import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {Bottle} from '../../model/bottle';
 import {ListBottleEvent} from './bottle-list-event';
 import {ItemSliding, ToastController} from 'ionic-angular';
@@ -16,7 +16,7 @@ export class BottleListComponent {
   @Output()
   showDetail: EventEmitter<ListBottleEvent> = new EventEmitter();
 
-  constructor(private bottlesService: BottleService, private toastCtrl: ToastController) {
+  constructor(private bottlesService: BottlePersistenceService, private toastCtrl: ToastController) {
   }
 
   filter() {

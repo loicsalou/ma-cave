@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Camera} from '@ionic-native/camera';
 import {BottleMetadata} from '../../model/bottle';
-import {FirebaseImageService, UploadMetadata} from '../../service/firebase-image.service';
+import {ImagePersistenceService, UploadMetadata} from '../../service/image-persistence.service';
 import {NotificationService} from '../../service/notification.service';
 import {Subscription} from 'rxjs/Subscription';
 
@@ -26,7 +26,7 @@ export class ImageAttacherComponent {
   @Output()
   error: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor(private camera: Camera, private imageService: FirebaseImageService, private notificationService: NotificationService) {
+  constructor(private camera: Camera, private imageService: ImagePersistenceService, private notificationService: NotificationService) {
     this.progressSubscription = this.imageService.progressEvent.subscribe(
       value => this.progress = value
     );

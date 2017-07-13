@@ -3,12 +3,11 @@ import {Observable} from 'rxjs/Observable';
 import {LoginService} from './login.service';
 import {NotificationService} from './notification.service';
 import {TranslateService} from '@ngx-translate/core';
-import {AngularFireDatabase} from 'angularfire2/database';
 /**
  * Created by loicsalou on 16.06.17.
  */
 
-export abstract class FirebaseService {
+export abstract class PersistenceService {
 
   protected USERS_FOLDER = 'users';
   protected XREF_FOLDER = 'xref';
@@ -17,7 +16,7 @@ export abstract class FirebaseService {
 
   private loading: Loading;
 
-  constructor(protected angularFirebase: AngularFireDatabase, private loadingCtrl: LoadingController, protected notificationService: NotificationService,
+  constructor(private loadingCtrl: LoadingController, protected notificationService: NotificationService,
               protected loginService: LoginService, private translateService: TranslateService) {
     loginService.authentifiedObservable.subscribe(
       user => {
@@ -28,15 +27,10 @@ export abstract class FirebaseService {
         }
       }
     );
-    if (loginService.user !== undefined) {
-      this.initialize(loginService.user);
-    } else {
-      this.cleanup();
-    }
   }
 
   protected initialize(user) {
-      this.XREF_ROOT = this.XREF_FOLDER;
+    this.XREF_ROOT = this.XREF_FOLDER;
   }
 
   protected cleanup() {
