@@ -27,6 +27,7 @@ export class CellarPage implements OnInit {
   @ViewChild(Slides) slides: Slides;
 
   pendingCell: Cell;
+  pendingBottleTipVisible: boolean=false;
 
   constructor(private cellarService: CellarPersistenceService, private notificationService: NotificationService) {
   }
@@ -58,6 +59,13 @@ export class CellarPage implements OnInit {
     this.otherLockers = this.otherLockers.filter(item => item.name !== locker.name);
     this.chosenLocker = locker;
     this.resetPaginatedLocker();
+  }
+
+  showTip() {
+    this.pendingBottleTipVisible=true;
+    setTimeout(() => {
+      this.pendingBottleTipVisible=false;
+    }, 3000)
   }
 
   slideChanged() {

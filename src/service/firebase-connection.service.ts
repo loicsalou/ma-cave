@@ -13,7 +13,9 @@ import {FileItem} from './file-item';
 import {UploadMetadata} from './image-persistence.service';
 import {NotificationService} from './notification.service';
 import {Subject} from 'rxjs/Subject';
-import {Loading} from 'ionic-angular';
+import {NativeStorageService} from './native-storage.service';
+import {Platform} from 'ionic-angular';
+import * as _ from 'lodash';
 import Reference = firebase.database.Reference;
 import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
 
@@ -39,11 +41,15 @@ export class FirebaseConnectionService {
 
   private imageStorageRef: firebase.storage.Reference;
   private _uploadProgressEvent: Subject<number> = new Subject<number>();
+  private cacheBottles: Bottle[];
 
-  constructor(private angularFirebase: AngularFireDatabase, private loginService: LoginService, private notificationService: NotificationService) {
+  constructor(private angularFirebase: AngularFireDatabase, private loginService: LoginService,
+              private notificationService: NotificationService, private localStorage: NativeStorageService,
+              private platform: Platform) {
   }
 
   public initialize(user) {
+    this.localStorage.initialize(user);
     this.IMAGES_ROOT = this.IMAGES_FOLDER;
     this.XREF_ROOT = this.XREF_FOLDER;
     this.BOTTLES_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.BOTTLES_FOLDER;
@@ -183,31 +189,51 @@ export class FirebaseConnectionService {
   }
 
   public fetchAllBottles() {
-    let popup: Loading = this.notificationService.createLoadingPopup('loading');
-
+    let cacheAvailable = this.fetchFromCache();
+    //let popup: Loading = this.notificationService.createLoadingPopup('app.loading');
     let items = this.angularFirebase.list(this.BOTTLES_ROOT, {
       query: {
-        limitToFirst: 2000,
-        orderByChild: 'quantite_courante',
-        startAt: '0'
+        limitToLast: 2000,
+        orderByChild: 'lastUpdated'
       }
     });
+
     items.subscribe(
       (bottles: Bottle[]) => {
-        this._bottles.next(bottles);
-        popup.dismiss();
+        if (!cacheAvailable) {
+          this._bottles.next(bottles);
+        }
+        this.synchronizeCache(bottles);
+        //popup.dismiss();
       },
       error => {
         this._bottles.error(error);
-        popup.dismiss();
+        //popup.dismiss();
       },
       () => this._bottles.complete()
     );
   }
 
+  public fetchFromCache(): boolean {
+    if (this.platform.is('cordova')) {
+      let items = this.localStorage.allBottlesObservable;
+      items.subscribe(
+        (bottles: Bottle[]) => {
+          this._bottles.next(bottles);
+          this.cacheBottles = bottles;
+        },
+        error => this.notificationService.error('L\'accès à la liste locale des bouteilles a échoué !', error)
+      );
+      this.localStorage.fetchAllBottles();
+      return true;
+    }
+    return false;
+  }
+
   public update(bottles: Bottle[ ]): Promise<any> {
     return new Promise((resolve, reject) => {
       bottles.forEach(bottle => {
+        bottle[ 'lastUpdated' ] = new Date().getTime();
         this.bottlesRootRef.child(bottle[ '$key' ]).set(bottle, (
           err => {
             if (err == null) {
@@ -224,6 +250,7 @@ export class FirebaseConnectionService {
   public save(bottles: Bottle[ ]): Promise<any> {
     return new Promise((resolve, reject) => {
       bottles.forEach(bottle => {
+        bottle[ 'lastUpdated' ] = new Date().getTime();
         this.bottlesRootRef.push(bottle, (
           err => {
             if (err == null) {
@@ -239,6 +266,7 @@ export class FirebaseConnectionService {
 
   public replaceBottle(bottle: Bottle) {
     return new Promise((resolve, reject) => {
+                         bottle[ 'lastUpdated' ] = new Date().getTime();
                          this.bottlesRootRef.child(bottle[ '$key' ]).set(bottle, err => {
                                                                            if (err == null) {
                                                                              resolve(null)
@@ -264,6 +292,34 @@ export class FirebaseConnectionService {
                        }
     )
   }
+
+  private synchronizeCache(firebaseBottles: Bottle[]) {
+    //comparer firebaseBottles avec this.cacheBottles et si des bouteilles ont été ajoutées ou mises à jour
+    // dans la base, on enlève du cache les anciennes versions et on ajoute les différences dans le cache puis il
+    // faut encore sauvegarder le cache dans le native storage
+    if (!this.cacheBottles) {
+      this.cacheBottles = [];
+    }
+    let inFBNotInCache = _.differenceBy(firebaseBottles, this.cacheBottles, matchByKeyAndLastUpdateDate);
+
+    //create new cache: remove updated bottltes then add updated to cache bottles and we're done
+    let newCache = _.pullAllWith(this.cacheBottles, inFBNotInCache, matchByKey);
+    newCache = _.concat(this.cacheBottles, inFBNotInCache);
+
+    // on upgrade le cache
+    this.localStorage.save(newCache);
+    this.notificationService.information('cache raffraichi: '+inFBNotInCache.length+' ajouts / modifications');
+  }
 }
 
+function matchByKeyAndLastUpdateDate(fbBottle, cacheBottle) {
+  if (!cacheBottle) {
+    //une bouteille est dans FB mais pas dans le cache ==> il n'y a pas matching
+    return false;
+  }
+  return (fbBottle.lastUpdated === cacheBottle.lastUpdated && fbBottle.$key === cacheBottle.$key);
+}
 
+function matchByKey(fbBottle, cacheBottle) {
+  return (fbBottle.$key === cacheBottle.$key);
+}

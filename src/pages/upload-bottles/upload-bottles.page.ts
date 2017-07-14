@@ -7,6 +7,7 @@ import {BottleFactory} from '../../model/bottle.factory';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {Bottle} from '../../model/bottle';
 import {NotificationService} from '../../service/notification.service';
+import {Http} from '@angular/http';
 
 /**
  * Generated class for the UploadBottles page.
@@ -37,7 +38,8 @@ export class UploadBottlesPage {
               private notificationService: NotificationService,
               private bottleService: BottlePersistenceService,
               private bottleFactory: BottleFactory,
-              private platform: Platform) {
+              private platform: Platform,
+              private http: Http) {
   }
 
   public platformIsCordova(): boolean {
@@ -185,6 +187,56 @@ export class UploadBottlesPage {
     this.bottles = bottles;
     this.notificationService.information('Le chargement (XLS) de ' + csvarray.length + ' fichiers a été effectué.' +
                                          ' Nombre de lots' + (bottles == null ? 'KO' + ' !' : bottles.length));
+  }
+
+  test() {
+    let btl1 = [];
+    let btl2 = [];
+    this.http.get('../../assets/json/ma-cave-mini1.json').subscribe(
+      response => {
+        btl1 = response.json()
+        this.http.get('../../assets/json/ma-cave-mini2.json').subscribe(
+          response => {
+            btl2 = response.json();
+            this.playWith(btl1, btl2);
+          }
+        );
+      }
+    );
+  }
+
+  private playWith(btl1: Array<Bottle>, btl2: Array<Bottle>) {
+    //btl1 vient de firebase, bt2 du cache
+    btl1 = btl1.sort(function (a, b) {
+      if (a[ '$key' ] === b[ '$key' ]) {
+        return 0;
+      }
+      return a[ '$key' ] < b[ '$key' ] ? -1 : 1;
+    });
+    btl2 = btl2.sort(function (a, b) {
+      if (a[ '$key' ] === b[ '$key' ]) {
+        return 0;
+      }
+      return a[ '$key' ] < b[ '$key' ] ? -1 : 1;
+    });
+
+    //liste les bouteilles de btl1 qui ne sont pas dans btl2
+    let diff = _.differenceWith(btl1, btl2, function (a, b) {
+      return (a.lastUpdated === b.lastUpdated && a.$key===b.$key);
+    });
+    console.info('nombre de différences:'+diff.length);
+
+    //create new cache: remove updated bottltes then add updated to cache bottles and we're done
+    let newCache = _.pullAllWith(btl2, diff, function (a, b) {
+      return (a.$key===b.$key);
+    });
+    btl2 = _.concat(btl2, diff);
+
+    let diff2 = _.differenceWith(btl1, btl2, function (a, b) {
+      return (a.lastUpdated === b.lastUpdated && a.$key===b.$key);
+    });
+    console.info('nombre de différences après refresh:'+diff2.length);
+
   }
 }
 

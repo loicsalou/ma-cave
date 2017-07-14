@@ -7,7 +7,7 @@ import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {FilterSet} from '../components/distribution/distribution';
 import {BottleFactory} from '../model/bottle.factory';
-import {Loading, LoadingController} from 'ionic-angular';
+import {LoadingController, Platform} from 'ionic-angular';
 import * as firebase from 'firebase/app';
 import * as _ from 'lodash';
 import {LoginService} from './login.service';
@@ -15,6 +15,7 @@ import {PersistenceService} from './persistence.service';
 import {NotificationService} from './notification.service';
 import {TranslateService} from '@ngx-translate/core';
 import {FirebaseConnectionService} from './firebase-connection.service';
+import {NativeStorageService} from './native-storage.service';
 import Reference = firebase.database.Reference;
 
 /**
@@ -36,10 +37,12 @@ export class BottlePersistenceService extends PersistenceService {
   private allBottlesArray: Bottle[];
 
   constructor(private bottleFactory: BottleFactory, private dataConnection: FirebaseConnectionService,
+              private storageService: NativeStorageService,
               loadingCtrl: LoadingController,
               notificationService: NotificationService,
               loginService: LoginService,
-              translateService: TranslateService) {
+              translateService: TranslateService,
+              private platform: Platform) {
     super(loadingCtrl, notificationService, loginService, translateService);
     if (loginService.user !== undefined) {
       this.initialize(loginService.user);
@@ -51,7 +54,6 @@ export class BottlePersistenceService extends PersistenceService {
   initialize(user) {
     super.initialize(user);
     this.dataConnection.initialize(user);
-    this.dataConnection.fetchAllBottles();
     this.fetchAllBottles();
   }
 
@@ -67,14 +69,24 @@ export class BottlePersistenceService extends PersistenceService {
     if (this.cellarImported) {
       this._bottles.next(this.allBottlesArray);
     } else {
-      let items = this.dataConnection.allBottlesObservable;
-      items.subscribe((bottles: Bottle[]) => {
-                        bottles.forEach((bottle: Bottle) => this.bottleFactory.create(bottle));
-                        this.setAllBottlesArray(bottles);
-                        this.filterOn(this.filters);
-                      },
-                      error => this.notificationService.error('L\'accès à la liste des bouteilles a échoué !', error));
+      this.fetchFromDatabase();
     }
+  }
+
+  public fetchFromDatabase() {
+    this.dataConnection.fetchAllBottles();
+    let items = this.dataConnection.allBottlesObservable;
+    items.subscribe((bottles: Bottle[]) => {
+                      bottles.forEach((bottle: Bottle) => this.bottleFactory.create(bottle));
+                      this.setAllBottlesArray(bottles);
+                      if (this.platform.is('cordova') && bottles.length > 0) {
+                        //this.notificationService.information('sauvegarde locale...', true);
+                        this.storageService.save(bottles);
+                        //this.notificationService.information('sauvegarde locale terminée', true);
+                      }
+                      this.filterOn(this.filters);
+                    },
+                    error => this.notificationService.error('L\'accès à la liste des bouteilles a échoué !', error));
   }
 
   public update(bottles: Bottle[]) {

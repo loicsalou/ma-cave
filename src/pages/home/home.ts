@@ -6,6 +6,8 @@ import {User} from '../../model/user';
 import {TabsPage} from '../tabs/tabs';
 import {Subscription} from 'rxjs/Subscription';
 import {SplashScreen} from '@ionic-native/splash-screen';
+import {LocalLoginPage} from '../login/local-login.page';
+import * as _ from 'lodash';
 
 @Component({
              selector: 'page-home',
@@ -52,6 +54,17 @@ export class HomePage implements OnInit, AfterViewInit {
       }
     });
     this.loginPage = this.modalController.create(EmailLoginPage);
+    this.loginPage.present();
+  }
+
+  localLogin() {
+    this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
+      this.handleLoginEvent(user);
+      if (user) {
+        this.loginPage.dismiss();
+      }
+    });
+    this.loginPage = this.modalController.create(LocalLoginPage);
     this.loginPage.present();
   }
 

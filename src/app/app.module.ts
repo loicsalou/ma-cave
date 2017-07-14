@@ -54,6 +54,10 @@ import {LockerFactory} from '../model/locker.factory';
 import {CellarPage} from '../pages/cellar/cellar.page';
 import {CellarPageModule} from '../pages/cellar/cellar.page.module';
 import {FirebaseConnectionService} from '../service/firebase-connection.service';
+import {NativeStorageService} from '../service/native-storage.service';
+import {NativeStorage} from '@ionic-native/native-storage';
+import {LocalLoginService} from '../service/local-login.service';
+import {LocalLoginPage} from '../pages/login/local-login.page';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -69,6 +73,7 @@ export const fireConfig = {
               MyCaveApp,
               ContactPage,
               EmailLoginPage,
+              LocalLoginPage,
               HomePage,
               TabsPage
             ],
@@ -104,6 +109,7 @@ export const fireConfig = {
               ContactPage,
               DashboardPage,
               EmailLoginPage,
+              LocalLoginPage,
               HomePage,
               MyCaveApp,
               TabsPage,
@@ -123,12 +129,16 @@ export const fireConfig = {
               FacebookLoginService,
               ImagePersistenceService,
               FirebaseConnectionService,
+              LocalLoginService,
               LockerFactory,
               {
                 provide: LoginService,
                 useFactory: (createLoginFactory),
-                deps: [ AnonymousLoginService, EmailLoginService, FacebookLoginService, NotificationService ]
+                deps: [ AnonymousLoginService, EmailLoginService, FacebookLoginService, LocalLoginService,
+                  NotificationService, NativeStorageService ]
               },
+              NativeStorage,
+              NativeStorageService,
               {
                 provide: NotificationService,
                 useFactory: (createNotificationFactory),
@@ -150,8 +160,8 @@ export function createTranslateLoader(http: Http) {
 }
 
 export function createLoginFactory(ano: AnonymousLoginService, ema: EmailLoginService, fac: FacebookLoginService,
-                                   ns: NotificationService) {
-  return new LoginService(ano, ema, fac, ns);
+                                   lls: LocalLoginService, ns: NotificationService, lss: NativeStorageService) {
+  return new LoginService(ano, ema, fac, lls, ns, lss);
 }
 
 export function createNotificationFactory(alrt: AlertController, toast: ToastController, translate: TranslateService,

@@ -12,13 +12,15 @@ export class NotificationService {
               private translateService: TranslateService, private loadingCtrl: LoadingController) {
   }
 
-  information(message: string, delay?: number, position?: string) {
+  information(message: string, showCloseButton?: boolean, delay?: number, position?: string) {
     this.toastController.create({
                                   message: message,
                                   duration: delay ? delay : 3000,
-                                  position: position ? position : 'top'
-                                })
-      .present()
+                                  position: position ? position : 'top',
+                                  showCloseButton: showCloseButton ? showCloseButton : false
+  })
+  .
+    present()
   }
 
   error(message: string, error?: any) {

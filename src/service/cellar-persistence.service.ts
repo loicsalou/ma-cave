@@ -54,7 +54,7 @@ export class CellarPersistenceService extends PersistenceService implements Cell
   }
 
   public fetchAllLockers() {
-    let popup: Loading = this.notificationService.createLoadingPopup('loading');
+    let popup: Loading = this.notificationService.createLoadingPopup('app.loading');
     try {
       let items = this.angularFirebase.list(this.CELLAR_ROOT, {
         query: {

@@ -17,10 +17,13 @@
         <button ion-button badge (click)="anonymousLogin()">
           <img icon-only src="assets/icon/anonymous.png"/>
         </button>
+        <button ion-button badge (click)="localLogin()">
+          <ion-icon name="phone-portrait"></ion-icon>
+        </button>
       </div>
     </fieldset>
   </div>
 
 </ion-content>
 
-<ion-footer text-right padding-horizontal>version {{version}}</ion-footer>
+<ion-footer text-right padding-horizontal (click)="test()">version {{version}}</ion-footer>

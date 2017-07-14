@@ -7,6 +7,7 @@
   ion-fab > button.pending-bottle {
     background-color: map-get($colors, light);
     border: thin solid black;
+    margin-left: auto;
 
     img {
       height: 40px;
@@ -17,10 +18,18 @@
   ion-row {
     height: 50%;
   }
+
   ion-scroll {
     height: 100%;
     width: 100%;
     white-space: nowrap;
+  }
+
+  p.tip {
+    background-color: map-get($colors, light);
+    border: thin solid black;
+    font-size: small;
+    font-variant: all-small-caps;
   }
 
   span.title {
