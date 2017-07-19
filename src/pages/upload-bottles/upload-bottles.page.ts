@@ -9,6 +9,7 @@ import {Bottle} from '../../model/bottle';
 import {NotificationService} from '../../service/notification.service';
 import {Http} from '@angular/http';
 import {NativeStorageService} from '../../service/native-storage.service';
+import {User} from '../../model/user';
 
 /**
  * Generated class for the UploadBottles page.
@@ -66,9 +67,7 @@ export class UploadBottlesPage {
 
     this.fileChooser.open()
       .then(uri => {
-        this.notificationService.debugAlert('fichier choisi: ', uri);
         this.filepath.resolveNativePath(uri).then((result) => {
-          this.notificationService.debugAlert('resolve OK: ' + result);
           let nativepath = result;
           this.readFile(nativepath);
         })
@@ -82,10 +81,8 @@ export class UploadBottlesPage {
   public saveBottles() {
     try {
       if (this.deleteBefore) {
-        this.notificationService.debugAlert('suppression de la base avant importation');
         this.bottleService.deleteBottles();
       }
-      this.notificationService.debugAlert('sauvegarde de ' + this.bottles.length + ' bouteilles');
       this.bottleService.initializeDB(this.bottles);
       this.bottles = null;
     } catch (error) {
@@ -97,26 +94,20 @@ export class UploadBottlesPage {
     try {
       let self = this;
       (<any>window).resolveLocalFileSystemURL(nativepath, (res) => {
-                                                this.notificationService.debugAlert('resolve local ok ', res);
                                                 res.file((resFile) => {
-                                                  self.notificationService.debugAlert('reading file ', resFile);
                                                   let reader = new FileReader();
                                                   let isXls = resFile.name.toLowerCase().endsWith('.xls');
                                                   if (this.encoding == null) {
                                                     this.encoding = isXls ? 'windows-1252' : 'utf-8';
                                                   }
-                                                  this.notificationService.debugAlert('lecture as text...');
                                                   reader.readAsText(resFile, this.encoding);
                                                   reader.onloadend = (evt: any) => {
-                                                    this.notificationService.debugAlert('load ended...', evt);
                                                     this.fileContent = evt.target.result;
-                                                    this.notificationService.debugAlert('taille contenu ', this.fileContent.length);
                                                     if (isXls) {
                                                       this.parseContentXLS();
                                                     } else {
                                                       this.parseContentCSV();
                                                     }
-                                                    this.notificationService.debugAlert('save...');
                                                     this.saveBottles();
                                                   }
                                                 })
@@ -145,7 +136,7 @@ export class UploadBottlesPage {
       self.saveBottles();
     }
     reader.onerror = function (evt) {
-      self.notificationService.debugAlert('cannot read the file ! ' + file, self.debugMode);
+      self.notificationService.error('cannot read the file ! ' + file);
     };
     reader.readAsText(file, encoding);
   }
@@ -180,7 +171,6 @@ export class UploadBottlesPage {
 
   public parseContentXLS() {
     //let textType = /text.*/;
-    this.notificationService.debugAlert('parsing XLS...');
     let nbread = this.nbRead;
     let nbfrom = this.from;
     let csvarray = this.fileContent.split(/\r\n|\n/);
@@ -203,6 +193,14 @@ export class UploadBottlesPage {
 
   test() {
     this.listLocalStorageData();
+    let u1: User = <User> {
+      user: 'u1',
+      email: 'mail1',
+      photoURL: '',
+      displayName: '',
+      phoneNumber: '',
+      uid: ''
+    };
 
     //let btl1 = [];
     //let btl2 = [];

@@ -9,6 +9,7 @@
     "information": "Information",
     "error": "Erreur !",
     "failed": "Echec !",
+    "unavailable-function": "Fonction indisponible - êtes vous offline ?",
     "warning": "Attention",
     "loading": "Chargement en cours..."
   },

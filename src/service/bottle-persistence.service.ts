@@ -79,7 +79,6 @@ export class BottlePersistenceService extends PersistenceService {
   public fetchFromDatabase() {
     let items = this.dataConnection.allBottlesObservable;
     this.dataConnectionSub=items.subscribe((bottles: Bottle[]) => {
-                      this.notificationService.debugAlert('Réception de '+bottles.length+' bouteilles dans la couche de persistence des bouteilles');
                       this.setAllBottlesArray(bottles);
                       this.filterOn(this.filters);
                     },

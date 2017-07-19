@@ -37,7 +37,6 @@ export class LocalLoginPage implements OnInit {
   }
 
   public loginAs(user: User) {
-    this.notificationService.debugAlert('LoginPage: user choisi: ', JSON.stringify(user));
     this.chosenUser = user;
     this.signin();
   }

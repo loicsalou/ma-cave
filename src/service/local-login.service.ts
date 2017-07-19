@@ -27,8 +27,7 @@ export class LocalLoginService extends AbstractLoginService {
   }
 
   set localUser(value: any) {
-    this._localUser = new LocalLoginUser(value._user, value._email, value._photoUrl, value._displayName, value._uid, value._phoneNumber);
-    this.notificationService.debugAlert('localLogin, set localUser(value) appelé, résultat : '+JSON.stringify(this._localUser));
+    this._localUser = new LocalLoginUser(value.user, value.email, value.photoUrl, value.displayName, value.uid, value.phoneNumber);
   }
 
   public login(): Observable<User> {

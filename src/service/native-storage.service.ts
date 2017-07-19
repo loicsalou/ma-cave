@@ -55,7 +55,7 @@ export class NativeStorageService {
     this.IMAGES_ROOT = this.IMAGES_FOLDER;
     this.XREF_ROOT = this.XREF_FOLDER;
     this.USER_ROOT = this.USERS_ROOT + this.SEP + (user ? user.user : '' );
-    this.notificationService.debugAlert('NativeStorage: init avec user.user='+user.user+' - USER_ROOT='+this.USER_ROOT);
+    this.notificationService.debugAlert('NativeStorage: init avec user.user=' + user.user + ' - USER_ROOT=' + this.USER_ROOT);
     this.BOTTLES_ROOT = this.USER_ROOT + this.SEP + NativeStorageService.BOTTLES_FOLDER;
     this.saveUser(user);
   }
@@ -125,7 +125,6 @@ export class NativeStorageService {
 
   public fetchAllBottles() {
     if (this.cordova) {
-      this.notificationService.debugAlert('tentative de récup depuis cache local ' + this.BOTTLES_ROOT + ',,,');
 
       this.nativeStorage.getItem(this.BOTTLES_ROOT)
         .then(
@@ -133,16 +132,13 @@ export class NativeStorageService {
             //load then prepare loaded bottles for the app
             let btl = data.map((bottle: Bottle) => this.bottleFactory.create(bottle));
             //let btl = JSON.parse(data).map((bottle: Bottle) => this.bottleFactory.create(bottle));
-            this.notificationService.debugAlert('Chargement local de ' + btl.length + ' bouteilles depuis ' + this.BOTTLES_ROOT + ': émission');
             this._bottles.next(btl);
           },
           error => {
-            this.notificationService.debugAlert('(reject) pas de donnée locale trouvée ' + this.BOTTLES_ROOT + ' erreur=', error);
-            this.notificationService.error('pas de donnée locale trouvée ' + this.BOTTLES_ROOT, error);
+            this.notificationService.debugAlert('pas de donnée locale trouvée ' + this.BOTTLES_ROOT, error);
           }
-        ).catch(error => this.notificationService.debugAlert('(catch) La récupération locale des données a échoué depuis ' + this.BOTTLES_ROOT + ' erreur=' + error));
-    } else {
-      this.notificationService.debugAlert('Plateforme non Cordova !');
+        ).catch(error => this.notificationService.debugAlert('(catch) La récupération locale des données a échoué' +
+                                                             ' depuis ' + this.BOTTLES_ROOT, error));
     }
   }
 
@@ -152,14 +148,12 @@ export class NativeStorageService {
   }
 
   public save(bottles: Bottle[ ]): Promise<any> {
-    this.notificationService.debugAlert('sauvegarde dans ' + this.BOTTLES_ROOT + ' de ' + bottles.length + ' bouteille. 1ère clé=' + bottles[ 0 ][ '$key' ] + '/' + bottles[ 0 ][ 'id' ]);
     if (this.cordova) {
-      return this.nativeStorage.setItem(this.BOTTLES_ROOT, bottles)
-      //return this.nativeStorage.setItem(this.BOTTLES_ROOT, JSON.stringify(bottles))
-        .then(
-          result => this.notificationService.debugAlert('sauvegarde locale OK'),
-          error => this.notificationService.debugAlert('sauvegarde locale En erreur ! ' + error)
-        );
+      return this.nativeStorage.setItem(this.BOTTLES_ROOT, bottles);
+      //.then(
+      //  result => this.notificationService.debugAlert('sauvegarde locale OK'),
+      //  error => this.notificationService.debugAlert('sauvegarde locale En erreur ! ' + error)
+      //);
     }
   }
 
@@ -170,12 +164,6 @@ export class NativeStorageService {
       return undefined
     }
   }
-  //
-  //setValue(key: string, value: any) {
-  //  if (this.cordova) {
-  //    this.nativeStorage.setItem(key, value)
-  //  }
-  //}
 
   public replaceBottle(bottle: Bottle) {
     this.notificationService.warning('Non supporté hors connexion');
@@ -190,16 +178,22 @@ export class NativeStorageService {
   private saveUser(user: User) {
     if (user && this.cordova) {
       this.notificationService.debugAlert('Tentative de sauvegarde de l\'utilisateur: ' + JSON.stringify(user));
-      this.nativeStorage.getItem(this.KNOWN_USERS).then(
+      this.getKnownUsers().then(
         (users: User[]) => {
-          this.notificationService.debugAlert('Récupéré ' + users.length + ' utilisateurs: ' + JSON.stringify(users));
+          this.notificationService.debugAlert('Récupéré ' + JSON.stringify(users.map(u => u.email)));
           users.push(user);
-          this.notificationService.debugAlert('push du user dans le tableau des users OK');
-          users = _.uniqBy(users, function (u: User) {
-            //this.notificationService.debugAlert('élim doubles. user[_email]='+u['_email']+' et user.email='+u.email);
-            return u.email;
+          this.notificationService.debugAlert('push du user dans le tableau des users OK nb=' + JSON.stringify(users.map(u => u.email)));
+          let usersByMail = new Map<string, User>();
+          users.forEach((u: User) => {
+            if (!usersByMail.has(u.email)) {
+              this.notificationService.debugAlert('le user sera sauvegardé: ' + u.email);
+              usersByMail.set(u.email, u);
+            } else {
+              this.notificationService.debugAlert('le user ne sera pas sauvegardé: ' + u.email);
+            }
           });
-          this.notificationService.debugAlert('élim doubles fait. Reste '+users.length+'. Sauvegarde...');
+          users=Array.from(usersByMail.values());
+          this.notificationService.debugAlert('élim doubles fait. Reste ' + JSON.stringify(users.map(u => u.email))+ '. Sauvegarde...');
           this.nativeStorage.setItem(this.KNOWN_USERS, users);
           this.notificationService.debugAlert('Sauvegarde liste utilisateurs OK');
         }).catch(err => {

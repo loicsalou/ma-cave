@@ -99,7 +99,6 @@ export class FirebaseConnectionService {
             this._bottles.next(bottles);
           }
         } else {
-          this.notificationService.debugAlert('Réception de ' + bottles.length + ' bouteilles chargées depuis la DB: ré-émission');
           this._bottles.next(bottles);
         }
       },
@@ -124,17 +123,13 @@ export class FirebaseConnectionService {
   }
 
   private handleCacheObservable(bottles: Bottle[]) {
-    if (bottles.length > 0) {
-      this.notificationService.debugAlert('Réception de ' + bottles.length + ' bouteilles chargées depuis le cache local: ré-émission');
-    } else {
-      this.notificationService.debugAlert('état courant cache local: vide, pas de propagation');
-    }
     this.cacheBottles = bottles;
     this._bottles.next(bottles);
   }
 
   public deleteImage(file: File): Promise<any> {
     if (!this.connectionAllowed) {
+      this.notificationService.i18nFailed('app.unavailable-function');
       return;
     }
     let item: FileItem = new FileItem(file);
@@ -150,6 +145,7 @@ export class FirebaseConnectionService {
 
   public uploadImageToStorage(imageBlob, name: string): Promise<UploadTaskSnapshot> {
     if (!this.connectionAllowed) {
+      this.notificationService.i18nFailed('app.unavailable-function');
       return;
     }
     let fileName = name + '-' + new Date().getTime() + '.jpg';
@@ -175,6 +171,7 @@ export class FirebaseConnectionService {
 
   public listBottleImages(bottle: Bottle): Observable<Image[]> {
     if (!this.connectionAllowed) {
+      this.notificationService.i18nFailed('app.unavailable-function');
       return undefined;
     }
     return this.angularFirebase.list(this.XREF_ROOT, {
@@ -189,6 +186,7 @@ export class FirebaseConnectionService {
 
   public uploadFileOrBlob(fileOrBlob, meta: BottleMetadata): Promise<void | UploadMetadata> {
     if (!this.connectionAllowed) {
+      this.notificationService.i18nFailed('app.unavailable-function');
       return undefined;
     }
     return this.uploadToStorage(fileOrBlob, meta.nomCru)
@@ -266,13 +264,12 @@ export class FirebaseConnectionService {
 
   public update(bottles: Bottle[ ]): Promise<any> {
     if (!this.connectionAllowed) {
-      this.notificationService.failed('Update indisponible en offline');
+      this.notificationService.i18nFailed('');
       return undefined;
     }
     return new Promise((resolve, reject) => {
       bottles.forEach(bottle => {
         bottle[ 'lastUpdated' ] = new Date().getTime();
-        this.notificationService.debugAlert('update de $key=' + bottle[ '$key' ] + ', this.bottlesRootRef=' + this.bottlesRootRef);
         this.bottlesRootRef.child(bottle[ '$key' ]).set(bottle, (
           err => {
             if (err == null) {
@@ -359,8 +356,6 @@ export class FirebaseConnectionService {
     let inFBNotInCache = _.differenceBy(firebaseBottles, this.cacheBottles, matchByKeyAndLastUpdateDate);
 
     if (inFBNotInCache.length !== 0) {
-      this.notificationService.debugAlert('trouvé ' + inFBNotInCache.length + ' différences entre le cache et' +
-                                          ' firebase => sauvegarde');
       //create new cache: remove updated bottltes then add updated to cache bottles and we're done
       let newCache = _.pullAllWith(this.cacheBottles, inFBNotInCache, matchByKey);
       newCache = _.concat(this.cacheBottles, inFBNotInCache);
@@ -370,7 +365,6 @@ export class FirebaseConnectionService {
       this.notificationService.information('cache raffraichi: ' + inFBNotInCache.length + ' ajouts / modifications');
       return true;
     } else {
-      this.notificationService.debugAlert('aucune différence trouvée entre le cache et Firebase, pas de sauvegarde');
       return false;
     }
   }

@@ -2,13 +2,12 @@ import {AlertController, Loading, LoadingController, ToastController} from 'ioni
 import {TranslateService} from '@ngx-translate/core';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
-import {NativeStorageService} from './native-storage.service';
 
 /**
  * Created by loicsalou on 13.06.17.
  */
 export class NotificationService {
-  private _debugMode: boolean=false;
+  private _debugMode: boolean = false;
 
   constructor(private alertController: AlertController, private toastController: ToastController,
               private translateService: TranslateService, private loadingCtrl: LoadingController) {
@@ -30,7 +29,7 @@ export class NotificationService {
 
   error(message: string, error?: any) {
     this.alertController.create({
-                                  title: this.translateService.instant('error'),
+                                  title: this.translateService.instant('app.error'),
                                   subTitle: message ? message + error : 'Une erreur s\'est produite ! ' + error ? error : '',
                                   buttons: [ 'Ok' ]
                                 })
@@ -39,8 +38,17 @@ export class NotificationService {
 
   failed(message: string, error?: any) {
     this.alertController.create({
-                                  title: this.translateService.instant('failed'),
+                                  title: this.translateService.instant('app.failed'),
                                   subTitle: message ? message + error : 'l\'opération a échoué' + error ? error : '',
+                                  buttons: [ 'Ok' ]
+                                })
+      .present();
+  }
+
+  i18nFailed(message: string) {
+    this.alertController.create({
+                                  title: this.translateService.instant('app.failed'),
+                                  subTitle: this.translateService.instant(message),
                                   buttons: [ 'Ok' ]
                                 })
       .present();
@@ -48,7 +56,7 @@ export class NotificationService {
 
   warning(message: string, error?: any) {
     this.alertController.create({
-                                  title: this.translateService.instant('warning'),
+                                  title: this.translateService.instant('app.warning'),
                                   subTitle: message + (error ? error : ''),
                                   buttons: [ 'Ok' ]
                                 })

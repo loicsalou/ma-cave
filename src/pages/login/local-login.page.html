@@ -6,7 +6,7 @@
   
   <ion-row padding-top>
     <ion-item *ngFor="let user of knownUsers" (click)="loginAs(user)">
-      <p floating style="color: black">{{user._displayName}}</p>
+      <p floating style="color: black">{{user.displayName}} - {{user.email}}</p>
     </ion-item>
   </ion-row>
   
