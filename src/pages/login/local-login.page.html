@@ -3,12 +3,11 @@
 </ion-header>
 
 <ion-content class="home card-background-page page">
+  
   <ion-row padding-top>
-
     <ion-item *ngFor="let user of knownUsers" (click)="loginAs(user)">
-      <ion-label floating>{{user.email}}</ion-label>
+      <p floating style="color: black">{{user._displayName}}</p>
     </ion-item>
-
   </ion-row>
   
   <ion-card class="card-background" justify-content-center style="background-color: transparent">

@@ -8,18 +8,45 @@
     <fieldset>
       <legend><h2>{{'app.please-login' | translate}}</h2></legend>
       <div d-flex>
-        <button ion-button badge (click)="facebookLogin()">
+        <button ion-button badge (click)="facebookLogin()" *ngIf="isConnectionAllowed()">
           <img icon-only src="assets/icon/social_facebook_box_blue.png"/>
         </button>
-        <button ion-button badge (click)="emailLogin()">
+        <button ion-button badge (click)="emailLogin()" *ngIf="isConnectionAllowed()">
           <ion-icon name="mail" style="font-size: 2.4em;"></ion-icon>
         </button>
-        <button ion-button badge (click)="anonymousLogin()">
+        <button ion-button badge (click)="anonymousLogin()" *ngIf="isConnectionAllowed()">
           <img icon-only src="assets/icon/anonymous.png"/>
         </button>
         <button ion-button badge (click)="localLogin()">
           <ion-icon name="phone-portrait"></ion-icon>
         </button>
+      </div>
+    </fieldset>
+    
+    <fieldset>
+      <legend><h2> {{'app.connection' | translate}}</h2></legend>
+      <div d-flex>
+        <ion-list radio-group>
+          <ion-item>
+            <ion-label color="dark">{{'app.connection-on' | translate}}</ion-label>
+            <ion-radio value="on" checked (click)="connectionAllowed()"></ion-radio>
+          </ion-item>
+          <ion-item>
+            <ion-label color="dark">{{'app.connection-off' | translate}}</ion-label>
+            <ion-radio value="off" (click)="connectionDisallowed()"></ion-radio>
+          </ion-item>
+        </ion-list>
+        
+        <ion-list radio-group>
+          <ion-item>
+            <ion-label color="dark">debug</ion-label>
+            <ion-radio (click)="setDebugMode(true)"></ion-radio>
+          </ion-item>
+          <ion-item>
+            <ion-label color="dark">sans debug</ion-label>
+            <ion-radio checked (click)="setDebugMode(false)"></ion-radio>
+          </ion-item>
+        </ion-list>
       </div>
     </fieldset>
   </div>

@@ -2,14 +2,20 @@ import {AlertController, Loading, LoadingController, ToastController} from 'ioni
 import {TranslateService} from '@ngx-translate/core';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
+import {NativeStorageService} from './native-storage.service';
 
 /**
  * Created by loicsalou on 13.06.17.
  */
 export class NotificationService {
+  private _debugMode: boolean=false;
 
   constructor(private alertController: AlertController, private toastController: ToastController,
               private translateService: TranslateService, private loadingCtrl: LoadingController) {
+  }
+
+  set debugMode(value: boolean) {
+    this._debugMode = value;
   }
 
   information(message: string, showCloseButton?: boolean, delay?: number, position?: string) {
@@ -18,9 +24,8 @@ export class NotificationService {
                                   duration: delay ? delay : 3000,
                                   position: position ? position : 'top',
                                   showCloseButton: showCloseButton ? showCloseButton : false
-  })
-  .
-    present()
+                                })
+      .present()
   }
 
   error(message: string, error?: any) {
@@ -50,11 +55,11 @@ export class NotificationService {
       .present();
   }
 
-  debugAlert(message: string, obj?: any, debug: boolean = false) {
-    if (debug) {
+  debugAlert(message: string, obj?: any) {
+    if (this._debugMode) {
       alert(message + ' ' + (obj ? JSON.stringify(obj) : '-'));
     } else {
-
+      console.debug(message + (obj ? obj : ''));
     }
   }
 

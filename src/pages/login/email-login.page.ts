@@ -8,10 +8,13 @@ import {NotificationService} from '../../service/notification.service';
              templateUrl: 'email-login.page.html'
            })
 
-export class EmailLoginPage extends LoginPage {
+export class EmailLoginPage {
 
-  constructor(loginService: LoginService, notificationService: NotificationService) {
-    super(loginService, notificationService);
+  user: string;
+  psw: string;
+
+  constructor(private loginService: LoginService, private notificationService: NotificationService) {
+    //super(loginService, notificationService);
   }
 
   public signin() {

@@ -8,6 +8,7 @@ import {BottlePersistenceService} from '../../service/bottle-persistence.service
 import {Bottle} from '../../model/bottle';
 import {NotificationService} from '../../service/notification.service';
 import {Http} from '@angular/http';
+import {NativeStorageService} from '../../service/native-storage.service';
 
 /**
  * Generated class for the UploadBottles page.
@@ -31,6 +32,8 @@ export class UploadBottlesPage {
   optionsVisibles: boolean = false; // forcer l'encoding
   debugMode: boolean = false;
   deleteBefore: boolean = true;
+  localStorageKeys: any;
+  tempValue: any;
 
   constructor(public navCtrl: NavController,
               private filepath: FilePath,
@@ -39,6 +42,7 @@ export class UploadBottlesPage {
               private bottleService: BottlePersistenceService,
               private bottleFactory: BottleFactory,
               private platform: Platform,
+              private localStorage: NativeStorageService,
               private http: Http) {
   }
 
@@ -50,11 +54,19 @@ export class UploadBottlesPage {
     this.optionsVisibles = !this.optionsVisibles;
   }
 
+  public listLocalStorageData() {
+    this.localStorage.getList()
+      .then(keys => {
+        this.localStorageKeys = keys;
+      })
+      .catch(err => alert('accès aux clés KO ' + err));
+  }
+
   public chooseFile() {
 
     this.fileChooser.open()
       .then(uri => {
-        this.notificationService.debugAlert('fichier choisi: ', uri, this.debugMode);
+        this.notificationService.debugAlert('fichier choisi: ', uri);
         this.filepath.resolveNativePath(uri).then((result) => {
           this.notificationService.debugAlert('resolve OK: ' + result);
           let nativepath = result;
@@ -73,7 +85,7 @@ export class UploadBottlesPage {
         this.notificationService.debugAlert('suppression de la base avant importation');
         this.bottleService.deleteBottles();
       }
-      this.notificationService.debugAlert('sauvegarde de ' + this.bottles.length + ' bouteilles', this.debugMode);
+      this.notificationService.debugAlert('sauvegarde de ' + this.bottles.length + ' bouteilles');
       this.bottleService.initializeDB(this.bottles);
       this.bottles = null;
     } catch (error) {
@@ -85,26 +97,26 @@ export class UploadBottlesPage {
     try {
       let self = this;
       (<any>window).resolveLocalFileSystemURL(nativepath, (res) => {
-                                                this.notificationService.debugAlert('resolve local ok ', res, this.debugMode);
+                                                this.notificationService.debugAlert('resolve local ok ', res);
                                                 res.file((resFile) => {
-                                                  self.notificationService.debugAlert('reading file ', resFile, this.debugMode);
+                                                  self.notificationService.debugAlert('reading file ', resFile);
                                                   let reader = new FileReader();
                                                   let isXls = resFile.name.toLowerCase().endsWith('.xls');
                                                   if (this.encoding == null) {
                                                     this.encoding = isXls ? 'windows-1252' : 'utf-8';
                                                   }
-                                                  this.notificationService.debugAlert('lecture as text...', this.debugMode);
+                                                  this.notificationService.debugAlert('lecture as text...');
                                                   reader.readAsText(resFile, this.encoding);
                                                   reader.onloadend = (evt: any) => {
-                                                    this.notificationService.debugAlert('load ended...', evt, this.debugMode);
+                                                    this.notificationService.debugAlert('load ended...', evt);
                                                     this.fileContent = evt.target.result;
-                                                    this.notificationService.debugAlert('taille contenu ', this.fileContent.length, this.debugMode);
+                                                    this.notificationService.debugAlert('taille contenu ', this.fileContent.length);
                                                     if (isXls) {
                                                       this.parseContentXLS();
                                                     } else {
                                                       this.parseContentCSV();
                                                     }
-                                                    this.notificationService.debugAlert('save...', this.debugMode);
+                                                    this.notificationService.debugAlert('save...');
                                                     this.saveBottles();
                                                   }
                                                 })
@@ -168,7 +180,7 @@ export class UploadBottlesPage {
 
   public parseContentXLS() {
     //let textType = /text.*/;
-    this.notificationService.debugAlert('parsing XLS...', this.debugMode);
+    this.notificationService.debugAlert('parsing XLS...');
     let nbread = this.nbRead;
     let nbfrom = this.from;
     let csvarray = this.fileContent.split(/\r\n|\n/);
@@ -190,19 +202,21 @@ export class UploadBottlesPage {
   }
 
   test() {
-    let btl1 = [];
-    let btl2 = [];
-    this.http.get('../../assets/json/ma-cave-mini1.json').subscribe(
-      response => {
-        btl1 = response.json()
-        this.http.get('../../assets/json/ma-cave-mini2.json').subscribe(
-          response => {
-            btl2 = response.json();
-            this.playWith(btl1, btl2);
-          }
-        );
-      }
-    );
+    this.listLocalStorageData();
+
+    //let btl1 = [];
+    //let btl2 = [];
+    //this.http.get('../../assets/json/ma-cave-mini1.json').subscribe(
+    //  response => {
+    //    btl1 = response.json()
+    //    this.http.get('../../assets/json/ma-cave-mini2.json').subscribe(
+    //      response => {
+    //        btl2 = response.json();
+    //        this.playWith(btl1, btl2);
+    //      }
+    //    );
+    //  }
+    //);
   }
 
   private playWith(btl1: Array<Bottle>, btl2: Array<Bottle>) {
@@ -222,21 +236,26 @@ export class UploadBottlesPage {
 
     //liste les bouteilles de btl1 qui ne sont pas dans btl2
     let diff = _.differenceWith(btl1, btl2, function (a, b) {
-      return (a.lastUpdated === b.lastUpdated && a.$key===b.$key);
+      return (a.lastUpdated === b.lastUpdated && a.$key === b.$key);
     });
-    console.info('nombre de différences:'+diff.length);
+    console.info('nombre de différences:' + diff.length);
 
     //create new cache: remove updated bottltes then add updated to cache bottles and we're done
     let newCache = _.pullAllWith(btl2, diff, function (a, b) {
-      return (a.$key===b.$key);
+      return (a.$key === b.$key);
     });
     btl2 = _.concat(btl2, diff);
 
     let diff2 = _.differenceWith(btl1, btl2, function (a, b) {
-      return (a.lastUpdated === b.lastUpdated && a.$key===b.$key);
+      return (a.lastUpdated === b.lastUpdated && a.$key === b.$key);
     });
-    console.info('nombre de différences après refresh:'+diff2.length);
+    console.info('nombre de différences après refresh:' + diff2.length);
+  }
 
+  loadTempValueFor(key) {
+    this.localStorage.getValue(key)
+      .then(v => this.tempValue = JSON.stringify(v))
+      .catch(err => alert('accès à la valeur de ' + key + ' KO: ' + JSON.stringify(err)));
   }
 }
 

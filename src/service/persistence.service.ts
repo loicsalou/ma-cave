@@ -1,8 +1,10 @@
-import {Loading, LoadingController} from 'ionic-angular';
+import {LoadingController} from 'ionic-angular';
 import {Observable} from 'rxjs/Observable';
 import {LoginService} from './login.service';
 import {NotificationService} from './notification.service';
 import {TranslateService} from '@ngx-translate/core';
+import {User} from '../model/user';
+import {Subscription} from 'rxjs/Subscription';
 /**
  * Created by loicsalou on 16.06.17.
  */
@@ -14,22 +16,26 @@ export abstract class PersistenceService {
 
   public XREF_ROOT: string;
 
-  private loading: Loading;
+  private loginSub: Subscription;
 
   constructor(private loadingCtrl: LoadingController, protected notificationService: NotificationService,
               protected loginService: LoginService, private translateService: TranslateService) {
-    loginService.authentifiedObservable.subscribe(
-      user => {
-        if (loginService.user !== undefined) {
-          this.initialize(loginService.user);
-        } else {
-          this.cleanup();
-        }
-      }
+    this.loginSub = loginService.authentifiedObservable.subscribe(
+      user => this.handleLoginEvent(user)
     );
   }
 
-  protected initialize(user) {
+  private handleLoginEvent(user: User) {
+    if (user) {
+      //clean subscriptions before init again
+      this.cleanup();
+      this.initialize(user);
+    } else {
+      this.cleanup();
+    }
+  }
+
+  protected initialize(user: User) {
     this.XREF_ROOT = this.XREF_FOLDER;
   }
 

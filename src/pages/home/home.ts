@@ -7,7 +7,8 @@ import {TabsPage} from '../tabs/tabs';
 import {Subscription} from 'rxjs/Subscription';
 import {SplashScreen} from '@ionic-native/splash-screen';
 import {LocalLoginPage} from '../login/local-login.page';
-import * as _ from 'lodash';
+import {FirebaseConnectionService} from '../../service/firebase-connection.service';
+import {NotificationService} from '../../service/notification.service';
 
 @Component({
              selector: 'page-home',
@@ -23,7 +24,8 @@ export class HomePage implements OnInit, AfterViewInit {
   private loginSubscription: Subscription;
 
   constructor(public navCtrl: NavController, public platform: Platform, public loginService: LoginService,
-              private modalController: ModalController, private splashScreen: SplashScreen) {
+              private modalController: ModalController, private splashScreen: SplashScreen,
+              private notificationService: NotificationService, private dataConnection: FirebaseConnectionService) {
   }
 
   ngOnInit(): void {
@@ -37,13 +39,10 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   facebookLogin() {
-    this.loginService.facebookLogin();
     this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
       this.handleLoginEvent(user);
-      if (user) {
-        this.authenticated = true;
-      }
     });
+    this.loginService.facebookLogin();
   }
 
   emailLogin() {
@@ -73,6 +72,22 @@ export class HomePage implements OnInit, AfterViewInit {
       this.handleLoginEvent(user);
     });
     this.loginService.anonymousLogin();
+  }
+
+  setDebugMode(b: boolean) {
+    this.notificationService.debugMode = b;
+  }
+
+  isConnectionAllowed():boolean {
+    return this.dataConnection.isConnectionAllowed();
+  }
+
+  connectionAllowed() {
+    this.dataConnection.setConnectionAllowed(true);
+  }
+
+  connectionDisallowed() {
+    this.dataConnection.setConnectionAllowed(false);
   }
 
   logout() {

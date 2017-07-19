@@ -13,6 +13,9 @@ export abstract class LoginPage {
   psw: string;
 
   constructor(public loginService: LoginService, protected notificationService: NotificationService) {
+    //cette souscription est nécessaire car l'authentification se fait potentiellement en asynchrone et la page ne
+    // peut pas être fermée si le mot de passe saisi est erroné par ex. donc on s'abonne pour capter le résultat du
+    // login et gérer la page correctement.
     this.authSubscription = this.loginService.authentifiedObservable.subscribe(
       user => this.authenticated(user),
       error => this.authError(error)

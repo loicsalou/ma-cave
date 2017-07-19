@@ -100,13 +100,11 @@
         </ion-list>
       </ion-row>
     </ion-card>
-
+    
     <label>Vidage de la base avant importation</label>
     <ion-checkbox id="deleteBefore" [(ngModel)]="deleteBefore"></ion-checkbox>
-
+    
     <div *ngIf="platformIsCordova()">
-      <label>Mode debug</label>
-      <ion-checkbox id="debugMode" [(ngModel)]="debugMode"></ion-checkbox>
       <button ion-button align-items-start round icon-only block (click)="chooseFile()">
         <ion-icon name="cloud-upload"></ion-icon>
         Importer...
@@ -119,7 +117,15 @@
     <p>{{bottleService.loginService.user.user}}</p>
   </div>
   
-  <button ion-button (click)="test()">Tests</button>
+  <button ion-button (click)="test()">Voir local storage</button>
+  <div *ngIf="localStorageKeys">
+    <ion-item *ngFor="let key of localStorageKeys">
+      <label (click)="loadTempValueFor(key)">{{key}}</label>
+    </ion-item>
+    <ion-item *ngIf="tempValue">
+      <ion-textarea [value]="tempValue" style="height:50vh"></ion-textarea>
+    </ion-item>
+  </div>
   <!--<button ion-button align-items-start round icon-only block (click)="saveBottles()">-->
   <!--<ion-icon name="folder"></ion-icon>-->
   <!--Effacer et importer la cave-->

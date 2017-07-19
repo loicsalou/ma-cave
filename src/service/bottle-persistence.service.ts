@@ -17,6 +17,8 @@ import {TranslateService} from '@ngx-translate/core';
 import {FirebaseConnectionService} from './firebase-connection.service';
 import {NativeStorageService} from './native-storage.service';
 import Reference = firebase.database.Reference;
+import {User} from '../model/user';
+import {Subscription} from 'rxjs/Subscription';
 
 /**
  * Services related to the bottles in the cellar.
@@ -35,9 +37,9 @@ export class BottlePersistenceService extends PersistenceService {
   private _filtersObservable: BehaviorSubject<FilterSet> = new BehaviorSubject<FilterSet>(new FilterSet());
   private filters: FilterSet = new FilterSet();
   private allBottlesArray: Bottle[];
+  private dataConnectionSub: Subscription;
 
-  constructor(private bottleFactory: BottleFactory, private dataConnection: FirebaseConnectionService,
-              private storageService: NativeStorageService,
+  constructor(private dataConnection: FirebaseConnectionService,
               loadingCtrl: LoadingController,
               notificationService: NotificationService,
               loginService: LoginService,
@@ -51,7 +53,7 @@ export class BottlePersistenceService extends PersistenceService {
     }
   }
 
-  initialize(user) {
+  initialize(user: User) {
     super.initialize(user);
     this.dataConnection.initialize(user);
     this.fetchAllBottles();
@@ -59,6 +61,7 @@ export class BottlePersistenceService extends PersistenceService {
 
   cleanup() {
     super.cleanup();
+    this.dataConnectionSub.unsubscribe();
     this.dataConnection.cleanup();
     this.BOTTLES_ROOT = undefined;
     this.allBottlesArray = undefined;
@@ -74,19 +77,14 @@ export class BottlePersistenceService extends PersistenceService {
   }
 
   public fetchFromDatabase() {
-    this.dataConnection.fetchAllBottles();
     let items = this.dataConnection.allBottlesObservable;
-    items.subscribe((bottles: Bottle[]) => {
-                      bottles.forEach((bottle: Bottle) => this.bottleFactory.create(bottle));
+    this.dataConnectionSub=items.subscribe((bottles: Bottle[]) => {
+                      this.notificationService.debugAlert('Réception de '+bottles.length+' bouteilles dans la couche de persistence des bouteilles');
                       this.setAllBottlesArray(bottles);
-                      if (this.platform.is('cordova') && bottles.length > 0) {
-                        //this.notificationService.information('sauvegarde locale...', true);
-                        this.storageService.save(bottles);
-                        //this.notificationService.information('sauvegarde locale terminée', true);
-                      }
                       this.filterOn(this.filters);
                     },
                     error => this.notificationService.error('L\'accès à la liste des bouteilles a échoué !', error));
+    this.dataConnection.fetchAllBottles();
   }
 
   public update(bottles: Bottle[]) {

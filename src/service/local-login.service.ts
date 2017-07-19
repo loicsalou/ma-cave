@@ -16,7 +16,7 @@ import {NativeStorageService} from './native-storage.service';
 @Injectable()
 export class LocalLoginService extends AbstractLoginService {
 
-  localUser: User;
+  private _localUser: User;
   knownUsers: User[];
 
   constructor(notificationService: NotificationService, private storageService: NativeStorageService) {
@@ -26,10 +26,30 @@ export class LocalLoginService extends AbstractLoginService {
     )
   }
 
+  set localUser(value: any) {
+    this._localUser = new LocalLoginUser(value._user, value._email, value._photoUrl, value._displayName, value._uid, value._phoneNumber);
+    this.notificationService.debugAlert('localLogin, set localUser(value) appelé, résultat : '+JSON.stringify(this._localUser));
+  }
+
   public login(): Observable<User> {
     //async this, must return first
-    setTimeout(() => this.success(this.localUser), 300);
+    setTimeout(() => this.success(this._localUser), 300);
     return this.authentifiedObservable;
   }
 }
 
+
+export class LocalLoginUser extends User {
+
+  constructor(user: string, email: string, photoURL: string, displayName: string, uid: string, phoneNumber: string) {
+    super();
+    this.user = email.replace(/[\.]/g, '');
+    this.user = this.user.replace(/[#.]/g, '');
+    this.email = email;
+    this.photoURL = photoURL;
+    this.uid = uid;
+    this.phoneNumber = phoneNumber;
+    this.displayName = displayName;
+  }
+
+}

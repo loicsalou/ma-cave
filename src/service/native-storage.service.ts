@@ -14,6 +14,7 @@ import {NativeStorage} from '@ionic-native/native-storage';
 import {User} from '../model/user';
 import * as _ from 'lodash';
 import {Platform} from 'ionic-angular';
+import {BottleFactory} from '../model/bottle.factory';
 import Reference = firebase.database.Reference;
 
 /**
@@ -26,9 +27,11 @@ export class NativeStorageService {
   private static BOTTLES_FOLDER = 'bottles';
   private IMAGES_FOLDER = 'images';
   public IMAGES_ROOT: string;
+  private USER_ROOT: string;
+  private SEP = '/';
 
   protected USERS_ROOT = 'users';
-  protected KNOWN_USERS = this.USERS_ROOT + '/list';
+  protected KNOWN_USERS = this.USERS_ROOT + this.SEP + 'list';
   private BOTTLES_ROOT: string;
   protected XREF_FOLDER = 'xref';
   public XREF_ROOT: string;
@@ -43,15 +46,18 @@ export class NativeStorageService {
    * @param notificationService
    * @param nativeStorage
    */
-  constructor(private notificationService: NotificationService, private nativeStorage: NativeStorage, private platform: Platform) {
+  constructor(private bottleFactory: BottleFactory, private notificationService: NotificationService,
+              private nativeStorage: NativeStorage, private platform: Platform) {
     this.cordova = platform.is('cordova');
   }
 
-  public initialize(user) {
+  public initialize(user: User) {
     this.IMAGES_ROOT = this.IMAGES_FOLDER;
     this.XREF_ROOT = this.XREF_FOLDER;
-    this.BOTTLES_ROOT = this.USERS_ROOT + '/' + user + '/' + NativeStorageService.BOTTLES_FOLDER;
-    this.BOTTLES_ROOT = this.USERS_ROOT + '/' + user + '/' + NativeStorageService.BOTTLES_FOLDER;
+    this.USER_ROOT = this.USERS_ROOT + this.SEP + (user ? user.user : '' );
+    this.notificationService.debugAlert('NativeStorage: init avec user.user='+user.user+' - USER_ROOT='+this.USER_ROOT);
+    this.BOTTLES_ROOT = this.USER_ROOT + this.SEP + NativeStorageService.BOTTLES_FOLDER;
+    this.saveUser(user);
   }
 
   public cleanup() {
@@ -119,13 +125,24 @@ export class NativeStorageService {
 
   public fetchAllBottles() {
     if (this.cordova) {
+      this.notificationService.debugAlert('tentative de récup depuis cache local ' + this.BOTTLES_ROOT + ',,,');
+
       this.nativeStorage.getItem(this.BOTTLES_ROOT)
         .then(
-          data => this._bottles.next(JSON.parse(data)),
+          data => {
+            //load then prepare loaded bottles for the app
+            let btl = data.map((bottle: Bottle) => this.bottleFactory.create(bottle));
+            //let btl = JSON.parse(data).map((bottle: Bottle) => this.bottleFactory.create(bottle));
+            this.notificationService.debugAlert('Chargement local de ' + btl.length + ' bouteilles depuis ' + this.BOTTLES_ROOT + ': émission');
+            this._bottles.next(btl);
+          },
           error => {
-            this.notificationService.error('La récupération locale des données a échoué', error)
+            this.notificationService.debugAlert('(reject) pas de donnée locale trouvée ' + this.BOTTLES_ROOT + ' erreur=', error);
+            this.notificationService.error('pas de donnée locale trouvée ' + this.BOTTLES_ROOT, error);
           }
-        );
+        ).catch(error => this.notificationService.debugAlert('(catch) La récupération locale des données a échoué depuis ' + this.BOTTLES_ROOT + ' erreur=' + error));
+    } else {
+      this.notificationService.debugAlert('Plateforme non Cordova !');
     }
   }
 
@@ -135,10 +152,30 @@ export class NativeStorageService {
   }
 
   public save(bottles: Bottle[ ]): Promise<any> {
+    this.notificationService.debugAlert('sauvegarde dans ' + this.BOTTLES_ROOT + ' de ' + bottles.length + ' bouteille. 1ère clé=' + bottles[ 0 ][ '$key' ] + '/' + bottles[ 0 ][ 'id' ]);
     if (this.cordova) {
-      return this.nativeStorage.setItem(this.BOTTLES_ROOT, JSON.stringify(bottles));
+      return this.nativeStorage.setItem(this.BOTTLES_ROOT, bottles)
+      //return this.nativeStorage.setItem(this.BOTTLES_ROOT, JSON.stringify(bottles))
+        .then(
+          result => this.notificationService.debugAlert('sauvegarde locale OK'),
+          error => this.notificationService.debugAlert('sauvegarde locale En erreur ! ' + error)
+        );
     }
   }
+
+  getValue(key: string): any {
+    if (this.cordova) {
+      return this.nativeStorage.getItem(key);
+    } else {
+      return undefined
+    }
+  }
+  //
+  //setValue(key: string, value: any) {
+  //  if (this.cordova) {
+  //    this.nativeStorage.setItem(key, value)
+  //  }
+  //}
 
   public replaceBottle(bottle: Bottle) {
     this.notificationService.warning('Non supporté hors connexion');
@@ -150,17 +187,27 @@ export class NativeStorageService {
     return undefined;
   }
 
-  saveUser(user: User) {
-    if (this.cordova) {
+  private saveUser(user: User) {
+    if (user && this.cordova) {
+      this.notificationService.debugAlert('Tentative de sauvegarde de l\'utilisateur: ' + JSON.stringify(user));
       this.nativeStorage.getItem(this.KNOWN_USERS).then(
         (users: User[]) => {
+          this.notificationService.debugAlert('Récupéré ' + users.length + ' utilisateurs: ' + JSON.stringify(users));
           users.push(user);
+          this.notificationService.debugAlert('push du user dans le tableau des users OK');
           users = _.uniqBy(users, function (u: User) {
+            //this.notificationService.debugAlert('élim doubles. user[_email]='+u['_email']+' et user.email='+u.email);
             return u.email;
           });
-          this.nativeStorage.setItem(this.USERS_ROOT, JSON.stringify(users));
+          this.notificationService.debugAlert('élim doubles fait. Reste '+users.length+'. Sauvegarde...');
+          this.nativeStorage.setItem(this.KNOWN_USERS, users);
+          this.notificationService.debugAlert('Sauvegarde liste utilisateurs OK');
         }).catch(err => {
-        this.nativeStorage.setItem(this.USERS_ROOT, JSON.stringify([ user ]));
+        this.notificationService.debugAlert('La récupération des utilisateurs locaux a échoué: ', err);
+        this.notificationService.debugAlert('Tentative de sauvegarde de l\'utilisateur: ' + JSON.stringify(user));
+        this.nativeStorage.setItem(this.KNOWN_USERS, [ user ])
+          .then(value => this.notificationService.debugAlert('sauvegarde apparemment OK ', value))
+          .catch(err => this.notificationService.debugAlert('sauvegarde KO ', err));
       });
     }
   }
@@ -187,6 +234,20 @@ export class NativeStorageService {
         }
       }
     );
+  }
+
+  deleteKnowUsers() {
+    return this.nativeStorage.remove(this.KNOWN_USERS)
+      .then(value => this.notificationService.debugAlert('suppression des utilisateurs connus OK'))
+      .catch(err => this.notificationService.debugAlert('La suppression des utilisateurs a échoué'));
+  }
+
+  getList(): Promise<any> {
+    if (this.cordova) {
+      return this.nativeStorage.keys();
+    } else {
+      return this.emptyPromise(undefined);
+    }
   }
 }
 

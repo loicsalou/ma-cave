@@ -34,7 +34,8 @@ export class AnonymousLoginService extends AbstractLoginService {
     ' mode déconnecté ?').subscribe(
           bool => {
             if (bool) {
-              this.notificationService.information('--- Mode déconnecté ---')
+              this.notificationService.information('--- Mode déconnecté ---');
+              this.success(undefined);
             }
           }
         )

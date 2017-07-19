@@ -24,8 +24,9 @@ export class LoginService {
               private notificationService: NotificationService, private localStorage: NativeStorageService) {
   }
 
-  public localLogin() {
+  public localLogin(user: User) {
     this.loadingPopup = this.notificationService.createLoadingPopup('app.checking-login');
+    this.locLogin.localUser=user;
     this.loginSub = this.locLogin.login().subscribe((user: User) => this.initUser(user));
   }
 
@@ -72,6 +73,8 @@ export class LoginService {
   logout() {
     this.loginSub.unsubscribe();
     this.loginSub = undefined;
-    this.initUser(undefined);
+    this.user=undefined;
+    this.localStorage.cleanup();
+    this.authentified.next(this.user);
   }
 }

@@ -2,6 +2,9 @@
   "app": {
     "please-login": "Authentification",
     "checking-login": "Authentification en cours...",
+    "connection": "Connexion",
+    "connection-on": "autorisée",
+    "connection-off": "sans",
     "title": "L'assistant caviste",
     "information": "Information",
     "error": "Erreur !",
