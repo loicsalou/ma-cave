@@ -6,6 +6,7 @@ import {BottleDetailSlide} from './slide-bottle-detail';
 import {UpdatePage} from '../update/update.page';
 import {SharedModule} from '../../components/shared.module';
 import {TranslateModule} from '@ngx-translate/core';
+import {FormsModule} from '@angular/forms';
 
 @NgModule({
             declarations: [
@@ -16,6 +17,7 @@ import {TranslateModule} from '@ngx-translate/core';
             imports: [
               IonicModule,
               BrowserModule,
+              FormsModule,
               SharedModule,
               TranslateModule
             ],

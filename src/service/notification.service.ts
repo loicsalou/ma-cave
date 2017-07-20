@@ -18,8 +18,9 @@ export class NotificationService {
   }
 
   information(message: string, showCloseButton?: boolean, delay?: number, position?: string) {
+    let msg = this.translateService.instant(message);
     this.toastController.create({
-                                  message: message,
+                                  message: msg,
                                   duration: delay ? delay : 3000,
                                   position: position ? position : 'top',
                                   showCloseButton: showCloseButton ? showCloseButton : false

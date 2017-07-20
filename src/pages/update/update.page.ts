@@ -118,9 +118,12 @@ export class UpdatePage implements OnInit, OnDestroy {
 
   save() {
     this.bottleService.update([ this.bottle ]);
+    this.notificationService.information('update.saved');
+    this.navCtrl.pop();
   }
 
   cancel() {
+    this.notificationService.information('update.cancelled');
     this.navCtrl.pop();
   }
 
