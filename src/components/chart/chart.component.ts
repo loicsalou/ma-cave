@@ -46,7 +46,7 @@ export class ChartComponent implements OnInit {
   ngOnInit(): void {
     if (this.legend) {
       if (ChartComponent.LEGEND_POSITIONS.indexOf(this.legend) < 0) {
-        this.legend='top';
+        this.legend = 'top';
       }
     }
     this.dataset = [ {

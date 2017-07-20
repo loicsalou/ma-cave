@@ -12,7 +12,6 @@ import {UploadMetadata} from './image-persistence.service';
 import {NotificationService} from './notification.service';
 import {NativeStorage} from '@ionic-native/native-storage';
 import {User} from '../model/user';
-import * as _ from 'lodash';
 import {Platform} from 'ionic-angular';
 import {BottleFactory} from '../model/bottle.factory';
 import Reference = firebase.database.Reference;
@@ -192,8 +191,8 @@ export class NativeStorageService {
               this.notificationService.debugAlert('le user ne sera pas sauvegardé: ' + u.email);
             }
           });
-          users=Array.from(usersByMail.values());
-          this.notificationService.debugAlert('élim doubles fait. Reste ' + JSON.stringify(users.map(u => u.email))+ '. Sauvegarde...');
+          users = Array.from(usersByMail.values());
+          this.notificationService.debugAlert('élim doubles fait. Reste ' + JSON.stringify(users.map(u => u.email)) + '. Sauvegarde...');
           this.nativeStorage.setItem(this.KNOWN_USERS, users);
           this.notificationService.debugAlert('Sauvegarde liste utilisateurs OK');
         }).catch(err => {

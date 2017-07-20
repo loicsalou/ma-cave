@@ -5,7 +5,6 @@ import {ListBottleEvent} from '../../components/list/bottle-list-event';
 import {UpdatePage} from '../update/update.page';
 import * as _ from 'lodash';
 import {LoginService} from '../../service/login.service';
-import {HomePage} from '../home/home';
 
 /*
  Generated class for the BottleDetail page.

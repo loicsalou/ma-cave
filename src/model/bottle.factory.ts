@@ -32,9 +32,9 @@ export class BottleFactory {
 
   private setId(bottle: Bottle): BottleFactory {
     if (bottle[ '$key' ]) {
-      bottle['id'] = bottle[ '$key' ];
+      bottle[ 'id' ] = bottle[ '$key' ];
     } else {
-      bottle['$key'] = bottle[ 'id' ];
+      bottle[ '$key' ] = bottle[ 'id' ];
     }
     return this;
   }

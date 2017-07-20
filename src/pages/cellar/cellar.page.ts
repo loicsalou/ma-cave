@@ -27,7 +27,7 @@ export class CellarPage implements OnInit {
   @ViewChild(Slides) slides: Slides;
 
   pendingCell: Cell;
-  pendingBottleTipVisible: boolean=false;
+  pendingBottleTipVisible: boolean = false;
 
   constructor(private cellarService: CellarPersistenceService, private notificationService: NotificationService) {
   }
@@ -62,9 +62,9 @@ export class CellarPage implements OnInit {
   }
 
   showTip() {
-    this.pendingBottleTipVisible=true;
+    this.pendingBottleTipVisible = true;
     setTimeout(() => {
-      this.pendingBottleTipVisible=false;
+      this.pendingBottleTipVisible = false;
     }, 3000)
   }
 

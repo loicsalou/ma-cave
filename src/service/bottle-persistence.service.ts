@@ -6,7 +6,6 @@ import {Bottle} from '../model/bottle';
 import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {FilterSet} from '../components/distribution/distribution';
-import {BottleFactory} from '../model/bottle.factory';
 import {LoadingController, Platform} from 'ionic-angular';
 import * as firebase from 'firebase/app';
 import * as _ from 'lodash';
@@ -15,10 +14,9 @@ import {PersistenceService} from './persistence.service';
 import {NotificationService} from './notification.service';
 import {TranslateService} from '@ngx-translate/core';
 import {FirebaseConnectionService} from './firebase-connection.service';
-import {NativeStorageService} from './native-storage.service';
-import Reference = firebase.database.Reference;
 import {User} from '../model/user';
 import {Subscription} from 'rxjs/Subscription';
+import Reference = firebase.database.Reference;
 
 /**
  * Services related to the bottles in the cellar.
@@ -78,11 +76,11 @@ export class BottlePersistenceService extends PersistenceService {
 
   public fetchFromDatabase() {
     let items = this.dataConnection.allBottlesObservable;
-    this.dataConnectionSub=items.subscribe((bottles: Bottle[]) => {
-                      this.setAllBottlesArray(bottles);
-                      this.filterOn(this.filters);
-                    },
-                    error => this.notificationService.error('L\'accès à la liste des bouteilles a échoué !', error));
+    this.dataConnectionSub = items.subscribe((bottles: Bottle[]) => {
+                                               this.setAllBottlesArray(bottles);
+                                               this.filterOn(this.filters);
+                                             },
+                                             error => this.notificationService.error('L\'accès à la liste des bouteilles a échoué !', error));
     this.dataConnection.fetchAllBottles();
   }
 

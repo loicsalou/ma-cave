@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ChartComponent } from './chart.component';
-import { ChartsModule } from 'ng2-charts';
-import { FormsModule } from '@angular/forms';
+import {ChartComponent} from './chart.component';
+import {ChartsModule} from 'ng2-charts';
+import {FormsModule} from '@angular/forms';
 
 describe('ChartComponent', () => {
   let component: ChartComponent;
@@ -10,9 +10,9 @@ describe('ChartComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ChartComponent ],
-      imports: [ ChartsModule, FormsModule ]
-    })
+                                     declarations: [ ChartComponent ],
+                                     imports: [ ChartsModule, FormsModule ]
+                                   })
       .compileComponents();
   }));
 

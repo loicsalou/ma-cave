@@ -12,7 +12,7 @@ ion-header.home {
 ion-content.home {
 
   div.login {
-    background: transparentize(map-get($colors, light),.3);
+    background: transparentize(map-get($colors, light), .3);
     margin-top: 70%;
   }
 

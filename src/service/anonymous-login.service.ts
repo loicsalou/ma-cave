@@ -3,7 +3,6 @@
  */
 import {Injectable} from '@angular/core';
 import {AngularFireAuth} from 'angularfire2/auth';
-import * as firebase from 'firebase/app';
 import {AbstractLoginService} from './abstract-login.service';
 import {User} from '../model/user';
 import {Observable} from 'rxjs/Observable';
@@ -30,8 +29,8 @@ export class AnonymousLoginService extends AbstractLoginService {
           this.anoUser = new AnonymousUser();
           this.success(this.anoUser);
         },
-        err => this.notificationService.ask('Problème réseau','Impossible de s\'authentifier, voulez-vous passer en' +
-    ' mode déconnecté ?').subscribe(
+        err => this.notificationService.ask('Problème réseau', 'Impossible de s\'authentifier, voulez-vous passer en' +
+                                            ' mode déconnecté ?').subscribe(
           bool => {
             if (bool) {
               this.notificationService.information('--- Mode déconnecté ---');
@@ -52,9 +51,9 @@ export class AnonymousUser extends User {
     this.user = 'caveexplorer@gmailcom';
     this.email = 'cave.explorer@gmail.com';
     this.photoURL = 'assets/icon/anonymous2.jpg';
-    this.uid=undefined;
-    this.phoneNumber='00-12-00-34-99';
-    this.displayName='Ano Nymous';
+    this.uid = undefined;
+    this.phoneNumber = '00-12-00-34-99';
+    this.displayName = 'Ano Nymous';
   }
 
 }

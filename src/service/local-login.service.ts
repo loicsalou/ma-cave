@@ -22,7 +22,7 @@ export class LocalLoginService extends AbstractLoginService {
   constructor(notificationService: NotificationService, private storageService: NativeStorageService) {
     super(notificationService);
     this.storageService.getKnownUsers().then(
-      (users:User[]) => this.knownUsers=users
+      (users: User[]) => this.knownUsers = users
     )
   }
 
@@ -36,7 +36,6 @@ export class LocalLoginService extends AbstractLoginService {
     return this.authentifiedObservable;
   }
 }
-
 
 export class LocalLoginUser extends User {
 

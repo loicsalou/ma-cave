@@ -16,11 +16,14 @@
         
         <div *ngIf="!isSearchVisible()" (click)="showSearchBar()">
           <ion-title wrap>{{ filterSet.toMessage() }}</ion-title>
-          <ion-note style="color: black; padding-left: 15px;">{{numberOfLots()}} crus / {{numberOfBottles()}} bouteilles</ion-note>
+          <ion-note style="color: black; padding-left: 15px;">{{numberOfLots()}} crus / {{numberOfBottles()}}
+            bouteilles
+          </ion-note>
         </div>
       </ion-col>
       
-      <img src="assets/icon/primary-logout.png" icon-only (click)="logout()" class="action-image toolbar-background-md"/>
+      <img src="assets/icon/primary-logout.png" icon-only (click)="logout()"
+           class="action-image toolbar-background-md"/>
     </ion-row>
   
   </ion-grid>
