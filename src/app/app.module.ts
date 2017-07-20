@@ -1,11 +1,18 @@
 import {ErrorHandler, NgModule} from '@angular/core';
-import {AlertController, IonicApp, IonicErrorHandler, IonicModule, ToastController} from 'ionic-angular';
+import {
+  AlertController,
+  IonicApp,
+  IonicErrorHandler,
+  IonicModule,
+  LoadingController,
+  ToastController
+} from 'ionic-angular';
 import {MyCaveApp} from './app.component';
 import {ContactPage} from '../pages/contact/contact';
 import {HomePage} from '../pages/home/home';
 import {TabsPage} from '../pages/tabs/tabs';
 import {BrowsePage} from '../pages/browse/browse.page';
-import {BottleService} from '../service/firebase-bottle.service';
+import {BottlePersistenceService} from '../service/bottle-persistence.service';
 import {DistributeService} from '../service/distribute.service';
 import {TranslateLoader, TranslateModule, TranslateService} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
@@ -25,7 +32,7 @@ import {UploadBottlesPage} from '../pages/upload-bottles/upload-bottles.page';
 import {ChartsModule} from 'ng2-charts';
 import '../../node_modules/chart.js/dist/Chart.bundle.min.js';
 import {EmailLoginPage} from '../pages/login/email-login.page';
-import {FirebaseImageService} from '../service/firebase-image.service';
+import {ImagePersistenceService} from '../service/image-persistence.service';
 import {Bottles} from '../components/config/Bottles';
 import {AnonymousLoginService} from '../service/anonymous-login.service';
 import {EmailLoginService} from '../service/email-login.service';
@@ -43,10 +50,14 @@ import {Statistics} from '../model/statistics';
 import {SharedModule} from '../components/shared.module';
 import {BrowseModule} from '../pages/browse/browse.module';
 import {BottleDetailModule} from '../pages/bottle-detail/bottle-detail.module';
-import { LockerComponent } from '../components/locker/locker.component';
 import {LockerFactory} from '../model/locker.factory';
 import {CellarPage} from '../pages/cellar/cellar.page';
 import {CellarPageModule} from '../pages/cellar/cellar.page.module';
+import {FirebaseConnectionService} from '../service/firebase-connection.service';
+import {NativeStorageService} from '../service/native-storage.service';
+import {NativeStorage} from '@ionic-native/native-storage';
+import {LocalLoginService} from '../service/local-login.service';
+import {LocalLoginPage} from '../pages/login/local-login.page';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -62,6 +73,7 @@ export const fireConfig = {
               MyCaveApp,
               ContactPage,
               EmailLoginPage,
+              LocalLoginPage,
               HomePage,
               TabsPage
             ],
@@ -97,6 +109,7 @@ export const fireConfig = {
               ContactPage,
               DashboardPage,
               EmailLoginPage,
+              LocalLoginPage,
               HomePage,
               MyCaveApp,
               TabsPage,
@@ -107,32 +120,37 @@ export const fireConfig = {
               AnonymousLoginService,
               BottleFactory,
               Bottles,
-              BottleService,
+              BottlePersistenceService,
               Camera,
               DistributeService,
               EmailLoginService,
               {provide: ErrorHandler, useClass: IonicErrorHandler},
               Facebook,
               FacebookLoginService,
-              FirebaseImageService,
+              ImagePersistenceService,
+              FirebaseConnectionService,
+              LocalLoginService,
               LockerFactory,
               {
                 provide: LoginService,
                 useFactory: (createLoginFactory),
-                deps: [ AnonymousLoginService, EmailLoginService, FacebookLoginService ]
+                deps: [ AnonymousLoginService, EmailLoginService, FacebookLoginService, LocalLoginService,
+                  NotificationService, NativeStorageService ]
               },
+              NativeStorage,
+              NativeStorageService,
               {
                 provide: NotificationService,
                 useFactory: (createNotificationFactory),
-                deps: [ AlertController, ToastController, TranslateService ]
+                deps: [ AlertController, ToastController, TranslateService, LoadingController ]
               },
               SplashScreen,
               Statistics,
               StatusBar
             ], exports: [
-              StatisticsComponent,
-              DefaultImageDirective
-            ]
+    StatisticsComponent,
+    DefaultImageDirective
+  ]
           })
 export class AppModule {
 }
@@ -142,10 +160,11 @@ export function createTranslateLoader(http: Http) {
 }
 
 export function createLoginFactory(ano: AnonymousLoginService, ema: EmailLoginService, fac: FacebookLoginService,
-                                   ns: NotificationService) {
-  return new LoginService(ano, ema, fac, ns);
+                                   lls: LocalLoginService, ns: NotificationService, lss: NativeStorageService) {
+  return new LoginService(ano, ema, fac, lls, ns, lss);
 }
 
-export function createNotificationFactory(alrt: AlertController, toast: ToastController, translate: TranslateService) {
-  return new NotificationService(alrt, toast, translate);
+export function createNotificationFactory(alrt: AlertController, toast: ToastController, translate: TranslateService,
+                                          loadingCtrl: LoadingController) {
+  return new NotificationService(alrt, toast, translate, loadingCtrl);
 }

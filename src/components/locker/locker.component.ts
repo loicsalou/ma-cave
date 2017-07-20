@@ -79,7 +79,8 @@ export class LockerComponent implements OnInit {
     bottle.label = label;
     bottle.area_label = 'area_label';
     bottle.subregion_label = 'subregion_label';
-    bottle.nomCru = 'nomCru';
+    bottle.nomCru = 'Domaine Marcel Deiss - Burlenberg';
+    bottle.millesime = '2010';
     bottle.quantite_courante = 1;
     return bottle;
   }

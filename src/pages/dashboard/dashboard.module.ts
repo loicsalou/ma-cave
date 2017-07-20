@@ -3,6 +3,7 @@ import { IonicPageModule } from 'ionic-angular';
 import { DashboardPage } from './dashboard';
 import {StatisticsComponentModule} from '../../components/statistics/statistics.component.module';
 import {TranslateModule} from '@ngx-translate/core';
+import {NativeStorageService} from '../../service/native-storage.service';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,9 @@ import {TranslateModule} from '@ngx-translate/core';
   ],
   exports: [
     DashboardPage
+  ],
+  providers: [
+    NativeStorageService
   ]
 })
 export class DashboardPageModule {}

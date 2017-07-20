@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {NavController, NavParams, Platform} from 'ionic-angular';
-import {BottleService} from '../../service/firebase-bottle.service';
+import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {Bottle} from '../../model/bottle';
 import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
 import {ListBottleEvent} from '../../components/list/bottle-list-event';
@@ -26,7 +26,7 @@ export class BrowsePage implements OnInit, OnDestroy {
   private navParams: NavParams;
   private nbOfBottles: number = 0;
 
-  constructor(public navCtrl: NavController, public platform: Platform, private bottlesService: BottleService,
+  constructor(public navCtrl: NavController, public platform: Platform, private bottlesService: BottlePersistenceService,
               private loginService: LoginService, private notificationService: NotificationService, params?: NavParams) {
     this.navParams = params;
   }

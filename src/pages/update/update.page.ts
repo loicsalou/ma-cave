@@ -1,9 +1,9 @@
 import {Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
 import {Bottle, BottleMetadata} from '../../model/bottle';
 import {NavController, NavParams} from 'ionic-angular';
-import {BottleService} from '../../service/firebase-bottle.service';
+import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {Camera} from '@ionic-native/camera';
-import {FirebaseImageService} from '../../service/firebase-image.service';
+import {ImagePersistenceService} from '../../service/image-persistence.service';
 import {Subscription} from 'rxjs/Subscription';
 import {AocInfo, Bottles} from '../../components/config/Bottles';
 import {LoginService} from '../../service/login.service';
@@ -38,8 +38,8 @@ export class UpdatePage implements OnInit, OnDestroy {
   private forceLeave: boolean = true;
   private metadata: BottleMetadata;
 
-  constructor(private navCtrl: NavController, navParams: NavParams, private bottleService: BottleService,
-              private camera: Camera, private notificationService: NotificationService, private imageService: FirebaseImageService,
+  constructor(private navCtrl: NavController, navParams: NavParams, private bottleService: BottlePersistenceService,
+              private camera: Camera, private notificationService: NotificationService, private imageService: ImagePersistenceService,
               private loginService: LoginService, private bottles: Bottles) {
     //don't clone to keep firebase '$key' which is necessary to update
     this.bottle = navParams.data[ 'bottle' ];

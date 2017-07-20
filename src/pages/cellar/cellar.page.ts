@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {IonicPage, Slides} from 'ionic-angular';
 import {SimpleLocker} from '../../model/simple-locker';
-import {FirebaseCellarService} from '../../service/firebase-cellar.service';
+import {CellarPersistenceService} from '../../service/cellar-persistence.service';
 import {Locker} from '../../model/locker';
 import {Cell} from '../../components/locker/locker.component';
 import {NotificationService} from '../../service/notification.service';
@@ -27,8 +27,9 @@ export class CellarPage implements OnInit {
   @ViewChild(Slides) slides: Slides;
 
   pendingCell: Cell;
+  pendingBottleTipVisible: boolean=false;
 
-  constructor(private cellarService: FirebaseCellarService, private notificationService: NotificationService) {
+  constructor(private cellarService: CellarPersistenceService, private notificationService: NotificationService) {
   }
 
   ngOnInit(): void {
@@ -58,6 +59,13 @@ export class CellarPage implements OnInit {
     this.otherLockers = this.otherLockers.filter(item => item.name !== locker.name);
     this.chosenLocker = locker;
     this.resetPaginatedLocker();
+  }
+
+  showTip() {
+    this.pendingBottleTipVisible=true;
+    setTimeout(() => {
+      this.pendingBottleTipVisible=false;
+    }, 3000)
   }
 
   slideChanged() {

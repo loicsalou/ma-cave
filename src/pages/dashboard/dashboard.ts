@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {NavController} from 'ionic-angular';
 import {BrowsePage} from '../browse/browse.page';
 import {LoginService} from '../../service/login.service';
-import {BottleService} from '../../service/firebase-bottle.service';
+import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {Bottle} from '../../model/bottle';
 import {FilterSet} from '../../components/distribution/distribution';
 
@@ -15,7 +15,7 @@ export class DashboardPage implements OnInit {
   version: any;
   bottles: Bottle[];
 
-  constructor(public navCtrl: NavController, public loginService: LoginService, private bottleService: BottleService) {
+  constructor(public navCtrl: NavController, public loginService: LoginService, private bottleService: BottlePersistenceService) {
   }
 
   ngOnInit(): void {

@@ -29,7 +29,16 @@ export class AnonymousLoginService extends AbstractLoginService {
         () => {
           this.anoUser = new AnonymousUser();
           this.success(this.anoUser);
-        }
+        },
+        err => this.notificationService.ask('Problème réseau','Impossible de s\'authentifier, voulez-vous passer en' +
+    ' mode déconnecté ?').subscribe(
+          bool => {
+            if (bool) {
+              this.notificationService.information('--- Mode déconnecté ---');
+              this.success(undefined);
+            }
+          }
+        )
       )
 
     return this.authentifiedObservable;

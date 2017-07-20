@@ -6,16 +6,19 @@ import {Bottle} from '../model/bottle';
 import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {FilterSet} from '../components/distribution/distribution';
-import {AngularFireDatabase} from 'angularfire2/database';
 import {BottleFactory} from '../model/bottle.factory';
-import {LoadingController} from 'ionic-angular';
+import {LoadingController, Platform} from 'ionic-angular';
 import * as firebase from 'firebase/app';
 import * as _ from 'lodash';
 import {LoginService} from './login.service';
-import {FirebaseService} from './firebase-service';
+import {PersistenceService} from './persistence.service';
 import {NotificationService} from './notification.service';
 import {TranslateService} from '@ngx-translate/core';
+import {FirebaseConnectionService} from './firebase-connection.service';
+import {NativeStorageService} from './native-storage.service';
 import Reference = firebase.database.Reference;
+import {User} from '../model/user';
+import {Subscription} from 'rxjs/Subscription';
 
 /**
  * Services related to the bottles in the cellar.
@@ -23,11 +26,9 @@ import Reference = firebase.database.Reference;
  * clicks on a region to filter bottles. Any change on either side must be propagated on the other side.
  */
 @Injectable()
-export class BottleService extends FirebaseService {
-  private static BOTTLES_FOLDER = 'bottles';
+export class BottlePersistenceService extends PersistenceService {
   private BOTTLES_ROOT: string;
 
-  private firebaseRef: Reference;
   private cellarImported: boolean = false;
   private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
   private _allBottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
@@ -36,25 +37,32 @@ export class BottleService extends FirebaseService {
   private _filtersObservable: BehaviorSubject<FilterSet> = new BehaviorSubject<FilterSet>(new FilterSet());
   private filters: FilterSet = new FilterSet();
   private allBottlesArray: Bottle[];
+  private dataConnectionSub: Subscription;
 
-  constructor(private bottleFactory: BottleFactory, firebase: AngularFireDatabase,
+  constructor(private dataConnection: FirebaseConnectionService,
               loadingCtrl: LoadingController,
               notificationService: NotificationService,
               loginService: LoginService,
-              translateService: TranslateService) {
-    super(firebase, loadingCtrl, notificationService, loginService, translateService);
+              translateService: TranslateService,
+              private platform: Platform) {
+    super(loadingCtrl, notificationService, loginService, translateService);
+    if (loginService.user !== undefined) {
+      this.initialize(loginService.user);
+    } else {
+      this.cleanup();
+    }
   }
 
-  initialize(user) {
+  initialize(user: User) {
     super.initialize(user);
-    this.BOTTLES_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + BottleService.BOTTLES_FOLDER;
-    this.XREF_ROOT = this.XREF_FOLDER;
-    this.firebaseRef = this.angularFirebase.database.ref(this.BOTTLES_ROOT);
+    this.dataConnection.initialize(user);
     this.fetchAllBottles();
   }
 
   cleanup() {
     super.cleanup();
+    this.dataConnectionSub.unsubscribe();
+    this.dataConnection.cleanup();
     this.BOTTLES_ROOT = undefined;
     this.allBottlesArray = undefined;
     this.filters = undefined;
@@ -64,58 +72,52 @@ export class BottleService extends FirebaseService {
     if (this.cellarImported) {
       this._bottles.next(this.allBottlesArray);
     } else {
-      this.showLoading();
-      let items = this.angularFirebase.list(this.BOTTLES_ROOT, {
-        query: {
-          limitToFirst: 2000,
-          orderByChild: 'quantite_courante',
-          startAt: '0'
-        }
-      });
-      items.subscribe((bottles: Bottle[]) => {
-                        bottles.forEach((bottle: Bottle) => this.bottleFactory.create(bottle));
-                        this.setAllBottlesArray(bottles);
-                        this.filterOn(this.filters);
-                        this.dismissLoading();
-                      },
-                      error => this.notificationService.error('L\'accès à la liste des bouteilles a échoué !', error));
+      this.fetchFromDatabase();
     }
   }
 
+  public fetchFromDatabase() {
+    let items = this.dataConnection.allBottlesObservable;
+    this.dataConnectionSub=items.subscribe((bottles: Bottle[]) => {
+                      this.setAllBottlesArray(bottles);
+                      this.filterOn(this.filters);
+                    },
+                    error => this.notificationService.error('L\'accès à la liste des bouteilles a échoué !', error));
+    this.dataConnection.fetchAllBottles();
+  }
+
   public update(bottles: Bottle[]) {
-    bottles.forEach(bottle => {
-      this.firebaseRef.child(bottle[ '$key' ]).set(bottle, (
-        err => {
-          if (err) {
-            this.notificationService.failed('La mise à jour de la bouteille a échoué !', err);
-          }
-        }
-      ))
-    })
+    this.dataConnection.update(bottles).then(
+      () => {
+        //mise à jour faite
+      },
+      err => this.notificationService.failed('La mise à jour de la bouteille a échoué !', err)
+    )
   }
 
   public save(bottles: Bottle[]) {
-    bottles.forEach(bottle => this.firebaseRef.push(bottle));
+    this.dataConnection.save(bottles).then(
+      () => this.notificationService.information('Sauvegarde effectuée'),
+      err => this.notificationService.error('La sauvegarde a échoué !', err)
+    );
   }
 
   public replaceBottle(bottle: Bottle) {
-    this.firebaseRef.child(bottle[ '$key' ])
-      .set(bottle,
-           err => {
-             if (err) {
-               this.notificationService.failed('La sauvegarde a échoué ! ', err);
-             }
-           });
+    this.dataConnection.replaceBottle(bottle).then(
+      () => this.notificationService.information('Remplacement effectué'),
+      err => this.notificationService.error('Le remplacement a échoué !', err)
+    );
   }
 
   public deleteBottles() {
-    this.firebaseRef.remove(
+    this.dataConnection.deleteBottles().then(
+      () => this.notificationService.information('Suppression effectuée'),
       error => this.notificationService.failed('La suppression des bouteilles a échoué', error)
     )
   }
 
   public initializeDB(bottles: Bottle[]) {
-    bottles.forEach(bottle => this.firebaseRef.push(bottle));
+    this.save(bottles);
   }
 
   get allBottlesObservable(): Observable<Bottle[]> {

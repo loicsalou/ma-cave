@@ -1,0 +1,18 @@
+<ion-header class="home header">
+  <h1 align-self-center padding>Identification</h1>
+</ion-header>
+
+<ion-content class="home card-background-page page">
+  
+  <ion-row padding-top>
+    <ion-item *ngFor="let user of knownUsers" (click)="loginAs(user)">
+      <p floating style="color: black">{{user.displayName}} - {{user.email}}</p>
+    </ion-item>
+  </ion-row>
+  
+  <ion-card class="card-background" justify-content-center style="background-color: transparent">
+    <ion-card-title class="card-title">Bienvenue dans votre cave !</ion-card-title>
+    <img src="assets/img/cave-moderne.jpg"/>
+  </ion-card>
+
+</ion-content>

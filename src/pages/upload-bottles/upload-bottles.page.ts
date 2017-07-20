@@ -4,9 +4,12 @@ import {FileChooser} from '@ionic-native/file-chooser';
 import {FilePath} from '@ionic-native/file-path';
 import * as _ from 'lodash';
 import {BottleFactory} from '../../model/bottle.factory';
-import {BottleService} from '../../service/firebase-bottle.service';
+import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {Bottle} from '../../model/bottle';
 import {NotificationService} from '../../service/notification.service';
+import {Http} from '@angular/http';
+import {NativeStorageService} from '../../service/native-storage.service';
+import {User} from '../../model/user';
 
 /**
  * Generated class for the UploadBottles page.
@@ -30,14 +33,18 @@ export class UploadBottlesPage {
   optionsVisibles: boolean = false; // forcer l'encoding
   debugMode: boolean = false;
   deleteBefore: boolean = true;
+  localStorageKeys: any;
+  tempValue: any;
 
   constructor(public navCtrl: NavController,
               private filepath: FilePath,
               private fileChooser: FileChooser,
               private notificationService: NotificationService,
-              private bottleService: BottleService,
+              private bottleService: BottlePersistenceService,
               private bottleFactory: BottleFactory,
-              private platform: Platform) {
+              private platform: Platform,
+              private localStorage: NativeStorageService,
+              private http: Http) {
   }
 
   public platformIsCordova(): boolean {
@@ -48,13 +55,19 @@ export class UploadBottlesPage {
     this.optionsVisibles = !this.optionsVisibles;
   }
 
+  public listLocalStorageData() {
+    this.localStorage.getList()
+      .then(keys => {
+        this.localStorageKeys = keys;
+      })
+      .catch(err => alert('accès aux clés KO ' + err));
+  }
+
   public chooseFile() {
 
     this.fileChooser.open()
       .then(uri => {
-        this.notificationService.debugAlert('fichier choisi: ', uri, this.debugMode);
         this.filepath.resolveNativePath(uri).then((result) => {
-          this.notificationService.debugAlert('resolve OK: ' + result);
           let nativepath = result;
           this.readFile(nativepath);
         })
@@ -68,10 +81,8 @@ export class UploadBottlesPage {
   public saveBottles() {
     try {
       if (this.deleteBefore) {
-        this.notificationService.debugAlert('suppression de la base avant importation');
         this.bottleService.deleteBottles();
       }
-      this.notificationService.debugAlert('sauvegarde de ' + this.bottles.length + ' bouteilles', this.debugMode);
       this.bottleService.initializeDB(this.bottles);
       this.bottles = null;
     } catch (error) {
@@ -83,26 +94,20 @@ export class UploadBottlesPage {
     try {
       let self = this;
       (<any>window).resolveLocalFileSystemURL(nativepath, (res) => {
-                                                this.notificationService.debugAlert('resolve local ok ', res, this.debugMode);
                                                 res.file((resFile) => {
-                                                  self.notificationService.debugAlert('reading file ', resFile, this.debugMode);
                                                   let reader = new FileReader();
                                                   let isXls = resFile.name.toLowerCase().endsWith('.xls');
                                                   if (this.encoding == null) {
                                                     this.encoding = isXls ? 'windows-1252' : 'utf-8';
                                                   }
-                                                  this.notificationService.debugAlert('lecture as text...', this.debugMode);
                                                   reader.readAsText(resFile, this.encoding);
                                                   reader.onloadend = (evt: any) => {
-                                                    this.notificationService.debugAlert('load ended...', evt, this.debugMode);
                                                     this.fileContent = evt.target.result;
-                                                    this.notificationService.debugAlert('taille contenu ', this.fileContent.length, this.debugMode);
                                                     if (isXls) {
                                                       this.parseContentXLS();
                                                     } else {
                                                       this.parseContentCSV();
                                                     }
-                                                    this.notificationService.debugAlert('save...', this.debugMode);
                                                     this.saveBottles();
                                                   }
                                                 })
@@ -131,7 +136,7 @@ export class UploadBottlesPage {
       self.saveBottles();
     }
     reader.onerror = function (evt) {
-      self.notificationService.debugAlert('cannot read the file ! ' + file, self.debugMode);
+      self.notificationService.error('cannot read the file ! ' + file);
     };
     reader.readAsText(file, encoding);
   }
@@ -166,7 +171,6 @@ export class UploadBottlesPage {
 
   public parseContentXLS() {
     //let textType = /text.*/;
-    this.notificationService.debugAlert('parsing XLS...', this.debugMode);
     let nbread = this.nbRead;
     let nbfrom = this.from;
     let csvarray = this.fileContent.split(/\r\n|\n/);
@@ -185,6 +189,71 @@ export class UploadBottlesPage {
     this.bottles = bottles;
     this.notificationService.information('Le chargement (XLS) de ' + csvarray.length + ' fichiers a été effectué.' +
                                          ' Nombre de lots' + (bottles == null ? 'KO' + ' !' : bottles.length));
+  }
+
+  test() {
+    this.listLocalStorageData();
+    let u1: User = <User> {
+      user: 'u1',
+      email: 'mail1',
+      photoURL: '',
+      displayName: '',
+      phoneNumber: '',
+      uid: ''
+    };
+
+    //let btl1 = [];
+    //let btl2 = [];
+    //this.http.get('../../assets/json/ma-cave-mini1.json').subscribe(
+    //  response => {
+    //    btl1 = response.json()
+    //    this.http.get('../../assets/json/ma-cave-mini2.json').subscribe(
+    //      response => {
+    //        btl2 = response.json();
+    //        this.playWith(btl1, btl2);
+    //      }
+    //    );
+    //  }
+    //);
+  }
+
+  private playWith(btl1: Array<Bottle>, btl2: Array<Bottle>) {
+    //btl1 vient de firebase, bt2 du cache
+    btl1 = btl1.sort(function (a, b) {
+      if (a[ '$key' ] === b[ '$key' ]) {
+        return 0;
+      }
+      return a[ '$key' ] < b[ '$key' ] ? -1 : 1;
+    });
+    btl2 = btl2.sort(function (a, b) {
+      if (a[ '$key' ] === b[ '$key' ]) {
+        return 0;
+      }
+      return a[ '$key' ] < b[ '$key' ] ? -1 : 1;
+    });
+
+    //liste les bouteilles de btl1 qui ne sont pas dans btl2
+    let diff = _.differenceWith(btl1, btl2, function (a, b) {
+      return (a.lastUpdated === b.lastUpdated && a.$key === b.$key);
+    });
+    console.info('nombre de différences:' + diff.length);
+
+    //create new cache: remove updated bottltes then add updated to cache bottles and we're done
+    let newCache = _.pullAllWith(btl2, diff, function (a, b) {
+      return (a.$key === b.$key);
+    });
+    btl2 = _.concat(btl2, diff);
+
+    let diff2 = _.differenceWith(btl1, btl2, function (a, b) {
+      return (a.lastUpdated === b.lastUpdated && a.$key === b.$key);
+    });
+    console.info('nombre de différences après refresh:' + diff2.length);
+  }
+
+  loadTempValueFor(key) {
+    this.localStorage.getValue(key)
+      .then(v => this.tempValue = JSON.stringify(v))
+      .catch(err => alert('accès à la valeur de ' + key + ' KO: ' + JSON.stringify(err)));
   }
 }
 
