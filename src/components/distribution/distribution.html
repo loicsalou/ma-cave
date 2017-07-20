@@ -5,7 +5,7 @@
   for more info on Angular 2 Components.
 -->
 <ion-card *ngFor="let dimension of distribution" class="distribution">
-  
+
   <p (click)="switchDistribution(dimension)">
     <button *ngIf="isOpen(dimension.axis)" ion-button color="light" icon-only>
       <ion-icon name='arrow-dropdown'></ion-icon>
@@ -17,7 +17,7 @@
   </p>
   <div *ngIf="isOpen(dimension.axis)">
     <ion-badge (click)="valueClicked($event, dimension.axis)" item-right *ngFor="let value of dimension.values"
-              [class.selected]="isFilterSelected(dimension.axis, value.key)">
+               [class.selected]="isFilterSelected(dimension.axis, value.key)">
       {{value.key}}: {{value.value}}
     </ion-badge>
   </div>

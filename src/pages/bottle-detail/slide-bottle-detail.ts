@@ -1,7 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {NavController} from 'ionic-angular';
 import {Bottle} from '../../model/bottle';
-import {UpdatePage} from '../update/update.page';
 
 @Component({
              selector: 'slide-bottle-detail',

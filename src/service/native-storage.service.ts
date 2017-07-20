@@ -12,7 +12,6 @@ import {UploadMetadata} from './image-persistence.service';
 import {NotificationService} from './notification.service';
 import {NativeStorage} from '@ionic-native/native-storage';
 import {User} from '../model/user';
-import * as _ from 'lodash';
 import {Platform} from 'ionic-angular';
 import {BottleFactory} from '../model/bottle.factory';
 import Reference = firebase.database.Reference;
@@ -73,7 +72,6 @@ export class NativeStorageService {
   public deleteImage(file: File): Promise<any> {
     let item: FileItem = new FileItem(file);
     item.isUploading = true;
-    let self = this;
     return new Promise<any>((resolve, reject) => {
                               let error = undefined;
                               let result = 'ok';
@@ -100,28 +98,28 @@ export class NativeStorageService {
     this.notificationService.warning('Non supporté hors connexion');
     return undefined;
   }
-
-  private uploadToStorage(imageBlob, name: string): Promise<any> {
-    this.notificationService.warning('Non supporté hors connexion');
-    return undefined;
-  }
-
-  private saveToDatabaseAssetList(uploadSnapshot, meta: BottleMetadata): Promise<UploadMetadata> {
-    this.notificationService.warning('Non supporté hors connexion');
-    return undefined;
-  }
-
-  private getUploadMeta(snap): UploadMetadata {
-    return {
-      downloadURL: snap.downloadURL,
-      imageName: snap.metadata.name,
-      contentType: snap.metadata.contentType,
-      totalBytes: snap.totalBytes,
-      updated: snap.metadata.updated,
-      timeCreated: snap.metadata.timeCreated,
-      uploadState: snap.state
-    }
-  }
+  //
+  //private uploadToStorage(imageBlob, name: string): Promise<any> {
+  //  this.notificationService.warning('Non supporté hors connexion');
+  //  return undefined;
+  //}
+  //
+  //private saveToDatabaseAssetList(uploadSnapshot, meta: BottleMetadata): Promise<UploadMetadata> {
+  //  this.notificationService.warning('Non supporté hors connexion');
+  //  return undefined;
+  //}
+  //
+  //private getUploadMeta(snap): UploadMetadata {
+  //  return {
+  //    downloadURL: snap.downloadURL,
+  //    imageName: snap.metadata.name,
+  //    contentType: snap.metadata.contentType,
+  //    totalBytes: snap.totalBytes,
+  //    updated: snap.metadata.updated,
+  //    timeCreated: snap.metadata.timeCreated,
+  //    uploadState: snap.state
+  //  }
+  //}
 
   public fetchAllBottles() {
     if (this.cordova) {
@@ -192,8 +190,8 @@ export class NativeStorageService {
               this.notificationService.debugAlert('le user ne sera pas sauvegardé: ' + u.email);
             }
           });
-          users=Array.from(usersByMail.values());
-          this.notificationService.debugAlert('élim doubles fait. Reste ' + JSON.stringify(users.map(u => u.email))+ '. Sauvegarde...');
+          users = Array.from(usersByMail.values());
+          this.notificationService.debugAlert('élim doubles fait. Reste ' + JSON.stringify(users.map(u => u.email)) + '. Sauvegarde...');
           this.nativeStorage.setItem(this.KNOWN_USERS, users);
           this.notificationService.debugAlert('Sauvegarde liste utilisateurs OK');
         }).catch(err => {

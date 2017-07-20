@@ -4,14 +4,10 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {LoadingController} from 'ionic-angular';
-import {LockerFactory} from '../../model/locker.factory';
-import {NotificationService} from '../notification.service';
-import {LoginService} from '../login.service';
 import {CellarService} from '../cellar.service';
 import {FridgeLocker} from '../../model/fridge-locker';
 import {SimpleLocker} from '../../model/simple-locker';
-import {BottleSize, Locker, LockerType} from '../../model/locker';
+import {Locker, LockerType} from '../../model/locker';
 
 /**
  * Services related to the cellar itself, locker and place of the lockers.
@@ -24,10 +20,7 @@ export class MockCellarService implements CellarService {
   private _allLockersObservable: Observable<Locker[]> = this._lockers.asObservable();
   private allLockersArray: Locker[] = [];
 
-  constructor(private loadingCtrl: LoadingController,
-              private lockerFactory: LockerFactory,
-              private notificationService: NotificationService,
-              private loginService: LoginService) {
+  constructor() {
     this.initMocks();
   }
 
@@ -48,7 +41,7 @@ export class MockCellarService implements CellarService {
                                   },
                                   'casier numéro 1',
     );
-    let locker2=new FridgeLocker(
+    let locker2 = new FridgeLocker(
       'Frigo',
       LockerType.fridge, // frigo, étagère, filaire...
       [
@@ -76,12 +69,12 @@ export class MockCellarService implements CellarService {
       'Frigo cave'
     );
     let locker3 = new SimpleLocker('Grand rangement',
-                                  LockerType.shifted,
-                                  {
-                                    x: 16,
-                                    y: 20,
-                                  },
-                                  'Empilement de cellules polystyrène',
+                                   LockerType.shifted,
+                                   {
+                                     x: 16,
+                                     y: 20,
+                                   },
+                                   'Empilement de cellules polystyrène',
     );
 
     this.allLockersArray.push(locker);

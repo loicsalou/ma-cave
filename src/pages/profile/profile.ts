@@ -1,14 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 import {NavController} from 'ionic-angular';
 import {LoginService} from '../../service/login.service';
-import {HomePage} from '../home/home';
 import {User} from '../../model/user';
 import Platform = NodeJS.Platform;
 
 @Component({
              selector: 'page-profile',
              templateUrl: './profile.html',
-             styleUrls: ['/profile.scss']
+             styleUrls: [ '/profile.scss' ]
            })
 export class ProfilePage implements OnInit {
   version: any;

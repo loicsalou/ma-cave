@@ -1,8 +1,6 @@
-import {LoadingController} from 'ionic-angular';
 import {Observable} from 'rxjs/Observable';
 import {LoginService} from './login.service';
 import {NotificationService} from './notification.service';
-import {TranslateService} from '@ngx-translate/core';
 import {User} from '../model/user';
 import {Subscription} from 'rxjs/Subscription';
 /**
@@ -18,8 +16,7 @@ export abstract class PersistenceService {
 
   private loginSub: Subscription;
 
-  constructor(private loadingCtrl: LoadingController, protected notificationService: NotificationService,
-              protected loginService: LoginService, private translateService: TranslateService) {
+  constructor(protected notificationService: NotificationService, protected loginService: LoginService) {
     this.loginSub = loginService.authentifiedObservable.subscribe(
       user => this.handleLoginEvent(user)
     );

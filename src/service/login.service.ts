@@ -26,7 +26,7 @@ export class LoginService {
 
   public localLogin(user: User) {
     this.loadingPopup = this.notificationService.createLoadingPopup('app.checking-login');
-    this.locLogin.localUser=user;
+    this.locLogin.localUser = user;
     this.loginSub = this.locLogin.login().subscribe((user: User) => this.initUser(user));
   }
 
@@ -73,7 +73,7 @@ export class LoginService {
   logout() {
     this.loginSub.unsubscribe();
     this.loginSub = undefined;
-    this.user=undefined;
+    this.user = undefined;
     this.localStorage.cleanup();
     this.authentified.next(this.user);
   }

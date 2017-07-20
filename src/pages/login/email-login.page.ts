@@ -1,5 +1,4 @@
 import {Component} from '@angular/core';
-import {LoginPage} from './login-page';
 import {LoginService} from '../../service/login.service';
 import {NotificationService} from '../../service/notification.service';
 

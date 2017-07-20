@@ -78,7 +78,7 @@ export class HomePage implements OnInit, AfterViewInit {
     this.notificationService.debugMode = b;
   }
 
-  isConnectionAllowed():boolean {
+  isConnectionAllowed(): boolean {
     return this.dataConnection.isConnectionAllowed();
   }
 

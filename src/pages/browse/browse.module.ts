@@ -1,6 +1,5 @@
 import {NgModule} from '@angular/core';
 import {IonicModule} from 'ionic-angular';
-import {DefaultImageDirective} from './default-image/default-image';
 import {BrowsePage} from './browse.page';
 import {BrowserModule} from '@angular/platform-browser';
 import {BottleListComponent} from '../../components/list/bottle-list.component';

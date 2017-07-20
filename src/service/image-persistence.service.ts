@@ -2,7 +2,6 @@
  * Created by loicsalou on 28.02.17.
  */
 import {Injectable} from '@angular/core';
-import {LoadingController} from 'ionic-angular';
 import * as firebase from 'firebase/app';
 import 'firebase/storage';
 import {LoginService} from './login.service';
@@ -11,13 +10,8 @@ import {PersistenceService} from './persistence.service';
 import {Observable} from 'rxjs/Observable';
 import {Image} from '../model/image';
 import {NotificationService} from './notification.service';
-import {TranslateService} from '@ngx-translate/core';
 import {Subject} from 'rxjs/Subject';
 import {FirebaseConnectionService} from './firebase-connection.service';
-import Reference = firebase.database.Reference;
-import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
-
-//import { FirebaseApp } from 'angularfire2';
 
 /**
  * Services related to the bottles in the cellar.
@@ -30,9 +24,9 @@ export class ImagePersistenceService extends PersistenceService {
   private _progressEvent: Subject<number> = new Subject<number>();
   private progressEvent$: Observable<number> = this._progressEvent.asObservable();
 
-  constructor(private dataConnection: FirebaseConnectionService, loadingCtrl: LoadingController,
-              notificationService: NotificationService, loginService: LoginService, translateService: TranslateService) {
-    super(loadingCtrl, notificationService, loginService, translateService);
+  constructor(private dataConnection: FirebaseConnectionService,
+              notificationService: NotificationService, loginService: LoginService) {
+    super(notificationService, loginService);
     if (loginService.user !== undefined) {
       this.initialize(loginService.user);
     } else {

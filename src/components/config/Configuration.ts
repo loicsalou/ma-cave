@@ -9,7 +9,7 @@ import * as _ from 'lodash';
 export class Configuration {
 
   private static SPECIAL_CHARS_REMOVED = new RegExp(/[\.|\d|\n|\r|,|!|?|@]/g);
-  private static SEARCH_STRING_REMOVED_CHARS= new RegExp(/[\ |\-|\.|\d|\n|\r|,|!|?|@]/g);
+  private static SEARCH_STRING_REMOVED_CHARS = new RegExp(/[\ |\-|\.|\d|\n|\r|,|!|?|@]/g);
   trads = require('../../assets/i18n/fr.json');
 
   public static regionsText2Code = {

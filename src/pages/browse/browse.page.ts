@@ -8,7 +8,6 @@ import {FilterSet} from '../../components/distribution/distribution';
 import {Subscription} from 'rxjs/Subscription';
 import * as _ from 'lodash';
 import {LoginService} from '../../service/login.service';
-import {HomePage} from '../home/home';
 import {NotificationService} from '../../service/notification.service';
 
 @Component({

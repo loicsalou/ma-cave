@@ -133,6 +133,9 @@ export class Cell {
     let btl = this.bottle;
     this.bottle = undefined;
     this.cellClass = 'empty';
+    if (this.selected) {
+      this.cellClass+=' selected';
+    }
     return btl;
   }
 

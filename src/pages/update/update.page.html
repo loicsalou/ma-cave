@@ -82,8 +82,9 @@
   <ion-row>
     <ion-item>
       <ion-label>{{'bottle.area_label' | translate}}</ion-label>
-      <ion-select [(ngModel)]="metadata.area_label_search" required *ngIf="aoc" (ionChange)="setAreaLabelFromMetadata()">
-      <ion-option *ngFor="let data of aoc" [value]="data.appellationSearched">
+      <ion-select [(ngModel)]="metadata.area_label_search" required *ngIf="aoc"
+                  (ionChange)="setAreaLabelFromMetadata()">
+        <ion-option *ngFor="let data of aoc" [value]="data.appellationSearched">
           <span>{{data.appellation}}
             <span *ngIf="data.subdivision">- [{{data.subdivision}}]</span>
           </span></ion-option>

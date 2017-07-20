@@ -32,12 +32,10 @@ export class CellarPersistenceService extends PersistenceService implements Cell
   private allLockersArray: SimpleLocker[];
 
   constructor(private angularFirebase: AngularFireDatabase,
-              loadingCtrl: LoadingController,
               private lockerFactory: LockerFactory,
               notificationService: NotificationService,
-              loginService: LoginService,
-              translateService: TranslateService) {
-    super(loadingCtrl, notificationService, loginService, translateService);
+              loginService: LoginService) {
+    super(notificationService, loginService);
   }
 
   initialize(user) {

@@ -134,7 +134,6 @@ export class FirebaseConnectionService {
     }
     let item: FileItem = new FileItem(file);
     item.isUploading = true;
-    let self = this;
     return new Promise((resolve, reject) => {
       this.imageStorageRef.child(`${this.IMAGES_ROOT}/${item.file[ 'name' ]}`)
         .delete()
@@ -344,7 +343,7 @@ export class FirebaseConnectionService {
   /**
    * comparer firebaseBottles avec this.cacheBottles et si des bouteilles ont été ajoutées ou mises à jour
    * dans la base, on enlève du cache les anciennes versions et on ajoute les différences dans le cache puis il
-    faut encore sauvegarder le cache dans le native storage.
+   faut encore sauvegarder le cache dans le native storage.
    * @param firebaseBottles
    * @returns {boolean}
    */
