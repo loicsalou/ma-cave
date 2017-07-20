@@ -134,7 +134,6 @@ export class FirebaseConnectionService {
     }
     let item: FileItem = new FileItem(file);
     item.isUploading = true;
-    let self = this;
     return new Promise((resolve, reject) => {
       this.imageStorageRef.child(`${this.IMAGES_ROOT}/${item.file[ 'name' ]}`)
         .delete()

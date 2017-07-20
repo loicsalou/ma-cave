@@ -8,7 +8,7 @@ import {Configuration} from '../../config/Configuration';
       })
 export class BottleIconPipe implements PipeTransform {
 
-  transform(value: string): string {
+  transform(value: any, ...args: any[]): any {
     let color = this.getColor(value);
     return 'assets/img/bottle-color/' + color + '.png';
   }

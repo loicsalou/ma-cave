@@ -28,6 +28,7 @@ export class CellarPage implements OnInit {
 
   pendingCell: Cell;
   pendingBottleTipVisible: boolean = false;
+  selectedCell: Cell;
 
   constructor(private cellarService: CellarPersistenceService, private notificationService: NotificationService) {
   }
@@ -72,37 +73,39 @@ export class CellarPage implements OnInit {
     this.resetPaginatedLocker();
   }
 
-  cellSelected(selectedCell: Cell) {
-    if (selectedCell) {
+  cellSelected(cell: Cell) {
+    if (cell) {
       if (this.pendingCell) {
-        if (selectedCell.id === this.pendingCell.id) {
+        if (cell.id === this.pendingCell.id) {
           this.pendingCell = undefined;
-          selectedCell.setSelected(false);
+          this.selectedCell.setSelected(false);
+          this.selectedCell = undefined;
           return;
         }
         // une cellule était déjà sélectionnée qui contenait une bouteille
         // - déplacer cette bouteille dans la nouvelle cellule et déselectionner les 2 cellules
         // - si la nouvelle cellule contient aussi une bouteille alors la cellule sélectionnée devient cette
         // nouvelle cellule, sinon on déplace la bouteille et on déselectionne les 2 cellules
-        let incomingCell = _.clone(selectedCell);
+        let incomingCell = _.clone(cell);
         //on déplace la bouteille pré-enregistrée dans la cellule choisie
-        selectedCell.storeBottle(this.pendingCell.withdraw());
+        cell.storeBottle(this.pendingCell.withdraw());
         //plus de cellule sélectionnée
-        this.pendingCell.setSelected(false);
         this.pendingCell = undefined;
         if (!incomingCell.isEmpty()) {
           this.pendingCell = incomingCell;
-          this.pendingCell.setSelected(true);
+        } else {
+          this.selectedCell.setSelected(false);
         }
       } else {
         //aucune cellule n'était sélectionnée
-        if (selectedCell.isEmpty()) {
+        if (cell.isEmpty()) {
           //cellule vide mais rien en transit ==> erreur
           this.notificationService.warning('La cellule sélectionnée est vide');
         } else {
           //nouvelle bouteille en transit ==> on marque la cellule comme en transit et on stocke localement
-          selectedCell.setSelected(true);
-          this.pendingCell = selectedCell;
+          this.selectedCell = cell;
+          this.selectedCell.setSelected(true);
+          this.pendingCell = cell;
         }
       }
     }

@@ -6,13 +6,12 @@ import {Bottle} from '../model/bottle';
 import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {FilterSet} from '../components/distribution/distribution';
-import {LoadingController, Platform} from 'ionic-angular';
+import {Platform} from 'ionic-angular';
 import * as firebase from 'firebase/app';
 import * as _ from 'lodash';
 import {LoginService} from './login.service';
 import {PersistenceService} from './persistence.service';
 import {NotificationService} from './notification.service';
-import {TranslateService} from '@ngx-translate/core';
 import {FirebaseConnectionService} from './firebase-connection.service';
 import {User} from '../model/user';
 import {Subscription} from 'rxjs/Subscription';
@@ -38,12 +37,10 @@ export class BottlePersistenceService extends PersistenceService {
   private dataConnectionSub: Subscription;
 
   constructor(private dataConnection: FirebaseConnectionService,
-              loadingCtrl: LoadingController,
               notificationService: NotificationService,
               loginService: LoginService,
-              translateService: TranslateService,
               private platform: Platform) {
-    super(loadingCtrl, notificationService, loginService, translateService);
+    super(notificationService, loginService);
     if (loginService.user !== undefined) {
       this.initialize(loginService.user);
     } else {

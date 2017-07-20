@@ -1,6 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DistributeService} from '../../service/distribute.service';
-import {Chart, ChartElement} from 'chart.js';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {Bottle} from '../../model/bottle';
 import * as _ from 'lodash';

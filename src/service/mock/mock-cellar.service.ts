@@ -4,10 +4,6 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {LoadingController} from 'ionic-angular';
-import {LockerFactory} from '../../model/locker.factory';
-import {NotificationService} from '../notification.service';
-import {LoginService} from '../login.service';
 import {CellarService} from '../cellar.service';
 import {FridgeLocker} from '../../model/fridge-locker';
 import {SimpleLocker} from '../../model/simple-locker';
@@ -24,10 +20,7 @@ export class MockCellarService implements CellarService {
   private _allLockersObservable: Observable<Locker[]> = this._lockers.asObservable();
   private allLockersArray: Locker[] = [];
 
-  constructor(private loadingCtrl: LoadingController,
-              private lockerFactory: LockerFactory,
-              private notificationService: NotificationService,
-              private loginService: LoginService) {
+  constructor() {
     this.initMocks();
   }
 
