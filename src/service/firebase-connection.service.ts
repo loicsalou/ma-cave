@@ -5,7 +5,7 @@ import {Injectable} from '@angular/core';
 import {Bottle, BottleMetadata} from '../model/bottle';
 import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {AngularFireDatabase} from 'angularfire2/database';
+import {AngularFireDatabase, FirebaseListObservable} from 'angularfire2/database';
 import * as firebase from 'firebase/app';
 import {LoginService} from './login.service';
 import {Image} from '../model/image';
@@ -49,6 +49,8 @@ export class FirebaseConnectionService {
   private localStorageSub: Subscription;
   private firebaseSub: Subscription;
 
+  //date de dernière mise à jour d'une bouteille dans le cache
+
   constructor(private bottleFactory: BottleFactory, private angularFirebase: AngularFireDatabase, private loginService: LoginService,
               private notificationService: NotificationService, private localStorage: NativeStorageService,
               private platform: Platform) {
@@ -78,27 +80,60 @@ export class FirebaseConnectionService {
     return this._allBottlesObservable;
   }
 
+  /**
+   * récupérer du cache si il y en a un.
+   * prendre la date de mise à jour la plus récente dans le cache et aller chercher en DB les màj plus récentes que
+   * cette date. Remettre à jour le cache et ré-émettre les données pour l'affichage.
+   *
+   * @returns {undefined}
+   */
   public fetchAllBottles() {
-    let cacheAvailable = this.fetchFromCache();
+    this.notificationService.debugAlert('fetchAllBottles()');
+    // on prend déjà ce qu'on a dans le caceh
+    this.fetchFromCache();
+    //option: pas de connexion autorisée ==> on se contente de ça
     if (!this.connectionAllowed) {
       return;
     }
+    //on vérifie maintenant la cohérence avec la DB
+    this.fetchAllBottlesFromDB();
+  }
+
+  private fetchFromDBStartingAt(startDate: number, key: string) {
+    this.notificationService.debugAlert('fetchAllBottles() - cacheAvailable - chargement des mises à jour depuis '
+      + startDate + ' key=' + key);
+    //récupérer en DB toutes les bouteilles mises à jour depuis la date de dernière mise à jour du cache (le +1 permet
+    // d'exclure la date la plus récente en local puisqu'on l'a déjà)
+    let items = this.queryOrderByLastUpdate(startDate);
+    this.firebaseSub = items.subscribe(
+      (bottles: Bottle[]) => {
+        this.notificationService.debugAlert(bottles.length + ' mises à jour depuis la DB - ' + startDate +
+          ' - ' + JSON.stringify(bottles));
+        if (bottles.length > 0) {
+          //prepare loaded bottles for the app
+          bottles.forEach((bottle: Bottle) => this.bottleFactory.create(bottle));
+          this.updateCache(bottles);
+        }
+      },
+      error => {
+        this._bottles.error(error);
+      },
+      () => this._bottles.complete()
+    );
+  }
+
+  private fetchAllBottlesFromDB() {
     let items = this.angularFirebase.list(this.BOTTLES_ROOT, {
       query: {
-        limitToLast: 2000,
         orderByChild: 'lastUpdated'
       }
     });
 
     this.firebaseSub = items.subscribe(
       (bottles: Bottle[]) => {
-        //prepare loaded bottles for the app
-        bottles.forEach((bottle: Bottle) => this.bottleFactory.create(bottle));
-        if (cacheAvailable) {
-          if (this.updateCache(bottles)) {
-            this._bottles.next(bottles);
-          }
-        } else {
+        if (bottles.length > 0) {
+          //prepare loaded bottles for the app
+          bottles.forEach((bottle: Bottle) => this.bottleFactory.create(bottle));
           this._bottles.next(bottles);
         }
       },
@@ -107,6 +142,23 @@ export class FirebaseConnectionService {
       },
       () => this._bottles.complete()
     );
+  }
+
+  /**
+   * query the db and loads nbrows last updated bottles.
+   * return the corresponding observable.
+   * @param nbrows that should be retrieved from the DB
+   */
+  private queryOrderByLastUpdate(fromLastUpdated: number): FirebaseListObservable<any[]> {
+    if (isNaN(fromLastUpdated)) {
+      fromLastUpdated = 0;
+    }
+    let query = {
+      orderByChild: 'lastUpdated',
+      startAt: fromLastUpdated
+    };
+
+    return this.angularFirebase.list(this.BOTTLES_ROOT, {query});
   }
 
   private fetchFromCache(): boolean {
@@ -123,8 +175,16 @@ export class FirebaseConnectionService {
   }
 
   private handleCacheObservable(bottles: Bottle[]) {
-    this.cacheBottles = bottles;
+    //d'abord on émet ce qu'on a dans le cache
+    this.notificationService.debugAlert('handleCacheObservable()' + (bottles ? bottles.length : 'rien dans le cache'));
     this._bottles.next(bottles);
+    //puis on trie par date de dernière mise à jour et on va chercher en DB ce qui a été mise à jour depuis pour
+    // remettre le cache à jour
+    this.cacheBottles = bottles;
+    if (this.cacheBottles.length > 0) {
+      this.cacheBottles.sort(sortByLastUpdate).reverse();
+      this.fetchFromDBStartingAt(this.cacheBottles[ 0 ].lastUpdated + 1, this.cacheBottles[ 0 ][ 'id' ])
+    }
   }
 
   public deleteImage(file: File): Promise<any> {
@@ -196,7 +256,7 @@ export class FirebaseConnectionService {
         },
         (error) => {
           this.notificationService.error('Une erreur s\'est produite en tentant d\'enregistrer l\'image dans la base' +
-                                         ' de données', error);
+            ' de données', error);
         });
   }
 
@@ -344,26 +404,33 @@ export class FirebaseConnectionService {
    * comparer firebaseBottles avec this.cacheBottles et si des bouteilles ont été ajoutées ou mises à jour
    * dans la base, on enlève du cache les anciennes versions et on ajoute les différences dans le cache puis il
    faut encore sauvegarder le cache dans le native storage.
-   * @param firebaseBottles
-   * @returns {boolean}
+   * @param firebaseBottles contient les bouteilles qui sont différentes dans la DB firebase et dans le cache. La DB
+   * est bien sûr la référence.
+   * @returns {boolean} indicating if cache is up to date after change or not
    */
   private updateCache(firebaseBottles: Bottle[]): boolean {
     //
     if (!this.cacheBottles) {
       this.cacheBottles = [];
     }
-    let inFBNotInCache = _.differenceBy(firebaseBottles, this.cacheBottles, matchByKeyAndLastUpdateDate);
-
-    if (inFBNotInCache.length !== 0) {
-      //create new cache: remove updated bottltes then add updated to cache bottles and we're done
-      let newCache = _.pullAllWith(this.cacheBottles, inFBNotInCache, matchByKey);
-      newCache = _.concat(this.cacheBottles, inFBNotInCache);
+    if (firebaseBottles.length !== 0) {
+      this.notificationService.debugAlert('updateCache() - contrôle du cache: ' + firebaseBottles.length + ' différences' +
+        ' trouvées');
+      //create new cache: remove updated bottles then add updated to cache bottles and we're done
+      let size = this.cacheBottles.length;
+      let newCache = _.pullAllWith(this.cacheBottles, firebaseBottles, matchByKey);
+      let sizeAfterRemove = this.cacheBottles.length;
+      newCache = _.concat(this.cacheBottles, firebaseBottles);
+      let finalsize = newCache.length;
+      this.notificationService.debugAlert('taille du cache avant / après suppression / après màj=' + size + '/' + sizeAfterRemove + '/' + finalsize);
 
       // on upgrade le cache
       this.localStorage.save(newCache);
-      this.notificationService.information('cache raffraichi: ' + inFBNotInCache.length + ' ajouts / modifications');
+      this.cacheBottles = newCache;
+      this.notificationService.information('cache rafraichi: ' + firebaseBottles.length + ' ajouts / modifications');
       return true;
     } else {
+      this.notificationService.debugAlert('cache déjà à jour');
       return false;
     }
   }
@@ -382,9 +449,21 @@ function matchByKeyAndLastUpdateDate(fbBottle, cacheBottle) {
     //une bouteille est dans FB mais pas dans le cache ==> il n'y a pas matching
     return false;
   }
-  return (fbBottle.lastUpdated === cacheBottle.lastUpdated && fbBottle.$key === cacheBottle.$key);
+  return (fbBottle.lastUpdated === cacheBottle.lastUpdated && fbBottle.$key === cacheBottle.id);
 }
 
 function matchByKey(fbBottle, cacheBottle) {
-  return (fbBottle.$key === cacheBottle.$key);
+  return (fbBottle.$key === cacheBottle.id);
+}
+
+function sortByLastUpdate(btl1, btl2) {
+  let dt1 = btl1.lastUpdated;
+  if (!dt1) {
+    dt1 = 0;
+  }
+  let dt2 = btl2.lastUpdated;
+  if (!dt2) {
+    dt2 = 0;
+  }
+  return dt1 - dt2;
 }

@@ -17,6 +17,7 @@ export class Bottle implements ImgDefaultable {
   garde_min: string;
   garde_optimum: string;
   label: string;
+  lastUpdated: number;
   lieu_achat: string;
   millesime: string;
   nomCru: string;
@@ -42,4 +43,5 @@ export interface BottleMetadata {
   nomCru: string;
   subregion_label: string;
   keywords: string[];
+  secondaryKeywords: string[];
 }

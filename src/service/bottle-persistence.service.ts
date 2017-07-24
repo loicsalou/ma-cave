@@ -82,7 +82,10 @@ export class BottlePersistenceService extends PersistenceService {
   }
 
   public update(bottles: Bottle[]) {
-    this.dataConnection.update(bottles).then(
+    this.dataConnection.update(bottles.map((btl: Bottle) => {
+      btl.lastUpdated = new Date().getTime();
+      return btl;
+    })).then(
       () => {
         //mise à jour faite
       },

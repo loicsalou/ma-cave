@@ -54,7 +54,7 @@ export class NativeStorageService {
     this.IMAGES_ROOT = this.IMAGES_FOLDER;
     this.XREF_ROOT = this.XREF_FOLDER;
     this.USER_ROOT = this.USERS_ROOT + this.SEP + (user ? user.user : '' );
-    this.notificationService.debugAlert('NativeStorage: init avec user.user=' + user.user + ' - USER_ROOT=' + this.USER_ROOT);
+    //this.notificationService.debugAlert('NativeStorage: init avec user.user=' + user.user + ' - USER_ROOT=' + this.USER_ROOT);
     this.BOTTLES_ROOT = this.USER_ROOT + this.SEP + NativeStorageService.BOTTLES_FOLDER;
     this.saveUser(user);
   }
@@ -133,7 +133,7 @@ export class NativeStorageService {
             this._bottles.next(btl);
           },
           error => {
-            this.notificationService.debugAlert('pas de donnée locale trouvée ' + this.BOTTLES_ROOT, error);
+            //this.notificationService.debugAlert('pas de donnée locale trouvée ' + this.BOTTLES_ROOT, error);
           }
         ).catch(error => this.notificationService.debugAlert('(catch) La récupération locale des données a échoué' +
                                                              ' depuis ' + this.BOTTLES_ROOT, error));
@@ -175,28 +175,28 @@ export class NativeStorageService {
 
   private saveUser(user: User) {
     if (user && this.cordova) {
-      this.notificationService.debugAlert('Tentative de sauvegarde de l\'utilisateur: ' + JSON.stringify(user));
+      //this.notificationService.debugAlert('Tentative de sauvegarde de l\'utilisateur: ' + JSON.stringify(user));
       this.getKnownUsers().then(
         (users: User[]) => {
-          this.notificationService.debugAlert('Récupéré ' + JSON.stringify(users.map(u => u.email)));
+          //this.notificationService.debugAlert('Récupéré ' + JSON.stringify(users.map(u => u.email)));
           users.push(user);
-          this.notificationService.debugAlert('push du user dans le tableau des users OK nb=' + JSON.stringify(users.map(u => u.email)));
+          //this.notificationService.debugAlert('push du user dans le tableau des users OK nb=' + JSON.stringify(users.map(u => u.email)));
           let usersByMail = new Map<string, User>();
           users.forEach((u: User) => {
             if (!usersByMail.has(u.email)) {
-              this.notificationService.debugAlert('le user sera sauvegardé: ' + u.email);
+              //this.notificationService.debugAlert('le user sera sauvegardé: ' + u.email);
               usersByMail.set(u.email, u);
             } else {
-              this.notificationService.debugAlert('le user ne sera pas sauvegardé: ' + u.email);
+              //this.notificationService.debugAlert('le user ne sera pas sauvegardé: ' + u.email);
             }
           });
           users = Array.from(usersByMail.values());
-          this.notificationService.debugAlert('élim doubles fait. Reste ' + JSON.stringify(users.map(u => u.email)) + '. Sauvegarde...');
+          //this.notificationService.debugAlert('élim doubles fait. Reste ' + JSON.stringify(users.map(u => u.email)) + '. Sauvegarde...');
           this.nativeStorage.setItem(this.KNOWN_USERS, users);
-          this.notificationService.debugAlert('Sauvegarde liste utilisateurs OK');
+          //this.notificationService.debugAlert('Sauvegarde liste utilisateurs OK');
         }).catch(err => {
-        this.notificationService.debugAlert('La récupération des utilisateurs locaux a échoué: ', err);
-        this.notificationService.debugAlert('Tentative de sauvegarde de l\'utilisateur: ' + JSON.stringify(user));
+        //this.notificationService.debugAlert('La récupération des utilisateurs locaux a échoué: ', err);
+        //this.notificationService.debugAlert('Tentative de sauvegarde de l\'utilisateur: ' + JSON.stringify(user));
         this.nativeStorage.setItem(this.KNOWN_USERS, [ user ])
           .then(value => this.notificationService.debugAlert('sauvegarde apparemment OK ', value))
           .catch(err => this.notificationService.debugAlert('sauvegarde KO ', err));
