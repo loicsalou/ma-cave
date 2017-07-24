@@ -1,4 +1,11 @@
 .page-update {
+
+  ion-scroll {
+    height: 100%;
+    width: 100%;
+    white-space: nowrap;
+  }
+
   ion-item {
     justify-content: space-between;
 
