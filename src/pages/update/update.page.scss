@@ -1,4 +1,20 @@
 .page-update {
+
+  button.item {
+    color: map-get($colors, primary);
+    &:disabled {
+      font-style: italic;
+      color: map-get($colors, danger);
+    }
+  }
+
+  ion-scroll {
+    height: 100%;
+    width: 100%;
+    background: transparent;
+    white-space: nowrap;
+  }
+
   ion-item {
     justify-content: space-between;
 

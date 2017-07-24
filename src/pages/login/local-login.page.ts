@@ -27,10 +27,10 @@ export class LocalLoginPage implements OnInit {
     this.localStorage.getKnownUsers()
       .then(users => {
         this.knownUsers = users;
-        this.notificationService.debugAlert('LoginPage: récupération utilisateurs OK: ', users);
+        //this.notificationService.debugAlert('LoginPage: récupération utilisateurs OK: ', users);
       })
       .catch(err => {
-        this.notificationService.debugAlert('LoginPage: La récupération des utilisateurs locaux a échoué: ', err);
+        //this.notificationService.debugAlert('LoginPage: La récupération des utilisateurs locaux a échoué: ', err);
         this.localStorage.deleteKnowUsers();
       });
   }

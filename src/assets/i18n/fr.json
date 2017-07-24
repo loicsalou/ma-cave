@@ -32,7 +32,7 @@
     "millesime": "Millésime",
     "non-millesime": "Non-millésimé",
     "prix": "Prix",
-    "quantite_achat": "Quantité achatée",
+    "quantite_achat": "Quantité achetée",
     "quantite_courante": "Stock",
     "subregion_label": "Région",
     "suggestion": "Suggestions",
@@ -48,6 +48,10 @@
     "home": "Accueil",
     "cellar": "Cave",
     "profile": "Profile"
+  },
+  "update": {
+    "saved": "Modifications sauvegardées dans la base",
+    "cancelled": "Modifications annulées à votre demande"
   },
   "ans": "ans",
   "bottle-detail": "Informations détaillées",

@@ -58,6 +58,10 @@ export class ImageAttacherComponent {
       });
   }
 
+  removeProfileImage(): void {
+    this.imageUrl.emit(undefined);
+  }
+
 // TAKE FROM THE EXISTING PHOTOS
   chooseProfileImage(): void {
     let imageSource = this.camera.PictureSourceType.PHOTOLIBRARY;

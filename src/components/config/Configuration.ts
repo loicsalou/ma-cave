@@ -57,19 +57,22 @@ export class Configuration {
 
   public static getMetadata(bottle: Configuration | any): BottleMetadata {
     let keywords = [];
-    keywords.push(Configuration.extractKeywords(bottle.comment));
-    keywords.push(Configuration.extractKeywords(bottle.suggestion));
     keywords.push(Configuration.extractKeywords(bottle.area_label));
     keywords.push(Configuration.extractKeywords(bottle.label));
     keywords.push(Configuration.extractKeywords(bottle.subregion_label));
     keywords = _.uniq(_.flatten(keywords));
+
+    let secondaryKeywords = [];
+    secondaryKeywords.push(Configuration.extractKeywords(bottle.comment));
+    secondaryKeywords.push(Configuration.extractKeywords(bottle.suggestion));
 
     return {
       area_label: bottle.area_label,
       area_label_search: Configuration.getSearchStringFor(bottle.area_label),
       nomCru: bottle.nomCru,
       subregion_label: bottle.subregion_label,
-      keywords: keywords
+      keywords: keywords,
+      secondaryKeywords: secondaryKeywords
     }
   }
 
