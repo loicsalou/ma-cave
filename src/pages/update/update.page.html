@@ -12,21 +12,21 @@
 
 <ion-content class="page-update" padding-horizontal>
   
-  <ion-fab bottom right>
+  <ion-fab bottom right *ngIf="bottleForm.dirty">
     <button ion-fab>
       <ion-icon name="menu"></ion-icon>
     </button>
     <ion-fab-list side="top">
-      <button ion-fab (click)="save()">
+      <button ion-fab (click)="save()" [disabled]="bottleForm.invalid" class="item">
         <ion-icon name="checkmark"></ion-icon>
       </button>
-      <button ion-fab (click)="cancel()">
+      <button ion-fab (click)="cancel()" class="item">
         <ion-icon name="close"></ion-icon>
       </button>
     </ion-fab-list>
   </ion-fab>
   
-  <ion-scroll scrollY="true">
+  <!--<ion-scroll scrollY="true">-->
     <form #bottleForm="ngForm">
       <ion-row d-flex class="form-group">
         <ion-col style="text-align: center;">
@@ -54,7 +54,7 @@
       <ion-row class="form-group">
         <ion-item>
           <ion-label float-left>{{'bottle.label' | translate}}</ion-label>
-          <ion-select [(ngModel)]="bottle.label" name="label">
+          <ion-select [(ngModel)]="bottle.label" name="label" interface="popover">
             <ion-option *ngFor="let colorPair of bottles.colors" [value]="colorPair.value" class="form-control"
                         required>
               {{colorPair.value}}
@@ -82,7 +82,7 @@
         <ion-item>
           <ion-label>{{'bottle.subregion_label' | translate}}</ion-label>
           <ion-select [(ngModel)]="bottle.subregion_label" name="subregion_label" required
-                      (ionChange)="loadRegionAreas()">
+                      (ionChange)="loadRegionAreas()" interface="popover">
             <ion-option *ngFor="let regionData of bottles.aocByArea" [value]="regionData.key" class="form-control">
               {{regionData.key}}
             </ion-option>
@@ -94,7 +94,7 @@
         <ion-item>
           <ion-label>{{'bottle.area_label' | translate}}</ion-label>
           <ion-select [(ngModel)]="metadata.area_label_search" name="area_label_search" required *ngIf="aoc"
-                      (ionChange)="setAreaLabelFromMetadata()" class="form-control">
+                      (ionChange)="setAreaLabelFromMetadata()" class="form-control" interface="popover">
             <ion-option *ngFor="let data of aoc" [value]="data.appellationSearched">
           <span>{{data.appellation}}
             <span *ngIf="data.subdivision">- [{{data.subdivision}}]</span>
@@ -184,6 +184,6 @@
         </ion-card>
       </ion-slide>
     </ion-slides>
-  </ion-scroll>
+  <!--</ion-scroll>-->
 
 </ion-content>

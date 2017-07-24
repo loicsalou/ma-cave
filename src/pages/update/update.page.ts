@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {Bottle, BottleMetadata} from '../../model/bottle';
 import {NavController, NavParams} from 'ionic-angular';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
@@ -10,6 +10,7 @@ import {LoginService} from '../../service/login.service';
 import {NotificationService} from '../../service/notification.service';
 import * as _ from 'lodash';
 import {Configuration} from '../../components/config/Configuration';
+import {NgForm} from '@angular/forms';
 
 /*
  Generated class for the Update component.
@@ -37,6 +38,12 @@ export class UpdatePage implements OnInit, OnDestroy {
   private progressSubscription: Subscription;
   private forceLeave: boolean = true;
   private metadata: BottleMetadata;
+  selectOptions={
+    enableBackdropDismiss: true,
+
+  };
+
+  @ViewChild('bottleForm') bottleForm: NgForm;
 
   constructor(private navCtrl: NavController, navParams: NavParams, private bottleService: BottlePersistenceService,
               private camera: Camera, private notificationService: NotificationService, private imageService: ImagePersistenceService,
@@ -141,7 +148,7 @@ export class UpdatePage implements OnInit, OnDestroy {
   // =============
   // PROFILE IMAGE
   setProfileImage(downloadURL: string) {
-    this.bottle.profile_image_url = downloadURL;
+    this.bottle.profile_image_url = downloadURL ? downloadURL : '';
     if (!this.bottle.image_urls) {
       this.bottle.image_urls = []
     }
@@ -150,10 +157,6 @@ export class UpdatePage implements OnInit, OnDestroy {
 
   getProfileImage() {
     return this.bottle.profile_image_url;
-  }
-
-  removeProfileImage() {
-    this.bottle.profile_image_url = '';
   }
 
   error(error) {
