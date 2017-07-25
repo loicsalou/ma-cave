@@ -61,7 +61,7 @@ export class CellarPersistenceService extends PersistenceService implements Cell
       });
       items.subscribe((lockers: SimpleLocker[]) => {
         lockers.forEach((locker: SimpleLocker) => this.lockerFactory.create(locker));
-        this.setallLockersArray(lockers);
+        this.setAllLockersArray(lockers);
         popup.dismiss();
       });
     } catch (error) {
@@ -110,7 +110,7 @@ export class CellarPersistenceService extends PersistenceService implements Cell
     return this._allLockersObservable;
   }
 
-  private setallLockersArray(lockers: SimpleLocker[]) {
+  private setAllLockersArray(lockers: SimpleLocker[]) {
     this.allLockersArray = lockers;
     this._lockers.next(lockers);
   }

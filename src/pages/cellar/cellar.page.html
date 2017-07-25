@@ -1,44 +1,40 @@
 <ion-header class="cellar-page">
-  
   <ion-navbar>
-    <span class="title">
-      <ion-title>cellar</ion-title>
-      <div *ngIf="paginatedLocker">
-        <p *ngIf="chosenLocker">{{chosenLocker.name}}</p>
-        <p>{{paginatedLocker.name}} - {{selectedCell ? selectedCell.color : 'none'}}</p>
-      </div>
-    </span>
+    <ion-title>{{'lockers' | translate}}</ion-title>
   </ion-navbar>
-
 </ion-header>
 
 <ion-content padding class="cellar-page">
   
-  <ion-row>
-    <ion-scroll scrollX="true" scrollY="true" [zoom]="true" [maxZoom]="3" *ngIf="chosenLocker">
-      <locker [locker]="chosenLocker" *ngIf="!chosenLocker.isFridge()" (selected)="cellSelected($event)"></locker>
-      <fridge-locker [fridge]="chosenLocker" *ngIf="chosenLocker.isFridge()"
-                     (selected)="cellSelected($event)"></fridge-locker>
-    </ion-scroll>
-  </ion-row>
-  
-  <ion-row>
-    <ion-slides [zoom]="true" [pager]="true" (ionSlideDidChange)="slideChanged()">
+  <ion-row (click)="expandRow($event)">
+    <ion-slides [zoom]="true" [pager]="true" (ionSlideDidChange)="slideChanged()" [spaceBetween]="5"
+                [centeredSlides]="true" [paginationType]="fraction">
       <ion-slide *ngFor="let locker of otherLockers">
-        <ion-scroll scrollX="true" scrollY="true" [zoom]="true" [maxZoom]="3">
+        <div class="swiper-zoom-container">
           <locker [locker]="locker" *ngIf="!locker.isFridge()"
                   (selected)="cellSelected($event)"></locker>
           <fridge-locker [fridge]="locker" *ngIf="locker.isFridge()"
                          (selected)="cellSelected($event)"></fridge-locker>
-        </ion-scroll>
+        </div>
       </ion-slide>
     </ion-slides>
   </ion-row>
   
   <ion-fab bottom right>
-    <button ion-fab (click)="chooseLocker(paginatedLocker)">
-      <ion-icon name="arrow-dropup"></ion-icon>
+    <button ion-fab>
+      <ion-icon name="menu"></ion-icon>
     </button>
+    <ion-fab-list side="left">
+      <button ion-fab (click)="increaseSize()">
+        <ion-icon name="search">+</ion-icon>
+      </button>
+      <button ion-fab (click)="decreaseSize()">
+        <ion-icon name="search">-</ion-icon>
+      </button>
+      <button ion-fab (click)="createLocker()">
+        <ion-icon name="add-circle"></ion-icon>
+      </button>
+    </ion-fab-list>
   </ion-fab>
   
   <ion-fab top right *ngIf="pendingCell">

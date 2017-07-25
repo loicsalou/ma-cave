@@ -1,11 +1,11 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {IonicPage, Slides} from 'ionic-angular';
-import {SimpleLocker} from '../../model/simple-locker';
+import {IonicPage, ModalController, Slides} from 'ionic-angular';
 import {CellarPersistenceService} from '../../service/cellar-persistence.service';
 import {Locker} from '../../model/locker';
 import {Cell} from '../../components/locker/locker.component';
 import {NotificationService} from '../../service/notification.service';
 import * as _ from 'lodash';
+import {LockerEditorPage} from '../locker-editor/locker-editor.page';
 
 /**
  * Generated class for the CellarPage page.
@@ -22,7 +22,7 @@ import * as _ from 'lodash';
 export class CellarPage implements OnInit {
 
   private otherLockers: Locker[];
-  private chosenLocker: Locker;
+  //private chosenLocker: Locker;
   private paginatedLocker: Locker;
   @ViewChild(Slides) slides: Slides;
 
@@ -30,7 +30,8 @@ export class CellarPage implements OnInit {
   pendingBottleTipVisible: boolean = false;
   selectedCell: Cell;
 
-  constructor(private cellarService: CellarPersistenceService, private notificationService: NotificationService) {
+  constructor(private cellarService: CellarPersistenceService, private notificationService: NotificationService,
+              private modalCtrl: ModalController) {
   }
 
   ngOnInit(): void {
@@ -53,14 +54,28 @@ export class CellarPage implements OnInit {
     }
   }
 
-  chooseLocker(locker: SimpleLocker) {
-    if (this.chosenLocker !== undefined) {
-      this.otherLockers.push(this.chosenLocker);
-    }
-    this.otherLockers = this.otherLockers.filter(item => item.name !== locker.name);
-    this.chosenLocker = locker;
-    this.resetPaginatedLocker();
+  increaseSize() {
+    this.paginatedLocker.increaseSize();
   }
+
+  decreaseSize() {
+    this.paginatedLocker.decreaseSize();
+  }
+
+  createLocker() {
+    let editorModal = this.modalCtrl.create(LockerEditorPage, {}, {showBackdrop: false});
+    editorModal.present();
+  }
+
+  //
+  //chooseLocker(locker: SimpleLocker) {
+  //  if (this.chosenLocker !== undefined) {
+  //    this.otherLockers.push(this.chosenLocker);
+  //  }
+  //  this.otherLockers = this.otherLockers.filter(item => item.name !== locker.name);
+  //  this.chosenLocker = locker;
+  //  this.resetPaginatedLocker();
+  //}
 
   showTip() {
     this.pendingBottleTipVisible = true;
@@ -71,6 +86,10 @@ export class CellarPage implements OnInit {
 
   slideChanged() {
     this.resetPaginatedLocker();
+  }
+
+  expandRow(event: Event) {
+    console.info();
   }
 
   cellSelected(cell: Cell) {

@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FridgeLocker} from '../../model/fridge-locker';
-import {Cell} from './locker.component';
+import {Cell, LockerComponent} from './locker.component';
 
 /**
  * Generated class for the CompositeLockerComponent component.
@@ -29,6 +29,10 @@ export class FridgeLockerComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  sizeClass():string {
+    return LockerComponent.SIZE_CLASSES[this.fridge.currentSize];
   }
 
   cellSelected(cell: Cell) {

@@ -14,16 +14,17 @@
       width: 40px;
     }
   }
-
-  ion-row {
-    height: 50%;
-  }
-
-  ion-scroll {
-    height: 100%;
-    width: 100%;
-    white-space: nowrap;
-  }
+  //
+  //ion-row {
+  //  max-height: 80%;
+  //  min-height: 20%;
+  //}
+  //
+  //ion-scroll {
+  //  height: 100%;
+  //  width: 100%;
+  //  white-space: nowrap;
+  //}
 
   p.tip {
     background-color: map-get($colors, light);

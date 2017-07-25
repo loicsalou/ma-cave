@@ -29,6 +29,8 @@ export class LockerComponent implements OnInit {
     'vin de paille',
     'blanc liquoreux' ];
 
+  public static SIZE_CLASSES=['small', 'medium', 'big', 'huge'];
+
   @Input()
   locker: SimpleLocker;
   rows: Row[];
@@ -47,6 +49,10 @@ export class LockerComponent implements OnInit {
 
   ngOnChanges(changes: any) {
     this.resetComponent();
+  }
+
+  sizeClass():string {
+    return LockerComponent.SIZE_CLASSES[this.locker.currentSize];
   }
 
   isShifted(): boolean {

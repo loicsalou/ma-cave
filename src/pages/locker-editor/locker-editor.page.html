@@ -1,0 +1,93 @@
+<!-- Generated template for the LockerEditorComponent component -->
+<ion-header class="locker-editor-page" (click)="test()">
+  
+  <ion-navbar>
+    <ion-title>{{'locker-editor.title' | translate}}</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content padding class="locker-editor-page">
+  <form #lockerForm="ngForm">
+    
+    <ion-row class="form-group">
+      <ion-item>
+        <ion-label>{{'locker.name'| translate}}</ion-label>
+        <ion-input type="text" [(ngModel)]="name" name="name" class="form-control" required></ion-input>
+      </ion-item>
+      
+      <ion-item>
+        <ion-label>{{'locker.comment'| translate}}</ion-label>
+        <ion-input type="text" [(ngModel)]="comment" name="comment" class="form-control"></ion-input>
+      </ion-item>
+      
+      <ion-item>
+        <ion-label float-left>{{'locker.formats' | translate}}</ion-label>
+        <ion-select [(ngModel)]="supportedFormats" name="supportedFormats" multiple="true" interface="popover" required>
+          <ion-option *ngFor="let format of lockerFormats" [value]="format">{{'locker-format.'+format |
+            translate}}
+          </ion-option>
+        </ion-select>
+      </ion-item>
+    </ion-row>
+    
+    <ion-row class="form-group">
+      <ion-item>
+        <ion-label>{{'locker.type'| translate}}</ion-label>
+        <ion-select [(ngModel)]="type" name="type" required interface="popover">
+          <ion-option *ngFor="let type of lockerTypes" [value]="type">{{'locker-type.'+type | translate}}</ion-option>
+        </ion-select>
+      </ion-item>
+    </ion-row>
+    
+    <ion-row class="form-group" *ngIf="type!=='fridge'">
+      <ion-item>
+        <ion-label float-left>{{'locker.dim-x' | translate}}</ion-label>
+        <ion-input type="number" [(ngModel)]="lockerDimension.x" name="lockerDimensionX" float-right
+                   class="form-control" required></ion-input>
+      </ion-item>
+      
+      <ion-item>
+        <ion-label float-left>{{'locker.dim-y' | translate}}</ion-label>
+        <ion-input type="number" [(ngModel)]="lockerDimension.y" name="lockerDimensionY" float-right
+                   class="form-control" required></ion-input>
+      </ion-item>
+    </ion-row>
+    
+    <div *ngIf="type==='fridge'" style="margin-top: 10px">
+      <h3>{{'locker.dimensions-fridge' | translate }}</h3>
+      <ion-row class="form-group">
+        <!--<ion-item>-->
+        <!--<ion-label float-left>{{'locker.fridge-dim-x' | translate}}</ion-label>-->
+        <!--<ion-input type="number" [(ngModel)]="fridgeDimension.x" name="fridgeDimensionX" float-right-->
+        <!--class="form-control" required></ion-input>-->
+        <!--</ion-item>-->
+        
+        <ion-item>
+          <ion-label float-left>{{'locker.fridge-dim-y' | translate}}</ion-label>
+          <ion-input type="number" [(ngModel)]="fridgeDimension.y" name="fridgeDimensionY" float-right
+                     class="form-control" required></ion-input>
+        </ion-item>
+      </ion-row>
+  
+      <h3>{{'the-lockers' | translate }}</h3>
+      <ion-row class="form-group" *ngFor="let lockerDimensions of fridgeLockersDimensions;let ix=index">
+        <fieldset>
+        <legend>casier {{ix+1}}</legend>
+        <ion-item>
+          <ion-label float-left>{{'locker.fridge-dim-x' | translate}}</ion-label>
+          <ion-input type="number" [(ngModel)]="lockerDimensions.x" name="lockerDimensionX" float-right
+                     class="form-control" required></ion-input>
+        </ion-item>
+        
+        <ion-item>
+          <ion-label float-left>{{'locker.fridge-dim-y' | translate}}</ion-label>
+          <ion-input type="number" [(ngModel)]="lockerDimensions.y" name="lockerDimensionY" float-right
+                     class="form-control" required></ion-input>
+        </ion-item>
+        </fieldset>
+      </ion-row>
+    </div>
+  
+  </form>
+</ion-content>

@@ -46,7 +46,7 @@ export class UpdatePage implements OnInit, OnDestroy {
   @ViewChild('bottleForm') bottleForm: NgForm;
 
   constructor(private navCtrl: NavController, navParams: NavParams, private bottleService: BottlePersistenceService,
-              private camera: Camera, private notificationService: NotificationService, private imageService: ImagePersistenceService,
+              private notificationService: NotificationService, private imageService: ImagePersistenceService,
               private loginService: LoginService, private bottles: Bottles) {
     //don't clone to keep firebase '$key' which is necessary to update
     this.bottle = navParams.data[ 'bottle' ];

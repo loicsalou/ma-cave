@@ -1,4 +1,17 @@
 {
+  "ans": "ans",
+  "bottle-detail": "Informations détaillées",
+  "bottles": "Bouteilles",
+  "details": "Détails",
+  "infos": "Informations pratiques",
+  "lockers": "Vos casiers",
+  "the-lockers": "Vos casiers",
+  "middle": "Age moyen",
+  "no-age": "Non millésimé",
+  "nom": "Casier",
+  "old": "Vieux",
+  "very-old": "Très vieux",
+  "young": "Jeune",
   "app": {
     "please-login": "Authentification",
     "checking-login": "Authentification en cours...",
@@ -38,6 +51,45 @@
     "suggestion": "Suggestions",
     "volume": "Format"
   },
+  "locker": {
+    "name": "Nom",
+    "comment": "Note / commentaire",
+    "dimensions": "Dimensions du casier",
+    "dimensions-fridge": "Dimensions du frigo",
+    "dim-x": "Hauteur (en bouteilles)",
+    "dim-y": "Largeur (en bouteilles)",
+    "fridge-dim-x": "Largeur (en casiers)",
+    "fridge-dim-y": "Hauteur (en casiers)",
+    "formats": "Formats supportés",
+    "image": "Matériau",
+    "type": "Type"
+  },
+  "locker-editor": {
+    "title": "Créer ou modifier un casier"
+  },
+  "locker-format": {
+    "bouteille": "Bouteille (0.75 l)",
+    "demie": "Demie (0.5 l)",
+    "fillette": "Fillette (0.375 l)",
+    "clavelin": "Clavelin (0.62 l)",
+    "magnum": "Magnum (1.5 l)",
+    "litre": "Litre (1 l)",
+    "piccolo": "Piccolo (0.2 l)",
+    "chopine": "Chopine (0.25 l)",
+    "jeroboham": "Jeroboham (3 l)",
+    "rehoboram": "Rehoboram (4.5 l)",
+    "mathusalem": "Mathusalem (6 l)",
+    "salmanazar": "Salmanazar (9 l)",
+    "balthazar": "Balthazar (12 l)",
+    "nabuchodonozor": "Nabuchodonozor (15 l)",
+    "melchior": "Melchior (18 l)"
+  },
+  "locker-type": {
+    "simple": "Etagère, rangées alignées",
+    "shifted": "Etagère, rangées décalées",
+    "diamond": "Etagères en losange",
+    "fridge": "Frigo"
+  },
   "statistics": {
     "repartition-par-type": "Répartition par type de vin",
     "repartition-par-region": "Répartition par région"
@@ -52,16 +104,5 @@
   "update": {
     "saved": "Modifications sauvegardées dans la base",
     "cancelled": "Modifications annulées à votre demande"
-  },
-  "ans": "ans",
-  "bottle-detail": "Informations détaillées",
-  "bottles": "Bouteilles",
-  "details": "Détails",
-  "infos": "Informations pratiques",
-  "middle": "Age moyen",
-  "no-age": "Non millésimé",
-  "old": "Vieux",
-  "very-old": "Très vieux",
-  "young": "Jeune",
-  "nom": "Casier"
+  }
 }
