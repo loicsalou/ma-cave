@@ -103,6 +103,8 @@ export class HomePage implements OnInit, AfterViewInit {
       if (this.navCtrl.length() > 1) {
         this.navCtrl.popToRoot();
       }
+      // pas de onDestroy ici car après un logout on reste quand même sur le home ==> il faut faire l'unsubscribe à
+      // la main
       this.loginSubscription.unsubscribe();
     }
   }

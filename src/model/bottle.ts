@@ -5,6 +5,7 @@ import {ImgDefaultable} from '../directives/default-image/img-defaultable';
 
 export class Bottle implements ImgDefaultable {
 
+  id?: string;
   classe_age?: string;
   favorite?: boolean;
   area_label: string;
@@ -21,6 +22,7 @@ export class Bottle implements ImgDefaultable {
   lieu_achat: string;
   millesime: string;
   nomCru: string;
+  positions?: Position[];
   prix: string;
   profile_image_url?: string;
   image_urls?: string[];
@@ -44,4 +46,11 @@ export interface BottleMetadata {
   subregion_label: string;
   keywords: string[];
   secondaryKeywords: string[];
+}
+
+export interface Position {
+  lockerId: string;
+  rack?: number;
+  x: number;
+  y: number;
 }

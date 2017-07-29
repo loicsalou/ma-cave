@@ -15,7 +15,6 @@ import {NotificationService} from './notification.service';
 import {FirebaseConnectionService} from './firebase-connection.service';
 import {User} from '../model/user';
 import {Subscription} from 'rxjs/Subscription';
-import Reference = firebase.database.Reference;
 
 /**
  * Services related to the bottles in the cellar.
@@ -253,6 +252,10 @@ export class BottlePersistenceService extends PersistenceService {
     this.cellarImported = true;
     this.allBottlesArray = bottles;
     this._bottles.next(this.allBottlesArray);
+  }
+
+  getBottle(id: string): Bottle {
+    return this.allBottlesArray.find(btl => btl.id === id);
   }
 }
 

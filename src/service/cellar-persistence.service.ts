@@ -12,6 +12,8 @@ import {NotificationService} from './notification.service';
 import {CellarService} from './cellar.service';
 import {Locker} from '../model/locker';
 import {FirebaseConnectionService} from './firebase-connection.service';
+import {Bottle} from '../model/bottle';
+import {BottlePersistenceService} from './bottle-persistence.service';
 
 /**
  * Services related to the cellar itself, locker and place of the lockers.
@@ -28,6 +30,7 @@ export class CellarPersistenceService extends PersistenceService implements Cell
   constructor(private dataConnection: FirebaseConnectionService,
               private lockerFactory: LockerFactory,
               notificationService: NotificationService,
+              private bottleService: BottlePersistenceService,
               loginService: LoginService) {
     super(notificationService, loginService);
   }
@@ -72,6 +75,20 @@ export class CellarPersistenceService extends PersistenceService implements Cell
 
   public deleteLocker(locker: Locker) {
     this.dataConnection.deleteLocker(locker);
+  }
+
+  public fetchLockerContent(locker: Locker): Observable<Bottle[]> {
+    return this.dataConnection.fetchLockerContent(locker)
+      .concatMap((bottleIds: string[]) => this.resolveBottles(bottleIds));
+  }
+
+  private resolveBottles(bottleIds: string[]): Observable<Bottle[]> {
+    let bottles: Bottle[] = bottleIds.map(id => this.resolveBottle(id));
+    return Observable.create(observer => observer.next(bottles));
+  }
+
+  private resolveBottle(id: string): Bottle {
+    return this.bottleService.getBottle(id);
   }
 }
 

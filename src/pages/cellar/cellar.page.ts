@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {IonicPage, ModalController, Slides} from 'ionic-angular';
 import {CellarPersistenceService} from '../../service/cellar-persistence.service';
 import {Locker} from '../../model/locker';
@@ -6,6 +6,8 @@ import {Cell} from '../../components/locker/locker.component';
 import {NotificationService} from '../../service/notification.service';
 import * as _ from 'lodash';
 import {LockerEditorPage} from '../locker-editor/locker-editor.page';
+import {Subscription} from 'rxjs/Subscription';
+import {Bottle} from '../../model/bottle';
 
 /**
  * Generated class for the CellarPage page.
@@ -19,7 +21,7 @@ import {LockerEditorPage} from '../locker-editor/locker-editor.page';
              templateUrl: './cellar.page.html',
              styleUrls: [ '/cellar.page.scss' ]
            })
-export class CellarPage implements OnInit {
+export class CellarPage implements OnInit, OnDestroy {
 
   private otherLockers: Locker[];
   //private chosenLocker: Locker;
@@ -29,19 +31,25 @@ export class CellarPage implements OnInit {
   pendingCell: Cell;
   pendingBottleTipVisible: boolean = false;
   selectedCell: Cell;
+  private lockersSub: Subscription;
+  private lockerContent: Bottle[];
 
   constructor(private cellarService: CellarPersistenceService, private notificationService: NotificationService,
               private modalCtrl: ModalController) {
   }
 
   ngOnInit(): void {
-    this.cellarService.allLockersObservable.subscribe(
+    this.lockersSub=this.cellarService.allLockersObservable.subscribe(
       lockers => {
         this.otherLockers = lockers;
         this.resetPaginatedLocker();
       }
     );
     this.cellarService.fetchAllLockers();
+  }
+
+  ngOnDestroy(): void {
+    this.lockersSub.unsubscribe();
   }
 
   resetPaginatedLocker() {
@@ -51,6 +59,7 @@ export class CellarPage implements OnInit {
         ix = 0;
       }
       this.paginatedLocker = this.otherLockers[ ix ];
+      this.getLockerContent(this.paginatedLocker);
     }
   }
 
@@ -65,6 +74,12 @@ export class CellarPage implements OnInit {
   createLocker() {
     let editorModal = this.modalCtrl.create(LockerEditorPage, {}, {showBackdrop: false});
     editorModal.present();
+  }
+
+  private getLockerContent(locker: Locker) {
+    this.cellarService.fetchLockerContent(locker).subscribe(
+      (bottles: Bottle[]) => this.lockerContent=bottles
+    );
   }
 
   deleteLocker() {

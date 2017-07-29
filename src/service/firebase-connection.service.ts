@@ -42,6 +42,10 @@ export class FirebaseConnectionService {
   private CELLAR_ROOT: string;
   private static CELLAR_FOLDER = 'cellar';
 
+  private LOCKER_CONTENT_ROOT: string;
+  private static LOCKER_CONTENT_FOLDER = 'content';
+  private lockerContentRootRef: Reference;
+
   protected XREF_FOLDER = 'xref';
   public XREF_ROOT: string;
 
@@ -74,9 +78,11 @@ export class FirebaseConnectionService {
     this.XREF_ROOT = this.XREF_FOLDER;
     this.BOTTLES_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.BOTTLES_FOLDER;
     this.CELLAR_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.CELLAR_FOLDER;
+    this.LOCKER_CONTENT_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.LOCKER_CONTENT_FOLDER;
 
     this.bottlesRootRef = this.angularFirebase.database.ref(this.BOTTLES_ROOT);
     this.cellarRootRef = this.angularFirebase.database.ref(this.CELLAR_ROOT);
+    this.lockerContentRootRef = this.angularFirebase.database.ref(this.LOCKER_CONTENT_ROOT);
     this.imageStorageRef = this.angularFirebase.app.storage().ref(this.IMAGES_ROOT);
   }
 
@@ -155,6 +161,22 @@ export class FirebaseConnectionService {
         }
       }
     )
+  }
+
+  // ===================================================== LOCKER CONTENT
+  // note: on ne gère pas les observables ici car on peut avoir plusieurs lockers il nous faudrait un observable
+  // par locker, il est donc préférable de laisser le composant client gérer ça
+
+  public fetchLockerContent(locker: Locker): FirebaseListObservable<string[]> {
+    return Observable.create(observer => {
+      observer.next(['-KnyyG6N5-yIR78Ey0ZP','-KnyyG6Pez5gB6tB9MkM']);
+    })
+  }
+
+  public fetchLockerContentFB(locker: Locker): FirebaseListObservable<string[]> {
+    this.notificationService.debugAlert('fetchLockerContent('+locker.name+')');
+    let ref = this.lockerContentRootRef.child(locker.id);
+    return <FirebaseListObservable<string[]>>this.angularFirebase.list(ref);
   }
 
 // ===================================================== BOTTLES

@@ -11,9 +11,9 @@
                 [centeredSlides]="true" [paginationType]="fraction">
       <ion-slide *ngFor="let locker of otherLockers">
         <div class="swiper-zoom-container">
-          <locker [locker]="locker" *ngIf="!locker.isFridge()"
+          <locker [locker]="locker" [content]="lockerContent" *ngIf="!locker.isFridge()"
                   (selected)="cellSelected($event)"></locker>
-          <fridge-locker [fridge]="locker" *ngIf="locker.isFridge()"
+          <fridge-locker [fridge]="locker" [content]="lockerContent" *ngIf="locker.isFridge()"
                          (selected)="cellSelected($event)"></fridge-locker>
         </div>
       </ion-slide>

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {NavController} from 'ionic-angular';
 import {BrowsePage} from '../browse/browse.page';
 import {LoginService} from '../../service/login.service';
@@ -12,7 +12,7 @@ import {Subscription} from 'rxjs/Subscription';
              templateUrl: 'dashboard.html',
              styleUrls: [ '/dashboard.scss' ]
            })
-export class DashboardPage implements OnInit {
+export class DashboardPage implements OnInit, OnDestroy {
   version: any;
   bottles: Bottle[];
   private bottleSub: Subscription;
@@ -29,6 +29,10 @@ export class DashboardPage implements OnInit {
         }
       }
     );
+  }
+
+  ngOnDestroy(): void {
+    this.bottleSub.unsubscribe();
   }
 
   filterOnText(event: any) {
@@ -50,7 +54,6 @@ export class DashboardPage implements OnInit {
   }
 
   logout() {
-    this.bottleSub.unsubscribe();
     this.loginService.logout();
     this.navCtrl.popToRoot();
   }

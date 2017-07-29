@@ -69,6 +69,7 @@ export class BrowsePage implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.notificationService.traceInfo('Libération de la page de browse');
     this.bottleSubscription.unsubscribe();
+    this.filterSubscription.unsubscribe();
   }
 
   logout() {

@@ -1,6 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FridgeLocker} from '../../model/fridge-locker';
 import {Cell, LockerComponent} from './locker.component';
+import {Bottle, Position} from '../../model/bottle';
+import {NotificationService} from '../../service/notification.service';
 
 /**
  * Generated class for the CompositeLockerComponent component.
@@ -22,10 +24,14 @@ export class FridgeLockerComponent implements OnInit {
   @Input()
   fridge: FridgeLocker;
 
+  @Input()
+  content: Bottle[]=[];
+
   @Output()
   selected: EventEmitter<Cell> = new EventEmitter<Cell>();
 
-  constructor() {
+
+  constructor(private notificationService: NotificationService) {
   }
 
   ngOnInit(): void {
