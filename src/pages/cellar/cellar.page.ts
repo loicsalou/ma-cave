@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {IonicPage, ModalController, Slides} from 'ionic-angular';
+import {IonicPage, ModalController, NavParams, Slides} from 'ionic-angular';
 import {CellarPersistenceService} from '../../service/cellar-persistence.service';
 import {Locker} from '../../model/locker';
 import {Cell} from '../../components/locker/locker.component';
@@ -33,12 +33,14 @@ export class CellarPage implements OnInit, OnDestroy {
   selectedCell: Cell;
   private lockersSub: Subscription;
   private lockerContent: Bottle[];
+  private placedBottles: Bottle[];
 
   constructor(private cellarService: CellarPersistenceService, private notificationService: NotificationService,
-              private modalCtrl: ModalController) {
+              private modalCtrl: ModalController, private params: NavParams) {
   }
 
   ngOnInit(): void {
+    this.placedBottles=this.params ? this.params['data']['bottles'] : [];
     this.lockersSub=this.cellarService.allLockersObservable.subscribe(
       lockers => {
         this.otherLockers = lockers;

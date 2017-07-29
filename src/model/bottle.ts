@@ -29,6 +29,7 @@ export class Bottle implements ImgDefaultable {
   quantite_achat: string;
   quantite_courante: number;
   subregion_label: string;
+  selected?: boolean;
   suggestion: string;
   volume: string;
   metadata?: BottleMetadata;

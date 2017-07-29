@@ -15,6 +15,7 @@ export class BottleListComponent {
   bottles: Bottle[];
   @Output()
   showDetail: EventEmitter<ListBottleEvent> = new EventEmitter();
+  private nbSelected = 0;
 
   constructor(private bottlesService: BottlePersistenceService, private toastCtrl: ToastController) {
   }
@@ -29,11 +30,20 @@ export class BottleListComponent {
 
   switchSelected(event: Event, bottle: Bottle) {
     event.stopPropagation();
-    bottle[ 'selected' ] = bottle[ 'selected' ] ? !bottle[ 'selected' ] : true;
+    bottle.selected = !bottle.selected;
+    if (bottle.selected) {
+      this.nbSelected++;
+    } else {
+      this.nbSelected--;
+    }
+  }
+
+  anyBottleSelected(): boolean {
+    return this.nbSelected > 0;
   }
 
   isSelected(bottle) {
-    return bottle[ 'selected' ];
+    return bottle.selected;
   }
 
   isBottleFavorite(bottle: Bottle): boolean {
