@@ -8,6 +8,7 @@ import {CellarService} from '../cellar.service';
 import {FridgeLocker} from '../../model/fridge-locker';
 import {SimpleLocker} from '../../model/simple-locker';
 import {Locker, LockerType} from '../../model/locker';
+import {NotificationService} from '../notification.service';
 
 /**
  * Services related to the cellar itself, locker and place of the lockers.
@@ -16,12 +17,17 @@ import {Locker, LockerType} from '../../model/locker';
  */
 @Injectable()
 export class MockCellarService implements CellarService {
+
   private _lockers: BehaviorSubject<Locker[]> = new BehaviorSubject<Locker[]>([]);
   private _allLockersObservable: Observable<Locker[]> = this._lockers.asObservable();
   private allLockersArray: Locker[] = [];
 
-  constructor() {
+  constructor(private notificationService: NotificationService) {
     this.initMocks();
+  }
+
+  createLocker(locker: Locker): void {
+    this.notificationService.information('Cellar mock service aucune mise à jour implémentée');
   }
 
   public fetchAllLockers() {
@@ -30,6 +36,14 @@ export class MockCellarService implements CellarService {
 
   get allLockersObservable(): Observable<SimpleLocker[]> {
     return this._allLockersObservable;
+  }
+
+  replaceLocker(locker: Locker) {
+    throw new Error('Method not implemented.');
+  }
+
+  deleteLocker(locker: Locker) {
+    throw new Error('Method not implemented.');
   }
 
   private initMocks() {

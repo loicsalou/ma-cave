@@ -23,6 +23,8 @@ export class FacebookLoginService extends AbstractLoginService {
   }
 
   public login(): Observable<User> {
+    let loadingPopup = this.notificationService.createLoadingPopup('app.checking-login');
+
     this.facebook.login([ 'email' ]).then((response) => {
       const facebookCredential = firebase.auth.FacebookAuthProvider
         .credential(response.authResponse.accessToken);
@@ -31,17 +33,14 @@ export class FacebookLoginService extends AbstractLoginService {
         .then((success) => {
           let user: User = new FacebookUser(success.user, success.email, success.photoURL,
                                             success.displayName, success.uid, success.phoneNumber);
-          //let keys = Object.keys(success);
-          //keys.forEach(key => user[ key ] = success[ key ]);
-
           this.success(user);
         })
-        .catch(
-          error => this.notificationService.failed('Firebase failure', error)
-        );
-
     }).catch(
-      error => this.notificationService.failed('l\'authentification a échoué', error)
+      error => {
+        loadingPopup.dismiss();
+        this.loginFailed();
+        this.notificationService.failed('l\'authentification a échoué', error);
+      }
     );
 
     return this.authentifiedObservable;

@@ -5,6 +5,7 @@ import {LoginService} from '../../service/login.service';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {Bottle} from '../../model/bottle';
 import {FilterSet} from '../../components/distribution/distribution';
+import {Subscription} from 'rxjs/Subscription';
 
 @Component({
              selector: 'page-dashboard',
@@ -14,13 +15,20 @@ import {FilterSet} from '../../components/distribution/distribution';
 export class DashboardPage implements OnInit {
   version: any;
   bottles: Bottle[];
+  private bottleSub: Subscription;
 
   constructor(public navCtrl: NavController, public loginService: LoginService, private bottleService: BottlePersistenceService) {
   }
 
   ngOnInit(): void {
     this.version = require('../../../package.json').version;
-    this.bottleService.allBottlesObservable.subscribe((bottles: Bottle[]) => this.bottles = bottles);
+    this.bottleSub = this.bottleService.allBottlesObservable.subscribe(
+      (bottles: Bottle[]) => {
+        if (bottles && bottles.length > 0) {
+          this.bottles = bottles
+        }
+      }
+    );
   }
 
   filterOnText(event: any) {
@@ -42,6 +50,7 @@ export class DashboardPage implements OnInit {
   }
 
   logout() {
+    this.bottleSub.unsubscribe();
     this.loginService.logout();
     this.navCtrl.popToRoot();
   }

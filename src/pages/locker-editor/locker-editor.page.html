@@ -40,7 +40,7 @@
       </ion-item>
     </ion-row>
     
-    <ion-row class="form-group" *ngIf="type!=='fridge'">
+    <ion-row class="form-group" *ngIf="!isFridge()">
       <ion-item>
         <ion-label float-left>{{'locker.dim-x' | translate}}</ion-label>
         <ion-input type="number" [(ngModel)]="lockerDimension.x" name="lockerDimensionX" float-right
@@ -54,19 +54,13 @@
       </ion-item>
     </ion-row>
     
-    <div *ngIf="type==='fridge'" style="margin-top: 10px">
+    <div *ngIf="isFridge()" style="margin-top: 10px">
       <h3>{{'locker.dimensions-fridge' | translate }}</h3>
       <ion-row class="form-group">
-        <!--<ion-item>-->
-        <!--<ion-label float-left>{{'locker.fridge-dim-x' | translate}}</ion-label>-->
-        <!--<ion-input type="number" [(ngModel)]="fridgeDimension.x" name="fridgeDimensionX" float-right-->
-        <!--class="form-control" required></ion-input>-->
-        <!--</ion-item>-->
-        
         <ion-item>
           <ion-label float-left>{{'locker.fridge-dim-y' | translate}}</ion-label>
           <ion-input type="number" [(ngModel)]="fridgeDimension.y" name="fridgeDimensionY" float-right
-                     class="form-control" required></ion-input>
+                     class="form-control" required (ionChange)="changeFridgeDimension()"></ion-input>
         </ion-item>
       </ion-row>
   
@@ -75,18 +69,22 @@
         <fieldset>
         <legend>casier {{ix+1}}</legend>
         <ion-item>
-          <ion-label float-left>{{'locker.fridge-dim-x' | translate}}</ion-label>
+          <ion-label float-left>{{'locker.dim-x' | translate}}</ion-label>
           <ion-input type="number" [(ngModel)]="lockerDimensions.x" name="lockerDimensionX" float-right
                      class="form-control" required></ion-input>
         </ion-item>
         
         <ion-item>
-          <ion-label float-left>{{'locker.fridge-dim-y' | translate}}</ion-label>
-          <ion-input type="number" [(ngModel)]="lockerDimensions.y" name="lockerDimensionY" float-right
+          <ion-label float-left>{{'locker.dim-y' | translate}}</ion-label>
+          <ion-input type="number" [(ngModel)]="fridgeLockersDimensions[ix].y" name="lockerDimensionY" float-right
                      class="form-control" required></ion-input>
         </ion-item>
         </fieldset>
       </ion-row>
+    </div>
+    
+    <div>
+      <button ion-button (click)="saveLocker()">Save</button>
     </div>
   
   </form>

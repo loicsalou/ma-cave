@@ -23,22 +23,20 @@ export class AnonymousLoginService extends AbstractLoginService {
   }
 
   public login(): Observable<User> {
+    let loadingPopup = this.notificationService.createLoadingPopup('app.checking-login');
     this.firebaseAuth.auth.signInAnonymously()
       .then(
         () => {
+          loadingPopup.dismiss();
           this.anoUser = new AnonymousUser();
           this.success(this.anoUser);
         },
-        err => this.notificationService.ask('Problème réseau', 'Impossible de s\'authentifier, voulez-vous passer en' +
-                                            ' mode déconnecté ?').subscribe(
-          bool => {
-            if (bool) {
-              this.notificationService.information('--- Mode déconnecté ---');
-              this.success(undefined);
-            }
-          }
-        )
-      )
+        err => {
+          loadingPopup.dismiss();
+          this.loginFailed();
+          this.notificationService.error('Problème réseau', 'Impossible de s\'authentifier')
+        }
+      );
 
     return this.authentifiedObservable;
   }

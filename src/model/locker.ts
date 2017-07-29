@@ -9,6 +9,7 @@ import {ImgDefaultable} from '../directives/default-image/img-defaultable';
  */
 export abstract class Locker implements ImgDefaultable {
 
+  private _id: string; // identifiant DB si besoin
   name: string; // nom du casier
   type: LockerType; // normal, décalé ou diamond (en losange)
   defaultImage: string; // une image par défaut si par d'imageUrl
@@ -18,7 +19,7 @@ export abstract class Locker implements ImgDefaultable {
 
   currentSize = LockerSize.medium;
 
-  constructor(name: string, type: LockerType, comment?: string, defaultImage?: string, imageUrl?: string, supportedFormats?: BottleSize[]) {
+  constructor(name: string, type: LockerType, comment: string = '', defaultImage: string = '', imageUrl: string = '', supportedFormats: BottleSize[]) {
     this.name = name;
     this.type = type;
     this.defaultImage = defaultImage;
@@ -37,16 +38,27 @@ export abstract class Locker implements ImgDefaultable {
     return 0;
   }
 
+  get id(): string {
+    return this._id;
+  }
+
+  set id(value: string) {
+    this._id = value;
+  }
+
+  abstract isFridge(): boolean;
+
   abstract increaseSize();
 
   abstract decreaseSize();
 }
 
 export enum LockerType {
-  simple,
-  shifted,
   diamond,
-  fridge
+  fridge,
+  shifted,
+  simple
+
 }
 
 export interface Dimension {

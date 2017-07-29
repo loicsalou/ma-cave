@@ -2,6 +2,8 @@
  * Created by loicsalou on 28.02.17.
  */
 
+import {Locker} from '../model/locker';
+
 /**
  * Services related to the cellar itself, locker and place of the lockers.
  * The subregion_label below are duplicated in the code of france.component.html as they are emitted when end-user
@@ -9,7 +11,13 @@
  */
 export interface CellarService {
 
-  fetchAllLockers();
+  fetchAllLockers():void;
+
+  createLocker(locker: Locker): void;
+
+  replaceLocker(locker: Locker): void;
+
+  deleteLocker(locker: Locker): void;
 
 }
 

@@ -67,15 +67,9 @@ export class CellarPage implements OnInit {
     editorModal.present();
   }
 
-  //
-  //chooseLocker(locker: SimpleLocker) {
-  //  if (this.chosenLocker !== undefined) {
-  //    this.otherLockers.push(this.chosenLocker);
-  //  }
-  //  this.otherLockers = this.otherLockers.filter(item => item.name !== locker.name);
-  //  this.chosenLocker = locker;
-  //  this.resetPaginatedLocker();
-  //}
+  deleteLocker() {
+    this.cellarService.deleteLocker(this.paginatedLocker);
+  }
 
   showTip() {
     this.pendingBottleTipVisible = true;

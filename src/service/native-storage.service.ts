@@ -109,7 +109,7 @@ export class NativeStorageService {
   //  return undefined;
   //}
   //
-  //private getUploadMeta(snap): UploadMetadata {
+  //private getUploadImageMeta(snap): UploadMetadata {
   //  return {
   //    downloadURL: snap.downloadURL,
   //    imageName: snap.metadata.name,
@@ -147,11 +147,11 @@ export class NativeStorageService {
 
   public save(bottles: Bottle[ ]): Promise<any> {
     if (this.cordova) {
-      return this.nativeStorage.setItem(this.BOTTLES_ROOT, bottles);
-      //.then(
-      //  result => this.notificationService.debugAlert('sauvegarde locale OK'),
-      //  error => this.notificationService.debugAlert('sauvegarde locale En erreur ! ' + error)
-      //);
+      return this.nativeStorage.setItem(this.BOTTLES_ROOT, bottles)
+      .then(
+        result => this.notificationService.debugAlert('sauvegarde locale OK'),
+        error => this.notificationService.debugAlert('sauvegarde locale En erreur ! ' + error)
+      );
     }
   }
 

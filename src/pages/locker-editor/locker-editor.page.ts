@@ -3,6 +3,8 @@ import {IonicPage, NavParams} from 'ionic-angular';
 import {BottleSize, Dimension, Locker, LockerType} from '../../model/locker';
 import {NgForm} from '@angular/forms';
 import {FridgeLocker} from '../../model/fridge-locker';
+import {CellarPersistenceService} from '../../service/cellar-persistence.service';
+import {SimpleLocker} from '../../model/simple-locker';
 
 /**
  * Generated class for the LockerEditorComponent component.
@@ -18,15 +20,15 @@ import {FridgeLocker} from '../../model/fridge-locker';
            })
 export class LockerEditorPage {
 
-  lockerTypes: string[];
-  lockerFormats: string[];
+  lockerTypes: LockerType[];
+  lockerFormats: BottleSize[];
 
   @ViewChild('lockerForm') bottleForm: NgForm;
 
   name: string;
   comment: string;
-  supportedFormats: string[];
-  type;
+  supportedFormats: BottleSize[];
+  type: LockerType;
   //locker normal
   lockerDimension: Dimension;
   private locker: Locker;
@@ -35,16 +37,35 @@ export class LockerEditorPage {
   private fridge: FridgeLocker;
   fridgeDimension: Dimension;
 
-  fridgeLockersDimensions: Dimension[];
+  fridgeLockersDimensions: Dimension[]=[];
 
-  constructor(params: NavParams) {
-    this.lockerTypes = Reflect.ownKeys(LockerType).filter((value: string) => isNaN(+value)).map(value => value.toString());
-    this.lockerFormats = Reflect.ownKeys(BottleSize).filter(
-      (value: string) => isNaN(+value)
-    ).map(value => value.toString());
+  constructor(params: NavParams, private cellarService: CellarPersistenceService) {
+    this.lockerTypes = [
+      LockerType.shifted,
+      LockerType.diamond,
+      LockerType.fridge,
+      LockerType.simple
+    ];
+    this.lockerFormats = [
+      BottleSize.piccolo,
+      BottleSize.chopine,
+      BottleSize.fillette,
+      BottleSize.demie,
+      BottleSize.clavelin,
+      BottleSize.bouteille,
+      BottleSize.litre,
+      BottleSize.magnum,
+      BottleSize.jeroboham,
+      BottleSize.rehoboram,
+      BottleSize.mathusalem,
+      BottleSize.salmanazar,
+      BottleSize.balthazar,
+      BottleSize.nabuchodonozor,
+      BottleSize.melchior
+    ];
     this.lockerDimension = LockerEditorPage.getDefaultLockerDimensions();
     this.fridgeDimension = LockerEditorPage.getDefaultLockerDimensions();
-    this.fridgeLockersDimensions = LockerEditorPage.getDefaultFridgeLockersDimensions();
+    this.changeFridgeDimension();
     this.supportedFormats = this.getDefaultSupportedFormats();
   }
 
@@ -52,8 +73,31 @@ export class LockerEditorPage {
     console.info();
   }
 
-  private getDefaultSupportedFormats(): string[] {
+  isFridge(): boolean {
+    return this.type === LockerType.fridge;
+  }
+
+  private getDefaultSupportedFormats(): BottleSize[] {
     return this.lockerFormats.slice(0, 6);
+  }
+
+  saveLocker() {
+    let locker: Locker;
+    if (this.type === LockerType.fridge) {
+      //name: string, type: LockerType, dimensions: Dimension[], comment?: string, defaultImage?: string,
+      // supportedFormats?: BottleSize[], imageUrl?: string
+      locker = new FridgeLocker(this.name, this.type, this.fridgeLockersDimensions, this.comment, this.supportedFormats);
+    } else {
+      locker = new SimpleLocker(this.name, this.type, this.lockerDimension, this.comment, this.supportedFormats);
+    }
+    this.cellarService.createLocker(locker);
+  }
+
+  changeFridgeDimension() {
+    while (this.fridgeDimension.y > this.fridgeLockersDimensions.length) {
+      this.fridgeLockersDimensions.push(LockerEditorPage.getDefaultFridgeDimensions());
+    }
+    this.fridgeLockersDimensions=this.fridgeLockersDimensions.slice(0,this.fridgeDimension.y);
   }
 
   private static getDefaultLockerDimensions(): Dimension {

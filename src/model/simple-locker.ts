@@ -13,7 +13,8 @@ export class SimpleLocker extends Locker {
 
   dimension: Dimension; //dimension L x H
 
-  constructor(name: string, type: LockerType, dimension: Dimension, comment?: string, defaultImage?: string, imageUrl?: string, supportedFormats?: BottleSize[]) {
+  constructor(name: string, type: LockerType, dimension: Dimension, comment?: string, supportedFormats?: BottleSize[],
+              defaultImage?: string, imageUrl?: string) {
     super(name, type, comment, defaultImage, imageUrl, supportedFormats);
     this.dimension = dimension;
   }

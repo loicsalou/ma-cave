@@ -17,7 +17,7 @@ export abstract class PersistenceService {
   private loginSub: Subscription;
 
   constructor(protected notificationService: NotificationService, protected loginService: LoginService) {
-    this.loginSub = loginService.authentifiedObservable.subscribe(
+    this.loginSub = this.loginService.authentifiedObservable.subscribe(
       user => this.handleLoginEvent(user)
     );
   }
@@ -38,6 +38,7 @@ export abstract class PersistenceService {
 
   protected cleanup() {
     this.XREF_ROOT = undefined;
+    this.loginSub.unsubscribe();
   }
 
   protected handleError(message: string, error: any) {
