@@ -6,7 +6,7 @@
 
 <ion-content padding class="cellar-page">
   
-  <ion-row (click)="expandRow($event)">
+  <ion-row>
     <ion-slides [zoom]="true" [pager]="true" (ionSlideDidChange)="slideChanged()" [spaceBetween]="5"
                 [centeredSlides]="true" [paginationType]="fraction">
       <ion-slide *ngFor="let locker of otherLockers">
@@ -18,6 +18,11 @@
         </div>
       </ion-slide>
     </ion-slides>
+  </ion-row>
+  
+  <ion-row *ngIf="placedBottles">
+    <locker #placedLockerComponent [locker]="placedLocker" [content]="placedBottles"
+            (selected)="cellSelected($event)"></locker>
   </ion-row>
   
   <ion-fab bottom right>

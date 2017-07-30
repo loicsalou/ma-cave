@@ -9,16 +9,16 @@ export class FridgeLocker extends Locker {
   dimensions: Dimension[]; //dimension L x H
   racks: Locker[];
 
-  constructor(name: string, type: LockerType, dimensions: Dimension[], comment?: string, supportedFormats?: BottleSize[],
-              defaultImage?: string, imageUrl?: string) {
-    super(name, type, comment, defaultImage, imageUrl, supportedFormats);
+  constructor(id: string, name: string, type: LockerType, dimensions: Dimension[], comment?: string,
+              supportedFormats?: BottleSize[], defaultImage?: string, imageUrl?: string) {
+    super(id, name, type, comment, defaultImage, imageUrl, supportedFormats);
     this.dimensions = dimensions;
     this.initLockers();
   }
 
   initLockers() {
     this.racks = this.dimensions.map(
-      (dimension: Dimension, i: number) => new SimpleLocker(this.name + '-' + i+1, LockerType.shifted, dimension)
+      (dimension: Dimension, i: number) => new SimpleLocker(this.id, this.id + '-' + (i + 1), LockerType.shifted, dimension)
     )
   }
 

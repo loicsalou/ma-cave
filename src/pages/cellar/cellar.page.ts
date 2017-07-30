@@ -1,13 +1,14 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {IonicPage, ModalController, NavParams, Slides} from 'ionic-angular';
 import {CellarPersistenceService} from '../../service/cellar-persistence.service';
-import {Locker} from '../../model/locker';
-import {Cell} from '../../components/locker/locker.component';
+import {Locker, LockerType} from '../../model/locker';
+import {Cell, LockerComponent} from '../../components/locker/locker.component';
 import {NotificationService} from '../../service/notification.service';
 import * as _ from 'lodash';
 import {LockerEditorPage} from '../locker-editor/locker-editor.page';
 import {Subscription} from 'rxjs/Subscription';
-import {Bottle} from '../../model/bottle';
+import {Bottle, Position} from '../../model/bottle';
+import {SimpleLocker} from '../../model/simple-locker';
 
 /**
  * Generated class for the CellarPage page.
@@ -21,7 +22,7 @@ import {Bottle} from '../../model/bottle';
              templateUrl: './cellar.page.html',
              styleUrls: [ '/cellar.page.scss' ]
            })
-export class CellarPage implements OnInit, OnDestroy {
+export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
 
   private otherLockers: Locker[];
   //private chosenLocker: Locker;
@@ -33,6 +34,10 @@ export class CellarPage implements OnInit, OnDestroy {
   selectedCell: Cell;
   private lockersSub: Subscription;
   private lockerContent: Bottle[];
+
+  @ViewChild('placedLockerComponent')
+  private placedLockerComponent: LockerComponent;
+  private placedLocker: SimpleLocker;
   private placedBottles: Bottle[];
 
   constructor(private cellarService: CellarPersistenceService, private notificationService: NotificationService,
@@ -40,14 +45,28 @@ export class CellarPage implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.placedBottles=this.params ? this.params['data']['bottles'] : [];
-    this.lockersSub=this.cellarService.allLockersObservable.subscribe(
+    this.placedBottles = this.params.data[ 'bottles' ]
+    if (this.placedBottles && this.placedBottles.length > 0) {
+      this.placedLocker = new SimpleLocker(undefined, 'placedLocker', LockerType.simple, {
+        x: this.placedBottles.length,
+        y: 1
+      });
+    }
+    this.lockersSub = this.cellarService.allLockersObservable.subscribe(
       lockers => {
         this.otherLockers = lockers;
         this.resetPaginatedLocker();
       }
     );
     this.cellarService.fetchAllLockers();
+  }
+
+  ngAfterViewInit(): void {
+    if (this.placedBottles) {
+      this.placedBottles.forEach(
+        (bottle, ix) => this.placedLockerComponent.placeBottle(bottle, new Position(undefined, ix, 0))
+      )
+    }
   }
 
   ngOnDestroy(): void {
@@ -80,7 +99,7 @@ export class CellarPage implements OnInit, OnDestroy {
 
   private getLockerContent(locker: Locker) {
     this.cellarService.fetchLockerContent(locker).subscribe(
-      (bottles: Bottle[]) => this.lockerContent=bottles
+      (bottles: Bottle[]) => this.lockerContent = bottles
     );
   }
 
@@ -99,14 +118,10 @@ export class CellarPage implements OnInit, OnDestroy {
     this.resetPaginatedLocker();
   }
 
-  expandRow(event: Event) {
-    console.info();
-  }
-
   cellSelected(cell: Cell) {
     if (cell) {
       if (this.pendingCell) {
-        if (cell.id === this.pendingCell.id) {
+        if (cell.position.equals(this.pendingCell.position)) {
           this.pendingCell = undefined;
           this.selectedCell.setSelected(false);
           this.selectedCell = undefined;

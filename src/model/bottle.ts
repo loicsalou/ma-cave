@@ -22,7 +22,7 @@ export class Bottle implements ImgDefaultable {
   lieu_achat: string;
   millesime: string;
   nomCru: string;
-  positions?: Position[];
+  positions?: Position[]; // positions auxquelles les bouteilles du lot sont placées
   prix: string;
   profile_image_url?: string;
   image_urls?: string[];
@@ -49,9 +49,42 @@ export interface BottleMetadata {
   secondaryKeywords: string[];
 }
 
-export interface Position {
+export class Position {
   lockerId: string;
   rack?: number;
   x: number;
   y: number;
+
+  constructor(lockerId: string, x: number, y: number, rack?: number) {
+    this.lockerId = lockerId;
+    this.rack = rack;
+    this.x = x;
+    this.y = y;
+  }
+
+  public equals(pos: Position): boolean {
+    if (!pos) {return false}
+    return (pos.lockerId === this.lockerId &&
+      pos.x === this.x &&
+      pos.y === this.y &&
+      pos.rack === this.rack
+    )
+  }
+
+  /**
+   * vérifie si la position est une sous-position d'un casier.
+   * @param {string} id
+   */
+  inLocker(id: string): boolean {
+    return this.lockerId===id;
+  }
+
+  /**
+   * vérifie si la position est une sous-position d'un rack.
+   * @param {string} id
+   * @param {number} rack peut être undefined, auquel cas la position sourant doit aussi avoir undefined comme rack
+   */
+  inRack(id: string, rack: number): boolean {
+    return this.lockerId===id && this.rack===rack;
+  }
 }

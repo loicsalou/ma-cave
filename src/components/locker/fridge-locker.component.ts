@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FridgeLocker} from '../../model/fridge-locker';
 import {Cell, LockerComponent} from './locker.component';
-import {Bottle, Position} from '../../model/bottle';
+import {Bottle} from '../../model/bottle';
 import {NotificationService} from '../../service/notification.service';
 
 /**
@@ -19,17 +19,16 @@ export class FridgeLockerComponent implements OnInit {
 
   //racks composant le frigo, càd npmbre de rangées
   //chaque rangée est en fait un locker ayant ses propres dimensions l x L
-  //Celles-ci n'ont pas forcément toutes la même hauteur, ex dans un frigo, en bas on peut mettre 4 rangs, en haut
-  // seulement 2
+  //Celles-ci n'ont pas forcément toutes la même hauteur, ex dans un frigo, les étagères permettent de créer des
+  // racks de différentes hauteurs
   @Input()
   fridge: FridgeLocker;
 
   @Input()
-  content: Bottle[]=[];
+  content: Bottle[] = [];
 
   @Output()
   selected: EventEmitter<Cell> = new EventEmitter<Cell>();
-
 
   constructor(private notificationService: NotificationService) {
   }
@@ -37,8 +36,8 @@ export class FridgeLockerComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  sizeClass():string {
-    return LockerComponent.SIZE_CLASSES[this.fridge.currentSize];
+  sizeClass(): string {
+    return LockerComponent.SIZE_CLASSES[ this.fridge.currentSize ];
   }
 
   cellSelected(cell: Cell) {

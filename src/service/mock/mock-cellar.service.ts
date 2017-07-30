@@ -47,7 +47,7 @@ export class MockCellarService implements CellarService {
   }
 
   private initMocks() {
-    let locker = new SimpleLocker('casier 1',
+    let locker = new SimpleLocker('mock-id1', 'casier 1',
                                   LockerType.simple,
                                   {
                                     x: 12,
@@ -55,8 +55,8 @@ export class MockCellarService implements CellarService {
                                   },
                                   'casier numéro 1',
     );
-    let locker2 = new FridgeLocker(
-      'Frigo',
+    let locker2 = new FridgeLocker('mock-id2',
+                                   'Frigo',
       LockerType.fridge, // frigo, étagère, filaire...
       [
         {
@@ -82,7 +82,7 @@ export class MockCellarService implements CellarService {
       ],
       'Frigo cave'
     );
-    let locker3 = new SimpleLocker('Grand rangement',
+    let locker3 = new SimpleLocker('mock-id3', 'Grand rangement',
                                    LockerType.shifted,
                                    {
                                      x: 16,

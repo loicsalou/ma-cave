@@ -36,6 +36,9 @@ export class LockerComponent implements OnInit {
   locker: SimpleLocker;
 
   @Input()
+  rack: number;
+
+  @Input()
   content: Bottle[] = [];
 
   @Output()
@@ -54,8 +57,11 @@ export class LockerComponent implements OnInit {
     this.content.forEach(
       bottle => {
         if (bottle.positions) {
-          bottle.positions.filter(position => position.lockerId === this.locker.id)
-            .forEach(position => this.placeBottle(bottle, position))
+          bottle.positions.filter(
+            position => position.inRack(this.locker.id, this.rack)
+          ).forEach(
+            position => this.placeBottle(bottle, position)
+          )
         }
       });
     if (this.bogusBottles.length > 0) {
@@ -128,17 +134,19 @@ export class LockerComponent implements OnInit {
     }
   }
 
-  private initRow(nbcells: number, rowNumber: number): Row {
+  private initRow(nbcells: number, rowIndex: number): Row {
     let cells: Cell[] = [];
-    let rowId = this.locker.name + '-' + rowNumber;
+    //let rowId = this.locker.name + '-' + rowIndex;
     for (let i = 0; i < nbcells; i++) {
-      cells[ i ] = new Cell(undefined, rowId + '-' + i);
+      let position = new Position(this.locker.id, i, rowIndex, this.rack);
+      cells[ i ] = new Cell(position);
     }
-    return new Row(cells, rowId);
+    //return new Row(cells, rowId, rowIndex);
+    return new Row(cells, rowIndex);
   }
 
-  private placeBottle(bottle: Bottle, position: Position) {
-    this.bogusBottles = []
+  public placeBottle(bottle: Bottle, position: Position) {
+    this.bogusBottles = [];
     if (this.rows.length < position.y || this.rows[ position.y ].cells.length < position.y) {
       this.bogusBottles.push(bottle);
     } else {
@@ -150,24 +158,26 @@ export class LockerComponent implements OnInit {
 class Row {
 
   private id: string;
+  index: number;
   cells: Cell[];
 
-  constructor(cells: Cell[], id: string) {
+  //constructor(cells: Cell[], id: string, rowIndex: number) {
+  constructor(cells: Cell[], rowIndex: number) {
     this.cells = cells;
-    this.id = id;
+    //this.id = id;
+    this.index = rowIndex;
   }
 
 }
 
 export class Cell {
-  id: string;
   bottle: Bottle;
   cellClass: string;
   selected = false;
+  position: Position;
 
-  constructor(bottle: Bottle, id: string) {
-    this.id = id;
-    this.storeBottle(bottle);
+  constructor(position: Position) {
+    this.position = position;
   }
 
   public isEmpty(): boolean {
@@ -181,6 +191,9 @@ export class Cell {
     if (this.selected) {
       this.cellClass += ' selected';
     }
+    btl.positions = btl.positions.filter(
+      (pos: Position) => ! this.position.equals(pos)
+    );
     return btl;
   }
 
@@ -193,6 +206,7 @@ export class Cell {
     if (this.isEmpty()) {
       this.cellClass = 'empty';
     } else {
+      bottle.positions.push(this.position);
       if (bottle.label === undefined) {
         console.info();
       } else {

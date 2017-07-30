@@ -21,13 +21,20 @@ export class BottleFactory {
   }
 
   public create(btl: Bottle): Bottle {
-    this.setClasseAge(btl).setDefaultImage(btl).setId(btl);
+    this.setClasseAge(btl).setDefaultImage(btl).setId(btl).ensurePositionsInitialized(btl);
 
     return btl;
   }
 
   get stats(): Statistics {
     return this._stats;
+  }
+
+  private ensurePositionsInitialized(btl: Bottle): BottleFactory {
+    if (!btl.positions) {
+      btl.positions = [];
+    }
+    return this;
   }
 
   private setId(bottle: Bottle): BottleFactory {

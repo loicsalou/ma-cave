@@ -23,14 +23,13 @@ export class LockerFactory {
     let locker: Locker;
     if (json[ 'type' ] === LockerType.fridge) {
       let dim: Dimension[]=json.dimensions;
-      locker = new FridgeLocker(json[ 'name' ], json[ 'type' ], dim, json[ 'comment' ], json[ 'supportedFormats' ],
+      locker = new FridgeLocker(json['id'], json[ 'name' ], json[ 'type' ], dim, json[ 'comment' ], json[ 'supportedFormats' ],
                                 json[ 'defaultImage' ], json[ 'imageUrl' ]);
     } else {
       let dim: Dimension=json.dimension;
-      locker = new SimpleLocker(json[ 'name' ], LockerType.simple, dim, json[ 'comment' ],
+      locker = new SimpleLocker(json['id'], json[ 'name' ], LockerType.simple, dim, json[ 'comment' ],
                                 json[ 'supportedFormats' ], json[ 'defaultImage' ], json[ 'imageUrl' ]);
     }
-    locker.id=json['id'];
     return locker;
   }
 
