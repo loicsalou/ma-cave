@@ -20,7 +20,8 @@ export class BottleFactory {
   constructor(private i18n: TranslateService, private _stats: Statistics) {
   }
 
-  public create(btl: Bottle): Bottle {
+  public create(bottle: Bottle): Bottle {
+    let btl: Bottle=new Bottle(bottle);
     this.setClasseAge(btl).setDefaultImage(btl).setId(btl).ensurePositionsInitialized(btl);
 
     return btl;

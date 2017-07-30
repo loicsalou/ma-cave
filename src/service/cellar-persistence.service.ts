@@ -83,7 +83,7 @@ export class CellarPersistenceService extends PersistenceService implements Cell
   }
 
   private resolveBottles(bottleIds: string[]): Observable<Bottle[]> {
-    let bottles: Bottle[] = bottleIds.map(id => this.resolveBottle(id));
+    let bottles: Bottle[] = bottleIds.map(id => this.resolveBottle(id)).filter(btl => btl!==undefined);
     return Observable.create(observer => observer.next(bottles));
   }
 

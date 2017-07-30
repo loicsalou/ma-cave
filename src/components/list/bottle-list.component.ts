@@ -38,6 +38,10 @@ export class BottleListComponent {
     }
   }
 
+  numberNotPlaced(bottle:Bottle): number {
+    return bottle.numberToBePlaced();
+  }
+
   anyBottleSelected(): boolean {
     return this.nbSelected > 0;
   }

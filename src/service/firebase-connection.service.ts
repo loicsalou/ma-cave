@@ -216,8 +216,7 @@ export class FirebaseConnectionService {
           ' - ' + JSON.stringify(bottles));
         if (bottles.length > 0) {
           //prepare loaded bottles for the app
-          bottles.forEach((bottle: Bottle) => this.bottleFactory.create(bottle));
-          this.updateCache(bottles);
+          this.updateCache(bottles.map((bottle: Bottle) => this.bottleFactory.create(bottle)));
         }
       },
       error => {
@@ -239,8 +238,7 @@ export class FirebaseConnectionService {
       (bottles: Bottle[]) => {
         if (bottles.length > 0) {
           //prepare loaded bottles for the app
-          bottles.forEach((bottle: Bottle) => this.bottleFactory.create(bottle));
-          this._bottles.next(bottles);
+          this._bottles.next(bottles.map((bottle: Bottle) => this.bottleFactory.create(bottle)));
 
           // on sauve dans le cache
           this.localStorage.save(bottles);

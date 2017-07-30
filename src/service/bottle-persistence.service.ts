@@ -154,6 +154,10 @@ export class BottlePersistenceService extends PersistenceService {
       if (filters.searchFavoriteOnly()) {
         filtered = filtered.filter(btl => btl.favorite);
       }
+      //ne garder que les bouteilles pas encore placées, sinon toutes
+      if (filters.searchToBePlacedOnly()) {
+        filtered = filtered.filter(btl => btl.numberToBePlaced() > 0);
+      }
       // always start filtering using textual search
       if (filters.hasText()) {
         filtered = this.getBottlesByKeywords(filtered, filters.text);

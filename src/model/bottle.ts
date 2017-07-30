@@ -35,8 +35,16 @@ export class Bottle implements ImgDefaultable {
   metadata?: BottleMetadata;
   defaultImage ?: string;
 
+  constructor(json: Object) {
+    Object.assign(this,json);
+  }
+
   getDefaultImageSrc(): string {
     return this.defaultImage;
+  }
+
+  numberToBePlaced(): number {
+    return this.quantite_courante - this.positions.length
   }
 }
 
@@ -63,7 +71,9 @@ export class Position {
   }
 
   public equals(pos: Position): boolean {
-    if (!pos) {return false}
+    if (!pos) {
+      return false
+    }
     return (pos.lockerId === this.lockerId &&
       pos.x === this.x &&
       pos.y === this.y &&
@@ -76,7 +86,7 @@ export class Position {
    * @param {string} id
    */
   inLocker(id: string): boolean {
-    return this.lockerId===id;
+    return this.lockerId === id;
   }
 
   /**
@@ -85,6 +95,6 @@ export class Position {
    * @param {number} rack peut être undefined, auquel cas la position sourant doit aussi avoir undefined comme rack
    */
   inRack(id: string, rack: number): boolean {
-    return this.lockerId===id && this.rack===rack;
+    return this.lockerId === id && this.rack === rack;
   }
 }
