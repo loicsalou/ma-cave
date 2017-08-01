@@ -38,7 +38,6 @@ export abstract class PersistenceService {
 
   protected cleanup() {
     this.XREF_ROOT = undefined;
-    this.loginSub.unsubscribe();
   }
 
   protected handleError(message: string, error: any) {

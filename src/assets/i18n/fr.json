@@ -28,6 +28,7 @@
     "failed": "Echec !",
     "unavailable-function": "Fonction indisponible - êtes vous offline ?",
     "warning": "Attention",
+    "withdrawn": "La bouteille a été retirée du casier",
     "loading": "Chargement en cours..."
   },
   "bottle": {
@@ -119,6 +120,7 @@
     "profile": "Profile"
   },
   "update": {
+    "failed": "La mise à jour des bouteilles a échoué",
     "saved": "Modifications sauvegardées dans la base",
     "cancelled": "Modifications annulées à votre demande"
   }

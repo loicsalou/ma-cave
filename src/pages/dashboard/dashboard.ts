@@ -15,6 +15,7 @@ import {Subscription} from 'rxjs/Subscription';
 export class DashboardPage implements OnInit, OnDestroy {
   version: any;
   bottles: Bottle[];
+  totalNumberOfBottles:number=0;
   private bottleSub: Subscription;
 
   constructor(public navCtrl: NavController, public loginService: LoginService, private bottleService: BottlePersistenceService) {
@@ -25,7 +26,8 @@ export class DashboardPage implements OnInit, OnDestroy {
     this.bottleSub = this.bottleService.allBottlesObservable.subscribe(
       (bottles: Bottle[]) => {
         if (bottles && bottles.length > 0) {
-          this.bottles = bottles
+          this.bottles = bottles;
+          this.totalNumberOfBottles = bottles.reduce((tot: number, btl: Bottle) => tot + +btl.quantite_courante, 0);
         }
       }
     );

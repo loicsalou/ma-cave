@@ -7,7 +7,6 @@ import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {FilterSet} from '../components/distribution/distribution';
 import {Platform} from 'ionic-angular';
-import * as firebase from 'firebase/app';
 import * as _ from 'lodash';
 import {LoginService} from './login.service';
 import {PersistenceService} from './persistence.service';
@@ -15,6 +14,7 @@ import {NotificationService} from './notification.service';
 import {FirebaseConnectionService} from './firebase-connection.service';
 import {User} from '../model/user';
 import {Subscription} from 'rxjs/Subscription';
+import {Locker} from '../model/locker';
 
 /**
  * Services related to the bottles in the cellar.
@@ -83,6 +83,8 @@ export class BottlePersistenceService extends PersistenceService {
   public update(bottles: Bottle[]) {
     this.dataConnection.update(bottles.map((btl: Bottle) => {
       btl.lastUpdated = new Date().getTime();
+      btl.positions = btl.positions.filter(pos => pos.lockerId !== undefined);
+      delete btl.selected;
       return btl;
     })).then(
       () => {
@@ -96,13 +98,6 @@ export class BottlePersistenceService extends PersistenceService {
     this.dataConnection.saveBottles(bottles).then(
       () => this.notificationService.information('Sauvegarde effectuée'),
       err => this.notificationService.error('La sauvegarde a échoué !', err)
-    );
-  }
-
-  public replaceBottle(bottle: Bottle) {
-    this.dataConnection.replaceBottle(bottle).then(
-      () => this.notificationService.information('Remplacement effectué'),
-      err => this.notificationService.error('Le remplacement a échoué !', err)
     );
   }
 
@@ -260,6 +255,12 @@ export class BottlePersistenceService extends PersistenceService {
 
   getBottle(id: string): Bottle {
     return this.allBottlesArray.find(btl => btl.id === id);
+  }
+
+  getBottlesInLocker(locker: Locker): Bottle[] {
+    return this.allBottlesArray.filter(
+      bottle => bottle.positions.filter(pos => pos.lockerId === locker.id).length > 0
+    )
   }
 }
 

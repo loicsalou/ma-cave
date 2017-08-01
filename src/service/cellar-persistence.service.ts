@@ -74,21 +74,26 @@ export class CellarPersistenceService extends PersistenceService implements Cell
   }
 
   public deleteLocker(locker: Locker) {
-    this.dataConnection.deleteLocker(locker);
-  }
-
-  public fetchLockerContent(locker: Locker): Observable<Bottle[]> {
-    return this.dataConnection.fetchLockerContent(locker)
-      .concatMap((bottleIds: string[]) => this.resolveBottles(bottleIds));
+    if (this.isEmpty(locker)) {
+      this.dataConnection.deleteLocker(locker);
+      this.notificationService.information('Le casier "'+locker.name+'" a bien été supprimé')
+    } else {
+      this.notificationService.warning('Le casier "'+locker.name+'" n\'est pas vide et ne peut donc pas' +
+        ' être supprimé');
+    }
   }
 
   private resolveBottles(bottleIds: string[]): Observable<Bottle[]> {
-    let bottles: Bottle[] = bottleIds.map(id => this.resolveBottle(id)).filter(btl => btl!==undefined);
+    let bottles: Bottle[] = bottleIds.map(id => this.resolveBottle(id)).filter(btl => btl !== undefined);
     return Observable.create(observer => observer.next(bottles));
   }
 
   private resolveBottle(id: string): Bottle {
     return this.bottleService.getBottle(id);
+  }
+
+  public isEmpty(locker: Locker) {
+    return this.bottleService.getBottlesInLocker(locker).length === 0;
   }
 }
 

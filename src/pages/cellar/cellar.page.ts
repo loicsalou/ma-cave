@@ -9,6 +9,7 @@ import {LockerEditorPage} from '../locker-editor/locker-editor.page';
 import {Subscription} from 'rxjs/Subscription';
 import {Bottle, Position} from '../../model/bottle';
 import {SimpleLocker} from '../../model/simple-locker';
+import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 
 /**
  * Generated class for the CellarPage page.
@@ -40,17 +41,19 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
   private placedLocker: SimpleLocker;
   private placedBottles: Bottle[];
 
-  constructor(private cellarService: CellarPersistenceService, private notificationService: NotificationService,
+  constructor(private cellarService: CellarPersistenceService, private bottleService: BottlePersistenceService,
+              private notificationService: NotificationService,
               private modalCtrl: ModalController, private params: NavParams) {
   }
 
   ngOnInit(): void {
-    this.placedBottles = this.params.data[ 'bottles' ]
+    this.placedBottles = this.params.data[ 'bottles' ];
     if (this.placedBottles && this.placedBottles.length > 0) {
       this.placedLocker = new SimpleLocker(undefined, 'placedLocker', LockerType.simple, {
-        x: this.placedBottles.length,
+        x: this.placedBottles.reduce((total, btl) => total + btl.numberToBePlaced(), 0),
         y: 1
-      });
+      })
+      ;
     }
     this.lockersSub = this.cellarService.allLockersObservable.subscribe(
       lockers => {
@@ -58,13 +61,22 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
         this.resetPaginatedLocker();
       }
     );
+
+    this.getLockersContent(this.paginatedLocker);
+
     this.cellarService.fetchAllLockers();
   }
 
   ngAfterViewInit(): void {
     if (this.placedBottles) {
+      let ix = 0;
       this.placedBottles.forEach(
-        (bottle, ix) => this.placedLockerComponent.placeBottle(bottle, new Position(undefined, ix, 0))
+        bottle => {
+          let nbBottles = bottle.numberToBePlaced();
+          for (let i = 0; i < nbBottles; i++) {
+            this.placedLockerComponent.placeBottle(bottle, new Position(undefined, ix++, 0))
+          }
+        }
       )
     }
   }
@@ -80,7 +92,6 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
         ix = 0;
       }
       this.paginatedLocker = this.otherLockers[ ix ];
-      this.getLockerContent(this.paginatedLocker);
     }
   }
 
@@ -97,8 +108,8 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
     editorModal.present();
   }
 
-  private getLockerContent(locker: Locker) {
-    this.cellarService.fetchLockerContent(locker).subscribe(
+  private getLockersContent(locker: Locker) {
+    this.bottleService.allBottlesObservable.subscribe(
       (bottles: Bottle[]) => this.lockerContent = bottles
     );
   }
@@ -118,14 +129,28 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
     this.resetPaginatedLocker();
   }
 
+  private moveCellContentTo(source: Cell, target: Cell) {
+    if (source) {
+      let bottle = source.withdraw();
+      bottle.removeFromPosition(source.position);
+      source.setSelected(false);
+      target.storeBottle(bottle);
+      bottle.addNewPosition(target.position);
+      this.bottleService.update([ bottle ]);
+    }
+  }
+
   cellSelected(cell: Cell) {
+    this.cellarService.isEmpty(this.paginatedLocker);
     if (cell) {
       if (this.pendingCell) {
         if (cell.position.equals(this.pendingCell.position)) {
-          this.pendingCell = undefined;
-          this.selectedCell.setSelected(false);
-          this.selectedCell = undefined;
-          return;
+          if (cell.bottle && cell.bottle.id === this.pendingCell.bottle.id) {
+            this.pendingCell = undefined;
+            this.selectedCell.setSelected(false);
+            this.selectedCell = undefined;
+            return;
+          }
         }
         // une cellule était déjà sélectionnée qui contenait une bouteille
         // - déplacer cette bouteille dans la nouvelle cellule et déselectionner les 2 cellules
@@ -133,7 +158,7 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
         // nouvelle cellule, sinon on déplace la bouteille et on déselectionne les 2 cellules
         let incomingCell = _.clone(cell);
         //on déplace la bouteille pré-enregistrée dans la cellule choisie
-        cell.storeBottle(this.pendingCell.withdraw());
+        this.moveCellContentTo(this.pendingCell, cell);
         //plus de cellule sélectionnée
         this.pendingCell = undefined;
         if (!incomingCell.isEmpty()) {

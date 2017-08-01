@@ -17,18 +17,6 @@ import {NotificationService} from '../../service/notification.service';
              styleUrls: [ '/locker.component.scss' ]
            })
 export class LockerComponent implements OnInit {
-  //private static COLORS = [ 'rouge',
-  //  'blanc',
-  //  'blanc effervescent',
-  //  'cognac',
-  //  'demi-sec',
-  //  'rosé effervescent',
-  //  'rosé',
-  //  'vin jaune',
-  //  'vin blanc muté',
-  //  'blanc moëlleux',
-  //  'vin de paille',
-  //  'blanc liquoreux' ];
 
   public static SIZE_CLASSES = [ 'small', 'medium', 'big', 'huge' ];
 
@@ -36,7 +24,7 @@ export class LockerComponent implements OnInit {
   locker: SimpleLocker;
 
   @Input()
-  rack: number;
+  rack: number = 0;
 
   @Input()
   content: Bottle[] = [];
@@ -78,10 +66,10 @@ export class LockerComponent implements OnInit {
     }
 
   }
-
-  ngOnChanges(changes: any) {
-    this.resetComponent();
-  }
+  //
+  //ngOnChanges(changes: any) {
+  //  this.resetComponent();
+  //}
 
   sizeClass(): string {
     return LockerComponent.SIZE_CLASSES[ this.locker.currentSize ];
@@ -109,24 +97,6 @@ export class LockerComponent implements OnInit {
     }
   }
 
-  //private static mockBottle() {
-  //  let label = undefined;
-  //  let ix = Math.round(Math.random() * 12);
-  //  if (ix < LockerComponent.COLORS.length) {
-  //    label = LockerComponent.COLORS[ ix ];
-  //  } else {
-  //    return undefined;
-  //  }
-  //  let bottle = new Bottle();
-  //  bottle.label = label;
-  //  bottle.area_label = 'area_label';
-  //  bottle.subregion_label = 'subregion_label';
-  //  bottle.nomCru = 'Domaine Marcel Deiss - Burlenberg';
-  //  bottle.millesime = '2010';
-  //  bottle.quantite_courante = 1;
-  //  return bottle;
-  //}
-
   private resetComponent() {
     this.rows = [];
     for (let i = 0; i < this.locker.dimension.y; i++) {
@@ -150,7 +120,9 @@ export class LockerComponent implements OnInit {
     if (this.rows.length < position.y || this.rows[ position.y ].cells.length < position.y) {
       this.bogusBottles.push(bottle);
     } else {
-      this.rows[ position.y ].cells[ position.x ].storeBottle(bottle);
+      let targetCell=this.rows[ position.y ].cells[ position.x ];
+      targetCell.storeBottle(bottle);
+      //bottle.addNewPosition(targetCell.position);
     }
   }
 }
@@ -184,16 +156,13 @@ export class Cell {
     return this.bottle === undefined;
   }
 
-  public withdraw(): any {
+  public withdraw(): Bottle {
     let btl = this.bottle;
     this.bottle = undefined;
     this.cellClass = 'empty';
     if (this.selected) {
       this.cellClass += ' selected';
     }
-    btl.positions = btl.positions.filter(
-      (pos: Position) => ! this.position.equals(pos)
-    );
     return btl;
   }
 
@@ -206,12 +175,7 @@ export class Cell {
     if (this.isEmpty()) {
       this.cellClass = 'empty';
     } else {
-      bottle.positions.push(this.position);
-      if (bottle.label === undefined) {
-        console.info();
-      } else {
-        this.cellClass = Configuration.colorsText2Code[ bottle.label.toLowerCase() ];
-      }
+      this.cellClass = Configuration.colorsText2Code[ bottle.label.toLowerCase() ];
     }
   }
 

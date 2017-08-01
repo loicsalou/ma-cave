@@ -85,7 +85,7 @@ export class FilterPage implements OnInit, OnChanges, OnDestroy {
 
   reset() {
     this.filterSet.reset();
-    this.bottlesService.fetchAllBottles();
+    this.bottlesService.filterOn(this.filterSet);
     this.close();
   }
 }

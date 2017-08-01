@@ -36,7 +36,9 @@ export class Bottle implements ImgDefaultable {
   defaultImage ?: string;
 
   constructor(json: Object) {
-    Object.assign(this,json);
+    Object.assign(this, json);
+    this.id = json[ '$key' ];
+    this.selected = false;
   }
 
   getDefaultImageSrc(): string {
@@ -45,6 +47,14 @@ export class Bottle implements ImgDefaultable {
 
   numberToBePlaced(): number {
     return this.quantite_courante - this.positions.length
+  }
+
+  addNewPosition(position: Position) {
+    this.positions.push(position);
+  }
+
+  removeFromPosition(position: Position) {
+    this.positions = this.positions.filter(pos => !pos.equals(position));
   }
 }
 
@@ -59,11 +69,11 @@ export interface BottleMetadata {
 
 export class Position {
   lockerId: string;
-  rack?: number;
+  rack: number = 0;
   x: number;
   y: number;
 
-  constructor(lockerId: string, x: number, y: number, rack?: number) {
+  constructor(lockerId: string, x: number, y: number, rack: number = 0) {
     this.lockerId = lockerId;
     this.rack = rack;
     this.x = x;

@@ -15,6 +15,7 @@ import {User} from '../model/user';
 import {Platform} from 'ionic-angular';
 import {BottleFactory} from '../model/bottle.factory';
 import Reference = firebase.database.Reference;
+import {Subject} from 'rxjs/Subject';
 
 /**
  * Services related to the bottles in the cellar.
@@ -36,7 +37,7 @@ export class NativeStorageService {
   public XREF_ROOT: string;
 
   private cordova: boolean = false;
-  private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
+  private _bottles: Subject<Bottle[]> = new Subject<Bottle[]>();
   private _allBottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
 
   /**
@@ -62,7 +63,6 @@ export class NativeStorageService {
   public cleanup() {
     this.BOTTLES_ROOT = undefined;
     this.IMAGES_ROOT = undefined;
-    this._bottles.next([]);
   }
 
   get allBottlesObservable(): Observable<Bottle[ ]> {

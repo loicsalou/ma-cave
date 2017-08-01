@@ -61,7 +61,7 @@ export class BottleListComponent {
   manageFavorites(slidingItem: ItemSliding, bottle: Bottle) {
     bottle.favorite = bottle.favorite ? !bottle.favorite : true;
     slidingItem.close();
-    this.bottlesService.replaceBottle(bottle);
+    this.bottlesService.update([bottle]);
   }
 
   isBottleInBasket(bottle: Bottle): boolean {
