@@ -2,7 +2,8 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {SimpleLocker} from '../../model/simple-locker';
 import {Configuration} from '../config/Configuration';
 import {LockerType} from '../../model/locker';
-import {Bottle} from '../../model/bottle';
+import {Bottle, Position} from '../../model/bottle';
+import {NotificationService} from '../../service/notification.service';
 
 /**
  * Generated class for the LockerComponent component.
@@ -16,37 +17,62 @@ import {Bottle} from '../../model/bottle';
              styleUrls: [ '/locker.component.scss' ]
            })
 export class LockerComponent implements OnInit {
-  private static COLORS = [ 'rouge',
-    'blanc',
-    'blanc effervescent',
-    'cognac',
-    'demi-sec',
-    'rosé effervescent',
-    'rosé',
-    'vin jaune',
-    'vin blanc muté',
-    'blanc moëlleux',
-    'vin de paille',
-    'blanc liquoreux' ];
+
+  public static SIZE_CLASSES = [ 'small', 'medium', 'big', 'huge' ];
 
   @Input()
   locker: SimpleLocker;
-  rows: Row[];
+
+  @Input()
+  rack: number = 0;
+
+  @Input()
+  content: Bottle[] = [];
 
   @Output()
   selected: EventEmitter<Cell> = new EventEmitter<Cell>();
 
-  constructor() {
+  rows: Row[];
+  private bogusBottles = [];
+
+  constructor(private notificationService: NotificationService) {
   }
 
   ngOnInit(): void {
     if (this.locker.dimension && !this.rows) {
       this.resetComponent();
     }
-  }
+    this.content.forEach(
+      bottle => {
+        if (bottle.positions) {
+          bottle.positions.filter(
+            position => position.inRack(this.locker.id, this.rack)
+          ).forEach(
+            position => this.placeBottle(bottle, position)
+          )
+        }
+      });
+    if (this.bogusBottles.length > 0) {
+      this.notificationService.ask('Position inexistante', this.bogusBottles.length + ' bouteilles sont dans une position' +
+        ' inexistante: les remettre en attente de rangement ?')
+        .subscribe(
+          result => {
+            if (result) {
+              this.notificationService.information('SUPPRESSION DES POSITIONS ERRONEES A IMPLEMENTER')
+              //this.bogusBottles.forEach(btl => btl.positions = btl.positions.filter(
+              //  pos => !(pos.lockerId = position.lockerId && pos.x === position.x && pos.y === position.y)))
+            }
+          })
+    }
 
-  ngOnChanges(changes: any) {
-    this.resetComponent();
+  }
+  //
+  //ngOnChanges(changes: any) {
+  //  this.resetComponent();
+  //}
+
+  sizeClass(): string {
+    return LockerComponent.SIZE_CLASSES[ this.locker.currentSize ];
   }
 
   isShifted(): boolean {
@@ -61,28 +87,14 @@ export class LockerComponent implements OnInit {
     return this.locker.type == LockerType.simple
   }
 
+  isFridge(): boolean {
+    return this.locker.type == LockerType.fridge
+  }
+
   cellSelected(cell: Cell) {
     if (cell) {
       this.selected.emit(cell);
     }
-  }
-
-  mockBottle() {
-    let label = undefined;
-    let ix = Math.round(Math.random() * 12);
-    if (ix < LockerComponent.COLORS.length) {
-      label = LockerComponent.COLORS[ ix ];
-    } else {
-      return undefined;
-    }
-    let bottle = new Bottle();
-    bottle.label = label;
-    bottle.area_label = 'area_label';
-    bottle.subregion_label = 'subregion_label';
-    bottle.nomCru = 'Domaine Marcel Deiss - Burlenberg';
-    bottle.millesime = '2010';
-    bottle.quantite_courante = 1;
-    return bottle;
   }
 
   private resetComponent() {
@@ -92,63 +104,78 @@ export class LockerComponent implements OnInit {
     }
   }
 
-  private initRow(nbcells: number, rowNumber: number): Row {
+  private initRow(nbcells: number, rowIndex: number): Row {
     let cells: Cell[] = [];
-    let rowId = this.locker.name + '-' + rowNumber;
+    //let rowId = this.locker.name + '-' + rowIndex;
     for (let i = 0; i < nbcells; i++) {
-      cells[ i ] = new Cell(this.mockBottle(), rowId + '-' + i);
+      let position = new Position(this.locker.id, i, rowIndex, this.rack);
+      cells[ i ] = new Cell(position);
     }
-    return new Row(cells, rowId);
+    //return new Row(cells, rowId, rowIndex);
+    return new Row(cells, rowIndex);
+  }
+
+  public placeBottle(bottle: Bottle, position: Position) {
+    this.bogusBottles = [];
+    if (this.rows.length < position.y || this.rows[ position.y ].cells.length < position.y) {
+      this.bogusBottles.push(bottle);
+    } else {
+      let targetCell=this.rows[ position.y ].cells[ position.x ];
+      targetCell.storeBottle(bottle);
+      //bottle.addNewPosition(targetCell.position);
+    }
   }
 }
 
 class Row {
 
   private id: string;
+  index: number;
   cells: Cell[];
 
-  constructor(cells: Cell[], id: string) {
+  //constructor(cells: Cell[], id: string, rowIndex: number) {
+  constructor(cells: Cell[], rowIndex: number) {
     this.cells = cells;
-    this.id = id;
+    //this.id = id;
+    this.index = rowIndex;
   }
 
 }
 
 export class Cell {
-  id: string;
   bottle: Bottle;
   cellClass: string;
   selected = false;
+  position: Position;
 
-  constructor(bottle: Bottle, id: string) {
-    this.id = id;
-    this.storeBottle(bottle);
+  constructor(position: Position) {
+    this.position = position;
   }
 
   public isEmpty(): boolean {
     return this.bottle === undefined;
   }
 
-  public withdraw(): any {
+  public withdraw(): Bottle {
     let btl = this.bottle;
     this.bottle = undefined;
     this.cellClass = 'empty';
     if (this.selected) {
-      this.cellClass+=' selected';
+      this.cellClass += ' selected';
     }
     return btl;
   }
 
   public storeBottle(bottle: Bottle) {
+    if (!bottle) {
+      return;
+    }
+
     this.bottle = bottle;
     if (this.isEmpty()) {
       this.cellClass = 'empty';
     } else {
-      if (bottle.label === undefined) {
-        console.info();
-      } else {
-        this.cellClass = Configuration.colorsText2Code[ bottle.label.toLowerCase() ];
-      }
+      this.cellClass = Configuration.colorsText2Code[ bottle.label.toLowerCase() ];
     }
   }
 

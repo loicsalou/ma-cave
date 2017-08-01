@@ -1,7 +1,7 @@
 /**
  * Created by loicsalou on 01.03.17.
  */
-import {BottleSize, Dimension, Locker, LockerType} from './locker';
+import {BottleSize, Dimension, Locker, LockerSize, LockerType} from './locker';
 
 /**
  * un SimpleLocker est un casier à bouteilles "simple", ce qui signifie qu'il se définit seulement grâce à sa
@@ -13,13 +13,42 @@ export class SimpleLocker extends Locker {
 
   dimension: Dimension; //dimension L x H
 
-  constructor(name: string, type: LockerType, dimension: Dimension, comment?: string, defaultImage?: string, imageUrl?: string, supportedFormats?: BottleSize[]) {
-    super(name, type, comment, defaultImage, imageUrl, supportedFormats);
+  constructor(id: string, name: string, type: LockerType, dimension: Dimension, comment?: string, supportedFormats?: BottleSize[],
+              defaultImage?: string, imageUrl?: string) {
+    super(id, name, type, comment, defaultImage, imageUrl, supportedFormats);
     this.dimension = dimension;
   }
 
   getNbOfBottles(): number {
     return this.dimension.x * this.dimension.y;
+  }
+
+  increaseSize() {
+    switch (this.currentSize) {
+      case LockerSize.small:
+        this.currentSize = LockerSize.medium;
+        break;
+      case LockerSize.medium:
+        this.currentSize = LockerSize.big;
+        break;
+      case LockerSize.big:
+        this.currentSize = LockerSize.huge;
+        break;
+    }
+  }
+
+  decreaseSize() {
+    switch (this.currentSize) {
+      case LockerSize.medium:
+        this.currentSize = LockerSize.small;
+        break;
+      case LockerSize.big:
+        this.currentSize = LockerSize.medium;
+        break;
+      case LockerSize.huge:
+        this.currentSize = LockerSize.big;
+        break;
+    }
   }
 
   isFridge(): boolean {

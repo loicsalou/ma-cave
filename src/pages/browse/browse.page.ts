@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {NavController, NavParams, Platform} from 'ionic-angular';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {Bottle} from '../../model/bottle';
@@ -9,6 +9,8 @@ import {Subscription} from 'rxjs/Subscription';
 import * as _ from 'lodash';
 import {LoginService} from '../../service/login.service';
 import {NotificationService} from '../../service/notification.service';
+import {CellarPage} from '../cellar/cellar.page';
+import {BottleListComponent} from '../../components/list/bottle-list.component';
 
 @Component({
              selector: 'page-browse',
@@ -24,6 +26,9 @@ export class BrowsePage implements OnInit, OnDestroy {
   filterSet: FilterSet = new FilterSet();
   private navParams: NavParams;
   private nbOfBottles: number = 0;
+
+  @ViewChild('bottleList')
+  listComponent: BottleListComponent;
 
   constructor(public navCtrl: NavController, public platform: Platform, private bottlesService: BottlePersistenceService,
               private loginService: LoginService, private notificationService: NotificationService, params?: NavParams) {
@@ -69,11 +74,21 @@ export class BrowsePage implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.notificationService.traceInfo('Libération de la page de browse');
     this.bottleSubscription.unsubscribe();
+    this.filterSubscription.unsubscribe();
   }
 
   logout() {
     this.loginService.logout();
     this.navCtrl.popToRoot();
+  }
+
+  anyBottleSelected(): boolean {
+    return this.listComponent.anyBottleSelected();
+  }
+
+  placeSelection() {
+    let placedBottles=this.bottles.filter(btl => btl.selected);
+    this.navCtrl.push(CellarPage,{bottles: placedBottles});
   }
 
   // in case user navigated to here from the home page then we have search param ==> filter on this text

@@ -1,53 +1,67 @@
 <ion-header class="cellar-page">
-  
   <ion-navbar>
-    <span class="title">
-      <ion-title>cellar</ion-title>
-      <div *ngIf="paginatedLocker">
-        <p *ngIf="chosenLocker">{{chosenLocker.name}}</p>
-        <p>{{paginatedLocker.name}} - {{selectedCell ? selectedCell.color : 'none'}}</p>
-      </div>
-    </span>
+    <ion-title>{{'lockers' | translate}}</ion-title>
   </ion-navbar>
-
 </ion-header>
 
 <ion-content padding class="cellar-page">
   
   <ion-row>
-    <ion-scroll scrollX="true" scrollY="true" [zoom]="true" [maxZoom]="3" *ngIf="chosenLocker">
-      <locker [locker]="chosenLocker" *ngIf="!chosenLocker.isFridge()" (selected)="cellSelected($event)"></locker>
-      <fridge-locker [fridge]="chosenLocker" *ngIf="chosenLocker.isFridge()"
-                     (selected)="cellSelected($event)"></fridge-locker>
-    </ion-scroll>
-  </ion-row>
-  
-  <ion-row>
-    <ion-slides [zoom]="true" [pager]="true" (ionSlideDidChange)="slideChanged()">
+    <ion-slides [zoom]="true" [pager]="true" (ionSlideDidChange)="slideChanged()" [spaceBetween]="5"
+                [centeredSlides]="true" [paginationType]="fraction">
       <ion-slide *ngFor="let locker of otherLockers">
-        <ion-scroll scrollX="true" scrollY="true" [zoom]="true" [maxZoom]="3">
-          <locker [locker]="locker" *ngIf="!locker.isFridge()"
+        <div class="swiper-zoom-container">
+          <locker [locker]="locker" [content]="lockerContent" *ngIf="!locker.isFridge()"
                   (selected)="cellSelected($event)"></locker>
-          <fridge-locker [fridge]="locker" *ngIf="locker.isFridge()"
+          <fridge-locker [fridge]="locker" [content]="lockerContent" *ngIf="locker.isFridge()"
                          (selected)="cellSelected($event)"></fridge-locker>
-        </ion-scroll>
+        </div>
       </ion-slide>
     </ion-slides>
   </ion-row>
   
+  <ion-row *ngIf="placedBottles">
+    <locker #placedLockerComponent [locker]="placedLocker" [content]="placedBottles"
+            (selected)="cellSelected($event)"></locker>
+  </ion-row>
+  
   <ion-fab bottom right>
-    <button ion-fab (click)="chooseLocker(paginatedLocker)">
-      <ion-icon name="arrow-dropup"></ion-icon>
+    <button ion-fab>
+      <ion-icon name="menu"></ion-icon>
     </button>
+    <ion-fab-list side="left">
+      <button ion-fab (click)="increaseSize()">
+        <ion-icon name="search">+</ion-icon>
+      </button>
+      <button ion-fab (click)="decreaseSize()">
+        <ion-icon name="search">-</ion-icon>
+      </button>
+    </ion-fab-list>
+    <ion-fab-list side="top">
+      <button ion-fab (click)="createLocker()">
+        <ion-icon name="add-circle"></ion-icon>
+      </button>
+      <button ion-fab (click)="updateLocker()">
+        <ion-icon name="create"></ion-icon>
+      </button>
+      <button ion-fab (click)="deleteLocker()">
+        <ion-icon name="trash"></ion-icon>
+      </button>
+    </ion-fab-list>
   </ion-fab>
   
   <ion-fab top right *ngIf="pendingCell">
     <button ion-fab class="pending-bottle" (click)="showTip()">
       <img src="{{ pendingCell.bottle.label | bottleIcon }}">
     </button>
-    <ion-badge class="tip" *ngIf="pendingBottleTipVisible">{{pendingCell.bottle.nomCru}} -
+    <ion-badge class="tip" *ngIf="pendingBottleTipVisible && pendingCell">{{pendingCell.bottle.nomCru}} -
       {{pendingCell.bottle.millesime}}
     </ion-badge>
+    <ion-fab-list side="left">
+      <button ion-fab style="border: thin solid black" (click)="withdraw()">
+        <img src="assets/icon/tire-bouchon.png">
+      </button>
+    </ion-fab-list>
   </ion-fab>
 
 </ion-content>

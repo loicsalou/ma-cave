@@ -1,31 +1,74 @@
 .locker-component {
-  //max-height: 40vh;
-  //min-height: 30vh;
 
   .locker {
-
     .container {
       background: url("../assets/img/background/tex-bois.jpeg");
       display: inline-flex;
       flex-direction: column;
       flex-shrink: 1;
       padding: 5px;
+
+      &.shifted {
+        div.row:nth-child(2n+1) {
+          padding-left: 12px;
+        }
+      }
     }
 
     .row {
       flex-wrap: nowrap;
     }
 
+    .small .cell {
+      min-height: 20px;
+      min-width: 20px;
+    }
+
+    .medium .cell {
+      min-height: 25px;
+      min-width: 25px;
+    }
+
+    .big .cell {
+      min-height: 30px;
+      min-width: 30px;
+    }
+
+    .huge .cell {
+      min-height: 35px;
+      min-width: 35px;
+    }
+
     .cell {
       background-image: radial-gradient(circle at center, black, white);
       //rgba(245,245,220,20%);
       background-size: contain;
-      min-height: 20px;
-      min-width: 20px;
+      //min-height: 25px;
+      //min-width: 25px;
       border-radius: 50% 50%;
       margin-left: 1px;
       margin-bottom: 1px;
-
+      //
+      //&.small {
+      //  min-height: 20px;
+      //  min-width: 20px;
+      //}
+      //
+      //&.medium {
+      //  min-height: 25px;
+      //  min-width: 25px;
+      //}
+      //
+      //&.big {
+      //  min-height: 30px;
+      //  min-width: 30px;
+      //}
+      //
+      //&.huge {
+      //  min-height: 35px;
+      //  min-width: 35px;
+      //}
+      //
       &.empty {
         border: thin solid darken(white, 20%);
       }

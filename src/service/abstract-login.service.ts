@@ -27,6 +27,10 @@ export abstract class AbstractLoginService {
     this._user = value;
   }
 
+  public loginFailed() {
+    this.authentified.next(undefined);
+  }
+
   public success(user: User) {
     if (user) {
       this.user = user;

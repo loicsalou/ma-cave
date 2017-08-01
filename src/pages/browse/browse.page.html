@@ -38,5 +38,12 @@
 
 <ion-content class="page-browse page">
   <ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>
-  <bottle-list [bottles]="bottles" (showDetail)="triggerDetail($event)"></bottle-list>
+  <bottle-list #bottleList [bottles]="bottles" (showDetail)="triggerDetail($event)"></bottle-list>
+  
+  <ion-fab bottom right *ngIf="anyBottleSelected()">
+    <button ion-fab (click)="placeSelection()">
+      <ion-icon name="apps"></ion-icon>
+    </button>
+  </ion-fab>
+
 </ion-content>

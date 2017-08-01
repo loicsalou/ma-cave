@@ -1,4 +1,21 @@
 {
+  "ans": "ans",
+  "bottle-detail": "Informations détaillées",
+  "bottles": "Bouteilles",
+  "cancel": "Annuler",
+  "details": "Détails",
+  "infos": "Informations pratiques",
+  "lockers": "Vos casiers",
+  "lots": "Lots",
+  "middle": "Age moyen",
+  "no-age": "Non millésimé",
+  "nom": "Casier",
+  "old": "Vieux",
+  "reset": "Réinitialiser",
+  "the-lockers": "Vos casiers",
+  "validate": "Valider",
+  "very-old": "Très vieux",
+  "young": "Jeune",
   "app": {
     "please-login": "Authentification",
     "checking-login": "Authentification en cours...",
@@ -11,6 +28,7 @@
     "failed": "Echec !",
     "unavailable-function": "Fonction indisponible - êtes vous offline ?",
     "warning": "Attention",
+    "withdrawn": "La bouteille a été retirée du casier",
     "loading": "Chargement en cours..."
   },
   "bottle": {
@@ -38,6 +56,58 @@
     "suggestion": "Suggestions",
     "volume": "Format"
   },
+  "filter": {
+    "history": "Historique",
+    "favorite-only": "Favoris seuls",
+    "to-be-placed": "A placer seulement",
+    "dimensions-fridge": "Dimensions du frigo",
+    "dim-x": "Largeur (en bouteilles)",
+    "dim-y": "Hauteur (en bouteilles)",
+    "fridge-dim-x": "Largeur (en casiers)",
+    "fridge-dim-y": "Hauteur (en casiers)",
+    "formats": "Formats supportés",
+    "image": "Matériau",
+    "type": "Type"
+  },
+  "locker": {
+    "name": "Nom",
+    "comment": "Note / commentaire",
+    "dimensions": "Dimensions du casier",
+    "dimensions-fridge": "Dimensions du frigo",
+    "dim-x": "Largeur (en bouteilles)",
+    "dim-y": "Hauteur (en bouteilles)",
+    "fridge-dim-x": "Largeur (en casiers)",
+    "fridge-dim-y": "Hauteur (en casiers)",
+    "formats": "Formats supportés",
+    "image": "Matériau",
+    "type": "Type"
+  },
+  "locker-editor": {
+    "title": "Créer ou modifier un casier"
+  },
+  "locker-format": {
+    "0": "Piccolo (0.2 l)",
+    "1": "Chopine (0.25 l)",
+    "2": "Fillette (0.375 l)",
+    "3": "Demie (0.5 l)",
+    "4": "Clavelin (0.62 l)",
+    "5": "Bouteille (0.75 l)",
+    "6": "Litre (1 l)",
+    "7": "Magnum (1.5 l)",
+    "8": "Jeroboham (3 l)",
+    "9": "Rehoboram (4.5 l)",
+    "10": "Mathusalem (6 l)",
+    "11": "Salmanazar (9 l)",
+    "12": "Balthazar (12 l)",
+    "13": "Nabuchodonozor (15 l)",
+    "14": "Melchior (18 l)"
+  },
+  "locker-type": {
+    "0": "Etagères en losange",
+    "1": "Frigo",
+    "2": "Etagère, rangées décalées",
+    "3": "Etagère, rangées alignées"
+  },
   "statistics": {
     "repartition-par-type": "Répartition par type de vin",
     "repartition-par-region": "Répartition par région"
@@ -50,18 +120,8 @@
     "profile": "Profile"
   },
   "update": {
+    "failed": "La mise à jour des bouteilles a échoué",
     "saved": "Modifications sauvegardées dans la base",
     "cancelled": "Modifications annulées à votre demande"
-  },
-  "ans": "ans",
-  "bottle-detail": "Informations détaillées",
-  "bottles": "Bouteilles",
-  "details": "Détails",
-  "infos": "Informations pratiques",
-  "middle": "Age moyen",
-  "no-age": "Non millésimé",
-  "old": "Vieux",
-  "very-old": "Très vieux",
-  "young": "Jeune",
-  "nom": "Casier"
+  }
 }

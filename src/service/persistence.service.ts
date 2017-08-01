@@ -17,7 +17,7 @@ export abstract class PersistenceService {
   private loginSub: Subscription;
 
   constructor(protected notificationService: NotificationService, protected loginService: LoginService) {
-    this.loginSub = loginService.authentifiedObservable.subscribe(
+    this.loginSub = this.loginService.authentifiedObservable.subscribe(
       user => this.handleLoginEvent(user)
     );
   }

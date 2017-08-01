@@ -28,7 +28,9 @@ export class ImageAttacherComponent {
 
   constructor(private camera: Camera, private imageService: ImagePersistenceService, private notificationService: NotificationService) {
     this.progressSubscription = this.imageService.progressEvent.subscribe(
-      value => this.progress = value
+      value => this.progress = value,
+      error => this.notificationService.error('Erreur d\'upload de l\'image', error),
+      () => this.progressSubscription.unsubscribe()
     );
   }
 

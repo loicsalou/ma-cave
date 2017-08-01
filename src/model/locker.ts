@@ -3,11 +3,13 @@
  */
 
 import {ImgDefaultable} from '../directives/default-image/img-defaultable';
+
 /**
  * Définit ce qu'est un casier à bouteilles et quel est son contrat de base
  */
-export class Locker implements ImgDefaultable {
+export abstract class Locker implements ImgDefaultable {
 
+  id: string; // identifiant DB si besoin
   name: string; // nom du casier
   type: LockerType; // normal, décalé ou diamond (en losange)
   defaultImage: string; // une image par défaut si par d'imageUrl
@@ -15,7 +17,11 @@ export class Locker implements ImgDefaultable {
   imageUrl?: string; //Photo éventuelle
   comment: string; //commentaire utile, emplacement etc.
 
-  constructor(name: string, type: LockerType, comment?: string, defaultImage?: string, imageUrl?: string, supportedFormats?: BottleSize[]) {
+  currentSize = LockerSize.medium;
+
+  constructor(id: string, name: string, type: LockerType, comment: string = '', defaultImage: string = '',
+              imageUrl: string = '', supportedFormats: BottleSize[]) {
+    this.id = id;
     this.name = name;
     this.type = type;
     this.defaultImage = defaultImage;
@@ -33,13 +39,20 @@ export class Locker implements ImgDefaultable {
   getNbOfBottles(): number {
     return 0;
   }
+
+  abstract isFridge(): boolean;
+
+  abstract increaseSize();
+
+  abstract decreaseSize();
 }
 
 export enum LockerType {
-  simple,
-  shifted,
   diamond,
-  fridge
+  fridge,
+  shifted,
+  simple
+
 }
 
 export interface Dimension {
@@ -48,19 +61,23 @@ export interface Dimension {
 }
 
 export enum BottleSize {
-  piccolo = .2,
-  chopine = .25,
-  fillette = .375,
-  demie = .5,
-  clavelin = .62,
-  bouteille = .75,
-  litre = 1,
-  magnum = 1.5,
-  jeroboham = 3,
-  rehoboram = 4.5,
-  mathusalem = 6,
-  salmanazar = 9,
-  balthazar = 12,
-  nabuchodonozor = 15,
-  melchior = 18
+  piccolo,
+  chopine,
+  fillette,
+  demie,
+  clavelin,
+  bouteille,
+  litre,
+  magnum,
+  jeroboham,
+  rehoboram,
+  mathusalem,
+  salmanazar,
+  balthazar,
+  nabuchodonozor,
+  melchior
+}
+
+export enum LockerSize {
+  small, medium, big, huge
 }

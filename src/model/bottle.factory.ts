@@ -2,7 +2,7 @@
  * Created by loicsalou on 25.05.17.
  */
 import {Injectable} from '@angular/core';
-import {Bottle} from './bottle';
+import {Bottle, Position} from './bottle';
 import {TranslateService} from '@ngx-translate/core';
 import {Statistics} from './statistics';
 import {BottleIconPipe} from '../components/list/bottle-item-component/bottle-icon.pipe';
@@ -20,8 +20,9 @@ export class BottleFactory {
   constructor(private i18n: TranslateService, private _stats: Statistics) {
   }
 
-  public create(btl: Bottle): Bottle {
-    this.setClasseAge(btl).setDefaultImage(btl).setId(btl);
+  public create(bottle: Bottle): Bottle {
+    let btl: Bottle=new Bottle(bottle);
+    this.setClasseAge(btl).setDefaultImage(btl).ensurePositionsInitialized(btl).mapPositions(btl);
 
     return btl;
   }
@@ -30,17 +31,20 @@ export class BottleFactory {
     return this._stats;
   }
 
-  private setId(bottle: Bottle): BottleFactory {
-    if (bottle[ '$key' ]) {
-      bottle[ 'id' ] = bottle[ '$key' ];
-    } else {
-      bottle[ '$key' ] = bottle[ 'id' ];
+  private ensurePositionsInitialized(btl: Bottle): BottleFactory {
+    if (!btl.positions) {
+      btl.positions = [];
     }
     return this;
   }
 
   private setDefaultImage(bottle: Bottle): BottleFactory {
     bottle.defaultImage = BottleIconPipe.prototype.transform(bottle.label);
+    return this;
+  }
+
+  private mapPositions(bottle: Bottle): BottleFactory {
+    bottle.positions = bottle.positions.map(pos => new Position(pos.lockerId, pos.x, pos.y, pos.rack));
     return this;
   }
 

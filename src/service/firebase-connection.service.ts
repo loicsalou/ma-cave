@@ -19,6 +19,8 @@ import * as _ from 'lodash';
 import {BottleFactory} from '../model/bottle.factory';
 import {User} from '../model/user';
 import {Subscription} from 'rxjs/Subscription';
+import {SimpleLocker} from '../model/simple-locker';
+import {Locker} from '../model/locker';
 import Reference = firebase.database.Reference;
 import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
 
@@ -29,29 +31,44 @@ import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
  */
 @Injectable()
 export class FirebaseConnectionService {
-  private static BOTTLES_FOLDER = 'bottles';
-  private IMAGES_FOLDER = 'images';
-  public IMAGES_ROOT: string;
-
   protected USERS_FOLDER = 'users';
+
+  public IMAGES_ROOT: string;
+  private IMAGES_FOLDER = 'images';
+
   private BOTTLES_ROOT: string;
+  private static BOTTLES_FOLDER = 'bottles';
+
+  private CELLAR_ROOT: string;
+  private static CELLAR_FOLDER = 'cellar';
+
+  private LOCKER_CONTENT_ROOT: string;
+  private static LOCKER_CONTENT_FOLDER = 'content';
+  private lockerContentRootRef: Reference;
+
   protected XREF_FOLDER = 'xref';
   public XREF_ROOT: string;
 
   private bottlesRootRef: Reference;
   private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
   private _allBottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
+  private firebaseBottlesSub: Subscription;
+
+  private cellarRootRef: Reference;
+  private _lockers: BehaviorSubject<Locker[]> = new BehaviorSubject<Locker[]>([]);
+  private _allLockersObservable: Observable<Locker[]> = this._lockers.asObservable();
+  private firebaseLockersSub: Subscription;
 
   private imageStorageRef: firebase.storage.Reference;
   private _uploadProgressEvent: Subject<number> = new Subject<number>();
   private cacheBottles: Bottle[];
   private connectionAllowed: boolean = true;
   private localStorageSub: Subscription;
-  private firebaseSub: Subscription;
 
   //date de dernière mise à jour d'une bouteille dans le cache
 
-  constructor(private bottleFactory: BottleFactory, private angularFirebase: AngularFireDatabase, private loginService: LoginService,
+  constructor(private bottleFactory: BottleFactory,
+              private angularFirebase: AngularFireDatabase, private loginService: LoginService,
               private notificationService: NotificationService, private localStorage: NativeStorageService,
               private platform: Platform) {
   }
@@ -60,21 +77,93 @@ export class FirebaseConnectionService {
     this.IMAGES_ROOT = this.IMAGES_FOLDER;
     this.XREF_ROOT = this.XREF_FOLDER;
     this.BOTTLES_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.BOTTLES_FOLDER;
+    this.CELLAR_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.CELLAR_FOLDER;
+    this.LOCKER_CONTENT_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.LOCKER_CONTENT_FOLDER;
 
     this.bottlesRootRef = this.angularFirebase.database.ref(this.BOTTLES_ROOT);
+    this.cellarRootRef = this.angularFirebase.database.ref(this.CELLAR_ROOT);
+    this.lockerContentRootRef = this.angularFirebase.database.ref(this.LOCKER_CONTENT_ROOT);
     this.imageStorageRef = this.angularFirebase.app.storage().ref(this.IMAGES_ROOT);
   }
 
   public cleanup() {
+    this.CELLAR_ROOT = undefined;
     this.BOTTLES_ROOT = undefined;
     this.IMAGES_ROOT = undefined;
     this.imageStorageRef = undefined;
     this._bottles.next([]);
+    this._lockers.next([]);
     if (this.localStorageSub) {
       this.localStorageSub.unsubscribe();
     }
-    this.firebaseSub.unsubscribe();
+    this.firebaseBottlesSub.unsubscribe();
   }
+
+  // ===================================================== LOCKERS
+
+  get allLockersObservable(): Observable<Locker[]> {
+    return this._allLockersObservable;
+  }
+
+  public fetchAllLockers() {
+    this.notificationService.debugAlert('fetchAllLockersFromDB()');
+    let items = this.angularFirebase.list(this.CELLAR_ROOT, {
+      query: {
+        orderByChild: 'lastUpdated'
+      }
+    });
+
+    this.firebaseLockersSub = items.subscribe(
+      (lockers: Locker[]) => {
+        if (lockers.length > 0) {
+          //prepare loaded bottles for the app
+          this._lockers.next(lockers.map(l => {
+            l[ 'id' ] = l[ '$key' ];
+            return l;
+          }));
+
+          // on sauve dans le cache
+          //this.localStorage.save(lockers);
+        }
+      },
+      error => {
+        this._lockers.error(error);
+      },
+      () => this._lockers.complete()
+    );
+  }
+
+  public createLocker(locker: Locker): void {
+    this.cellarRootRef.push(sanitizeBeforeSave(locker), (
+      err => {
+        if (err !== null) {
+          throw err
+        }
+      }
+    ))
+  }
+
+  public replaceLocker(locker: SimpleLocker) {
+    this.cellarRootRef.child(locker.id)
+      .set(sanitizeBeforeSave(locker),
+           err => {
+             if (err) {
+               this.notificationService.failed('La sauvegarde a échoué ! ', err);
+             }
+           });
+  }
+
+  public deleteLocker(locker: Locker) {
+    this.cellarRootRef.child(locker.id).remove(
+      error => {
+        if (error !== null) {
+          this.notificationService.failed('La suppression des casiers a échoué', error)
+        }
+      }
+    )
+  }
+
+// ===================================================== BOTTLES
 
   get allBottlesObservable(): Observable<Bottle[ ]> {
     return this._allBottlesObservable;
@@ -90,7 +179,7 @@ export class FirebaseConnectionService {
   public fetchAllBottles() {
     this.notificationService.debugAlert('fetchAllBottles()');
     // on prend déjà ce qu'on a dans le caceh
-    this.fetchFromCache();
+    this.fetchBottlesFromCache();
     //option: pas de connexion autorisée ==> on se contente de ça
     if (!this.connectionAllowed) {
       return;
@@ -99,42 +188,24 @@ export class FirebaseConnectionService {
     this.fetchAllBottlesFromDB();
   }
 
-  private fetchFromDBStartingAt(startDate: number, key: string) {
-    this.notificationService.debugAlert('fetchAllBottles() - cacheAvailable - chargement des mises à jour depuis '
-      + startDate + ' key=' + key);
-    //récupérer en DB toutes les bouteilles mises à jour depuis la date de dernière mise à jour du cache (le +1 permet
-    // d'exclure la date la plus récente en local puisqu'on l'a déjà)
-    let items = this.queryOrderByLastUpdate(startDate);
-    this.firebaseSub = items.subscribe(
-      (bottles: Bottle[]) => {
-        this.notificationService.debugAlert(bottles.length + ' mises à jour depuis la DB - ' + startDate +
-          ' - ' + JSON.stringify(bottles));
-        if (bottles.length > 0) {
-          //prepare loaded bottles for the app
-          bottles.forEach((bottle: Bottle) => this.bottleFactory.create(bottle));
-          this.updateCache(bottles);
-        }
-      },
-      error => {
-        this._bottles.error(error);
-      },
-      () => this._bottles.complete()
-    );
-  }
-
   private fetchAllBottlesFromDB() {
+    this.notificationService.debugAlert('fetchAllBottlesFromDB()');
     let items = this.angularFirebase.list(this.BOTTLES_ROOT, {
       query: {
         orderByChild: 'lastUpdated'
       }
     });
 
-    this.firebaseSub = items.subscribe(
+    this.firebaseBottlesSub = items.subscribe(
       (bottles: Bottle[]) => {
         if (bottles.length > 0) {
           //prepare loaded bottles for the app
-          bottles.forEach((bottle: Bottle) => this.bottleFactory.create(bottle));
-          this._bottles.next(bottles);
+          this._bottles.next(bottles.map(
+            (bottle: Bottle) => this.bottleFactory.create(bottle))
+          );
+
+          // on sauve dans le cache
+          this.localStorage.save(bottles);
         }
       },
       error => {
@@ -149,8 +220,9 @@ export class FirebaseConnectionService {
    * return the corresponding observable.
    * @param nbrows that should be retrieved from the DB
    */
-  private queryOrderByLastUpdate(fromLastUpdated: number): FirebaseListObservable<any[]> {
-    if (isNaN(fromLastUpdated)) {
+  private queryOrderByLastUpdate(fromLastUpdated: number): FirebaseListObservable<any[ ]> {
+    if (isNaN(fromLastUpdated)
+    ) {
       fromLastUpdated = 0;
     }
     let query = {
@@ -161,11 +233,12 @@ export class FirebaseConnectionService {
     return this.angularFirebase.list(this.BOTTLES_ROOT, {query});
   }
 
-  private fetchFromCache(): boolean {
+  private fetchBottlesFromCache(): boolean {
     if (this.platform.is('cordova')) {
-      this.localStorageSub = this.localStorage.allBottlesObservable.subscribe(
+      this.localStorageSub = this.localStorage.allBottlesObservable.take(1).subscribe(
         (bottles: Bottle[]) => this.handleCacheObservable(bottles),
-        error => this.notificationService.error('L\'accès à la liste locale des bouteilles a échoué !', error)
+        error => this.notificationService.error('L\'accès à la liste locale des bouteilles a échoué !', error),
+        () => this.notificationService.debugAlert('Récupération unique des bouteilles dans le cache OK')
       );
 
       this.localStorage.fetchAllBottles();
@@ -174,7 +247,7 @@ export class FirebaseConnectionService {
     return false;
   }
 
-  private handleCacheObservable(bottles: Bottle[]) {
+  private handleCacheObservable(bottles: Bottle[ ]) {
     //d'abord on émet ce qu'on a dans le cache
     this.notificationService.debugAlert('handleCacheObservable()' + (bottles ? bottles.length : 'rien dans le cache'));
     this._bottles.next(bottles);
@@ -183,12 +256,34 @@ export class FirebaseConnectionService {
     this.cacheBottles = bottles;
     if (this.cacheBottles.length > 0) {
       this.cacheBottles.sort(sortByLastUpdate).reverse();
-      this.fetchFromDBStartingAt(this.cacheBottles[ 0 ].lastUpdated + 1, this.cacheBottles[ 0 ][ 'id' ])
+      this.fetchBottlesFromDBStartingAt(this.cacheBottles[ 0 ].lastUpdated + 1, this.cacheBottles[ 0 ][ 'id' ])
     }
   }
 
+  private fetchBottlesFromDBStartingAt(startDate: number, key: string) {
+    this.notificationService.debugAlert('fetchAllBottles() - cacheAvailable - chargement des mises à jour depuis '
+      + startDate + ' key=' + key);
+    //récupérer en DB toutes les bouteilles mises à jour depuis la date de dernière mise à jour du cache (le +1 permet
+    // d'exclure la date la plus récente en local puisqu'on l'a déjà)
+    let items = this.queryOrderByLastUpdate(startDate);
+    this.firebaseBottlesSub = items.take(1).subscribe(
+      (bottles: Bottle[]) => {
+        this.notificationService.debugAlert(bottles.length + ' mises à jour depuis la DB - ' + startDate +
+          ' - ' + JSON.stringify(bottles));
+        if (bottles.length > 0) {
+          //prepare loaded bottles for the app
+          this.updateCache(bottles.map((bottle: Bottle) => this.bottleFactory.create(bottle)));
+        }
+      },
+      error => this.notificationService.error('Impossible de récupérer les bouteilles depuis '+new Date(startDate).toDateString(), error),
+      () => this.notificationService.debugAlert('Vérification de la validité du cache depuis '+new Date(startDate).toDateString())
+    );
+  }
+
   public deleteImage(file: File): Promise<any> {
-    if (!this.connectionAllowed) {
+    if (!
+        this.connectionAllowed
+    ) {
       this.notificationService.i18nFailed('app.unavailable-function');
       return;
     }
@@ -203,7 +298,9 @@ export class FirebaseConnectionService {
   }
 
   public uploadImageToStorage(imageBlob, name: string): Promise<UploadTaskSnapshot> {
-    if (!this.connectionAllowed) {
+    if (!
+        this.connectionAllowed
+    ) {
       this.notificationService.i18nFailed('app.unavailable-function');
       return;
     }
@@ -228,8 +325,10 @@ export class FirebaseConnectionService {
     });
   }
 
-  public listBottleImages(bottle: Bottle): Observable<Image[]> {
-    if (!this.connectionAllowed) {
+  public listBottleImages(bottle: Bottle): Observable<Image[ ]> {
+    if (!
+        this.connectionAllowed
+    ) {
       this.notificationService.i18nFailed('app.unavailable-function');
       return undefined;
     }
@@ -237,14 +336,16 @@ export class FirebaseConnectionService {
                                        query: {
                                          limitToFirst: 10,
                                          orderByChild: 'bottleId',
-                                         equalTo: bottle[ '$key' ]
+                                         equalTo: bottle.id
                                        }
                                      }
     );
   }
 
   public uploadFileOrBlob(fileOrBlob, meta: BottleMetadata): Promise<void | UploadMetadata> {
-    if (!this.connectionAllowed) {
+    if (!
+        this.connectionAllowed
+    ) {
       this.notificationService.i18nFailed('app.unavailable-function');
       return undefined;
     }
@@ -302,14 +403,14 @@ export class FirebaseConnectionService {
 
       ref.push(dataToSave, (response) => {
         //la réponse est null, donc on renvoie ce qui nous intéresse
-        resolve(this.getUploadMeta(uploadSnapshot));
+        resolve(this.getUploadImageMeta(uploadSnapshot));
       }).catch((_error) => {
         reject(_error);
       });
     });
   }
 
-  private getUploadMeta(snap): UploadMetadata {
+  private getUploadImageMeta(snap): UploadMetadata {
     return {
       downloadURL: snap.downloadURL,
       imageName: snap.metadata.name,
@@ -322,14 +423,14 @@ export class FirebaseConnectionService {
   }
 
   public update(bottles: Bottle[ ]): Promise<any> {
-    if (!this.connectionAllowed) {
-      this.notificationService.i18nFailed('');
+    if (! this.connectionAllowed) {
+      this.notificationService.i18nFailed('update.failed');
       return undefined;
-    }
+    };
     return new Promise((resolve, reject) => {
       bottles.forEach(bottle => {
         bottle[ 'lastUpdated' ] = new Date().getTime();
-        this.bottlesRootRef.child(bottle[ '$key' ]).set(bottle, (
+        this.bottlesRootRef.child(bottle.id).set(sanitizeBeforeSave(bottle), (
           err => {
             if (err == null) {
               resolve(null)
@@ -342,15 +443,17 @@ export class FirebaseConnectionService {
     })
   }
 
-  public save(bottles: Bottle[ ]): Promise<any> {
-    if (!this.connectionAllowed) {
+  public saveBottles(bottles: Bottle[ ]): Promise<any> {
+    if (!
+        this.connectionAllowed
+    ) {
       this.notificationService.failed('Sauvegarde indisponible en offline');
       return undefined;
     }
     return new Promise((resolve, reject) => {
       bottles.forEach(bottle => {
         bottle[ 'lastUpdated' ] = new Date().getTime();
-        this.bottlesRootRef.push(bottle, (
+        this.bottlesRootRef.push(sanitizeBeforeSave(bottle), (
           err => {
             if (err == null) {
               resolve(null)
@@ -370,7 +473,7 @@ export class FirebaseConnectionService {
     }
     return new Promise((resolve, reject) => {
                          bottle[ 'lastUpdated' ] = new Date().getTime();
-                         this.bottlesRootRef.child(bottle[ '$key' ]).set(bottle, err => {
+                         this.bottlesRootRef.child(bottle.id).set(sanitizeBeforeSave(bottle), err => {
                                                                            if (err == null) {
                                                                              resolve(null)
                                                                            } else {
@@ -408,7 +511,7 @@ export class FirebaseConnectionService {
    * est bien sûr la référence.
    * @returns {boolean} indicating if cache is up to date after change or not
    */
-  private updateCache(firebaseBottles: Bottle[]): boolean {
+  private updateCache(firebaseBottles: Bottle[ ]): boolean {
     //
     if (!this.cacheBottles) {
       this.cacheBottles = [];
@@ -443,17 +546,17 @@ export class FirebaseConnectionService {
     this.connectionAllowed = b;
   }
 }
-
-function matchByKeyAndLastUpdateDate(fbBottle, cacheBottle) {
-  if (!cacheBottle) {
-    //une bouteille est dans FB mais pas dans le cache ==> il n'y a pas matching
-    return false;
-  }
-  return (fbBottle.lastUpdated === cacheBottle.lastUpdated && fbBottle.$key === cacheBottle.id);
-}
+//
+//function matchByKeyAndLastUpdateDate(fbBottle, cacheBottle) {
+//  if (!cacheBottle) {
+//    //une bouteille est dans FB mais pas dans le cache ==> il n'y a pas matching
+//    return false;
+//  }
+//  return (fbBottle.lastUpdated === cacheBottle.lastUpdated && fbBottle.$key === cacheBottle.id);
+//}
 
 function matchByKey(fbBottle, cacheBottle) {
-  return (fbBottle.$key === cacheBottle.id);
+  return (fbBottle.id === cacheBottle.id);
 }
 
 function sortByLastUpdate(btl1, btl2) {
@@ -466,4 +569,10 @@ function sortByLastUpdate(btl1, btl2) {
     dt2 = 0;
   }
   return dt1 - dt2;
+}
+
+function sanitizeBeforeSave(object) {
+  return JSON.parse(JSON.stringify(object, function(k, v) {
+    if (v === undefined) { return null; } return v;
+  }));
 }

@@ -1,11 +1,15 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {IonicPage, Slides} from 'ionic-angular';
-import {SimpleLocker} from '../../model/simple-locker';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {IonicPage, ModalController, NavParams, Slides} from 'ionic-angular';
 import {CellarPersistenceService} from '../../service/cellar-persistence.service';
-import {Locker} from '../../model/locker';
-import {Cell} from '../../components/locker/locker.component';
+import {Locker, LockerType} from '../../model/locker';
+import {Cell, LockerComponent} from '../../components/locker/locker.component';
 import {NotificationService} from '../../service/notification.service';
 import * as _ from 'lodash';
+import {LockerEditorPage} from '../locker-editor/locker-editor.page';
+import {Subscription} from 'rxjs/Subscription';
+import {Bottle, Position} from '../../model/bottle';
+import {SimpleLocker} from '../../model/simple-locker';
+import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 
 /**
  * Generated class for the CellarPage page.
@@ -19,28 +23,66 @@ import * as _ from 'lodash';
              templateUrl: './cellar.page.html',
              styleUrls: [ '/cellar.page.scss' ]
            })
-export class CellarPage implements OnInit {
+export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
 
   private otherLockers: Locker[];
-  private chosenLocker: Locker;
+  //private chosenLocker: Locker;
   private paginatedLocker: Locker;
   @ViewChild(Slides) slides: Slides;
 
   pendingCell: Cell;
   pendingBottleTipVisible: boolean = false;
   selectedCell: Cell;
+  private lockersSub: Subscription;
+  private lockerContent: Bottle[];
 
-  constructor(private cellarService: CellarPersistenceService, private notificationService: NotificationService) {
+  @ViewChild('placedLockerComponent')
+  private placedLockerComponent: LockerComponent;
+  private placedLocker: SimpleLocker;
+  private placedBottles: Bottle[];
+
+  constructor(private cellarService: CellarPersistenceService, private bottleService: BottlePersistenceService,
+              private notificationService: NotificationService,
+              private modalCtrl: ModalController, private params: NavParams) {
   }
 
   ngOnInit(): void {
-    this.cellarService.allLockersObservable.subscribe(
+    this.placedBottles = this.params.data[ 'bottles' ];
+    if (this.placedBottles && this.placedBottles.length > 0) {
+      this.placedLocker = new SimpleLocker(undefined, 'placedLocker', LockerType.simple, {
+        x: this.placedBottles.reduce((total, btl) => total + btl.numberToBePlaced(), 0),
+        y: 1
+      })
+      ;
+    }
+    this.lockersSub = this.cellarService.allLockersObservable.subscribe(
       lockers => {
         this.otherLockers = lockers;
         this.resetPaginatedLocker();
       }
     );
+
+    this.getLockersContent(this.paginatedLocker);
+
     this.cellarService.fetchAllLockers();
+  }
+
+  ngAfterViewInit(): void {
+    if (this.placedBottles) {
+      let ix = 0;
+      this.placedBottles.forEach(
+        bottle => {
+          let nbBottles = bottle.numberToBePlaced();
+          for (let i = 0; i < nbBottles; i++) {
+            this.placedLockerComponent.placeBottle(bottle, new Position(undefined, ix++, 0))
+          }
+        }
+      )
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.lockersSub.unsubscribe();
   }
 
   resetPaginatedLocker() {
@@ -53,13 +95,27 @@ export class CellarPage implements OnInit {
     }
   }
 
-  chooseLocker(locker: SimpleLocker) {
-    if (this.chosenLocker !== undefined) {
-      this.otherLockers.push(this.chosenLocker);
-    }
-    this.otherLockers = this.otherLockers.filter(item => item.name !== locker.name);
-    this.chosenLocker = locker;
-    this.resetPaginatedLocker();
+  increaseSize() {
+    this.paginatedLocker.increaseSize();
+  }
+
+  decreaseSize() {
+    this.paginatedLocker.decreaseSize();
+  }
+
+  createLocker() {
+    let editorModal = this.modalCtrl.create(LockerEditorPage, {}, {showBackdrop: false});
+    editorModal.present();
+  }
+
+  private getLockersContent(locker: Locker) {
+    this.bottleService.allBottlesObservable.subscribe(
+      (bottles: Bottle[]) => this.lockerContent = bottles
+    );
+  }
+
+  deleteLocker() {
+    this.cellarService.deleteLocker(this.paginatedLocker);
   }
 
   showTip() {
@@ -73,14 +129,28 @@ export class CellarPage implements OnInit {
     this.resetPaginatedLocker();
   }
 
+  private moveCellContentTo(source: Cell, target: Cell) {
+    if (source) {
+      let bottle = source.withdraw();
+      bottle.removeFromPosition(source.position);
+      source.setSelected(false);
+      target.storeBottle(bottle);
+      bottle.addNewPosition(target.position);
+      this.bottleService.update([ bottle ]);
+    }
+  }
+
   cellSelected(cell: Cell) {
+    this.cellarService.isEmpty(this.paginatedLocker);
     if (cell) {
       if (this.pendingCell) {
-        if (cell.id === this.pendingCell.id) {
-          this.pendingCell = undefined;
-          this.selectedCell.setSelected(false);
-          this.selectedCell = undefined;
-          return;
+        if (cell.position.equals(this.pendingCell.position)) {
+          if (cell.bottle && cell.bottle.id === this.pendingCell.bottle.id) {
+            this.pendingCell = undefined;
+            this.selectedCell.setSelected(false);
+            this.selectedCell = undefined;
+            return;
+          }
         }
         // une cellule était déjà sélectionnée qui contenait une bouteille
         // - déplacer cette bouteille dans la nouvelle cellule et déselectionner les 2 cellules
@@ -88,7 +158,7 @@ export class CellarPage implements OnInit {
         // nouvelle cellule, sinon on déplace la bouteille et on déselectionne les 2 cellules
         let incomingCell = _.clone(cell);
         //on déplace la bouteille pré-enregistrée dans la cellule choisie
-        cell.storeBottle(this.pendingCell.withdraw());
+        this.moveCellContentTo(this.pendingCell, cell);
         //plus de cellule sélectionnée
         this.pendingCell = undefined;
         if (!incomingCell.isEmpty()) {

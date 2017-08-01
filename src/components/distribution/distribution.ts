@@ -148,6 +148,7 @@ export class FilterSet {
   millesime?: string[];
   private history: boolean = false;
   private favoriteOnly: boolean = false;
+  private toBePlaced: boolean=false;
 
   constructor() {
   }
@@ -184,12 +185,20 @@ export class FilterSet {
     this.favoriteOnly = !this.favoriteOnly
   }
 
+  switchToBePlaced() {
+    this.toBePlaced = !this.toBePlaced;
+  }
+
   searchHistory() {
     return this.history;
   }
 
   searchFavoriteOnly() {
     return this.favoriteOnly;
+  }
+
+  searchToBePlacedOnly() {
+    return this.toBePlaced;
   }
 
   /**

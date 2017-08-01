@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {DistributeService} from '../../service/distribute.service';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {Bottle} from '../../model/bottle';
@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import {FilterSet} from '../distribution/distribution';
 import {NavController} from 'ionic-angular';
 import {ChartEvent} from '../chart/chart.component';
+import {Subscription} from 'rxjs/Subscription';
 
 /**
  * Generated class for the StatisticsComponent component.
@@ -17,7 +18,7 @@ import {ChartEvent} from '../chart/chart.component';
              selector: 'statistics',
              templateUrl: './statistics.component.html'
            })
-export class StatisticsComponent implements OnInit {
+export class StatisticsComponent implements OnInit, OnDestroy {
 // axes de distribution de la distribution courante
   @Input()
   axis: string;
@@ -67,14 +68,21 @@ export class StatisticsComponent implements OnInit {
     }
   };
   private others: KeyValue[];
+  private bottlesSub: Subscription;
 
   constructor(private distributionService: DistributeService, private bottlesService: BottlePersistenceService, private nav: NavController) {
   }
 
   ngOnInit(): void {
-    this.bottlesService.allBottlesObservable.subscribe((bottles: Bottle[]) => {
+    this.bottlesSub=this.bottlesService.allBottlesObservable.subscribe((bottles: Bottle[]) => {
       this.createChart(bottles.filter(btl => +btl.quantite_courante > 0));
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.bottlesSub) {
+      this.bottlesSub.unsubscribe();
+    }
   }
 
   private createChart(bottles: Bottle[]) {

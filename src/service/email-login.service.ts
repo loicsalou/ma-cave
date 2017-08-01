@@ -46,9 +46,11 @@ export class EmailLoginService extends AbstractLoginService {
 
   public login(): Observable<User> {
     let self = this;
+    let loadingPopup = this.notificationService.createLoadingPopup('app.checking-login');
     firebase.auth().signInWithEmailAndPassword(this.username, this.psw)
       .then(
         token => {
+          loadingPopup.dismiss();
           let displayName = token[ 'displayName' ];
           let email = token[ 'email' ];
           self.success(new EmailLoginUser(this.username, email, displayName, null));
@@ -56,11 +58,15 @@ export class EmailLoginService extends AbstractLoginService {
       )
       .catch(function (error) {
         firebase.auth().createUserWithEmailAndPassword(self.username, self.psw)
-          .then(() => self.success(self.user))
-          .catch(function (error2) {
-            self.notificationService.failed('la création du compte utilisateur a échoué', error2)
-          });
-        self.notificationService.error('L\'authentification a échoué', error);
+          .then(() => {
+                  loadingPopup.dismiss();
+                  self.success(self.user)
+                }
+          ).catch(err => {
+                    loadingPopup.dismiss();
+                    this.loginFailed();
+                  }
+        );
       });
 
     return this.authentifiedObservable;

@@ -22,9 +22,12 @@
           <h2 class="label">{{ bottle.nomCru }}</h2>
           <ion-note>{{bottle.area_label}} ({{bottle.millesime}})</ion-note>
         </ion-col>
-        <ion-col col-1>
+        <ion-col col-1 text-wrap>
           <ion-badge item-right>
             {{bottle.quantite_courante}}
+          </ion-badge>
+          <ion-badge item-right class="not-placed" *ngIf="numberNotPlaced(bottle) > 0">
+            {{numberNotPlaced(bottle)}}
           </ion-badge>
         </ion-col>
       </ion-row>
@@ -36,7 +39,7 @@
       </button>
       
       <button ion-button (click)="drawBottle($event, item, bottle)">
-        <img src="assets/icon/tire-bouchon.png">
+        <ion-icon name="pin"></ion-icon>
       </button>
     </ion-item-options>
   
