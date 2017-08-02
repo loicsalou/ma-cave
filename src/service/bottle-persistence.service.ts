@@ -40,10 +40,8 @@ export class BottlePersistenceService extends PersistenceService {
               loginService: LoginService,
               private platform: Platform) {
     super(notificationService, loginService);
-    if (loginService.user !== undefined) {
+    if (loginService.user) {
       this.initialize(loginService.user);
-    } else {
-      this.cleanup();
     }
   }
 

@@ -129,5 +129,9 @@
         background-image: url("../assets/img/cell-color/yellow.png"), radial-gradient(circle at center, black, white);
       }
     }
+
+    .highlighted {
+      border: medium green solid;
+    }
   }
 }

@@ -27,6 +27,9 @@ export class FridgeLockerComponent implements OnInit {
   @Input()
   content: Bottle[] = [];
 
+  @Input()
+  highlight: Bottle;
+
   @Output()
   selected: EventEmitter<Cell> = new EventEmitter<Cell>();
 

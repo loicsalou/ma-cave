@@ -51,11 +51,11 @@ export class BrowsePage implements OnInit, OnDestroy {
         _.chunk(received, 30).forEach(
           (chunk: any[], ix) => {
             this.notificationService.traceInfo('itération ' + ix + ' Traitement des bouteilles reçues après timeout' +
-                                               chunk.length);
+              chunk.length);
             setTimeout(
               () => {
                 this.notificationService.traceInfo('Dans l\'itération ' + ix + ' Traitement des bouteilles reçues' +
-                                                   ' après timeout ' + chunk.length);
+                  ' après timeout ' + chunk.length);
                 this.nbOfBottles += chunk.reduce(
                   (tot: number, btl2: Bottle) => tot + +btl2.quantite_courante,
                   0
@@ -87,11 +87,13 @@ export class BrowsePage implements OnInit, OnDestroy {
   }
 
   placeSelection() {
-    let placedBottles=this.bottles.filter(btl => btl.selected);
-    this.navCtrl.push(CellarPage,{bottles: placedBottles});
+    let placedBottles = this.bottles.filter(btl => btl.selected);
+    this.navCtrl.push(CellarPage, {bottlesToPlace: placedBottles});
+    placedBottles.forEach(btl => delete btl.selected);
+    this.listComponent.resetSelection();
   }
 
-  // in case user navigated to here from the home page then we have search param ==> filter on this text
+// in case user navigated to here from the home page then we have search param ==> filter on this text
   private setFilter() {
     this.notificationService.traceInfo('Vérification des paramètres du filtre');
     if (this.navParams != undefined) {

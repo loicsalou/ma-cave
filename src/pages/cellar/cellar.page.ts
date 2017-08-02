@@ -38,8 +38,9 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('placedLockerComponent')
   private placedLockerComponent: LockerComponent;
-  private placedLocker: SimpleLocker;
-  private placedBottles: Bottle[];
+  private bottlesToPlaceLocker: SimpleLocker;
+  private bottlesToPlace: Bottle[];
+  private bottlesToHighlight: Bottle;
 
   constructor(private cellarService: CellarPersistenceService, private bottleService: BottlePersistenceService,
               private notificationService: NotificationService,
@@ -47,14 +48,15 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.placedBottles = this.params.data[ 'bottles' ];
-    if (this.placedBottles && this.placedBottles.length > 0) {
-      this.placedLocker = new SimpleLocker(undefined, 'placedLocker', LockerType.simple, {
-        x: this.placedBottles.reduce((total, btl) => total + btl.numberToBePlaced(), 0),
+    this.bottlesToPlace = this.params.data[ 'bottlesToPlace' ];
+    if (this.bottlesToPlace && this.bottlesToPlace.length > 0) {
+      this.bottlesToPlaceLocker = new SimpleLocker(undefined, 'placedLocker', LockerType.simple, {
+        x: this.bottlesToPlace.reduce((total, btl) => total + btl.numberToBePlaced(), 0),
         y: 1
       })
       ;
     }
+    this.bottlesToHighlight = this.params.data[ 'bottlesToHighlight' ];
     this.lockersSub = this.cellarService.allLockersObservable.subscribe(
       lockers => {
         this.otherLockers = lockers;
@@ -63,14 +65,12 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
     );
 
     this.getLockersContent(this.paginatedLocker);
-
-    this.cellarService.fetchAllLockers();
   }
 
   ngAfterViewInit(): void {
-    if (this.placedBottles) {
+    if (this.bottlesToPlace) {
       let ix = 0;
-      this.placedBottles.forEach(
+      this.bottlesToPlace.forEach(
         bottle => {
           let nbBottles = bottle.numberToBePlaced();
           for (let i = 0; i < nbBottles; i++) {
@@ -108,6 +108,11 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
     editorModal.present();
   }
 
+  updateLocker() {
+    let editorModal = this.modalCtrl.create(LockerEditorPage, {locker: this.paginatedLocker}, {showBackdrop: true});
+    editorModal.present();
+  }
+
   private getLockersContent(locker: Locker) {
     this.bottleService.allBottlesObservable.subscribe(
       (bottles: Bottle[]) => this.lockerContent = bottles
@@ -134,7 +139,7 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
       let bottle = source.withdraw();
       bottle.removeFromPosition(source.position);
       source.setSelected(false);
-      target.storeBottle(bottle);
+      target.storeBottle(bottle, bottle.equals(this.bottlesToHighlight));
       bottle.addNewPosition(target.position);
       this.bottleService.update([ bottle ]);
     }

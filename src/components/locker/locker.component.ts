@@ -29,6 +29,9 @@ export class LockerComponent implements OnInit {
   @Input()
   content: Bottle[] = [];
 
+  @Input()
+  highlight: Bottle;
+
   @Output()
   selected: EventEmitter<Cell> = new EventEmitter<Cell>();
 
@@ -66,6 +69,7 @@ export class LockerComponent implements OnInit {
     }
 
   }
+
   //
   //ngOnChanges(changes: any) {
   //  this.resetComponent();
@@ -120,8 +124,8 @@ export class LockerComponent implements OnInit {
     if (this.rows.length < position.y || this.rows[ position.y ].cells.length < position.y) {
       this.bogusBottles.push(bottle);
     } else {
-      let targetCell=this.rows[ position.y ].cells[ position.x ];
-      targetCell.storeBottle(bottle);
+      let targetCell = this.rows[ position.y ].cells[ position.x ];
+      targetCell.storeBottle(bottle, bottle.equals(this.highlight));
       //bottle.addNewPosition(targetCell.position);
     }
   }
@@ -166,7 +170,7 @@ export class Cell {
     return btl;
   }
 
-  public storeBottle(bottle: Bottle) {
+  public storeBottle(bottle: Bottle, highlight = false) {
     if (!bottle) {
       return;
     }
@@ -176,6 +180,9 @@ export class Cell {
       this.cellClass = 'empty';
     } else {
       this.cellClass = Configuration.colorsText2Code[ bottle.label.toLowerCase() ];
+    }
+    if (highlight) {
+      this.cellClass += ' highlighted'
     }
   }
 

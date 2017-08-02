@@ -24,8 +24,6 @@ export abstract class PersistenceService {
 
   private handleLoginEvent(user: User) {
     if (user) {
-      //clean subscriptions before init again
-      this.cleanup();
       this.initialize(user);
     } else {
       this.cleanup();

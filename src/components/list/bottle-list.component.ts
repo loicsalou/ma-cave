@@ -2,7 +2,8 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {Bottle} from '../../model/bottle';
 import {ListBottleEvent} from './bottle-list-event';
-import {ItemSliding, ToastController} from 'ionic-angular';
+import {ItemSliding, NavController, ToastController} from 'ionic-angular';
+import {CellarPage} from '../../pages/cellar/cellar.page';
 
 @Component({
              selector: 'bottle-list',
@@ -17,7 +18,8 @@ export class BottleListComponent {
   showDetail: EventEmitter<ListBottleEvent> = new EventEmitter();
   private nbSelected = 0;
 
-  constructor(private bottlesService: BottlePersistenceService, private toastCtrl: ToastController) {
+  constructor(private bottlesService: BottlePersistenceService, private toastCtrl: ToastController,
+              private navCtrl: NavController) {
   }
 
   filter() {
@@ -38,7 +40,7 @@ export class BottleListComponent {
     }
   }
 
-  numberNotPlaced(bottle:Bottle): number {
+  numberNotPlaced(bottle: Bottle): number {
     return bottle.numberToBePlaced();
   }
 
@@ -61,7 +63,7 @@ export class BottleListComponent {
   manageFavorites(slidingItem: ItemSliding, bottle: Bottle) {
     bottle.favorite = bottle.favorite ? !bottle.favorite : true;
     slidingItem.close();
-    this.bottlesService.update([bottle]);
+    this.bottlesService.update([ bottle ]);
   }
 
   isBottleInBasket(bottle: Bottle): boolean {
@@ -92,16 +94,14 @@ export class BottleListComponent {
     }
   }
 
-  drawBottle(event: Event, slidingItem: ItemSliding, bottle: Bottle) {
+  locateBottle(event: Event, slidingItem: ItemSliding, bottle: Bottle) {
     event.stopPropagation();
     slidingItem.close();
-    let basketToast = this.toastCtrl.create({
-                                              message: 'la bouteille ' + bottle.nomCru + ' a été retirée du stock',
-                                              duration: 2000,
-                                              cssClass: 'information-message',
-                                              position: 'top'
-                                            });
-    basketToast.present();
+    this.navCtrl.push(CellarPage, {bottlesToHighlight: bottle});
+  }
+
+  resetSelection() {
+    this.nbSelected = 0;
   }
 }
 
