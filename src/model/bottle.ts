@@ -56,6 +56,13 @@ export class Bottle implements ImgDefaultable {
   removeFromPosition(position: Position) {
     this.positions = this.positions.filter(pos => !pos.equals(position));
   }
+
+  equals(bottle: Bottle) {
+    if (!bottle) {
+      return false;
+    }
+    return this.id===bottle.id;
+  }
 }
 
 export interface BottleMetadata {

@@ -34,12 +34,18 @@ export class FacebookLoginService extends AbstractLoginService {
           let user: User = new FacebookUser(success.user, success.email, success.photoURL,
                                             success.displayName, success.uid, success.phoneNumber);
           this.success(user);
+          loadingPopup.dismiss();
+        })
+        .catch(error => {
+          loadingPopup.dismiss();
+          this.loginFailed();
+          this.notificationService.failed('l\'authentification a échoué (Promise.catch)', error);
         })
     }).catch(
       error => {
         loadingPopup.dismiss();
         this.loginFailed();
-        this.notificationService.failed('l\'authentification a échoué', error);
+        this.notificationService.failed('l\'authentification a échoué (catch)', error);
       }
     );
 

@@ -33,6 +33,9 @@ export class CellarPersistenceService extends PersistenceService implements Cell
               private bottleService: BottlePersistenceService,
               loginService: LoginService) {
     super(notificationService, loginService);
+    if (loginService.user) {
+      this.initialize(loginService.user);
+    }
   }
 
   get allLockersObservable(): Observable<Locker[]> {
@@ -49,7 +52,7 @@ export class CellarPersistenceService extends PersistenceService implements Cell
     this.allLockersArray = undefined;
   }
 
-  public fetchAllLockers() {
+  private fetchAllLockers() {
     this.dataConnection.allLockersObservable.subscribe(
       (lockers: Locker[]) => {
         this.allLockersArray = lockers.map((locker: Locker) => this.lockerFactory.create(locker));

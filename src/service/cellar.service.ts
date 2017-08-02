@@ -11,8 +11,6 @@ import {Locker} from '../model/locker';
  */
 export interface CellarService {
 
-  fetchAllLockers():void;
-
   createLocker(locker: Locker): void;
 
   replaceLocker(locker: Locker): void;

@@ -154,7 +154,7 @@ export class UploadBottlesPage {
           let btl: Bottle = <Bottle>buildObject(row, keys);
           return self.bottleFactory.create(btl);
         } catch (error) {
-          this.notificationService.error('Erreur d\'analyse de l\'enregistrement: ' + row, error);
+          self.notificationService.error('Erreur d\'analyse de l\'enregistrement: ' + row, error);
         }
       }, {});
     } catch (error2) {

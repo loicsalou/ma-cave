@@ -9,12 +9,19 @@
     margin-top: 0;
   }
 
-  button[ion-button] img {
-    border-radius: 50%;
-    border: thin solid black;
-    background-color: white;
-    width: 45px;
-    height: 45px;
+  button[ion-button] {
+    img, ion-icon {
+      border-radius: 50%;
+      border: thin solid black;
+      background-color: white;
+      width: 45px;
+      height: 45px;
+    }
+    ion-icon {
+      color: black;
+      font-size: x-large;
+      padding-top: 10px;
+    }
   }
 
   ion-avatar {
