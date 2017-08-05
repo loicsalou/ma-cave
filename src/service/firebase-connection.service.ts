@@ -423,6 +423,10 @@ export class FirebaseConnectionService {
   }
 
   public update(bottles: Bottle[ ]): Promise<any> {
+    //TODO Attention le fait de faire une boucle sur update provoque autant d'événement dans l'observable firebase
+    // qu'il y a d'updates faits ==> essayer de faire un seul update global, il me semble qu'il y a une notion de
+    // transaction ==> à voir
+    //TODO voir pourquoi on perd l'attribut "favorite"
     if (! this.connectionAllowed) {
       this.notificationService.i18nFailed('update.failed');
       return undefined;

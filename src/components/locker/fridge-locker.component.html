@@ -2,6 +2,6 @@
 <div class="fridge-locker-component">
   <div class="rack" [ngClass]="sizeClass()">
     <locker *ngFor="let rack of fridge.racks; let ix=index" [locker]="rack"
-            [highlight]="highlight" [content]="content" [rack]="ix" (selected)="cellSelected($event)"></locker>
+            [highlighted]="highlighted" [content]="content" [rack]="ix" (selected)="cellSelected($event)"></locker>
   </div>
 </div>

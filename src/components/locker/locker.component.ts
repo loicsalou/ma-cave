@@ -30,7 +30,7 @@ export class LockerComponent implements OnInit {
   content: Bottle[] = [];
 
   @Input()
-  highlight: Bottle;
+  highlighted: Bottle[];
 
   @Output()
   selected: EventEmitter<Cell> = new EventEmitter<Cell>();
@@ -125,9 +125,16 @@ export class LockerComponent implements OnInit {
       this.bogusBottles.push(bottle);
     } else {
       let targetCell = this.rows[ position.y ].cells[ position.x ];
-      targetCell.storeBottle(bottle, bottle.equals(this.highlight));
+      targetCell.storeBottle(bottle, this.isHighlighted(bottle));
       //bottle.addNewPosition(targetCell.position);
     }
+  }
+
+  isHighlighted(bottle: Bottle): boolean {
+    if (!this.highlighted) {
+      return false;
+    }
+    return this.highlighted.find(btl => btl.id === bottle.id) !== undefined;
   }
 }
 

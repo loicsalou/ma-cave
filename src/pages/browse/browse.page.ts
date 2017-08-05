@@ -87,9 +87,30 @@ export class BrowsePage implements OnInit, OnDestroy {
   }
 
   placeSelection() {
-    let placedBottles = this.bottles.filter(btl => btl.selected);
-    this.navCtrl.push(CellarPage, {bottlesToPlace: placedBottles});
-    placedBottles.forEach(btl => delete btl.selected);
+    let selectedBottles = this.bottles.filter(btl => btl.selected);
+    this.navCtrl.push(CellarPage, {bottlesToPlace: selectedBottles});
+    selectedBottles.forEach(btl => delete btl.selected);
+    this.listComponent.resetSelection();
+  }
+
+  locateSelection() {
+    let selectedBottles = this.bottles.filter(btl => btl.selected);
+    this.navCtrl.push(CellarPage, {bottlesToHighlight: selectedBottles});
+    selectedBottles.forEach(btl => delete btl.selected);
+    this.listComponent.resetSelection();
+  }
+
+  registerSelectionAsFavorite() {
+    let favoriteStatus;
+    let selectedBottles: Bottle[] = this.bottles.filter(btl => btl.selected);
+    selectedBottles.forEach(btl => {
+        if (favoriteStatus == undefined) {
+          favoriteStatus = btl.favorite ? false : true;
+        }
+        btl.favorite = favoriteStatus;
+        delete btl.selected;
+      });
+    this.bottlesService.update(selectedBottles);
     this.listComponent.resetSelection();
   }
 

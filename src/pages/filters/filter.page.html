@@ -1,6 +1,7 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title style="margin-top: 4px;">{{ getNbOfLots() }} {{'lots' | translate}} / {{ getNbOfBottles() }} {{'bottles' |
+    <ion-title style="margin-top: 4px;">{{ getNbOfLots() }} {{'lots' | translate}} / {{ getNbOfBottles() }} {{'bottles'
+      |
       translate}}
     </ion-title>
     <button ion-button menuToggle>
@@ -15,17 +16,22 @@
   
   <ion-item>
     <ion-label>{{'filter.history' | translate}}</ion-label>
-    <ion-toggle (ionChange)="switchHistory($event)"></ion-toggle>
+    <ion-checkbox [checked]="filterSet.history" (ionChange)="switchHistory($event)"></ion-checkbox>
   </ion-item>
   
   <ion-item>
     <ion-label>{{'filter.favorite-only' | translate}}</ion-label>
-    <ion-toggle (ionChange)="switchFavorite($event)"></ion-toggle>
+    <ion-checkbox [checked]="filterSet.favoriteOnly" (ionChange)="switchFavorite($event)"></ion-checkbox>
   </ion-item>
   
   <ion-item>
-    <ion-label>{{'filter.to-be-placed' | translate}}</ion-label>
-    <ion-toggle (ionChange)="switchToBePlaced($event)"></ion-toggle>
+    <ion-label>{{'filter.placement-placed' | translate }}</ion-label>
+    <ion-checkbox [checked]="filterSet.placed" (ionChange)="switchedPlaced($event)"></ion-checkbox>
+  </ion-item>
+  
+  <ion-item>
+    <ion-label>{{'filter.placement-to-be-placed' | translate }}</ion-label>
+    <ion-checkbox [checked]="filterSet.toBePlaced" (ionChange)="switchedToBePlaced($event)"></ion-checkbox>
   </ion-item>
   
   <ion-row align-items-start>

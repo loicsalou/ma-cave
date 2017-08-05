@@ -94,10 +94,10 @@ export class BottleListComponent {
     }
   }
 
-  locateBottle(event: Event, slidingItem: ItemSliding, bottle: Bottle) {
+  locateBottles(event: Event, slidingItem: ItemSliding, bottles: Bottle[]) {
     event.stopPropagation();
     slidingItem.close();
-    this.navCtrl.push(CellarPage, {bottlesToHighlight: bottle});
+    this.navCtrl.push(CellarPage, {bottlesToHighlight: bottles});
   }
 
   resetSelection() {
