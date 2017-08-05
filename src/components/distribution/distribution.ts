@@ -146,11 +146,44 @@ export class FilterSet {
   label?: string[];
   classe_age?: string[];
   millesime?: string[];
-  private history: boolean = false;
-  private favoriteOnly: boolean = false;
-  private toBePlaced: boolean=false;
+  private _history = false;
+  private _favoriteOnly = false;
+  private _placed = true;
+  private _toBePlaced = true;
 
   constructor() {
+  }
+
+  get history(): boolean {
+    return this._history;
+  }
+
+  get favoriteOnly(): boolean {
+    return this._favoriteOnly;
+  }
+
+  get placed(): boolean {
+    return this._placed;
+  }
+
+  get toBePlaced(): boolean {
+    return this._toBePlaced;
+  }
+
+  set history(value: boolean) {
+    this._history = value;
+  }
+
+  set favoriteOnly(value: boolean) {
+    this._favoriteOnly = value;
+  }
+
+  set placed(value: boolean) {
+    this._placed = value;
+  }
+
+  set toBePlaced(value: boolean) {
+    this._toBePlaced = value;
   }
 
   hasText() {
@@ -178,27 +211,11 @@ export class FilterSet {
   }
 
   switchHistory() {
-    this.history = !this.history;
+    this._history = !this._history;
   }
 
   switchFavorite() {
-    this.favoriteOnly = !this.favoriteOnly
-  }
-
-  switchToBePlaced() {
-    this.toBePlaced = !this.toBePlaced;
-  }
-
-  searchHistory() {
-    return this.history;
-  }
-
-  searchFavoriteOnly() {
-    return this.favoriteOnly;
-  }
-
-  searchToBePlacedOnly() {
-    return this.toBePlaced;
+    this._favoriteOnly = !this._favoriteOnly
   }
 
   /**
@@ -209,7 +226,7 @@ export class FilterSet {
    */
   isEmpty() {
     return (!this.hasText() && !this.hasAppellations() && !this.hasAges() && !this.hasCouleurs() && !this.hasMillesimes()
-    && !this.hasRegions() && this.history && !this.favoriteOnly);
+      && !this.hasRegions() && this._history && this._placed && this._toBePlaced && !this._favoriteOnly);
   }
 
   reset() {
@@ -219,7 +236,9 @@ export class FilterSet {
     this.classe_age = undefined;
     this.millesime = undefined;
     this.subregion_label = undefined;
-    this.history = false;
+    this._history = false;
+    this._placed = true;
+    this._toBePlaced = true;
   }
 
   toString() {
@@ -244,6 +263,10 @@ export class FilterSet {
       strings.push(this.millesime);
     } else if (this.hasAges()) {
       strings.push(this.classe_age);
+    } else if (this._placed) {
+      strings.push('placées');
+    } else if (this._toBePlaced) {
+      strings.push('non placées');
     }
     if (strings.length == 0) {
       return '';

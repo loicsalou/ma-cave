@@ -140,20 +140,28 @@ export class BottlePersistenceService extends PersistenceService {
 
     let filtered = this.allBottlesArray;
     if (!filters.isEmpty()) {
-      if (!filters.searchHistory()) {
+      if (!filters.history) {
         filtered = filtered.filter(btl => +btl.quantite_courante > 0);
       }
       //ne garder que les bouteilles favorites, sinon toutes
-      if (filters.searchFavoriteOnly()) {
+      if (filters.favoriteOnly) {
         filtered = filtered.filter(btl => btl.favorite);
-      }
-      //ne garder que les bouteilles pas encore placées, sinon toutes
-      if (filters.searchToBePlacedOnly()) {
-        filtered = filtered.filter(btl => btl.numberToBePlaced() > 0);
       }
       // always start filtering using textual search
       if (filters.hasText()) {
         filtered = this.getBottlesByKeywords(filtered, filters.text);
+      }
+
+      // don't show placed bottles
+      if (!filters.placed) {
+        //on ne garde que les bouteilles non totalement placées
+        filtered = filtered.filter(btl => btl.positions.length !== +btl.quantite_courante)
+      }
+
+      // show not placed bottles
+      if (!filters.toBePlaced) {
+        //on ne garde que les bouteilles totalement placées
+        filtered = filtered.filter(btl => btl.positions.length === +btl.quantite_courante)
       }
 
       // on hierarchical axis like regions and ages, use most precise filter if available

@@ -59,7 +59,8 @@
   "filter": {
     "history": "Historique",
     "favorite-only": "Favoris seuls",
-    "to-be-placed": "A placer seulement",
+    "placement-placed": "Bouteilles placées",
+    "placement-to-be-placed": "Bouteilles à placer",
     "dimensions-fridge": "Dimensions du frigo",
     "dim-x": "Largeur (en bouteilles)",
     "dim-y": "Hauteur (en bouteilles)",

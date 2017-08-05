@@ -38,7 +38,8 @@
         <img src="assets/icon/basket.png">
       </button>
       
-      <button ion-button (click)="locateBottle($event, item, bottle)">
+      <button ion-button (click)="locateBottles($event, item, [bottle])"
+              *ngIf="bottle.positions.length > 0">
         <ion-icon name="pin"></ion-icon>
       </button>
     </ion-item-options>

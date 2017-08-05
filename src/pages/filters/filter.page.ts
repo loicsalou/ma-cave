@@ -22,7 +22,6 @@ export class FilterPage implements OnInit, OnChanges, OnDestroy {
 
   nbOfBottles: number = 0;
   filterSet: FilterSet;
-  historyVisible = false;
   ascending: boolean = true;
   private filtersSub: Subscription;
 
@@ -54,8 +53,13 @@ export class FilterPage implements OnInit, OnChanges, OnDestroy {
     this.bottlesService.filterOn(this.filterSet);
   }
 
-  switchToBePlaced(event) {
-    this.filterSet.switchToBePlaced();
+  switchedPlaced(event) {
+    this.filterSet.placed=event.checked;
+    this.bottlesService.filterOn(this.filterSet);
+  }
+
+  switchedToBePlaced(event) {
+    this.filterSet.toBePlaced=event.checked;
     this.bottlesService.filterOn(this.filterSet);
   }
 

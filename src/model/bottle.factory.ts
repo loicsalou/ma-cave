@@ -21,14 +21,28 @@ export class BottleFactory {
   }
 
   public create(bottle: Bottle): Bottle {
-    let btl: Bottle=new Bottle(bottle);
-    this.setClasseAge(btl).setDefaultImage(btl).ensurePositionsInitialized(btl).mapPositions(btl);
+    let btl: Bottle = new Bottle(bottle);
+    this.setClasseAge(btl)
+      .setDefaultImage(btl)
+      .ensurePositionsInitialized(btl)
+      .mapPositions(btl)
+      .ensureDataTypes(btl);
 
     return btl;
   }
 
   get stats(): Statistics {
     return this._stats;
+  }
+
+  private ensureDataTypes(btl: Bottle): BottleFactory {
+    if (!btl.quantite_courante) {
+      btl.quantite_courante = 0;
+    }
+    if (!btl.quantite_achat) {
+      btl.quantite_achat = "0";
+    }
+    return this;
   }
 
   private ensurePositionsInitialized(btl: Bottle): BottleFactory {

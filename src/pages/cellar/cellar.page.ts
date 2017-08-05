@@ -40,7 +40,7 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
   private placedLockerComponent: LockerComponent;
   private bottlesToPlaceLocker: SimpleLocker;
   private bottlesToPlace: Bottle[];
-  private bottlesToHighlight: Bottle;
+  private bottlesToHighlight: Bottle[];
 
   constructor(private cellarService: CellarPersistenceService, private bottleService: BottlePersistenceService,
               private notificationService: NotificationService,
@@ -139,9 +139,18 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
       let bottle = source.withdraw();
       bottle.removeFromPosition(source.position);
       source.setSelected(false);
-      target.storeBottle(bottle, bottle.equals(this.bottlesToHighlight));
+      target.storeBottle(bottle, this.isBottleToHighlight(bottle));
       bottle.addNewPosition(target.position);
       this.bottleService.update([ bottle ]);
+    }
+  }
+
+  private isBottleToHighlight(bottle: Bottle) {
+    if (this.bottlesToHighlight) {
+      return this.bottlesToHighlight.find(btl => btl.id === bottle.id) !== undefined
+    }
+    else {
+      return false;
     }
   }
 
