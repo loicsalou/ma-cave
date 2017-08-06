@@ -2,7 +2,6 @@
  * Created by loicsalou on 28.02.17.
  */
 import {Injectable} from '@angular/core';
-import * as firebase from 'firebase/app';
 import 'firebase/storage';
 import {LoginService} from './login.service';
 import {Bottle, BottleMetadata} from '../model/bottle';
@@ -12,6 +11,7 @@ import {Image} from '../model/image';
 import {NotificationService} from './notification.service';
 import {Subject} from 'rxjs/Subject';
 import {FirebaseConnectionService} from './firebase-connection.service';
+import {TranslateService} from '@ngx-translate/core';
 
 /**
  * Services related to the bottles in the cellar.
@@ -25,8 +25,8 @@ export class ImagePersistenceService extends PersistenceService {
   private progressEvent$: Observable<number> = this._progressEvent.asObservable();
 
   constructor(private dataConnection: FirebaseConnectionService,
-              notificationService: NotificationService, loginService: LoginService) {
-    super(notificationService, loginService);
+              notificationService: NotificationService, translateService: TranslateService, loginService: LoginService) {
+    super(notificationService, loginService, translateService);
     if (loginService.user !== undefined) {
       this.initialize(loginService.user);
     } else {

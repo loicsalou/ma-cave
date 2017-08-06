@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angula
 import * as _ from 'lodash';
 import {DistributeService} from '../../service/distribute.service';
 import {Bottle} from '../../model/bottle';
+import {TranslateService} from '@ngx-translate/core';
 
 /*
  Generated class for the Distribution component.
@@ -37,12 +38,12 @@ export class DistributionComponent implements OnChanges, OnInit {
   open = {};
 
   //filtres courant et valeurs sélectionnées
-  filterSet: FilterSet = new FilterSet();
+  filterSet: FilterSet = new FilterSet(this.translateService);
 
   //nombre de bouteilles affichées à un instant t
   count: number;
 
-  constructor(private distributionService: DistributeService) {
+  constructor(private distributionService: DistributeService, private translateService: TranslateService) {
   }
 
   ngOnChanges() {
@@ -151,7 +152,8 @@ export class FilterSet {
   private _placed = true;
   private _toBePlaced = true;
 
-  constructor() {
+  constructor(private translateService: TranslateService) {
+
   }
 
   get history(): boolean {
@@ -242,7 +244,13 @@ export class FilterSet {
   }
 
   toString() {
-    return JSON.stringify(this);
+    return JSON.stringify(this, (prop, value) => {
+      if (prop === 'translateService') {
+        return ''
+      } else {
+        return value
+      }
+    });
   }
 
   toMessage() {
@@ -263,10 +271,10 @@ export class FilterSet {
       strings.push(this.millesime);
     } else if (this.hasAges()) {
       strings.push(this.classe_age);
-    } else if (this._placed) {
-      strings.push('placées');
-    } else if (this._toBePlaced) {
-      strings.push('non placées');
+    } else if (!this._placed) {
+      strings.push(this.translateService.instant('filter.to-be-placed-only'))
+    } else if (!this._toBePlaced) {
+      strings.push(this.translateService.instant('filter.placed-only'))
     }
     if (strings.length == 0) {
       return '';

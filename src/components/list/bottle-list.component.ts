@@ -70,34 +70,17 @@ export class BottleListComponent {
     return bottle[ 'in-basket' ];
   }
 
-  addToBasketOrRemove(event: Event, slidingItem: ItemSliding, bottle: Bottle) {
-    event.stopPropagation();
-    slidingItem.close();
-    bottle[ 'in-basket' ] = bottle[ 'in-basket' ] ? !bottle[ 'in-basket' ] : true;
-    if (this.isBottleInBasket(bottle)) {
-      let basketToast = this.toastCtrl.create({
-                                                message: 'la bouteille ' + bottle.nomCru + ' a été placée dans le' +
-                                                ' panier',
-                                                cssClass: 'information-message',
-                                                duration: 2000,
-                                                position: 'top'
-                                              });
-      basketToast.present();
-    } else {
-      let basketToast = this.toastCtrl.create({
-                                                message: 'la bouteille ' + bottle.nomCru + ' a été retirée du panier',
-                                                cssClass: 'information-message',
-                                                duration: 2000,
-                                                position: 'top'
-                                              });
-      basketToast.present();
-    }
-  }
-
   locateBottles(event: Event, slidingItem: ItemSliding, bottles: Bottle[]) {
     event.stopPropagation();
     slidingItem.close();
     this.navCtrl.push(CellarPage, {bottlesToHighlight: bottles});
+  }
+
+  addToFavorite(event: Event, slidingItem: ItemSliding, bottle: Bottle) {
+    event.stopPropagation();
+    bottle.favorite = bottle.favorite ? !bottle.favorite : true;
+    this.bottlesService.update([bottle]);
+    slidingItem.close();
   }
 
   resetSelection() {

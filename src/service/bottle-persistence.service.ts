@@ -15,6 +15,7 @@ import {FirebaseConnectionService} from './firebase-connection.service';
 import {User} from '../model/user';
 import {Subscription} from 'rxjs/Subscription';
 import {Locker} from '../model/locker';
+import {TranslateService} from '@ngx-translate/core';
 
 /**
  * Services related to the bottles in the cellar.
@@ -30,16 +31,18 @@ export class BottlePersistenceService extends PersistenceService {
   private _allBottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
   private _filteredBottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
   private _filteredBottlesObservable: Observable<Bottle[]> = this._filteredBottles.asObservable();
-  private _filtersObservable: BehaviorSubject<FilterSet> = new BehaviorSubject<FilterSet>(new FilterSet());
-  private filters: FilterSet = new FilterSet();
+  private _filtersObservable: BehaviorSubject<FilterSet>;
+  private filters: FilterSet = new FilterSet(this.translateService);
   private allBottlesArray: Bottle[];
   private dataConnectionSub: Subscription;
 
   constructor(private dataConnection: FirebaseConnectionService,
               notificationService: NotificationService,
               loginService: LoginService,
+              translateService: TranslateService,
               private platform: Platform) {
-    super(notificationService, loginService);
+    super(notificationService, loginService, translateService);
+    this._filtersObservable = new BehaviorSubject<FilterSet>(new FilterSet(this.translateService));
     if (loginService.user) {
       this.initialize(loginService.user);
     }
