@@ -11,6 +11,7 @@ import {LoginService} from '../../service/login.service';
 import {NotificationService} from '../../service/notification.service';
 import {CellarPage} from '../cellar/cellar.page';
 import {BottleListComponent} from '../../components/list/bottle-list.component';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
              selector: 'page-browse',
@@ -23,7 +24,7 @@ export class BrowsePage implements OnInit, OnDestroy {
   private searchBarVisible: boolean = false;
   bottles: Bottle[];
 
-  filterSet: FilterSet = new FilterSet();
+  filterSet: FilterSet = new FilterSet(this.translateService);
   private navParams: NavParams;
   private nbOfBottles: number = 0;
 
@@ -31,7 +32,8 @@ export class BrowsePage implements OnInit, OnDestroy {
   listComponent: BottleListComponent;
 
   constructor(public navCtrl: NavController, public platform: Platform, private bottlesService: BottlePersistenceService,
-              private loginService: LoginService, private notificationService: NotificationService, params?: NavParams) {
+              private loginService: LoginService, private notificationService: NotificationService,
+              private translateService: TranslateService, params?: NavParams) {
     this.navParams = params;
   }
 

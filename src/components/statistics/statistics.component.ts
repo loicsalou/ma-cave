@@ -7,6 +7,7 @@ import {FilterSet} from '../distribution/distribution';
 import {NavController} from 'ionic-angular';
 import {ChartEvent} from '../chart/chart.component';
 import {Subscription} from 'rxjs/Subscription';
+import {TranslateService} from '@ngx-translate/core';
 
 /**
  * Generated class for the StatisticsComponent component.
@@ -70,7 +71,8 @@ export class StatisticsComponent implements OnInit, OnDestroy {
   private others: KeyValue[];
   private bottlesSub: Subscription;
 
-  constructor(private distributionService: DistributeService, private bottlesService: BottlePersistenceService, private nav: NavController) {
+  constructor(private distributionService: DistributeService, private bottlesService: BottlePersistenceService,
+              private translateService: TranslateService, private nav: NavController) {
   }
 
   ngOnInit(): void {
@@ -184,7 +186,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
     if (chartEvent) {
       let axis = chartEvent.axis;
       let axisValue = chartEvent.axisValue;
-      let fs: FilterSet = new FilterSet();
+      let fs: FilterSet = new FilterSet(this.translateService);
       if (axisValue === 'autres') {
         fs[ axis ] = this.others.map(keyValue => keyValue.key);
       } else {

@@ -14,6 +14,7 @@ import {Locker} from '../model/locker';
 import {FirebaseConnectionService} from './firebase-connection.service';
 import {Bottle} from '../model/bottle';
 import {BottlePersistenceService} from './bottle-persistence.service';
+import {TranslateService} from '@ngx-translate/core';
 
 /**
  * Services related to the cellar itself, locker and place of the lockers.
@@ -31,8 +32,9 @@ export class CellarPersistenceService extends PersistenceService implements Cell
               private lockerFactory: LockerFactory,
               notificationService: NotificationService,
               private bottleService: BottlePersistenceService,
+              translateService: TranslateService,
               loginService: LoginService) {
-    super(notificationService, loginService);
+    super(notificationService, loginService, translateService);
     if (loginService.user) {
       this.initialize(loginService.user);
     }

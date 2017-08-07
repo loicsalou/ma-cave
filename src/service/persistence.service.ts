@@ -3,6 +3,7 @@ import {LoginService} from './login.service';
 import {NotificationService} from './notification.service';
 import {User} from '../model/user';
 import {Subscription} from 'rxjs/Subscription';
+import {TranslateService} from '@ngx-translate/core';
 /**
  * Created by loicsalou on 16.06.17.
  */
@@ -16,7 +17,8 @@ export abstract class PersistenceService {
 
   private loginSub: Subscription;
 
-  constructor(protected notificationService: NotificationService, protected loginService: LoginService) {
+  constructor(protected notificationService: NotificationService, protected loginService: LoginService,
+              protected translateService: TranslateService) {
     this.loginSub = this.loginService.authentifiedObservable.subscribe(
       user => this.handleLoginEvent(user)
     );

@@ -34,13 +34,13 @@
     </ion-item>
     
     <ion-item-options side="right">
-      <button ion-button (click)="addToBasketOrRemove($event, item, bottle)">
-        <img src="assets/icon/basket.png">
-      </button>
-      
       <button ion-button (click)="locateBottles($event, item, [bottle])"
               *ngIf="bottle.positions.length > 0">
         <ion-icon name="pin"></ion-icon>
+      </button>
+      
+      <button ion-button (click)="addToFavorite($event, item, bottle)">
+        <ion-icon name="star" [ngClass]="bottle.favorite ? 'favorite':''"></ion-icon>
       </button>
     </ion-item-options>
   

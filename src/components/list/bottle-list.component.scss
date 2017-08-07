@@ -12,15 +12,17 @@
   button[ion-button] {
     img, ion-icon {
       border-radius: 50%;
-      border: thin solid black;
-      background-color: white;
+      background-color: map-get($colors,primary);
       width: 45px;
       height: 45px;
     }
     ion-icon {
-      color: black;
+      color: white;
       font-size: x-large;
       padding-top: 10px;
+    }
+    ion-icon.favorite {
+      color: yellow;
     }
   }
 
