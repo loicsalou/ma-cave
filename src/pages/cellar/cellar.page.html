@@ -7,9 +7,8 @@
 <ion-content padding class="cellar-page">
   
   <ion-row>
-    <ion-slides [zoom]="true" [pager]="true" (ionSlideDidChange)="slideChanged()" [spaceBetween]="5"
-                [centeredSlides]="true" [paginationType]="fraction">
-      <ion-slide *ngFor="let locker of otherLockers">
+    <ion-slides [zoom]="true" [pager]="true" (ionSlideDidChange)="slideChanged()" [spaceBetween]="5">
+      <ion-slide *ngFor="let locker of otherLockers" style="max-width: 90vw">
         <div class="swiper-zoom-container">
           <locker [locker]="locker" [content]="lockerContent" *ngIf="!locker.isFridge()"
                   [highlighted]="bottlesToHighlight" (selected)="cellSelected($event)"></locker>

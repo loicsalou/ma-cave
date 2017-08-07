@@ -275,8 +275,8 @@ export class FirebaseConnectionService {
           this.updateCache(bottles.map((bottle: Bottle) => this.bottleFactory.create(bottle)));
         }
       },
-      error => this.notificationService.error('Impossible de récupérer les bouteilles depuis '+new Date(startDate).toDateString(), error),
-      () => this.notificationService.debugAlert('Vérification de la validité du cache depuis '+new Date(startDate).toDateString())
+      error => this.notificationService.error('Impossible de récupérer les bouteilles depuis ' + new Date(startDate).toDateString(), error),
+      () => this.notificationService.debugAlert('Vérification de la validité du cache depuis ' + new Date(startDate).toDateString())
     );
   }
 
@@ -426,24 +426,26 @@ export class FirebaseConnectionService {
     //TODO Attention le fait de faire une boucle sur update provoque autant d'événement dans l'observable firebase
     // qu'il y a d'updates faits ==> essayer de faire un seul update global, il me semble qu'il y a une notion de
     // transaction ==> à voir
-    //TODO voir pourquoi on perd l'attribut "favorite"
-    if (! this.connectionAllowed) {
+    if (!this.connectionAllowed) {
       this.notificationService.i18nFailed('update.failed');
       return undefined;
-    };
+    }
+
     return new Promise((resolve, reject) => {
+      let updates = {};
       bottles.forEach(bottle => {
         bottle[ 'lastUpdated' ] = new Date().getTime();
-        this.bottlesRootRef.child(bottle.id).set(sanitizeBeforeSave(bottle), (
-          err => {
-            if (err == null) {
-              resolve(null)
-            } else {
-              reject(err)
-            }
+        updates[ '/' + bottle.id ] = bottle;
+      });
+      this.bottlesRootRef.update(updates, (
+        err => {
+          if (err == null) {
+            resolve(null)
+          } else {
+            reject(err)
           }
-        ))
-      })
+        }
+      ));
     })
   }
 
@@ -478,12 +480,12 @@ export class FirebaseConnectionService {
     return new Promise((resolve, reject) => {
                          bottle[ 'lastUpdated' ] = new Date().getTime();
                          this.bottlesRootRef.child(bottle.id).set(sanitizeBeforeSave(bottle), err => {
-                                                                           if (err == null) {
-                                                                             resolve(null)
-                                                                           } else {
-                                                                             reject(err)
-                                                                           }
-                                                                         }
+                                                                    if (err == null) {
+                                                                      resolve(null)
+                                                                    } else {
+                                                                      reject(err)
+                                                                    }
+                                                                  }
                          )
                        }
     )
@@ -550,6 +552,7 @@ export class FirebaseConnectionService {
     this.connectionAllowed = b;
   }
 }
+
 //
 //function matchByKeyAndLastUpdateDate(fbBottle, cacheBottle) {
 //  if (!cacheBottle) {
@@ -576,7 +579,10 @@ function sortByLastUpdate(btl1, btl2) {
 }
 
 function sanitizeBeforeSave(object) {
-  return JSON.parse(JSON.stringify(object, function(k, v) {
-    if (v === undefined) { return null; } return v;
+  return JSON.parse(JSON.stringify(object, function (k, v) {
+    if (v === undefined) {
+      return null;
+    }
+    return v;
   }));
 }
