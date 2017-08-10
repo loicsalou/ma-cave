@@ -17,10 +17,8 @@ export abstract class Locker implements ImgDefaultable {
   imageUrl?: string; //Photo éventuelle
   comment: string; //commentaire utile, emplacement etc.
 
-  currentSize = LockerSize.medium;
-
   constructor(id: string, name: string, type: LockerType, comment: string = '', defaultImage: string = '',
-              imageUrl: string = '', supportedFormats: BottleSize[]) {
+              imageUrl: string = '', supportedFormats: BottleSize[], public dimension: Dimension) {
     this.id = id;
     this.name = name;
     this.type = type;
@@ -30,6 +28,15 @@ export abstract class Locker implements ImgDefaultable {
     ];
     this.imageUrl = imageUrl;
     this.comment = comment;
+    //if (Array.isArray(dimension)) {
+    //  let totDim: Dimension = {x: 0, y: 0}
+    //  this.dimension = dimension.reduce(
+    //    (totDim, dim) => {
+    //      return {x: totDim.x + dim.x, y: totDim.y + dim.y}
+    //    }, totDim);
+    //} else {
+    //  this.dimension = <Dimension> dimension; //dimension L x H
+    //}
   }
 
   getDefaultImageSrc(): string {
@@ -41,10 +48,6 @@ export abstract class Locker implements ImgDefaultable {
   }
 
   abstract isFridge(): boolean;
-
-  abstract increaseSize();
-
-  abstract decreaseSize();
 }
 
 export enum LockerType {
@@ -76,8 +79,4 @@ export enum BottleSize {
   balthazar,
   nabuchodonozor,
   melchior
-}
-
-export enum LockerSize {
-  small, medium, big, huge
 }

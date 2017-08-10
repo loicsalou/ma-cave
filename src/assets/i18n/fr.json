@@ -86,7 +86,13 @@
     "type": "Type"
   },
   "locker-editor": {
-    "title": "Créer ou modifier un casier"
+    "title": "Créer ou modifier un casier",
+    "filled-column": "La colonne contient des bouteilles, impossible de la supprimer",
+    "filled-row": "La rangée contient des bouteilles, impossible de la supprimer",
+    "maxi-col-reached": "Le casier ne peut pas contenir plus de colonnes",
+    "maxi-row-reached": "Le casier ne peut pas contenir plus de rangées",
+    "mini-col-reached": "Le casier ne peut pas contenir moins de colonnes",
+    "mini-row-reached": "Le casier ne peut pas contenir moins de rangées"
   },
   "locker-format": {
     "0": "Piccolo (0.2 l)",

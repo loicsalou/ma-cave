@@ -29,18 +29,20 @@ export class NotificationService {
   }
 
   error(message: string, error?: any) {
+    let msg = this.translateService.instant(message);
     this.alertController.create({
                                   title: this.translateService.instant('app.error'),
-                                  subTitle: message ? message + error : 'Une erreur s\'est produite ! ' + error ? error : '',
+                                  subTitle: msg ? msg + error : 'Une erreur s\'est produite ! ' + error ? error : '',
                                   buttons: [ 'Ok' ]
                                 })
       .present();
   }
 
   failed(message: string, error?: any) {
+    let msg = this.translateService.instant(message);
     this.alertController.create({
                                   title: this.translateService.instant('app.failed'),
-                                  subTitle: message ? message + error : 'l\'opération a échoué' + error ? error : '',
+                                  subTitle: msg ? msg + error : 'l\'opération a échoué' + error ? error : '',
                                   buttons: [ 'Ok' ]
                                 })
       .present();
@@ -56,9 +58,10 @@ export class NotificationService {
   }
 
   warning(message: string, error?: any) {
+    let msg = this.translateService.instant(message);
     this.alertController.create({
                                   title: this.translateService.instant('app.warning'),
-                                  subTitle: message + (error ? error : ''),
+                                  subTitle: msg + (error ? error : ''),
                                   buttons: [ 'Ok' ]
                                 })
       .present();

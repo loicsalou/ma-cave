@@ -2,14 +2,16 @@ import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/c
 import {IonicPage, ModalController, NavParams, Slides} from 'ionic-angular';
 import {CellarPersistenceService} from '../../service/cellar-persistence.service';
 import {Locker, LockerType} from '../../model/locker';
-import {Cell, LockerComponent} from '../../components/locker/locker.component';
+import {SimpleLockerComponent} from '../../components/locker/simple-locker.component';
 import {NotificationService} from '../../service/notification.service';
 import * as _ from 'lodash';
-import {LockerEditorPage} from '../locker-editor/locker-editor.page';
 import {Subscription} from 'rxjs/Subscription';
 import {Bottle, Position} from '../../model/bottle';
 import {SimpleLocker} from '../../model/simple-locker';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
+import {LockerEditor2Page} from '../locker-editor2/locker-editor2.page';
+import {Cell, LockerSize} from '../../components/locker/locker.component';
+import {LockerEditorPage} from '../locker-editor/locker-editor.page';
 
 /**
  * Generated class for the CellarPage page.
@@ -37,10 +39,13 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
   private lockerContent: Bottle[];
 
   @ViewChild('placedLockerComponent')
-  private placedLockerComponent: LockerComponent;
+  private placedLockerComponent: SimpleLockerComponent;
   private bottlesToPlaceLocker: SimpleLocker;
   private bottlesToPlace: Bottle[];
   private bottlesToHighlight: Bottle[];
+
+  size: LockerSize = LockerSize.medium;
+
 
   constructor(private cellarService: CellarPersistenceService, private bottleService: BottlePersistenceService,
               private notificationService: NotificationService,
@@ -85,6 +90,34 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
     this.lockersSub.unsubscribe();
   }
 
+  increaseSize() {
+    switch (this.size) {
+      case LockerSize.small:
+        this.size = LockerSize.medium;
+        break;
+      case LockerSize.medium:
+        this.size = LockerSize.big;
+        break;
+      case LockerSize.big:
+        this.size = LockerSize.huge;
+        break;
+    }
+  }
+
+  decreaseSize() {
+    switch (this.size) {
+      case LockerSize.medium:
+        this.size = LockerSize.small;
+        break;
+      case LockerSize.big:
+        this.size = LockerSize.medium;
+        break;
+      case LockerSize.huge:
+        this.size = LockerSize.big;
+        break;
+    }
+  }
+
   resetPaginatedLocker() {
     if (this.otherLockers.length > 0) {
       let ix = this.slides.getActiveIndex();
@@ -95,21 +128,16 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  increaseSize() {
-    this.paginatedLocker.increaseSize();
-  }
-
-  decreaseSize() {
-    this.paginatedLocker.decreaseSize();
-  }
-
   createLocker() {
     let editorModal = this.modalCtrl.create(LockerEditorPage, {}, {showBackdrop: false});
     editorModal.present();
   }
 
   updateLocker() {
-    let editorModal = this.modalCtrl.create(LockerEditorPage, {locker: this.paginatedLocker}, {showBackdrop: true});
+    let editorModal = this.modalCtrl.create(LockerEditor2Page, {
+      locker: this.paginatedLocker,
+      content: this.lockerContent
+    }, {showBackdrop: true});
     editorModal.present();
   }
 

@@ -11,7 +11,7 @@ export class FridgeLocker extends Locker {
 
   constructor(id: string, name: string, type: LockerType, dimensions: Dimension[], comment?: string,
               supportedFormats?: BottleSize[], defaultImage?: string, imageUrl?: string) {
-    super(id, name, type, comment, defaultImage, imageUrl, supportedFormats);
+    super(id, name, type, comment, defaultImage, imageUrl, supportedFormats, {x: 1, y: dimensions.length});
     this.dimensions = dimensions;
     this.initLockers();
   }
@@ -20,14 +20,6 @@ export class FridgeLocker extends Locker {
     this.racks = this.dimensions.map(
       (dimension: Dimension, i: number) => new SimpleLocker(this.id, this.id + '-' + (i + 1), LockerType.shifted, dimension)
     )
-  }
-
-  increaseSize() {
-    this.racks.forEach((locker: Locker) => locker.increaseSize())
-  }
-
-  decreaseSize() {
-    this.racks.forEach((locker: Locker) => locker.decreaseSize())
   }
 
   getNbOfBottles(): number {

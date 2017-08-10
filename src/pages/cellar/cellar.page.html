@@ -10,9 +10,9 @@
     <ion-slides [zoom]="true" [pager]="true" (ionSlideDidChange)="slideChanged()" [spaceBetween]="5">
       <ion-slide *ngFor="let locker of otherLockers" style="max-width: 90vw">
         <div class="swiper-zoom-container">
-          <locker [locker]="locker" [content]="lockerContent" *ngIf="!locker.isFridge()"
+          <locker [locker]="locker" [content]="lockerContent" [size]="size" *ngIf="!locker.isFridge()"
                   [highlighted]="bottlesToHighlight" (selected)="cellSelected($event)"></locker>
-          <fridge-locker [fridge]="locker" [content]="lockerContent" *ngIf="locker.isFridge()"
+          <fridge-locker [fridge]="locker" [content]="lockerContent" [size]="size" *ngIf="locker.isFridge()"
                          [highlighted]="bottlesToHighlight" (selected)="cellSelected($event)"></fridge-locker>
         </div>
       </ion-slide>

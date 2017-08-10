@@ -15,7 +15,7 @@ import {NotificationService} from '../../service/notification.service';
              templateUrl: './fridge-locker.component.html',
              styleUrls: [ '/fridge-locker.component.scss' ]
            })
-export class FridgeLockerComponent implements OnInit {
+export class FridgeLockerComponent extends LockerComponent implements OnInit {
 
   //racks composant le frigo, càd npmbre de rangées
   //chaque rangée est en fait un locker ayant ses propres dimensions l x L
@@ -24,23 +24,15 @@ export class FridgeLockerComponent implements OnInit {
   @Input()
   fridge: FridgeLocker;
 
-  @Input()
-  content: Bottle[] = [];
-
-  @Input()
-  highlighted: Bottle[];
-
-  @Output()
-  selected: EventEmitter<Cell> = new EventEmitter<Cell>();
-
   constructor(private notificationService: NotificationService) {
+    super()
   }
 
   ngOnInit(): void {
   }
 
-  sizeClass(): string {
-    return LockerComponent.SIZE_CLASSES[ this.fridge.currentSize ];
+  public resetComponent() {
+    throw new Error('Method not implemented.');
   }
 
   cellSelected(cell: Cell) {
