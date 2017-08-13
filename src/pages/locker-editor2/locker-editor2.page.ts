@@ -7,6 +7,7 @@ import {SimpleLocker} from '../../model/simple-locker';
 import {Bottle} from '../../model/bottle';
 import {NotificationService} from '../../service/notification.service';
 import {LockerComponent} from '../../components/locker/locker.component';
+import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 
 /**
  * Generated class for the LockerEditorComponent component.
@@ -42,7 +43,7 @@ export class LockerEditor2Page implements OnInit {
   fridgeLockersDimensions: Dimension[] = [];
 
   constructor(private params: NavParams, private cellarService: CellarPersistenceService,
-              private notificationService: NotificationService) {
+              private bottlesService: BottlePersistenceService, private notificationService: NotificationService) {
   }
 
   ngOnInit(): void {
@@ -64,14 +65,6 @@ export class LockerEditor2Page implements OnInit {
   }
 
   saveLocker() {
-    let locker: Locker;
-    if (this.type === LockerType.fridge) {
-      //name: string, type: LockerType, dimensions: Dimension[], comment?: string, defaultImage?: string,
-      // supportedFormats?: BottleSize[], imageUrl?: string
-      locker = new FridgeLocker(undefined, this.name, this.type, this.fridgeLockersDimensions, this.comment, this.supportedFormats);
-    } else {
-      locker = new SimpleLocker(undefined, this.name, this.type, this.lockerDimension, false, this.comment, this.supportedFormats);
-    }
-    this.cellarService.createLocker(locker);
+    this.bottlesService.updateLockerAndBottles(this.lockerContent, this.locker);
   }
 }

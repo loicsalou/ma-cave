@@ -129,7 +129,7 @@
     "profile": "Profile"
   },
   "update": {
-    "failed": "La mise à jour des bouteilles a échoué",
+    "failed": "La mise à jour a échoué",
     "saved": "Modifications sauvegardées dans la base",
     "cancelled": "Modifications annulées à votre demande"
   }
