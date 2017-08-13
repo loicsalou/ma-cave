@@ -10,7 +10,7 @@ export abstract class LockerComponent {
   content: Bottle[] = [];
 
   @Input()
-  selectable: boolean = false;
+  selectable: boolean = true;
 
   @Input()
   highlighted: Bottle[];

@@ -12,6 +12,7 @@
   "nom": "Casier",
   "old": "Vieux",
   "reset": "Réinitialiser",
+  "save": "Sauvegarder",
   "the-lockers": "Vos casiers",
   "validate": "Valider",
   "very-old": "Très vieux",
@@ -92,7 +93,8 @@
     "maxi-col-reached": "Le casier ne peut pas contenir plus de colonnes",
     "maxi-row-reached": "Le casier ne peut pas contenir plus de rangées",
     "mini-col-reached": "Le casier ne peut pas contenir moins de colonnes",
-    "mini-row-reached": "Le casier ne peut pas contenir moins de rangées"
+    "mini-row-reached": "Le casier ne peut pas contenir moins de rangées",
+    "rack-not-empty": "Le casier n'est pas vide"
   },
   "locker-format": {
     "0": "Piccolo (0.2 l)",
@@ -129,6 +131,8 @@
     "profile": "Profile"
   },
   "update": {
+    "edit-locker": "modifier les cellules",
+    "edit-racks": "modifier les racks",
     "failed": "La mise à jour a échoué",
     "saved": "Modifications sauvegardées dans la base",
     "cancelled": "Modifications annulées à votre demande"

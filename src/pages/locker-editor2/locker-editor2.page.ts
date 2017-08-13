@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {IonicPage, NavParams} from 'ionic-angular';
+import {IonicPage, NavController, NavParams} from 'ionic-angular';
 import {BottleSize, Dimension, Locker, LockerType} from '../../model/locker';
 import {FridgeLocker} from '../../model/fridge-locker';
 import {CellarPersistenceService} from '../../service/cellar-persistence.service';
@@ -8,6 +8,8 @@ import {Bottle} from '../../model/bottle';
 import {NotificationService} from '../../service/notification.service';
 import {LockerComponent} from '../../components/locker/locker.component';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
+import {SimpleLockerComponent} from '../../components/locker/simple-locker.component';
+import {FridgeLockerComponent} from '../../components/locker/fridge-locker.component';
 
 /**
  * Generated class for the LockerEditorComponent component.
@@ -43,7 +45,8 @@ export class LockerEditor2Page implements OnInit {
   fridgeLockersDimensions: Dimension[] = [];
 
   constructor(private params: NavParams, private cellarService: CellarPersistenceService,
-              private bottlesService: BottlePersistenceService, private notificationService: NotificationService) {
+              private bottlesService: BottlePersistenceService, private notificationService: NotificationService,
+              private navCtrl: NavController) {
   }
 
   ngOnInit(): void {
@@ -56,6 +59,11 @@ export class LockerEditor2Page implements OnInit {
     }
   }
 
+  isLockerEditable(): boolean {
+    return (this.lockerComponent instanceof SimpleLockerComponent) ||
+      (this.lockerComponent instanceof FridgeLockerComponent && (<FridgeLockerComponent>this.lockerComponent).anyRackSelected())
+  }
+
   isFridge(): boolean {
     return this.type === LockerType.fridge;
   }
@@ -64,7 +72,13 @@ export class LockerEditor2Page implements OnInit {
     return this.lockerFormats.slice(0, 6);
   }
 
+  cancel() {
+    this.notificationService.information('update.cancelled');
+    this.navCtrl.pop();
+  }
+
   saveLocker() {
     this.bottlesService.updateLockerAndBottles(this.lockerContent, this.locker);
+    this.navCtrl.pop();
   }
 }
