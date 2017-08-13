@@ -11,9 +11,9 @@ import {BottleSize, Dimension, Locker, LockerType} from './locker';
  */
 export class SimpleLocker extends Locker {
 
-  constructor(id: string, name: string, type: LockerType, dimension: Dimension, comment?: string, supportedFormats?: BottleSize[],
+  constructor(id: string, name: string, type: LockerType, dimension: Dimension, inFridge ?: boolean, comment?: string, supportedFormats?: BottleSize[],
               defaultImage?: string, imageUrl?: string) {
-    super(id, name, type, comment, defaultImage, imageUrl, supportedFormats, dimension);
+    super(id, name, type, comment, defaultImage, imageUrl, supportedFormats, dimension, inFridge);
   }
 
   getNbOfBottles(): number {

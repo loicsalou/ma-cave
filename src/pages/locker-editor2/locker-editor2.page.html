@@ -14,43 +14,45 @@
       <ion-icon name="create"></ion-icon>
     </button>
     <ion-fab-list side="top">
-      <button ion-fab (click)="removeTopRow()">
+      <button ion-fab (click)="lockerComponent.removeTopRow()">
         <ion-icon name="arrow-dropdown"></ion-icon>
       </button>
-      <button ion-fab (click)="addTopRow()">
+      <button ion-fab (click)="lockerComponent.addTopRow()">
         <ion-icon name="arrow-dropup"></ion-icon>
       </button>
     </ion-fab-list>
     <ion-fab-list side="right">
-      <button ion-fab (click)="removeRightColumn()">
+      <button ion-fab (click)="lockerComponent.removeRightColumn()">
         <ion-icon name="arrow-dropleft"></ion-icon>
       </button>
-      <button ion-fab (click)="addRightColumn()">
+      <button ion-fab (click)="lockerComponent.addRightColumn()">
         <ion-icon name="arrow-dropright"></ion-icon>
       </button>
     </ion-fab-list>
     <ion-fab-list side="bottom">
-      <button ion-fab (click)="removeBottomRow()">
+      <button ion-fab (click)="lockerComponent.removeBottomRow()">
         <ion-icon name="arrow-dropup"></ion-icon>
       </button>
-      <button ion-fab (click)="addBottomRow()">
+      <button ion-fab (click)="lockerComponent.addBottomRow()">
         <ion-icon name="arrow-dropdown"></ion-icon>
       </button>
     </ion-fab-list>
     <ion-fab-list side="left">
-      <button ion-fab (click)="removeLeftColumn()">
+      <button ion-fab (click)="lockerComponent.removeLeftColumn()">
         <ion-icon name="arrow-dropright"></ion-icon>
       </button>
-      <button ion-fab (click)="addLeftColumn()">
+      <button ion-fab (click)="lockerComponent.addLeftColumn()">
         <ion-icon name="arrow-dropleft"></ion-icon>
       </button>
     </ion-fab-list>
   </ion-fab>
   
-  <ion-row>
-    <locker #lockerCmp [locker]="locker" [content]="lockerContent" [size]="0" *ngIf="!locker.isFridge()"
-            (selected)="cellSelected($event)"></locker>
-    <fridge-locker #lockerCmp [fridge]="locker" [content]="lockerContent" [size]="0" *ngIf="locker.isFridge()"
+  <ion-row *ngIf="!locker.isFridge()">
+    <locker #lockerCmp [locker]="locker" [content]="lockerContent" (onCellSelected)="cellSelected($event)"></locker>
+  </ion-row>
+  
+  <ion-row *ngIf="locker.isFridge()">
+    <fridge-locker #lockerCmp [fridge]="locker" [content]="lockerContent" [selectable]="true"
                    (selected)="cellSelected($event)"></fridge-locker>
   </ion-row>
 

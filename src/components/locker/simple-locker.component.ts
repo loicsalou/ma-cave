@@ -1,9 +1,10 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
 import {SimpleLocker} from '../../model/simple-locker';
-import {LockerType} from '../../model/locker';
+import {Dimension, LockerType} from '../../model/locker';
 import {Bottle, Position} from '../../model/bottle';
 import {NotificationService} from '../../service/notification.service';
-import {Cell, Row, LockerComponent} from './locker.component';
+import {Cell, LockerComponent, Row} from './locker.component';
+import {Gesture} from 'ionic-angular';
 
 /**
  * Generated class for the SimpleLockerComponent component.
@@ -16,7 +17,11 @@ import {Cell, Row, LockerComponent} from './locker.component';
              templateUrl: './simple-locker.component.html',
              styleUrls: [ '/locker.component.scss' ]
            })
-export class SimpleLockerComponent extends LockerComponent implements OnInit {
+export class SimpleLockerComponent extends LockerComponent implements OnInit, AfterViewInit {
+  protected static MAX_NB_COLUMNS: number = 16;
+  protected static MIN_NB_COLUMNS: number = 1;
+  protected static MAX_NB_ROWS: number = 16;
+  protected static MIN_NB_ROWS: number = 1;
 
   @Input()
   locker: SimpleLocker;
@@ -37,6 +42,10 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit {
     }
   }
 
+  get dimension(): Dimension {
+    return this.locker.dimension
+  }
+
   isShifted(): boolean {
     return this.locker.type == LockerType.shifted
   }
@@ -50,12 +59,12 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit {
   }
 
   isFridge(): boolean {
-    return this.locker.type == LockerType.fridge
+    return false
   }
 
   cellSelected(cell: Cell) {
     if (cell) {
-      this.selected.emit(cell);
+      this.onCellSelected.emit(cell);
     }
   }
 
@@ -116,4 +125,209 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit {
     }
     return this.highlighted.find(btl => btl.id === bottle.id) !== undefined;
   }
+
+  ngAfterViewInit(): void {
+    if (this.selectable) {
+      if (this.zoomable && !this.locker.inFridge) {
+        this.setupPinchZoom(this.zoomable.nativeElement);
+      } else if (this.zoomable && this.locker.inFridge) {
+        this.setupPressGesture(this.zoomable.nativeElement);
+      }
+    }
+  }
+
+  protected setupPressGesture(elm: HTMLElement): void {
+    const pressGesture = new Gesture(elm);
+
+    pressGesture.listen();
+    pressGesture.on('press', onPress);
+    let self = this;
+
+    function onPress(ev) {
+      self.currentGesture = 'press';
+      ev.preventDefault();
+      self.selected = !self.selected;
+    }
+  }
+
+  addTopRow() {
+    if (!this.canIncreaseHeight()) {
+      return
+    }
+    this.locker.dimension.y++;
+    this.shiftBottles(0, 1);
+    this.resetComponent();
+  }
+
+  removeTopRow() {
+    if (!this.canRemoveRow(0)) {
+      return
+    }
+
+    //décaler d'une rangée vers le haut toutes les bouteilles du casier
+    this.shiftBottles(0, -1);
+
+    this.locker.dimension.y--;
+    this.resetComponent();
+  }
+
+  addRightColumn() {
+    if (!this.canIncreaseWidth()) {
+      return
+    }
+    this.locker.dimension.x++;
+    this.resetComponent();
+  }
+
+  removeRightColumn() {
+    if (!this.canRemoveColumn(this.locker.dimension.x - 1)) {
+      return
+    }
+    this.locker.dimension.x--;
+    this.resetComponent();
+  }
+
+  addBottomRow() {
+    if (!this.canIncreaseHeight()) {
+      return
+    }
+    this.locker.dimension.y++;
+    this.resetComponent();
+  }
+
+  removeBottomRow() {
+    if (!this.canRemoveRow(this.locker.dimension.y - 1)) {
+      return
+    }
+    this.locker.dimension.y--;
+    this.resetComponent();
+  }
+
+  addLeftColumn() {
+    if (!this.canIncreaseWidth()) {
+      return
+    }
+
+    this.locker.dimension.x++;
+    //décaler les bouteilles d'une colonne vers la droite
+    this.shiftBottles(1, 0);
+
+    this.resetComponent();
+  }
+
+  removeLeftColumn() {
+    if (!this.canRemoveColumn(0)) {
+      return
+    }
+
+    //décaler les bouteilles d'une colonne vers la gauche
+    this.shiftBottles(-1, 0);
+
+    this.locker.dimension.x--;
+    this.resetComponent();
+  }
+
+  protected canIncreaseHeight() {
+    if (this.dimension.y >= SimpleLockerComponent.MAX_NB_ROWS) {
+      this.notificationService.warning('locker-editor.maxi-row-reached');
+      return false
+    }
+    return true
+  }
+
+  protected canIncreaseWidth() {
+    if (this.dimension.x >= SimpleLockerComponent.MAX_NB_COLUMNS) {
+      this.notificationService.warning('locker-editor.maxi-col-reached');
+      return false
+    }
+    return true
+  }
+
+  protected canDecreaseHeight() {
+    if (this.dimension.y > SimpleLockerComponent.MIN_NB_ROWS) {
+      return true
+    }
+    this.notificationService.warning('locker-editor.mini-row-reached');
+    return false
+  }
+
+  protected canDecreaseWidth() {
+    if (this.dimension.x > SimpleLockerComponent.MIN_NB_COLUMNS) {
+      return true
+    }
+    this.notificationService.warning('locker-editor.mini-col-reached');
+    return false
+  }
+
+  //avant d'enlever une rangée on s'assure qu'elle est vide
+  public canRemoveFirstRow(): boolean {
+    return this.canRemoveRow(0)
+  }
+
+  //avant d'enlever une rangée on s'assure qu'elle est vide
+  public canRemoveLastRow(): boolean {
+    return this.canRemoveRow(this.dimension.y-1);
+  }
+  //avant d'enlever une rangée on s'assure qu'elle est vide
+  private canRemoveRow(rowNumber: number): boolean {
+    if (!this.canDecreaseHeight()) {
+      return false;
+    }
+    let btl = this.content.filter(
+      (btl: Bottle) => btl.positions.filter(
+        pos => pos.inRack(this.locker.id, this.rack) && pos.y === rowNumber
+      ).length > 0
+    );
+    let filled = btl.length > 0;
+    if (filled) {
+      this.notificationService.warning('locker-editor.filled-row');
+      return false
+    }
+
+    return true;
+  }
+
+
+  //avant d'enlever une colonne on s'assure qu'elle est vide
+  public canRemoveFirstColumn(): boolean {
+    return this.canRemoveColumn(0)
+  }
+
+  //avant d'enlever une colonne on s'assure qu'elle est vide
+  public canRemoveLastColumn(): boolean {
+    return this.canRemoveColumn(this.dimension.x-1);
+  }
+  //avant d'enlever une colonne on s'assure qu'elle est vide
+  private canRemoveColumn(colNumber: number): boolean {
+    if (!this.canDecreaseWidth()) {
+      return false;
+    }
+    let btl = this.content.filter(
+      (btl: Bottle) => btl.positions.filter(
+        pos => pos.inRack(this.locker.id, this.rack) && pos.x === colNumber
+      ).length > 0
+    );
+    let filled = btl.length > 0;
+    if (filled) {
+      this.notificationService.warning('locker-editor.filled-column');
+      return false
+    }
+    return true
+  }
+
+  private shiftBottles(shiftX: number, shiftY: number) {
+    this.content.forEach(
+      bottle => {
+        bottle.positions.forEach(
+          pos => {
+            if (pos.inRack(this.locker.id, this.rack)) {
+              pos.x += shiftX;
+              pos.y += shiftY;
+            }
+          }
+        )
+      }
+    )
+  }
+
 }

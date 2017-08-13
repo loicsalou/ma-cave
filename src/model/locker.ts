@@ -16,13 +16,15 @@ export abstract class Locker implements ImgDefaultable {
   supportedFormats: BottleSize[]; // liste des formats de bouteilles entreposables dans ce casier
   imageUrl?: string; //Photo éventuelle
   comment: string; //commentaire utile, emplacement etc.
+  inFridge = false;
 
   constructor(id: string, name: string, type: LockerType, comment: string = '', defaultImage: string = '',
-              imageUrl: string = '', supportedFormats: BottleSize[], public dimension: Dimension) {
+              imageUrl: string = '', supportedFormats: BottleSize[], public dimension: Dimension, inFridge: boolean) {
     this.id = id;
     this.name = name;
     this.type = type;
     this.defaultImage = defaultImage;
+    this.inFridge = inFridge;
     this.supportedFormats = supportedFormats ? supportedFormats : [
       BottleSize.fillette, BottleSize.demie, BottleSize.bouteille, BottleSize.clavelin, BottleSize.piccolo, BottleSize.chopine
     ];
