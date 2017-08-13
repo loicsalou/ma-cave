@@ -89,10 +89,18 @@ export class BottlePersistenceService extends PersistenceService {
       return btl;
     })).then(
       () => {
-        //mise à jour faite
+        () => this.notificationService.information('update.saved')
+        err => this.notificationService.failed('update.failed', err)
       },
-      err => this.notificationService.failed('La mise à jour de la bouteille a échoué !', err)
     )
+  }
+
+  public updateLockerAndBottles(bottles: Bottle[], locker: Locker) {
+    this.dataConnection.updateLockerAndBottles(bottles, locker)
+      .then(
+        () => this.notificationService.information('update.saved'),
+        err => this.notificationService.failed('update.failed', err)
+      )
   }
 
   public save(bottles: Bottle[]) {

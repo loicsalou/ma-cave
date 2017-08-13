@@ -1,153 +1,192 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {SimpleLocker} from '../../model/simple-locker';
+import {ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {Configuration} from '../config/Configuration';
-import {LockerType} from '../../model/locker';
 import {Bottle, Position} from '../../model/bottle';
-import {NotificationService} from '../../service/notification.service';
+import {Gesture} from 'ionic-angular';
+import {Dimension} from '../../model/locker';
 
-/**
- * Generated class for the LockerComponent component.
- *
- * See https://angular.io/docs/ts/latest/api/core/index/ComponentMetadata-class.html
- * for more info on Angular Components.
- */
-@Component({
-             selector: 'locker',
-             templateUrl: './locker.component.html',
-             styleUrls: [ '/locker.component.scss' ]
-           })
-export class LockerComponent implements OnInit {
-
-  public static SIZE_CLASSES = [ 'small', 'medium', 'big', 'huge' ];
-
-  @Input()
-  locker: SimpleLocker;
-
-  @Input()
-  rack: number = 0;
+export abstract class LockerComponent {
 
   @Input()
   content: Bottle[] = [];
 
   @Input()
+  selectable: boolean = true;
+
+  @Input()
   highlighted: Bottle[];
 
   @Output()
-  selected: EventEmitter<Cell> = new EventEmitter<Cell>();
+  onCellSelected: EventEmitter<Cell> = new EventEmitter<Cell>();
+  scale: number;
+  currentGesture: any;
+  currentStyle: any;
+  selected: boolean = false;
 
-  rows: Row[];
-  private bogusBottles = [];
+  @ViewChild('zoomable') zoomable: ElementRef;
 
-  constructor(private notificationService: NotificationService) {
+
+  constructor() {
   }
 
-  ngOnInit(): void {
-    if (this.locker.dimension && !this.rows) {
-      this.resetComponent();
+  /**
+   * refreshes component after an update has been made
+   */
+  public abstract resetComponent();
+
+  abstract get dimension(): Dimension;
+
+  //avant d'enlever la première rangée on s'assure qu'elle est vide
+  public abstract canRemoveFirstRow(rowNumber: number): boolean;
+
+  //avant d'enlever la première colonne on s'assure qu'elle est vide
+  public abstract canRemoveFirstColumn(colNumber: number): boolean;
+
+  //avant d'enlever la dernière rangée on s'assure qu'elle est vide
+  public abstract canRemoveLastRow(rowNumber: number): boolean;
+
+  //avant d'enlever la dernière colonne on s'assure qu'elle est vide
+  public abstract canRemoveLastColumn(colNumber: number): boolean;
+
+  protected setupPinchZoom(elm: HTMLElement): void {
+    const gesture = new Gesture(elm);
+
+    // max translate x = (container_width - element absolute_width)px
+    // max translate y = (container_height - element absolute_height)px
+    let ow = 0;
+    let oh = 0;
+    for (let i = 0; i < elm.children.length; i++) {
+      let c = <HTMLElement>elm.children.item(i);
+      ow = c.offsetWidth;
+      oh += c.offsetHeight;
     }
-    this.content.forEach(
-      bottle => {
-        if (bottle.positions) {
-          bottle.positions.filter(
-            position => position.inRack(this.locker.id, this.rack)
-          ).forEach(
-            position => this.placeBottle(bottle, position)
-          )
+    const original_x = elm.clientWidth - ow;
+    const original_y = elm.clientHeight - oh;
+    let max_x = original_x;
+    let max_y = original_y;
+    let min_x = 0;
+    let min_y = 0;
+    let x = 0;
+    let y = 0;
+    let last_x = 0;
+    let last_y = 0;
+    this.scale = 1;
+    let base = this.scale;
+
+    gesture.listen();
+    gesture.on('pan', onPan);
+    gesture.on('panend', onPanend);
+    gesture.on('pancancel', onPanend);
+    gesture.on('tap', onTap);
+    gesture.on('pinch', onPinch);
+    gesture.on('pinchend', onPinchend);
+    gesture.on('pinchcancel', onPinchend);
+    gesture.on('swipe', onPinchend);
+    let self = this;
+
+    function onPan(ev) {
+      self.currentGesture = 'pan';
+      ev.preventDefault();
+      x = ev.deltaX;
+      y = ev.deltaY;
+      setCoor(ev.deltaX, ev.deltaY);
+      transform();
+    }
+
+    function onPanend(ev) {
+      self.currentGesture = 'panend';
+      ev.preventDefault();
+      // remembers previous position to continue panning.
+      last_x = x;
+      last_y = y;
+      transform(x, y);
+    }
+
+    function onTap(ev) {
+      self.currentGesture = 'tap';
+      ev.preventDefault();
+      if (ev.tapCount === 2) {
+        let reset = false;
+        self.scale += .5;
+        if (self.scale > 2) {
+          self.scale = 1;
+          reset = true;
         }
-      });
-    if (this.bogusBottles.length > 0) {
-      this.notificationService.ask('Position inexistante', this.bogusBottles.length + ' bouteilles sont dans une position' +
-        ' inexistante: les remettre en attente de rangement ?')
-        .subscribe(
-          result => {
-            if (result) {
-              this.notificationService.information('SUPPRESSION DES POSITIONS ERRONEES A IMPLEMENTER')
-              //this.bogusBottles.forEach(btl => btl.positions = btl.positions.filter(
-              //  pos => !(pos.lockerId = position.lockerId && pos.x === position.x && pos.y === position.y)))
-            }
-          })
+        setBounds();
+        reset ? transform(max_x / 2, max_y / 2) : transform();
+      }
     }
 
-  }
+    function onPinch(ev) {
+      self.currentGesture = 'pinch';
+      ev.preventDefault();
+      // formula to append scale to new scale
+      self.scale = base + (ev.scale * self.scale - self.scale) / self.scale
 
-  //
-  //ngOnChanges(changes: any) {
-  //  this.resetComponent();
-  //}
-
-  sizeClass(): string {
-    return LockerComponent.SIZE_CLASSES[ this.locker.currentSize ];
-  }
-
-  isShifted(): boolean {
-    return this.locker.type == LockerType.shifted
-  }
-
-  isDiamond(): boolean {
-    return this.locker.type == LockerType.diamond
-  }
-
-  isSimple(): boolean {
-    return this.locker.type == LockerType.simple
-  }
-
-  isFridge(): boolean {
-    return this.locker.type == LockerType.fridge
-  }
-
-  cellSelected(cell: Cell) {
-    if (cell) {
-      this.selected.emit(cell);
+      setBounds();
+      transform();
     }
-  }
 
-  private resetComponent() {
-    this.rows = [];
-    for (let i = 0; i < this.locker.dimension.y; i++) {
-      this.rows[ i ] = this.initRow(this.locker.dimension.x, i);
+    function onPinchend(ev) {
+      self.currentGesture = 'pinchend';
+      if (self.scale > 4) {
+        self.scale = 4;
+      }
+      if (self.scale < 0.5) {
+        self.scale = 0.5;
+      }
+      // lets pinch know where the new base will start
+      base = self.scale;
+      setBounds();
+      transform();
     }
-  }
 
-  private initRow(nbcells: number, rowIndex: number): Row {
-    let cells: Cell[] = [];
-    //let rowId = this.locker.name + '-' + rowIndex;
-    for (let i = 0; i < nbcells; i++) {
-      let position = new Position(this.locker.id, i, rowIndex, this.rack);
-      cells[ i ] = new Cell(position);
+    function onSwipe(ev) {
+      ev.preventDefault();
+      self.currentGesture = 'swipe';
     }
-    //return new Row(cells, rowId, rowIndex);
-    return new Row(cells, rowIndex);
-  }
 
-  public placeBottle(bottle: Bottle, position: Position) {
-    this.bogusBottles = [];
-    if (this.rows.length < position.y || this.rows[ position.y ].cells.length < position.y) {
-      this.bogusBottles.push(bottle);
-    } else {
-      let targetCell = this.rows[ position.y ].cells[ position.x ];
-      targetCell.storeBottle(bottle, this.isHighlighted(bottle));
-      //bottle.addNewPosition(targetCell.position);
-    }
-  }
+    function setBounds() {
+      // I am scaling the container not the elements
+      // since container is fixed, the container scales from the middle, while the
+      // content scales down and right, with the top and left of the container as boundaries
+      // scaled = absolute width * scale - already set width divided by 2;
+      let scaled_x = Math.ceil((elm.offsetWidth * self.scale - elm.offsetWidth) / 2);
+      let scaled_y = Math.ceil((elm.offsetHeight * self.scale - elm.offsetHeight) / 2);
+      // for max_x && max_y; adds the value relevant to their overflowed size
+      let overflow_x = Math.ceil(original_x * self.scale - original_x); // returns negative
+      let overflow_y = Math.ceil(oh * self.scale - oh);
 
-  isHighlighted(bottle: Bottle): boolean {
-    if (!this.highlighted) {
-      return false;
+      max_x = original_x - scaled_x + overflow_x;
+      min_x = 0 + scaled_x;
+      // remove added height from container
+      max_y = original_y + scaled_y - overflow_y;
+      min_y = 0 + scaled_y;
+
+      setCoor(-scaled_x, scaled_y);
+      console.info(`x: ${x}, scaled_x: ${scaled_x}, y: ${y}, scaled_y: ${scaled_y}`)
     }
-    return this.highlighted.find(btl => btl.id === bottle.id) !== undefined;
+
+    function setCoor(xx: number, yy: number) {
+      x = Math.min(Math.max((last_x + xx), max_x), min_x);
+      y = Math.min(Math.max((last_y + yy), max_y), min_y);
+    }
+
+    // xx && yy are for resetting the position when the scale return to 1.
+    function transform(xx?: number, yy?: number) {
+      elm.style.webkitTransform = `translate3d(${xx || x}px, ${yy || y}px, 0) scale3d(${self.scale}, ${self.scale}, 1)`;
+      self.currentStyle = elm.style.webkitTransform;
+    }
   }
 }
 
-class Row {
+export class Row {
 
   private id: string;
   index: number;
   cells: Cell[];
 
-  //constructor(cells: Cell[], id: string, rowIndex: number) {
   constructor(cells: Cell[], rowIndex: number) {
     this.cells = cells;
-    //this.id = id;
     this.index = rowIndex;
   }
 

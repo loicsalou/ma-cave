@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {IonicModule, IonicPageModule} from 'ionic-angular';
 import {CellarPage} from './cellar.page';
 import {TranslateModule} from '@ngx-translate/core';
-import {LockerComponent} from '../../components/locker/locker.component';
+import {SimpleLockerComponent} from '../../components/locker/simple-locker.component';
 import {CellarPersistenceService} from '../../service/cellar-persistence.service';
 import {CommonModule} from '@angular/common';
 import {BrowserModule} from '@angular/platform-browser';
@@ -12,12 +12,12 @@ import {LockerEditorPage} from '../locker-editor/locker-editor.page';
 import {LockerEditorPageModule} from '../locker-editor/locker-editor.page.module';
 import {FormsModule} from '@angular/forms';
 import {FirebaseConnectionService} from '../../service/firebase-connection.service';
+import {LockerEditor2Page} from '../locker-editor2/locker-editor2.page';
+import {LockerEditor2PageModule} from '../locker-editor2/locker-editor2.page.module';
 
 @NgModule({
             declarations: [
-              CellarPage,
-              LockerComponent,
-              FridgeLockerComponent
+              CellarPage
             ],
             imports: [
               BrowserModule,
@@ -26,13 +26,15 @@ import {FirebaseConnectionService} from '../../service/firebase-connection.servi
               IonicModule,
               IonicPageModule.forChild(CellarPage),
               LockerEditorPageModule,
+              LockerEditor2PageModule,
               SharedModule,
               TranslateModule
             ],
             exports: [
               CellarPage,
-              LockerComponent,
               LockerEditorPage,
+              LockerEditor2Page,
+              SimpleLockerComponent,
               FridgeLockerComponent
             ],
             providers: [
@@ -40,7 +42,8 @@ import {FirebaseConnectionService} from '../../service/firebase-connection.servi
               FirebaseConnectionService
             ],
             entryComponents: [
-              LockerEditorPage
+              LockerEditorPage,
+              LockerEditor2Page
             ]
           })
 export class CellarPageModule {

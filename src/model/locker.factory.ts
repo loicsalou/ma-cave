@@ -27,7 +27,7 @@ export class LockerFactory {
                                 json[ 'defaultImage' ], json[ 'imageUrl' ]);
     } else {
       let dim: Dimension=json.dimension;
-      locker = new SimpleLocker(json['id'], json[ 'name' ], LockerType.simple, dim, json[ 'comment' ],
+      locker = new SimpleLocker(json['id'], json[ 'name' ], LockerType.simple, dim, false, json[ 'comment' ],
                                 json[ 'supportedFormats' ], json[ 'defaultImage' ], json[ 'imageUrl' ]);
     }
     return locker;

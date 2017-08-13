@@ -31,6 +31,7 @@ import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
  */
 @Injectable()
 export class FirebaseConnectionService {
+  public USER_ROOT: string;
   protected USERS_FOLDER = 'users';
 
   public IMAGES_ROOT: string;
@@ -48,6 +49,8 @@ export class FirebaseConnectionService {
 
   protected XREF_FOLDER = 'xref';
   public XREF_ROOT: string;
+
+  private userRootRef: Reference;
 
   private bottlesRootRef: Reference;
   private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
@@ -76,10 +79,12 @@ export class FirebaseConnectionService {
   public initialize(user: User) {
     this.IMAGES_ROOT = this.IMAGES_FOLDER;
     this.XREF_ROOT = this.XREF_FOLDER;
+    this.USER_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user;
     this.BOTTLES_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.BOTTLES_FOLDER;
     this.CELLAR_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.CELLAR_FOLDER;
     this.LOCKER_CONTENT_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.LOCKER_CONTENT_FOLDER;
 
+    this.userRootRef = this.angularFirebase.database.ref(this.USER_ROOT);
     this.bottlesRootRef = this.angularFirebase.database.ref(this.BOTTLES_ROOT);
     this.cellarRootRef = this.angularFirebase.database.ref(this.CELLAR_ROOT);
     this.lockerContentRootRef = this.angularFirebase.database.ref(this.LOCKER_CONTENT_ROOT);
@@ -87,6 +92,7 @@ export class FirebaseConnectionService {
   }
 
   public cleanup() {
+    this.USER_ROOT = undefined;
     this.CELLAR_ROOT = undefined;
     this.BOTTLES_ROOT = undefined;
     this.IMAGES_ROOT = undefined;
@@ -422,10 +428,13 @@ export class FirebaseConnectionService {
     }
   }
 
+  /**
+   * met à jour dans une transaction les bouteilles passées en paramètre.
+   * Soit toute la mise à jour est faite, soit rien n'est mis à jour.
+   * @param {Bottle[]} bottles
+   * @returns {Promise<any>}
+   */
   public update(bottles: Bottle[ ]): Promise<any> {
-    //TODO Attention le fait de faire une boucle sur update provoque autant d'événement dans l'observable firebase
-    // qu'il y a d'updates faits ==> essayer de faire un seul update global, il me semble qu'il y a une notion de
-    // transaction ==> à voir
     if (!this.connectionAllowed) {
       this.notificationService.i18nFailed('update.failed');
       return undefined;
@@ -438,6 +447,39 @@ export class FirebaseConnectionService {
         updates[ '/' + bottle.id ] = bottle;
       });
       this.bottlesRootRef.update(updates, (
+        err => {
+          if (err == null) {
+            resolve(null)
+          } else {
+            reject(err)
+          }
+        }
+      ));
+    })
+  }
+
+  /**
+   * Transaction de mise à jour d'un casier et de son contenu. Soit toute la mise é jour est faite soit rien n'est
+   * mis à jour, ce afin de préserver la cohérence des données.
+   * @param {Bottle[]} bottles bouteilles du casier
+   * @param {Locker} locker casier contenant les bouteilles
+   * @returns {Promise<any>}
+   */
+  public updateLockerAndBottles(bottles: Bottle[], locker: Locker): Promise<any> {
+    if (!this.connectionAllowed) {
+      this.notificationService.i18nFailed('update.failed');
+      return undefined;
+    }
+
+    return new Promise((resolve, reject) => {
+      let updates = {};
+      bottles.forEach(bottle => {
+        bottle[ 'lastUpdated' ] = new Date().getTime();
+        updates[ '/' + FirebaseConnectionService.BOTTLES_FOLDER + '/' + bottle.id ] = bottle;
+      });
+      locker[ 'lastUpdated' ] = new Date().getTime();
+      updates[ '/' + FirebaseConnectionService.CELLAR_FOLDER + '/' + locker.id ] = locker;
+      this.userRootRef.update(updates, (
         err => {
           if (err == null) {
             resolve(null)

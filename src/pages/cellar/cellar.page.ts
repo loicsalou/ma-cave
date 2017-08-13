@@ -1,15 +1,17 @@
-import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {IonicPage, ModalController, NavParams, Slides} from 'ionic-angular';
+import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Content, Gesture, Haptic, IonicPage, ModalController, NavParams, Slides} from 'ionic-angular';
 import {CellarPersistenceService} from '../../service/cellar-persistence.service';
 import {Locker, LockerType} from '../../model/locker';
-import {Cell, LockerComponent} from '../../components/locker/locker.component';
+import {SimpleLockerComponent} from '../../components/locker/simple-locker.component';
 import {NotificationService} from '../../service/notification.service';
-import * as _ from 'lodash';
-import {LockerEditorPage} from '../locker-editor/locker-editor.page';
 import {Subscription} from 'rxjs/Subscription';
 import {Bottle, Position} from '../../model/bottle';
 import {SimpleLocker} from '../../model/simple-locker';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
+import {LockerEditor2Page} from '../locker-editor2/locker-editor2.page';
+import {Cell} from '../../components/locker/locker.component';
+import {LockerEditorPage} from '../locker-editor/locker-editor.page';
+import * as _ from 'lodash';
 
 /**
  * Generated class for the CellarPage page.
@@ -26,7 +28,6 @@ import {BottlePersistenceService} from '../../service/bottle-persistence.service
 export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
 
   private otherLockers: Locker[];
-  //private chosenLocker: Locker;
   private paginatedLocker: Locker;
   @ViewChild(Slides) slides: Slides;
 
@@ -37,13 +38,17 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
   private lockerContent: Bottle[];
 
   @ViewChild('placedLockerComponent')
-  private placedLockerComponent: LockerComponent;
+  private placedLockerComponent: SimpleLockerComponent;
   private bottlesToPlaceLocker: SimpleLocker;
   private bottlesToPlace: Bottle[];
   private bottlesToHighlight: Bottle[];
 
+  @ViewChild('zoomable') zoomable: ElementRef;
+
+  private scale: number = 1;
+
   constructor(private cellarService: CellarPersistenceService, private bottleService: BottlePersistenceService,
-              private notificationService: NotificationService,
+              private notificationService: NotificationService, private haptic: Haptic,
               private modalCtrl: ModalController, private params: NavParams) {
   }
 
@@ -53,7 +58,7 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
       this.bottlesToPlaceLocker = new SimpleLocker(undefined, 'placedLocker', LockerType.simple, {
         x: this.bottlesToPlace.reduce((total, btl) => total + btl.numberToBePlaced(), 0),
         y: 1
-      })
+      }, false)
       ;
     }
     this.bottlesToHighlight = this.params.data[ 'bottlesToHighlight' ];
@@ -85,6 +90,25 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
     this.lockersSub.unsubscribe();
   }
 
+  ionSlideDrag(event: any) {
+    //this.percent = item.getSlidingPercent();
+    //console.info("drag " + this.percent + " %");
+    //if (this.percent < 0 && Math.abs(this.percent) > 0.15) {
+    //  this.addToFavoritesOrRemove(null, item, bottle);
+    //}
+    console.info();
+  }
+
+  increaseSize() {
+    this.scale += .1;
+    this.zoomable.nativeElement.style.transform = `scale(${this.scale}, ${this.scale})`;
+  }
+
+  decreaseSize() {
+    this.scale -= .1;
+    this.zoomable.nativeElement.style.transform = `scale(${this.scale}, ${this.scale})`;
+  }
+
   resetPaginatedLocker() {
     if (this.otherLockers.length > 0) {
       let ix = this.slides.getActiveIndex();
@@ -95,21 +119,16 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  increaseSize() {
-    this.paginatedLocker.increaseSize();
-  }
-
-  decreaseSize() {
-    this.paginatedLocker.decreaseSize();
-  }
-
   createLocker() {
     let editorModal = this.modalCtrl.create(LockerEditorPage, {}, {showBackdrop: false});
     editorModal.present();
   }
 
   updateLocker() {
-    let editorModal = this.modalCtrl.create(LockerEditorPage, {locker: this.paginatedLocker}, {showBackdrop: true});
+    let editorModal = this.modalCtrl.create(LockerEditor2Page, {
+      locker: this.paginatedLocker,
+      content: this.lockerContent
+    }, {showBackdrop: true});
     editorModal.present();
   }
 
@@ -157,6 +176,7 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
   cellSelected(cell: Cell) {
     this.cellarService.isEmpty(this.paginatedLocker);
     if (cell) {
+      this.haptic.selection();
       if (this.pendingCell) {
         if (cell.position.equals(this.pendingCell.position)) {
           if (cell.bottle && cell.bottle.id === this.pendingCell.bottle.id) {

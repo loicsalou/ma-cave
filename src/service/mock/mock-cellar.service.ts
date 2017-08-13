@@ -53,6 +53,7 @@ export class MockCellarService implements CellarService {
                                     x: 12,
                                     y: 10,
                                   },
+                                  false,
                                   'casier numéro 1',
     );
     let locker2 = new FridgeLocker('mock-id2',
@@ -88,6 +89,7 @@ export class MockCellarService implements CellarService {
                                      x: 16,
                                      y: 20,
                                    },
+                                   false,
                                    'Empilement de cellules polystyrène',
     );
 

@@ -1,19 +1,20 @@
 <ion-header class="cellar-page">
   <ion-navbar>
-    <ion-title>{{'lockers' | translate}}</ion-title>
+    <ion-title>{{'lockers' | translate}} - {{scale}}</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding class="cellar-page">
   
   <ion-row>
-    <ion-slides [zoom]="true" [pager]="true" (ionSlideDidChange)="slideChanged()" [spaceBetween]="5">
+    <ion-slides [pager]="false" (ionSlideDidChange)="slideChanged()" [spaceBetween]="5"
+                (ionSlideDrag)="ionSlideDrag($event)" [slidesPerView]="1">
       <ion-slide *ngFor="let locker of otherLockers" style="max-width: 90vw">
-        <div class="swiper-zoom-container">
+        <div style="width: 100%" #zoomable>
           <locker [locker]="locker" [content]="lockerContent" *ngIf="!locker.isFridge()"
-                  [highlighted]="bottlesToHighlight" (selected)="cellSelected($event)"></locker>
+                  [highlighted]="bottlesToHighlight" (onCellSelected)="cellSelected($event)"></locker>
           <fridge-locker [fridge]="locker" [content]="lockerContent" *ngIf="locker.isFridge()"
-                         [highlighted]="bottlesToHighlight" (selected)="cellSelected($event)"></fridge-locker>
+                         [highlighted]="bottlesToHighlight" (onCellSelected)="cellSelected($event)"></fridge-locker>
         </div>
       </ion-slide>
     </ion-slides>
@@ -21,7 +22,7 @@
   
   <ion-row *ngIf="bottlesToPlace">
     <locker #placedLockerComponent [locker]="bottlesToPlaceLocker" [content]="bottlesToPlace"
-            (selected)="cellSelected($event)"></locker>
+            (onCellSelected)="cellSelected($event)"></locker>
   </ion-row>
   
   <ion-fab bottom right>

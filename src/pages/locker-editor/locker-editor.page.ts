@@ -88,7 +88,7 @@ export class LockerEditorPage {
       // supportedFormats?: BottleSize[], imageUrl?: string
       locker = new FridgeLocker(undefined, this.name, this.type, this.fridgeLockersDimensions, this.comment, this.supportedFormats);
     } else {
-      locker = new SimpleLocker(undefined, this.name, this.type, this.lockerDimension, this.comment, this.supportedFormats);
+      locker = new SimpleLocker(undefined, this.name, this.type, this.lockerDimension, false, this.comment, this.supportedFormats);
     }
     this.cellarService.createLocker(locker);
   }

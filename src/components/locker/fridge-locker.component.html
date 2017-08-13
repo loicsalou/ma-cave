@@ -1,7 +1,8 @@
-<!-- Generated template for the LockerComponent component -->
-<div class="fridge-locker-component">
-  <div class="rack" [ngClass]="sizeClass()">
-    <locker *ngFor="let rack of fridge.racks; let ix=index" [locker]="rack"
-            [highlighted]="highlighted" [content]="content" [rack]="ix" (selected)="cellSelected($event)"></locker>
+<!-- Generated template for the SimpleLockerComponent component -->
+<div class="fridge-locker-component" #zoomable>
+  <div class="rack">
+    <locker *ngFor="let rack of fridge.racks; let ix=index" [locker]="rack" [selectable]="selectable"
+            [highlighted]="highlighted" [content]="content" [rack]="ix"
+            (onCellSelected)="cellSelected($event)"></locker>
   </div>
 </div>

@@ -59,6 +59,7 @@ import {NativeStorage} from '@ionic-native/native-storage';
 import {LocalLoginService} from '../service/local-login.service';
 import {LocalLoginPage} from '../pages/login/local-login.page';
 import {LockerEditorPageModule} from '../pages/locker-editor/locker-editor.page.module';
+import {LockerEditor2PageModule} from '../pages/locker-editor2/locker-editor2.page.module';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -89,6 +90,7 @@ export const fireConfig = {
               CellarPageModule,
               ChartsModule,
               LockerEditorPageModule,
+              LockerEditor2PageModule,
               DashboardPageModule,
               HttpModule,
               ProfilePageModule,

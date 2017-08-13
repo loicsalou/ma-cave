@@ -16,20 +16,29 @@ export abstract class Locker implements ImgDefaultable {
   supportedFormats: BottleSize[]; // liste des formats de bouteilles entreposables dans ce casier
   imageUrl?: string; //Photo éventuelle
   comment: string; //commentaire utile, emplacement etc.
-
-  currentSize = LockerSize.medium;
+  inFridge = false;
 
   constructor(id: string, name: string, type: LockerType, comment: string = '', defaultImage: string = '',
-              imageUrl: string = '', supportedFormats: BottleSize[]) {
+              imageUrl: string = '', supportedFormats: BottleSize[], public dimension: Dimension, inFridge: boolean) {
     this.id = id;
     this.name = name;
     this.type = type;
     this.defaultImage = defaultImage;
+    this.inFridge = inFridge;
     this.supportedFormats = supportedFormats ? supportedFormats : [
       BottleSize.fillette, BottleSize.demie, BottleSize.bouteille, BottleSize.clavelin, BottleSize.piccolo, BottleSize.chopine
     ];
     this.imageUrl = imageUrl;
     this.comment = comment;
+    //if (Array.isArray(dimension)) {
+    //  let totDim: Dimension = {x: 0, y: 0}
+    //  this.dimension = dimension.reduce(
+    //    (totDim, dim) => {
+    //      return {x: totDim.x + dim.x, y: totDim.y + dim.y}
+    //    }, totDim);
+    //} else {
+    //  this.dimension = <Dimension> dimension; //dimension L x H
+    //}
   }
 
   getDefaultImageSrc(): string {
@@ -41,10 +50,6 @@ export abstract class Locker implements ImgDefaultable {
   }
 
   abstract isFridge(): boolean;
-
-  abstract increaseSize();
-
-  abstract decreaseSize();
 }
 
 export enum LockerType {
@@ -76,8 +81,4 @@ export enum BottleSize {
   balthazar,
   nabuchodonozor,
   melchior
-}
-
-export enum LockerSize {
-  small, medium, big, huge
 }
