@@ -6,6 +6,7 @@ import {BottlePersistenceService} from '../../service/bottle-persistence.service
 import {Bottle} from '../../model/bottle';
 import {FilterSet} from '../../components/distribution/distribution';
 import {Subscription} from 'rxjs/Subscription';
+import {DeviceFeedback} from '@ionic-native/device-feedback';
 
 @Component({
              selector: 'page-dashboard',
@@ -15,13 +16,17 @@ import {Subscription} from 'rxjs/Subscription';
 export class DashboardPage implements OnInit, OnDestroy {
   version: any;
   bottles: Bottle[];
-  totalNumberOfBottles:number=0;
+  totalNumberOfBottles: number = 0;
   private bottleSub: Subscription;
 
-  constructor(public navCtrl: NavController, public loginService: LoginService, private bottleService: BottlePersistenceService) {
+  constructor(public navCtrl: NavController, public loginService: LoginService,
+              private bottleService: BottlePersistenceService, private deviceFeedback: DeviceFeedback) {
   }
 
   ngOnInit(): void {
+    this.deviceFeedback.acoustic();
+    this.deviceFeedback.haptic(0);
+
     this.version = require('../../../package.json').version;
     this.bottleSub = this.bottleService.allBottlesObservable.subscribe(
       (bottles: Bottle[]) => {

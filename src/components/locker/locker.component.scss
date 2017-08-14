@@ -1,6 +1,12 @@
 .locker-component {
+  .locker .container {
+    border: thin solid transparent;
+    background-color: transparent;
+  }
+
   &.selected .locker .container {
     border: thin solid red;
+    background-color: red;
   }
 
   .locker {

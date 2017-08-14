@@ -5,6 +5,7 @@ import {NotificationService} from '../../service/notification.service';
 import {Dimension, Locker, LockerType} from '../../model/locker';
 import {SimpleLockerComponent} from './simple-locker.component';
 import {SimpleLocker} from '../../model/simple-locker';
+import {DeviceFeedback} from '@ionic-native/device-feedback';
 
 /**
  * Generated class for the CompositeLockerComponent component.
@@ -32,8 +33,8 @@ export class FridgeLockerComponent extends LockerComponent implements OnInit {
 
   @ViewChildren(SimpleLockerComponent) rackComponents: QueryList<SimpleLockerComponent>;
 
-  constructor(private notificationService: NotificationService) {
-    super()
+  constructor(private notificationService: NotificationService, deviceFeedback: DeviceFeedback) {
+    super(deviceFeedback)
   }
 
   ngOnInit(): void {
@@ -68,6 +69,7 @@ export class FridgeLockerComponent extends LockerComponent implements OnInit {
   }
 
   addTopRack(): boolean {
+    this.hapticConfirm();
     let currentHeight = this.fridge.racks.reduce((total, rack) => total + rack.dimension.y, 0);
     if (currentHeight + 1 > FridgeLockerComponent.MAX_NB_ROWS) {
       this.notificationService.information('locker-editor.maxi-row-reached');
@@ -92,6 +94,7 @@ export class FridgeLockerComponent extends LockerComponent implements OnInit {
   }
 
   addBottomRack(): boolean {
+    this.hapticConfirm();
     let currentHeight = this.fridge.racks.reduce((total, rack) => total + rack.dimension.y, 0);
     if (currentHeight + 1 > FridgeLockerComponent.MAX_NB_ROWS) {
       this.notificationService.information('locker-editor.maxi-row-reached');
@@ -105,6 +108,7 @@ export class FridgeLockerComponent extends LockerComponent implements OnInit {
   }
 
   removeTopRack(): boolean {
+    this.hapticConfirm();
     if (this.fridge.racks.length<2) {
       this.notificationService.warning('locker-editor.mini-row-reached');
       return false
@@ -135,6 +139,7 @@ export class FridgeLockerComponent extends LockerComponent implements OnInit {
   }
 
   removeBottomRack(): boolean {
+    this.hapticConfirm();
     if (this.fridge.racks.length<2) {
       this.notificationService.warning('locker-editor.mini-row-reached');
       return false
@@ -165,6 +170,7 @@ export class FridgeLockerComponent extends LockerComponent implements OnInit {
   }
 
   addTopRow(): boolean {
+    this.hapticConfirm();
     if (!this.canIncreaseHeight()) {
       return false
     }
@@ -182,6 +188,7 @@ export class FridgeLockerComponent extends LockerComponent implements OnInit {
   }
 
   removeTopRow(): boolean {
+    this.hapticConfirm();
     if (!this.canRemoveFirstRow()) {
       return false
     }
@@ -200,6 +207,7 @@ export class FridgeLockerComponent extends LockerComponent implements OnInit {
   }
 
   addRightColumn(): boolean {
+    this.hapticConfirm();
     if (!this.canIncreaseWidth()) {
       return false
     }
@@ -217,6 +225,7 @@ export class FridgeLockerComponent extends LockerComponent implements OnInit {
   }
 
   removeRightColumn(): boolean {
+    this.hapticConfirm();
     if (!this.canRemoveLastColumn()) {
       return false
     }
@@ -234,6 +243,7 @@ export class FridgeLockerComponent extends LockerComponent implements OnInit {
   }
 
   addBottomRow(): boolean {
+    this.hapticConfirm();
     if (!this.canIncreaseHeight()) {
       return false
     }
@@ -251,6 +261,7 @@ export class FridgeLockerComponent extends LockerComponent implements OnInit {
   }
 
   removeBottomRow(): boolean {
+    this.hapticConfirm();
     if (!this.canRemoveLastRow()) {
       return false
     }
@@ -268,6 +279,7 @@ export class FridgeLockerComponent extends LockerComponent implements OnInit {
   }
 
   addLeftColumn(): boolean {
+    this.hapticConfirm();
     if (!this.canIncreaseWidth()) {
       return false
     }
@@ -286,6 +298,7 @@ export class FridgeLockerComponent extends LockerComponent implements OnInit {
   }
 
   removeLeftColumn(): boolean {
+    this.hapticConfirm();
     if (!this.canRemoveFirstColumn()) {
       return false
     }

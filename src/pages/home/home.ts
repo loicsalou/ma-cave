@@ -9,6 +9,7 @@ import {SplashScreen} from '@ionic-native/splash-screen';
 import {LocalLoginPage} from '../login/local-login.page';
 import {FirebaseConnectionService} from '../../service/firebase-connection.service';
 import {NotificationService} from '../../service/notification.service';
+import {DeviceFeedback} from '@ionic-native/device-feedback';
 
 @Component({
              selector: 'page-home',
@@ -22,9 +23,13 @@ export class HomePage implements OnInit, AfterViewInit {
 
   private authenticated = false;
   private loginSubscription: Subscription;
+  private fbidentifying: boolean=false;
+  private mailidentifying: boolean=false;
+  private locidentifying: boolean=false;
+  private anoidentifying: boolean=false;
 
   constructor(public navCtrl: NavController, public platform: Platform, public loginService: LoginService,
-              private modalController: ModalController, private splashScreen: SplashScreen,
+              private modalController: ModalController, private splashScreen: SplashScreen, private deviceFeedBack: DeviceFeedback,
               private notificationService: NotificationService, private dataConnection: FirebaseConnectionService) {
   }
 
@@ -39,17 +44,25 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   facebookLogin() {
+    this.fbidentifying=true;
+    this.deviceFeedBack.haptic(0);
+    this.deviceFeedBack.acoustic();
     this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
       this.handleLoginEvent(user);
+      this.fbidentifying=false;
     });
     this.loginService.facebookLogin();
   }
 
   emailLogin() {
+    this.mailidentifying=true;
+    this.deviceFeedBack.haptic(0);
+    this.deviceFeedBack.acoustic();
     this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
       this.handleLoginEvent(user);
       if (user) {
         this.loginPage.dismiss();
+        this.mailidentifying=false;
       }
     });
     this.loginPage = this.modalController.create(EmailLoginPage);
@@ -57,10 +70,14 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   localLogin() {
+    this.locidentifying=true;
+    this.deviceFeedBack.haptic(0);
+    this.deviceFeedBack.acoustic();
     this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
       this.handleLoginEvent(user);
       if (user) {
         this.loginPage.dismiss();
+        this.locidentifying=false;
       }
     });
     this.loginPage = this.modalController.create(LocalLoginPage);
@@ -68,8 +85,12 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   anonymousLogin() {
+    this.anoidentifying=true;
+    this.deviceFeedBack.haptic(0);
+    this.deviceFeedBack.acoustic();
     this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
       this.handleLoginEvent(user);
+      this.anoidentifying=false;
     });
     this.loginService.anonymousLogin();
   }

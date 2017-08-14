@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Content, Gesture, Haptic, IonicPage, ModalController, NavParams, Slides} from 'ionic-angular';
+import {IonicPage, ModalController, NavParams, Slides} from 'ionic-angular';
 import {CellarPersistenceService} from '../../service/cellar-persistence.service';
 import {Locker, LockerType} from '../../model/locker';
 import {SimpleLockerComponent} from '../../components/locker/simple-locker.component';
@@ -12,6 +12,7 @@ import {LockerEditor2Page} from '../locker-editor2/locker-editor2.page';
 import {Cell} from '../../components/locker/locker.component';
 import {LockerEditorPage} from '../locker-editor/locker-editor.page';
 import * as _ from 'lodash';
+import {DeviceFeedback} from '@ionic-native/device-feedback';
 
 /**
  * Generated class for the CellarPage page.
@@ -48,11 +49,13 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
   private scale: number = 1;
 
   constructor(private cellarService: CellarPersistenceService, private bottleService: BottlePersistenceService,
-              private notificationService: NotificationService, private haptic: Haptic,
+              private notificationService: NotificationService, private deviceFeedback: DeviceFeedback,
               private modalCtrl: ModalController, private params: NavParams) {
   }
 
   ngOnInit(): void {
+    this.deviceFeedback.acoustic();
+    this.deviceFeedback.haptic(0);
     this.bottlesToPlace = this.params.data[ 'bottlesToPlace' ];
     if (this.bottlesToPlace && this.bottlesToPlace.length > 0) {
       this.bottlesToPlaceLocker = new SimpleLocker(undefined, 'placedLocker', LockerType.simple, {
@@ -90,25 +93,6 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
     this.lockersSub.unsubscribe();
   }
 
-  ionSlideDrag(event: any) {
-    //this.percent = item.getSlidingPercent();
-    //console.info("drag " + this.percent + " %");
-    //if (this.percent < 0 && Math.abs(this.percent) > 0.15) {
-    //  this.addToFavoritesOrRemove(null, item, bottle);
-    //}
-    console.info();
-  }
-
-  increaseSize() {
-    this.scale += .1;
-    this.zoomable.nativeElement.style.transform = `scale(${this.scale}, ${this.scale})`;
-  }
-
-  decreaseSize() {
-    this.scale -= .1;
-    this.zoomable.nativeElement.style.transform = `scale(${this.scale}, ${this.scale})`;
-  }
-
   resetPaginatedLocker() {
     if (this.otherLockers.length > 0) {
       let ix = this.slides.getActiveIndex();
@@ -125,6 +109,8 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   updateLocker() {
+    this.deviceFeedback.acoustic();
+    this.deviceFeedback.haptic(0);
     let editorModal = this.modalCtrl.create(LockerEditor2Page, {
       locker: this.paginatedLocker,
       content: this.lockerContent
@@ -143,6 +129,8 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showTip() {
+    this.deviceFeedback.acoustic();
+    this.deviceFeedback.haptic(0);
     this.pendingBottleTipVisible = true;
     setTimeout(() => {
       this.pendingBottleTipVisible = false;
@@ -174,9 +162,10 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   cellSelected(cell: Cell) {
-    this.cellarService.isEmpty(this.paginatedLocker);
+    this.deviceFeedback.acoustic();
+    this.deviceFeedback.haptic(this.pendingCell ? 1 : 0);
+
     if (cell) {
-      this.haptic.selection();
       if (this.pendingCell) {
         if (cell.position.equals(this.pendingCell.position)) {
           if (cell.bottle && cell.bottle.id === this.pendingCell.bottle.id) {

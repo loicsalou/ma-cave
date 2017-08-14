@@ -28,6 +28,11 @@ ion-content.home {
     border-radius: 50%;
     background-color: map-get($colors, light);
     color: map-get($colors, primary);
+    transition: transform 1s, scale .5s;
+
+    &.clicked {
+      transform: rotate(360deg) scale(1.8, 1.8);
+    }
   }
 
   div[d-flex] {

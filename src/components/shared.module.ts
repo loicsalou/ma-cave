@@ -6,6 +6,7 @@ import {ImageAttacherComponent} from './image-attacher/image-attacher';
 import {ProgressBarComponent} from './progress-bar/progress-bar';
 import {ChartComponent} from './chart/chart.component';
 import {ChartsModule} from 'ng2-charts';
+import {DeviceFeedback} from '@ionic-native/device-feedback';
 
 @NgModule({
             declarations: [
@@ -25,6 +26,9 @@ import {ChartsModule} from 'ng2-charts';
               DefaultImageDirective,
               ImageAttacherComponent,
               ProgressBarComponent
+            ],
+            providers: [
+              DeviceFeedback
             ]
           })
 export class SharedModule {

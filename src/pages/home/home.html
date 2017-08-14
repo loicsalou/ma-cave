@@ -8,16 +8,17 @@
     <fieldset>
       <legend><h2>{{'app.please-login' | translate}}</h2></legend>
       <div d-flex>
-        <button ion-button badge (click)="facebookLogin()" *ngIf="isConnectionAllowed()">
+        <button ion-button badge [class.clicked]="fbidentifying" (click)="facebookLogin()" *ngIf="isConnectionAllowed()">
           <img icon-only src="assets/icon/social_facebook_box_blue.png"/>
         </button>
-        <button ion-button badge (click)="emailLogin()" *ngIf="isConnectionAllowed()">
+        <button ion-button badge [class.clicked]="mailidentifying" (click)="emailLogin()" *ngIf="isConnectionAllowed()">
           <ion-icon name="mail" style="font-size: 2.4em;"></ion-icon>
         </button>
-        <button ion-button badge (click)="anonymousLogin()" *ngIf="isConnectionAllowed()">
+        <button ion-button badge [class.clicked]="anoidentifying" (click)="anonymousLogin()"
+                *ngIf="isConnectionAllowed()">
           <img icon-only src="assets/icon/anonymous.png"/>
         </button>
-        <button ion-button badge (click)="localLogin()">
+        <button ion-button badge [class.clicked]="locidentifying" (click)="localLogin()">
           <ion-icon name="phone-portrait"></ion-icon>
         </button>
       </div>
