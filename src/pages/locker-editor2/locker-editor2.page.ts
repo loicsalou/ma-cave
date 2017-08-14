@@ -10,6 +10,7 @@ import {LockerComponent} from '../../components/locker/locker.component';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {SimpleLockerComponent} from '../../components/locker/simple-locker.component';
 import {FridgeLockerComponent} from '../../components/locker/fridge-locker.component';
+import {DeviceFeedback} from '@ionic-native/device-feedback';
 
 /**
  * Generated class for the LockerEditorComponent component.
@@ -24,7 +25,6 @@ import {FridgeLockerComponent} from '../../components/locker/fridge-locker.compo
              styleUrls: [ '/locker-editor2.page.scss' ]
            })
 export class LockerEditor2Page implements OnInit {
-  lockerTypes: LockerType[];
   lockerFormats: BottleSize[];
 
   name: string;
@@ -34,19 +34,12 @@ export class LockerEditor2Page implements OnInit {
   @ViewChild('lockerCmp') lockerComponent: LockerComponent;
 
   //locker normal
-  lockerDimension: Dimension;
   locker: Locker;
   lockerContent: Bottle[];
 
-  //locker composite (ex. frigo)
-  private fridge: FridgeLocker;
-  fridgeDimension: Dimension;
-
-  fridgeLockersDimensions: Dimension[] = [];
-
   constructor(private params: NavParams, private cellarService: CellarPersistenceService,
               private bottlesService: BottlePersistenceService, private notificationService: NotificationService,
-              private navCtrl: NavController) {
+              private navCtrl: NavController, private deviceFeedback: DeviceFeedback) {
   }
 
   ngOnInit(): void {
@@ -73,11 +66,17 @@ export class LockerEditor2Page implements OnInit {
   }
 
   cancel() {
+    //this.deviceFeedback.acoustic();
+    //this.deviceFeedback.haptic(2);
+
     this.notificationService.information('update.cancelled');
     this.navCtrl.pop();
   }
 
   saveLocker() {
+    //this.deviceFeedback.acoustic();
+    //this.deviceFeedback.haptic(1);
+
     this.bottlesService.updateLockerAndBottles(this.lockerContent, this.locker);
     this.navCtrl.pop();
   }

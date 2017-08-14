@@ -12,6 +12,7 @@ import {NotificationService} from '../../service/notification.service';
 import {CellarPage} from '../cellar/cellar.page';
 import {BottleListComponent} from '../../components/list/bottle-list.component';
 import {TranslateService} from '@ngx-translate/core';
+import {DeviceFeedback} from '@ionic-native/device-feedback';
 
 @Component({
              selector: 'page-browse',
@@ -33,11 +34,13 @@ export class BrowsePage implements OnInit, OnDestroy {
 
   constructor(public navCtrl: NavController, public platform: Platform, private bottlesService: BottlePersistenceService,
               private loginService: LoginService, private notificationService: NotificationService,
-              private translateService: TranslateService, params?: NavParams) {
+              private translateService: TranslateService, private deviceFeedback: DeviceFeedback, params?: NavParams) {
     this.navParams = params;
   }
 
   ngOnInit() {
+    this.deviceFeedback.acoustic();
+    this.deviceFeedback.haptic(0);
     this.notificationService.traceInfo('Initialisation de la page de browse');
     this.setFilter();
     this.filterSubscription = this.bottlesService.filtersObservable.subscribe(

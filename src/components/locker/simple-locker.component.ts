@@ -5,6 +5,7 @@ import {Bottle, Position} from '../../model/bottle';
 import {NotificationService} from '../../service/notification.service';
 import {Cell, LockerComponent, Row} from './locker.component';
 import {Gesture} from 'ionic-angular';
+import {DeviceFeedback} from '@ionic-native/device-feedback';
 
 /**
  * Generated class for the SimpleLockerComponent component.
@@ -32,8 +33,8 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   rows: Row[];
   private bogusBottles = [];
 
-  constructor(private notificationService: NotificationService) {
-    super()
+  constructor(private notificationService: NotificationService, deviceFeedback: DeviceFeedback) {
+    super(deviceFeedback)
   }
 
   ngOnInit(): void {
@@ -151,6 +152,8 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   }
 
   addTopRow() {
+    this.hapticConfirm();
+
     if (!this.canIncreaseHeight()) {
       return
     }
@@ -160,6 +163,7 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   }
 
   removeTopRow() {
+    this.hapticConfirm();
     if (!this.canRemoveRow(0)) {
       return
     }
@@ -172,6 +176,7 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   }
 
   addRightColumn() {
+    this.hapticConfirm();
     if (!this.canIncreaseWidth()) {
       return
     }
@@ -180,6 +185,7 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   }
 
   removeRightColumn() {
+    this.hapticConfirm();
     if (!this.canRemoveColumn(this.locker.dimension.x - 1)) {
       return
     }
@@ -188,6 +194,7 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   }
 
   addBottomRow() {
+    this.hapticConfirm();
     if (!this.canIncreaseHeight()) {
       return
     }
@@ -196,6 +203,7 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   }
 
   removeBottomRow() {
+    this.hapticConfirm();
     if (!this.canRemoveRow(this.locker.dimension.y - 1)) {
       return
     }
@@ -204,6 +212,7 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   }
 
   addLeftColumn() {
+    this.hapticConfirm();
     if (!this.canIncreaseWidth()) {
       return
     }
@@ -216,6 +225,7 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   }
 
   removeLeftColumn() {
+    this.hapticConfirm();
     if (!this.canRemoveColumn(0)) {
       return
     }
@@ -329,5 +339,4 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
       }
     )
   }
-
 }

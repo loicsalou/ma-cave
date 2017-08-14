@@ -7,8 +7,7 @@
 <ion-content padding class="cellar-page">
   
   <ion-row>
-    <ion-slides [pager]="false" (ionSlideDidChange)="slideChanged()" [spaceBetween]="5"
-                (ionSlideDrag)="ionSlideDrag($event)" [slidesPerView]="1">
+    <ion-slides [pager]="false" (ionSlideDidChange)="slideChanged()" [spaceBetween]="5" [slidesPerView]="1">
       <ion-slide *ngFor="let locker of otherLockers" style="max-width: 90vw">
         <div style="width: 100%" #zoomable>
           <locker [locker]="locker" [content]="lockerContent" *ngIf="!locker.isFridge()"
@@ -29,14 +28,6 @@
     <button ion-fab>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-fab-list side="left">
-      <button ion-fab (click)="increaseSize()">
-        <ion-icon name="search">+</ion-icon>
-      </button>
-      <button ion-fab (click)="decreaseSize()">
-        <ion-icon name="search">-</ion-icon>
-      </button>
-    </ion-fab-list>
     <ion-fab-list side="top">
       <button ion-fab (click)="createLocker()">
         <ion-icon name="add-circle"></ion-icon>

@@ -4,6 +4,7 @@ import {Bottle} from '../../model/bottle';
 import {ListBottleEvent} from './bottle-list-event';
 import {ItemSliding, NavController, ToastController} from 'ionic-angular';
 import {CellarPage} from '../../pages/cellar/cellar.page';
+import {DeviceFeedback} from '@ionic-native/device-feedback';
 
 @Component({
              selector: 'bottle-list',
@@ -19,7 +20,7 @@ export class BottleListComponent {
   private nbSelected = 0;
 
   constructor(private bottlesService: BottlePersistenceService, private toastCtrl: ToastController,
-              private navCtrl: NavController) {
+              private navCtrl: NavController, private deviceFeedback: DeviceFeedback) {
   }
 
   filter() {
@@ -56,10 +57,6 @@ export class BottleListComponent {
     return bottle.favorite;
   }
 
-  addToFavoritesOrRemove(slidingBottle: SlidingBottle) {
-    this.manageFavorites(slidingBottle.slidingItem, slidingBottle.bottle);
-  }
-
   manageFavorites(slidingItem: ItemSliding, bottle: Bottle) {
     bottle.favorite = bottle.favorite ? !bottle.favorite : true;
     slidingItem.close();
@@ -71,12 +68,16 @@ export class BottleListComponent {
   }
 
   locateBottles(event: Event, slidingItem: ItemSliding, bottles: Bottle[]) {
+    this.deviceFeedback.acoustic();
+    this.deviceFeedback.haptic(0);
     event.stopPropagation();
     slidingItem.close();
     this.navCtrl.push(CellarPage, {bottlesToHighlight: bottles});
   }
 
   addToFavorite(event: Event, slidingItem: ItemSliding, bottle: Bottle) {
+    this.deviceFeedback.acoustic();
+    this.deviceFeedback.haptic(0);
     event.stopPropagation();
     bottle.favorite = bottle.favorite ? !bottle.favorite : true;
     this.bottlesService.update([bottle]);
