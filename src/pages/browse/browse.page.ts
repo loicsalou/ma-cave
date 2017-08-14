@@ -14,6 +14,30 @@ import {BottleListComponent} from '../../components/list/bottle-list.component';
 import {TranslateService} from '@ngx-translate/core';
 import {DeviceFeedback} from '@ionic-native/device-feedback';
 
+function compare(a: Bottle, b: Bottle) {
+  if (a.country_label > b.country_label)
+    return 1
+  else if (b.country_label > a.country_label)
+    return -1
+  else if (a.subregion_label > b.subregion_label)
+    return 1
+  else if (b.subregion_label > a.subregion_label)
+    return -1
+  else if (a.area_label > b.area_label)
+    return 1
+  else if (b.area_label > a.area_label)
+    return -1
+  else if (a.nomCru > b.nomCru)
+    return 1
+  else if (b.nomCru > a.nomCru)
+    return -1
+  else if (a.millesime > b.millesime)
+    return 1
+  else if (b.millesime > a.millesime)
+    return -1;
+  return 0;
+}
+
 @Component({
              selector: 'page-browse',
              templateUrl: 'browse.page.html',
@@ -65,7 +89,7 @@ export class BrowsePage implements OnInit, OnDestroy {
                   (tot: number, btl2: Bottle) => tot + +btl2.quantite_courante,
                   0
                 );
-                this.bottles = _.concat(this.bottles, chunk);
+                this.bottles = _.concat(this.bottles, chunk).sort((a:Bottle, b:Bottle) => compare(a,b));
               }, ix * 50
             )
           }
