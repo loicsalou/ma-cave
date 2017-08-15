@@ -1,8 +1,7 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title style="margin-top: 4px;">{{ getNbOfLots() }} {{'lots' | translate}} / {{ getNbOfBottles() }} {{'bottles'
-      |
-      translate}}
+    <ion-title style="margin-top: 4px;">{{ getNbOfLots() }} {{'lots' | translate}} / {{ getNbOfBottles() }}
+      {{'bottles' | translate}}
     </ion-title>
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
@@ -37,7 +36,7 @@
   <ion-row align-items-start>
     <ion-col margin-left col-4 align-item-center>
       <ion-label>Asc</ion-label>
-      <ion-checkbox [(ngModel)]="ascending"></ion-checkbox>
+      <ion-checkbox [(ngModel)]="ascending" (click)="sort()"></ion-checkbox>
     </ion-col>
     <ion-col padding-top col-7>
       <ion-badge margin-right margin-bottom *ngFor="let axis of sortAxis" (click)="sort(axis)">

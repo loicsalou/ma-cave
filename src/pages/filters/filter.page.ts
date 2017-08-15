@@ -1,6 +1,6 @@
 import {Bottle} from '../../model/bottle';
 import {Component, Input, OnChanges, OnDestroy, OnInit} from '@angular/core';
-import {FilterSet} from '../../components/distribution/distribution';
+import {FilterSet, SortOption} from '../../components/distribution/distribution';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {MenuController} from 'ionic-angular';
 import {Subscription} from 'rxjs/Subscription';
@@ -22,6 +22,7 @@ export class FilterPage implements OnInit, OnChanges, OnDestroy {
 
   nbOfBottles: number = 0;
   filterSet: FilterSet;
+  sortOn: string = 'country_label';
   ascending: boolean = true;
   private filtersSub: Subscription;
 
@@ -29,7 +30,7 @@ export class FilterPage implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.filtersSub=this.bottlesService.filtersObservable.subscribe(
+    this.filtersSub = this.bottlesService.filtersObservable.subscribe(
       filterSet => this.filterSet = filterSet
     );
   }
@@ -39,7 +40,15 @@ export class FilterPage implements OnInit, OnChanges, OnDestroy {
   }
 
   sort(axis: any) {
-    this.bottlesService.filterOn(this.filterSet, axis.col, (this.ascending ? 'asc' : 'desc'))
+    if (axis !== undefined) {
+      this.sortOn = axis.col ? axis.col : this.sortOn
+    }
+    let sortOption: SortOption = {
+      sortOn: axis == undefined ? this.sortOn : axis.col,
+      sortOrder: (this.ascending ? 'asc' : 'desc')
+    };
+    this.filterSet.setSortOption(sortOption);
+    this.bottlesService.filterOn(this.filterSet)
   }
 
   ngOnChanges() {
@@ -54,12 +63,12 @@ export class FilterPage implements OnInit, OnChanges, OnDestroy {
   }
 
   switchedPlaced(event) {
-    this.filterSet.placed=event.checked;
+    this.filterSet.placed = event.checked;
     this.bottlesService.filterOn(this.filterSet);
   }
 
   switchedToBePlaced(event) {
-    this.filterSet.toBePlaced=event.checked;
+    this.filterSet.toBePlaced = event.checked;
     this.bottlesService.filterOn(this.filterSet);
   }
 

@@ -14,30 +14,6 @@ import {BottleListComponent} from '../../components/list/bottle-list.component';
 import {TranslateService} from '@ngx-translate/core';
 import {DeviceFeedback} from '@ionic-native/device-feedback';
 
-function compare(a: Bottle, b: Bottle) {
-  if (a.country_label > b.country_label)
-    return 1
-  else if (b.country_label > a.country_label)
-    return -1
-  else if (a.subregion_label > b.subregion_label)
-    return 1
-  else if (b.subregion_label > a.subregion_label)
-    return -1
-  else if (a.area_label > b.area_label)
-    return 1
-  else if (b.area_label > a.area_label)
-    return -1
-  else if (a.nomCru > b.nomCru)
-    return 1
-  else if (b.nomCru > a.nomCru)
-    return -1
-  else if (a.millesime > b.millesime)
-    return 1
-  else if (b.millesime > a.millesime)
-    return -1;
-  return 0;
-}
-
 @Component({
              selector: 'page-browse',
              templateUrl: 'browse.page.html',
@@ -89,7 +65,12 @@ export class BrowsePage implements OnInit, OnDestroy {
                   (tot: number, btl2: Bottle) => tot + +btl2.quantite_courante,
                   0
                 );
-                this.bottles = _.concat(this.bottles, chunk).sort((a:Bottle, b:Bottle) => compare(a,b));
+                this.bottles = _.concat(this.bottles, chunk);
+                if (this.filterSet && this.filterSet.sortOption) {
+                  this.bottles = _.orderBy(this.bottles, [ this.filterSet.sortOption.sortOn, 'country_label', 'subregion_label', 'area_label', 'nomCru', 'millesime' ], [ this.filterSet.sortOption.sortOrder == undefined ? 'asc' : this.filterSet.sortOption.sortOrder, 'asc', 'asc', 'asc', 'asc', 'asc' ]);
+                } else {
+                  this.bottles = _.orderBy(this.bottles, [ 'country_label', 'subregion_label', 'area_label', 'nomCru', 'millesime' ], [ 'asc', 'asc', 'asc', 'asc', 'asc' ]);
+                }
               }, ix * 50
             )
           }
@@ -133,12 +114,12 @@ export class BrowsePage implements OnInit, OnDestroy {
     let favoriteStatus;
     let selectedBottles: Bottle[] = this.bottles.filter(btl => btl.selected);
     selectedBottles.forEach(btl => {
-        if (favoriteStatus == undefined) {
-          favoriteStatus = btl.favorite ? false : true;
-        }
-        btl.favorite = favoriteStatus;
-        delete btl.selected;
-      });
+      if (favoriteStatus == undefined) {
+        favoriteStatus = btl.favorite ? false : true;
+      }
+      btl.favorite = favoriteStatus;
+      delete btl.selected;
+    });
     this.bottlesService.update(selectedBottles);
     this.listComponent.resetSelection();
   }
@@ -193,4 +174,29 @@ export class BrowsePage implements OnInit, OnDestroy {
     this.filterSet = filterSet;
     this.searchBarVisible = false;
   }
+}
+
+function compare(a: Bottle, b: Bottle) {
+  if (a.country_label > b.country_label) {
+    return 1
+  } else if (b.country_label > a.country_label) {
+    return -1
+  } else if (a.subregion_label > b.subregion_label) {
+    return 1
+  } else if (b.subregion_label > a.subregion_label) {
+    return -1
+  } else if (a.area_label > b.area_label) {
+    return 1
+  } else if (b.area_label > a.area_label) {
+    return -1
+  } else if (a.nomCru > b.nomCru) {
+    return 1
+  } else if (b.nomCru > a.nomCru) {
+    return -1
+  } else if (a.millesime > b.millesime) {
+    return 1
+  } else if (b.millesime > a.millesime) {
+    return -1;
+  }
+  return 0;
 }

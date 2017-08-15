@@ -151,6 +151,7 @@ export class FilterSet {
   private _favoriteOnly = false;
   private _placed = true;
   private _toBePlaced = true;
+  private _sortOption: SortOption;
 
   constructor(private translateService: TranslateService) {
 
@@ -186,6 +187,14 @@ export class FilterSet {
 
   set toBePlaced(value: boolean) {
     this._toBePlaced = value;
+  }
+
+  get sortOption(): SortOption {
+    return this._sortOption;
+  }
+
+  set sortOption(value: SortOption) {
+    this._sortOption = value;
   }
 
   hasText() {
@@ -282,4 +291,13 @@ export class FilterSet {
       return strings.reduce((s1, s2) => s1 + ' & ' + s2);
     }
   }
+
+  setSortOption(sortOption: SortOption) {
+    this._sortOption = sortOption;
+  }
+}
+
+export interface SortOption {
+  sortOn: string;
+  sortOrder: 'asc' | 'desc';
 }
