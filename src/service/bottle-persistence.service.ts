@@ -140,7 +140,7 @@ export class BottlePersistenceService extends PersistenceService {
    * @param filters
    * @returns {any}
    */
-  public filterOn(filters: FilterSet, name?: string, order?: string): Bottle[] {
+  public filterOn(filters: FilterSet): Bottle[] {
 
     if (!filters) {
       return;
@@ -199,8 +199,8 @@ export class BottlePersistenceService extends PersistenceService {
         filtered = this.filterByAttribute(filtered, 'label', filters.label);
       }
     }
-    if (name) {
-      filtered = _.orderBy(filtered, [ name ], [ order == undefined ? 'asc' : order ]);
+    if (filters.sortOption) {
+      filtered = _.orderBy(filtered, [ filters.sortOption.sortOn ], [ filters.sortOption.sortOrder == undefined ? 'asc' : filters.sortOption.sortOrder ]);
     }
     this.setFilters(filters);
 

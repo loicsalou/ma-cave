@@ -64,7 +64,7 @@ export class EmailLoginService extends AbstractLoginService {
                 }
           ).catch(err => {
                     loadingPopup.dismiss();
-                    this.loginFailed();
+                    self.loginFailed();
                   }
         );
       });
