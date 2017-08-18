@@ -51,30 +51,38 @@ export class BrowsePage implements OnInit, OnDestroy {
     this.bottleSubscription = this.bottlesService.filteredBottlesObservable.subscribe(
       (received: Bottle[]) => {
         this.notificationService.traceInfo('Réception des bouteilles');
-        this.bottles = [];
-        this.nbOfBottles = 0;
-        _.chunk(received, 30).forEach(
-          (chunk: any[], ix) => {
-            this.notificationService.traceInfo('itération ' + ix + ' Traitement des bouteilles reçues après timeout' +
-              chunk.length);
-            setTimeout(
-              () => {
-                this.notificationService.traceInfo('Dans l\'itération ' + ix + ' Traitement des bouteilles reçues' +
-                  ' après timeout ' + chunk.length);
-                this.nbOfBottles += chunk.reduce(
-                  (tot: number, btl2: Bottle) => tot + +btl2.quantite_courante,
-                  0
-                );
-                this.bottles = _.concat(this.bottles, chunk);
-                if (this.filterSet && this.filterSet.sortOption) {
-                  this.bottles = _.orderBy(this.bottles, [ this.filterSet.sortOption.sortOn, 'country_label', 'subregion_label', 'area_label', 'nomCru', 'millesime' ], [ this.filterSet.sortOption.sortOrder == undefined ? 'asc' : this.filterSet.sortOption.sortOrder, 'asc', 'asc', 'asc', 'asc', 'asc' ]);
-                } else {
-                  this.bottles = _.orderBy(this.bottles, [ 'country_label', 'subregion_label', 'area_label', 'nomCru', 'millesime' ], [ 'asc', 'asc', 'asc', 'asc', 'asc' ]);
-                }
-              }, ix * 50
-            )
-          }
-        )
+        this.bottles = received;
+        this.nbOfBottles = received ? received.length : 0;
+        //_.chunk(received, 30).forEach(
+        //  (chunk: any[], ix) => {
+        //    this.notificationService.traceInfo('itération ' + ix + ' Traitement des bouteilles reçues après timeout'
+        // +
+        //      chunk.length);
+        //    setTimeout(
+        //      () => {
+        //        this.notificationService.traceInfo('Dans l\'itération ' + ix + ' Traitement des bouteilles reçues' +
+        //          ' après timeout ' + chunk.length);
+        //        this.nbOfBottles += chunk.reduce(
+        //          (tot: number, btl2: Bottle) => tot + +btl2.quantite_courante,
+        //          0
+        //        );
+        //        this.bottles = _.concat(this.bottles, chunk);
+        //        if (this.filterSet && this.filterSet.sortOption) {
+        //          this.bottles = _.orderBy(this.bottles, [ this.filterSet.sortOption.sortOn, 'country_label',
+        // 'subregion_label', 'area_label', 'nomCru', 'millesime' ], [ this.filterSet.sortOption.sortOrder == undefined
+        // ? 'asc' : this.filterSet.sortOption.sortOrder, 'asc', 'asc', 'asc', 'asc', 'asc' ]); } else { this.bottles =
+        // _.orderBy(this.bottles, [ 'country_label', 'subregion_label', 'area_label', 'nomCru', 'millesime' ], [
+        // 'asc', 'asc', 'asc', 'asc', 'asc' ]); } }, ix * 50 ) } )
+        if (this.filterSet && this.filterSet.sortOption) {
+          this.bottles = _.orderBy(this.bottles,
+                                   [ this.filterSet.sortOption.sortOn, 'country_label', 'subregion_label', 'area_label', 'nomCru', 'millesime' ],
+                                   [ this.filterSet.sortOption.sortOrder == undefined ? 'asc' : this.filterSet.sortOption.sortOrder, 'asc', 'asc', 'asc', 'asc', 'asc' ]
+          );
+        } else {
+          this.bottles = _.orderBy(this.bottles, [ 'country_label', 'subregion_label', 'area_label', 'nomCru', 'millesime' ],
+                                   [ 'asc', 'asc', 'asc', 'asc', 'asc' ]
+          );
+        }
       },
       error => this.notificationService.error('Erreur lors de l\'accès à la base de données' + error),
       () => this.notificationService.traceInfo('Récupération de ' + this.nbOfBottles + ' bouteilles terminée')
