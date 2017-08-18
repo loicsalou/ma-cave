@@ -5,6 +5,7 @@ import {HomePage} from '../home/home';
 import {ProfilePage} from '../profile/profile';
 import {BrowsePage} from '../browse/browse.page';
 import {CellarPage} from '../cellar/cellar.page';
+import {NavController, Platform} from 'ionic-angular';
 
 @Component({
              templateUrl: 'tabs.html'
@@ -19,6 +20,15 @@ export class TabsPage {
   dashboardRoot: any = DashboardPage;
   adminRoot: any = UploadBottlesPage;
 
-  constructor() {
+  constructor(platform: Platform, navCtrl: NavController) {
+    platform.ready().then(() => {
+      platform.registerBackButtonAction(() => {
+        if (navCtrl.canGoBack()) {
+          navCtrl.pop();
+        } else {
+          //don't do anything
+        }
+      });
+    });
   }
 }

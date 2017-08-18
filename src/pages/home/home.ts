@@ -23,14 +23,15 @@ export class HomePage implements OnInit, AfterViewInit {
 
   private authenticated = false;
   private loginSubscription: Subscription;
-  private fbidentifying: boolean=false;
-  private mailidentifying: boolean=false;
-  private locidentifying: boolean=false;
-  private anoidentifying: boolean=false;
+  private fbidentifying: boolean = false;
+  private mailidentifying: boolean = false;
+  private locidentifying: boolean = false;
+  private anoidentifying: boolean = false;
 
   constructor(public navCtrl: NavController, public platform: Platform, public loginService: LoginService,
               private modalController: ModalController, private splashScreen: SplashScreen, private deviceFeedBack: DeviceFeedback,
               private notificationService: NotificationService, private dataConnection: FirebaseConnectionService) {
+    this.enableExitOnConfirm();
   }
 
   ngOnInit(): void {
@@ -44,25 +45,25 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   facebookLogin() {
-    this.fbidentifying=true;
+    this.fbidentifying = true;
     this.deviceFeedBack.haptic(0);
     this.deviceFeedBack.acoustic();
     this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
       this.handleLoginEvent(user);
-      this.fbidentifying=false;
+      this.fbidentifying = false;
     });
     this.loginService.facebookLogin();
   }
 
   emailLogin() {
-    this.mailidentifying=true;
+    this.mailidentifying = true;
     this.deviceFeedBack.haptic(0);
     this.deviceFeedBack.acoustic();
     this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
       this.handleLoginEvent(user);
       if (user) {
         this.loginPage.dismiss();
-        this.mailidentifying=false;
+        this.mailidentifying = false;
       }
     });
     this.loginPage = this.modalController.create(EmailLoginPage);
@@ -70,14 +71,14 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   localLogin() {
-    this.locidentifying=true;
+    this.locidentifying = true;
     this.deviceFeedBack.haptic(0);
     this.deviceFeedBack.acoustic();
     this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
       this.handleLoginEvent(user);
       if (user) {
         this.loginPage.dismiss();
-        this.locidentifying=false;
+        this.locidentifying = false;
       }
     });
     this.loginPage = this.modalController.create(LocalLoginPage);
@@ -85,12 +86,12 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   anonymousLogin() {
-    this.anoidentifying=true;
+    this.anoidentifying = true;
     this.deviceFeedBack.haptic(0);
     this.deviceFeedBack.acoustic();
     this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
       this.handleLoginEvent(user);
-      this.anoidentifying=false;
+      this.anoidentifying = false;
     });
     this.loginService.anonymousLogin();
   }
@@ -118,15 +119,32 @@ export class HomePage implements OnInit, AfterViewInit {
   private handleLoginEvent(user: User) {
     this.authenticated = (user !== undefined);
     if (this.authenticated) {
-      this.navCtrl.push(TabsPage);
+      this.navCtrl.setRoot(TabsPage);
     }
     else {
-      if (this.navCtrl.length() > 1) {
-        this.navCtrl.popToRoot();
-      }
+      this.navCtrl.setRoot(HomePage);
       // pas de onDestroy ici car après un logout on reste quand même sur le home ==> il faut faire l'unsubscribe à
       // la main
       this.loginSubscription.unsubscribe();
+      this.enableExitOnConfirm();
     }
+  }
+
+  enableExitOnConfirm() {
+    this.platform.ready().then(() => {
+      this.platform.registerBackButtonAction(() => {
+        if (this.navCtrl.canGoBack()) {
+          this.navCtrl.pop();
+        } else {
+          this.notificationService.ask('app.exit-title', 'app.exit-message').subscribe(
+            response => {
+              if (response) {
+                this.platform.exitApp()
+              }
+            }
+          )
+        }
+      });
+    });
   }
 }

@@ -21,6 +21,8 @@
     "please-login": "Authentification",
     "checking-login": "Authentification en cours...",
     "connection": "Connexion",
+    "exit-title": "Sortir ?",
+    "exit-message": "Voulez-vous sortir de l'application ?",
     "connection-on": "autorisée",
     "connection-off": "sans",
     "title": "L'assistant caviste",

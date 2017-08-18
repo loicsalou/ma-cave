@@ -76,6 +76,9 @@ export class NotificationService {
   }
 
   ask(title: string, message: string,): Observable<boolean> {
+    title = this.translateService.instant(title);
+    message = this.translateService.instant(message);
+
     let response: Subject<boolean> = new Subject();
     let alert = this.alertController.create({
                                               title: title,
