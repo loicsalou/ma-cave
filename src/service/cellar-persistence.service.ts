@@ -66,10 +66,22 @@ export class CellarPersistenceService extends PersistenceService implements Cell
 
   createLocker(locker: Locker): void {
     locker[ 'lastUpdated' ] = new Date().getTime();
+    this.sanitize(locker);
     try {
       this.dataConnection.createLocker(locker);
     } catch (err) {
       this.notificationService.error('La création du casier a échoué', err)
+    }
+  }
+
+  private sanitize(locker: Locker) {
+    locker.dimension = {x: +locker.dimension.x, y: +locker.dimension.y};
+    if (locker[ 'dimensions' ]) {
+      locker[ 'dimensions' ] = locker[ 'dimensions' ].map(
+        dim => {
+          return { x: +dim.x, y: +dim.y }
+        }
+      )
     }
   }
 
@@ -81,9 +93,9 @@ export class CellarPersistenceService extends PersistenceService implements Cell
   public deleteLocker(locker: Locker) {
     if (this.isEmpty(locker)) {
       this.dataConnection.deleteLocker(locker);
-      this.notificationService.information('Le casier "'+locker.name+'" a bien été supprimé')
+      this.notificationService.information('Le casier "' + locker.name + '" a bien été supprimé')
     } else {
-      this.notificationService.warning('Le casier "'+locker.name+'" n\'est pas vide et ne peut donc pas' +
+      this.notificationService.warning('Le casier "' + locker.name + '" n\'est pas vide et ne peut donc pas' +
         ' être supprimé');
     }
   }

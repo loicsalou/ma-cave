@@ -478,6 +478,7 @@ export class FirebaseConnectionService {
         updates[ '/' + FirebaseConnectionService.BOTTLES_FOLDER + '/' + bottle.id ] = bottle;
       });
       locker[ 'lastUpdated' ] = new Date().getTime();
+      locker = sanitizeBeforeSave(locker);
       updates[ '/' + FirebaseConnectionService.CELLAR_FOLDER + '/' + locker.id ] = locker;
       this.userRootRef.update(updates, (
         err => {
