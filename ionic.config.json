@@ -1,5 +1,8 @@
 {
   "name": "ma-cave",
   "app_id": "e54fea8c",
-  "type": "ionic-angular"
+  "type": "ionic-angular",
+  "integrations": {
+    "cordova": {}
+  }
 }

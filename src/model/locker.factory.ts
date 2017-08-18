@@ -22,12 +22,12 @@ export class LockerFactory {
   public create(json): Locker {
     let locker: Locker;
     if (json[ 'type' ] === LockerType.fridge) {
-      let dim: Dimension[]=json.dimensions;
-      locker = new FridgeLocker(json['id'], json[ 'name' ], json[ 'type' ], dim, json[ 'comment' ], json[ 'supportedFormats' ],
+      let dim: Dimension[] = json.dimensions.map(dim => <Dimension> {x: +dim.x, y: +dim.y});
+      locker = new FridgeLocker(json[ 'id' ], json[ 'name' ], json[ 'type' ], dim, json[ 'comment' ], json[ 'supportedFormats' ],
                                 json[ 'defaultImage' ], json[ 'imageUrl' ]);
     } else {
-      let dim: Dimension=json.dimension;
-      locker = new SimpleLocker(json['id'], json[ 'name' ], LockerType.simple, dim, false, json[ 'comment' ],
+      let dim: Dimension = <Dimension> {x: +json.dimension.x, y: +json.dimension.y};
+      locker = new SimpleLocker(json[ 'id' ], json[ 'name' ], LockerType.simple, dim, false, json[ 'comment' ],
                                 json[ 'supportedFormats' ], json[ 'defaultImage' ], json[ 'imageUrl' ]);
     }
     return locker;

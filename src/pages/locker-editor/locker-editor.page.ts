@@ -1,5 +1,5 @@
 import {Component, ViewChild} from '@angular/core';
-import {IonicPage, NavParams} from 'ionic-angular';
+import {IonicPage, NavController, NavParams} from 'ionic-angular';
 import {BottleSize, Dimension, Locker, LockerType} from '../../model/locker';
 import {NgForm} from '@angular/forms';
 import {FridgeLocker} from '../../model/fridge-locker';
@@ -39,7 +39,7 @@ export class LockerEditorPage {
 
   fridgeLockersDimensions: Dimension[]=[];
 
-  constructor(params: NavParams, private cellarService: CellarPersistenceService) {
+  constructor(private navController: NavController, params: NavParams, private cellarService: CellarPersistenceService) {
     this.lockerTypes = [
       LockerType.shifted,
       LockerType.diamond,
@@ -91,6 +91,7 @@ export class LockerEditorPage {
       locker = new SimpleLocker(undefined, this.name, this.type, this.lockerDimension, false, this.comment, this.supportedFormats);
     }
     this.cellarService.createLocker(locker);
+    this.navController.pop();
   }
 
   changeFridgeDimension() {
