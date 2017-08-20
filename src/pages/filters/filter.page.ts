@@ -80,6 +80,10 @@ export class FilterPage implements OnInit, OnChanges, OnDestroy {
   //appelé depuis la page des filtres dnas le but d'enrichir le filtre textuel existant déjà si c'est le cas
   refineFilter(filters: FilterSet) {
     filters.text = this.filterSet.text;
+    filters.history = this.filterSet.history;
+    filters.placed = this.filterSet.placed;
+    filters.toBePlaced = this.filterSet.toBePlaced;
+    filters.favoriteOnly = this.filterSet.favoriteOnly;
     this.filterSet = filters;
     this.bottlesService.filterOn(filters);
   }
@@ -93,12 +97,13 @@ export class FilterPage implements OnInit, OnChanges, OnDestroy {
   }
 
   close() {
+    this.bottlesService.filterOn(this.filterSet);
     this.menuController.close();
   }
 
   reset() {
     this.filterSet.reset();
     this.bottlesService.filterOn(this.filterSet);
-    this.close();
+    this.menuController.close();
   }
 }
