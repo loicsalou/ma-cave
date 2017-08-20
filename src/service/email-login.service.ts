@@ -63,6 +63,7 @@ export class EmailLoginService extends AbstractLoginService {
                   self.success(self.user)
                 }
           ).catch(err => {
+                    self.notificationService.error(err.message);
                     loadingPopup.dismiss();
                     self.loginFailed();
                   }

@@ -290,7 +290,7 @@ export class FirebaseConnectionService {
     if (!
         this.connectionAllowed
     ) {
-      this.notificationService.i18nFailed('app.unavailable-function');
+      this.notificationService.failed('app.unavailable-function');
       return;
     }
     let item: FileItem = new FileItem(file);
@@ -307,7 +307,7 @@ export class FirebaseConnectionService {
     if (!
         this.connectionAllowed
     ) {
-      this.notificationService.i18nFailed('app.unavailable-function');
+      this.notificationService.failed('app.unavailable-function');
       return;
     }
     let fileName = name + '-' + new Date().getTime() + '.jpg';
@@ -335,7 +335,7 @@ export class FirebaseConnectionService {
     if (!
         this.connectionAllowed
     ) {
-      this.notificationService.i18nFailed('app.unavailable-function');
+      this.notificationService.failed('app.unavailable-function');
       return undefined;
     }
     return this.angularFirebase.list(this.XREF_ROOT, {
@@ -352,7 +352,7 @@ export class FirebaseConnectionService {
     if (!
         this.connectionAllowed
     ) {
-      this.notificationService.i18nFailed('app.unavailable-function');
+      this.notificationService.failed('app.unavailable-function');
       return undefined;
     }
     return this.uploadToStorage(fileOrBlob, meta.nomCru)
@@ -436,7 +436,7 @@ export class FirebaseConnectionService {
    */
   public update(bottles: Bottle[ ]): Promise<any> {
     if (!this.connectionAllowed) {
-      this.notificationService.i18nFailed('update.failed');
+      this.notificationService.failed('update.failed');
       return undefined;
     }
 
@@ -467,7 +467,7 @@ export class FirebaseConnectionService {
    */
   public updateLockerAndBottles(bottles: Bottle[], locker: Locker): Promise<any> {
     if (!this.connectionAllowed) {
-      this.notificationService.i18nFailed('update.failed');
+      this.notificationService.failed('update.failed');
       return undefined;
     }
 
