@@ -32,7 +32,7 @@ export class NotificationService {
     let msg = this.translateService.instant(message);
     this.alertController.create({
                                   title: this.translateService.instant('app.error'),
-                                  subTitle: msg ? msg + error : 'Une erreur s\'est produite ! ' + error ? error : '',
+                                  subTitle: msg + (error ? error : ''),
                                   buttons: [ 'Ok' ]
                                 })
       .present();
@@ -42,16 +42,7 @@ export class NotificationService {
     let msg = this.translateService.instant(message);
     this.alertController.create({
                                   title: this.translateService.instant('app.failed'),
-                                  subTitle: msg ? msg + error : 'l\'opération a échoué' + error ? error : '',
-                                  buttons: [ 'Ok' ]
-                                })
-      .present();
-  }
-
-  i18nFailed(message: string) {
-    this.alertController.create({
-                                  title: this.translateService.instant('app.failed'),
-                                  subTitle: this.translateService.instant(message),
+                                  subTitle: msg + (error ? error : ''),
                                   buttons: [ 'Ok' ]
                                 })
       .present();

@@ -149,22 +149,24 @@ export class UploadBottlesPage {
     let bottles = [];
     let self = this;
     try {
-      bottles = _.map(values, function (row) {
-        try {
-          let btl: Bottle = <Bottle>buildObject(row, keys);
-          return self.bottleFactory.create(btl);
-        } catch (error) {
-          self.notificationService.error('Erreur d\'analyse de l\'enregistrement: ' + row, error);
-        }
-      }, {});
+      bottles = _.filter(values, row => row.trim().length > 1)
+        .map(
+          row => {
+            try {
+              let btl: Bottle = <Bottle>buildObject(row, keys);
+              return self.bottleFactory.create(btl);
+            } catch (error) {
+              self.notificationService.error('Erreur d\'analyse de l\'enregistrement: ' + row, error);
+            }
+          }, {});
     } catch (error2) {
       this.notificationService.error('Erreur de parcours du fichier CSV', error2);
     }
     this.bottleService.setCellarContent(bottles);
     this.bottles = bottles;
     this.notificationService.information('Le chargement (CSV) de ' + csvarray.length + ' fichiers a été effectué.' +
-                                         ' Nombre' +
-                                         ' de lots' + (bottles == null ? 'KO' + ' !' : bottles.length));
+      ' Nombre' +
+      ' de lots' + (bottles == null ? 'KO' + ' !' : bottles.length));
 
     return this.bottles;
   }
@@ -177,18 +179,20 @@ export class UploadBottlesPage {
     let keys = _.first(csvarray).replace(/['"]+/g, '').split(/\t/);
     let values = _.drop(csvarray, 1 + nbfrom);
     values = _.take(values, nbread);
-    let bottles = _.map(values, row => {
-      try {
-        let btl: Bottle = <Bottle>buildObjectFromXLS(row, keys);
-        return this.bottleFactory.create(btl);
-      } catch (error) {
-        this.notificationService.error('Erreur d\'analyse de l\'enregistrement: ' + row, error);
-      }
-    }, error2 => this.notificationService.error('Erreur de parcours du fichier', error2));
+    let bottles = _.filter(values, row => row.trim().length > 1)
+      .map(
+        row => {
+          try {
+            let btl: Bottle = <Bottle>buildObjectFromXLS(row, keys);
+            return this.bottleFactory.create(btl);
+          } catch (error) {
+            this.notificationService.error('Erreur d\'analyse de l\'enregistrement: ' + row, error);
+          }
+        }, error2 => this.notificationService.error('Erreur de parcours du fichier', error2));
     this.bottleService.setCellarContent(bottles);
     this.bottles = bottles;
     this.notificationService.information('Le chargement (XLS) de ' + csvarray.length + ' fichiers a été effectué.' +
-                                         ' Nombre de lots' + (bottles == null ? 'KO' + ' !' : bottles.length));
+      ' Nombre de lots' + (bottles == null ? 'KO' + ' !' : bottles.length));
   }
 
   test() {
@@ -260,6 +264,9 @@ export class UploadBottlesPage {
 function buildObject(row: any, keys: any) {
   let object = {};
   let values = row.split(';');
+  if (values.length == 1) {
+    return null;
+  }
   _.each(keys, function (key, i) {
     if (i < values.length) {
       object[ key ] = values[ i ];
@@ -274,6 +281,9 @@ function buildObjectFromXLS(row: any, keys: any) {
   let object = {};
   let rowString = row.replace(/['"]+/g, '');
   let values = rowString.split(/\t/);
+  if (values.length == 1) {
+    return null;
+  }
   _.each(keys, function (key, i) {
     if (i < values.length) {
       object[ key ] = values[ i ];
