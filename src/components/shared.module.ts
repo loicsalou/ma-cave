@@ -7,6 +7,7 @@ import {ProgressBarComponent} from './progress-bar/progress-bar';
 import {ChartComponent} from './chart/chart.component';
 import {ChartsModule} from 'ng2-charts';
 import {DeviceFeedback} from '@ionic-native/device-feedback';
+import {ImportProvider} from '../providers/import/import';
 
 @NgModule({
             declarations: [
@@ -28,7 +29,8 @@ import {DeviceFeedback} from '@ionic-native/device-feedback';
               ProgressBarComponent
             ],
             providers: [
-              DeviceFeedback
+              DeviceFeedback,
+              ImportProvider
             ]
           })
 export class SharedModule {

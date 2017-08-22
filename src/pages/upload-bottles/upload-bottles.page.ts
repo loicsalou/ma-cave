@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {IonicPage, NavController, Platform} from 'ionic-angular';
+import {IonicPage, LoadingController, NavController, Platform} from 'ionic-angular';
 import {FileChooser} from '@ionic-native/file-chooser';
 import {FilePath} from '@ionic-native/file-path';
 import * as _ from 'lodash';
@@ -10,6 +10,7 @@ import {NotificationService} from '../../service/notification.service';
 import {Http} from '@angular/http';
 import {NativeStorageService} from '../../service/native-storage.service';
 import {User} from '../../model/user';
+import {ImportProvider} from '../../providers/import/import';
 
 /**
  * Generated class for the UploadBottles page.
@@ -44,7 +45,9 @@ export class UploadBottlesPage {
               private bottleFactory: BottleFactory,
               private platform: Platform,
               private localStorage: NativeStorageService,
-              private http: Http) {
+              private http: Http,
+              private loadingController: LoadingController,
+              private importProvider: ImportProvider) {
   }
 
   public platformIsCordova(): boolean {
@@ -118,7 +121,33 @@ export class UploadBottlesPage {
     }
   }
 
-  private readBrowserFile(event: any) {
+  private parsedBottles: Bottle[] = [];
+
+  public readBrowserFile(event: any) {
+    //let textType = /text.*/;
+    let file = event.currentTarget.files[ 0 ];
+    this.importProvider.progressObservable().subscribe(
+      step => {
+        if (step.startsWith('ligne')) {
+          let loading = this.loadingController.create({
+                                                  spinner: 'hide',
+                                                  content: 'Loading Please Wait...'
+                                                });
+        }
+        console.info(step);
+      },
+      err => console.error(err),
+      () => console.info('progression complete')
+    );
+
+    this.importProvider.parseFile(file)
+      .subscribe(bottle => this.parsedBottles.push(bottle),
+                 err => console.error(err),
+                 () => console.info('number of bottles parsed: ' + this.parsedBottles.length)
+      )
+  }
+
+  private readBrowserFile2(event: any) {
     //let textType = /text.*/;
     let file = event.currentTarget.files[ 0 ];
     let isXls = file.name.toLowerCase().endsWith('.xls');

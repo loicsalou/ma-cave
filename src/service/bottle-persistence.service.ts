@@ -16,6 +16,7 @@ import {User} from '../model/user';
 import {Subscription} from 'rxjs/Subscription';
 import {Locker} from '../model/locker';
 import {TranslateService} from '@ngx-translate/core';
+import {BottleFactory} from '../model/bottle.factory';
 
 /**
  * Services related to the bottles in the cellar.
@@ -38,7 +39,7 @@ export class BottlePersistenceService extends PersistenceService {
 
   constructor(private dataConnection: FirebaseConnectionService,
               notificationService: NotificationService,
-              loginService: LoginService,
+              loginService: LoginService, private bottleFactory: BottleFactory,
               translateService: TranslateService,
               private platform: Platform) {
     super(notificationService, loginService, translateService);
@@ -278,6 +279,15 @@ export class BottlePersistenceService extends PersistenceService {
     return this.allBottlesArray.filter(
       bottle => bottle.positions.filter(pos => pos.lockerId === locker.id).length > 0
     )
+  }
+
+  /**
+   * creates a clean bottle starting from any bottle-like structured Data
+   * @param {Bottle} btl
+   * @returns {Bottle}
+   */
+  createBottle(btl: Bottle): Bottle {
+    return this.bottleFactory.create(btl)
   }
 }
 
