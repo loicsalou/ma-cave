@@ -104,11 +104,8 @@ export class BottlePersistenceService extends PersistenceService {
       )
   }
 
-  public save(bottles: Bottle[]) {
-    this.dataConnection.saveBottles(bottles).then(
-      () => this.notificationService.information('Sauvegarde effectuée'),
-      err => this.notificationService.error('La sauvegarde a échoué !', err)
-    );
+  public save(bottles: Bottle[]): Promise<any> {
+    return this.dataConnection.saveBottles(bottles);
   }
 
   public deleteBottles() {

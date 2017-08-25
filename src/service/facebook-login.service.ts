@@ -23,9 +23,9 @@ export class FacebookLoginService extends AbstractLoginService {
   }
 
   public login(): Observable<User> {
-    let loadingPopup = this.notificationService.createLoadingPopup('app.checking-login');
-
-    this.facebook.login([ 'email' ]).then((response) => {
+    let self = this;
+    let popup = this.notificationService.createLoadingPopup('app.checking-login');
+    self.facebook.login([ 'email' ]).then((response) => {
       const facebookCredential = firebase.auth.FacebookAuthProvider
         .credential(response.authResponse.accessToken);
 
@@ -33,19 +33,19 @@ export class FacebookLoginService extends AbstractLoginService {
         .then((success) => {
           let user: User = new FacebookUser(success.user, success.email, success.photoURL,
                                             success.displayName, success.uid, success.phoneNumber);
-          this.success(user);
-          loadingPopup.dismiss();
+          self.success(user);
+          popup.dismiss();
         })
         .catch(error => {
-          loadingPopup.dismiss();
-          this.loginFailed();
-          this.notificationService.failed('l\'authentification a échoué (Promise.catch)', error);
+          popup.dismiss();
+          self.loginFailed();
+          self.notificationService.failed('l\'authentification a échoué (Promise.catch)', error);
         })
     }).catch(
       error => {
-        loadingPopup.dismiss();
-        this.loginFailed();
-        this.notificationService.failed('l\'authentification a échoué (catch)', error);
+        popup.dismiss();
+        self.loginFailed();
+        self.notificationService.failed('l\'authentification a échoué (catch)', error);
       }
     );
 
