@@ -90,9 +90,9 @@ export class NotificationService {
     return response.asObservable();
   }
 
-  askNoChoice(title: string, message: string): Observable<boolean> {
+  askNoChoice(title: string, message: string, params?: Object): Observable<boolean> {
     title = this.translateService.instant(title);
-    message = this.translateService.instant(message);
+    message = this.translateService.instant(message, params);
 
     let response: Subject<boolean> = new Subject();
     let alert = this.alertController.create({

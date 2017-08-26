@@ -22,7 +22,7 @@ export class AnonymousLoginService extends AbstractLoginService {
     super(notificationService);
   }
 
-  public login(): Observable<User> {
+  protected delegatedLogin(authObservable: Observable<User>): Observable<User> {
     let self = this;
     let popup = this.notificationService.createLoadingPopup('app.checking-login');
     this.firebaseAuth.auth.signInAnonymously()
@@ -39,7 +39,7 @@ export class AnonymousLoginService extends AbstractLoginService {
         }
       );
 
-    return this.authentifiedObservable;
+    return authObservable;
   }
 }
 

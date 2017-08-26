@@ -21,7 +21,7 @@ export class NativeProvider {
 
   constructor(public platform: Platform, private splashScreen: SplashScreen, private deviceFeedBack: DeviceFeedback,
               private androidPermissions: AndroidPermissions, private network: Network,
-              private notificationService: NotificationService, private navCtrl: NavController) {
+              private notificationService: NotificationService) {
     this.checkPermissions();
     this.initNetworkWatching();
   }
@@ -84,12 +84,12 @@ export class NativeProvider {
     });
   }
 
-  public initNativeFeatures() {
+  public initNativeFeatures(navCtrl: NavController) {
     this.platform.ready().then(() => {
       this.splashScreen.hide();
       this.platform.registerBackButtonAction(() => {
-        if (this.navCtrl.canGoBack()) {
-          this.navCtrl.pop();
+        if (navCtrl.canGoBack()) {
+          navCtrl.pop();
         } else {
           this.notificationService.ask('app.exit-title', 'app.exit-message').subscribe(
             response => {

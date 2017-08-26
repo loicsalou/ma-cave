@@ -29,6 +29,7 @@
     "connection-off": "sans",
     "title": "L'assistant caviste",
     "information": "Information",
+    "importation-successful": "L'importation est terminée en {{time}} ms",
     "error": "Erreur !",
     "failed": "Echec !",
     "unavailable-function": "Fonction indisponible - êtes vous offline ?",

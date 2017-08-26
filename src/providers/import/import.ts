@@ -15,13 +15,15 @@ import {Subject} from 'rxjs/Subject';
 @Injectable()
 export class ImportProvider {
 
-  bottleParsed: Subject<Bottle> = new Subject();
-  bottleParsedObservable: Observable<Bottle> = this.bottleParsed.asObservable();
+  bottleParsed: Subject<Bottle>;
+  bottleParsedObservable: Observable<Bottle>;
 
   constructor(public bottlesService: BottlePersistenceService) {
   }
 
   public parseFile(file: File): Observable<Bottle> {
+    this.bottleParsed = new Subject();
+    this.bottleParsedObservable = this.bottleParsed.asObservable();
     let isXls = file.name.toLowerCase().endsWith('.xls');
     let encoding = isXls ? 'windows-1252' : 'utf-8';
 
@@ -37,7 +39,8 @@ export class ImportProvider {
       }
     }
     reader.onerror = function (evt) {
-      self.bottleParsed.error('Le fichier ' + file.name + ' ne peut pas être lu');
+      self.bottleParsed.error('Le fichier ' + file.name + ' ne peut pas être lu. Veuillez vérifier les permissions' +
+        ' accordées à l\'application');
     };
     reader.readAsText(file, encoding);
 

@@ -8,7 +8,7 @@ import {Subject} from 'rxjs/Subject';
  */
 export abstract class AbstractLoginService {
   private authentified: Subject<User> = new Subject();
-  public authentifiedObservable: Observable<User> = this.authentified.asObservable();
+  private authentifiedObservable: Observable<User> = this.authentified.asObservable();
   protected notificationService: NotificationService;
 
   private _user: User;
@@ -17,7 +17,17 @@ export abstract class AbstractLoginService {
     this.notificationService = notificationService;
   }
 
-  public abstract login();
+  /**
+   * ne pas surcharger ! devrait être final mais pas possible en Typescript
+   * @returns {Observable<User>}
+   */
+  public login(): Observable<User> {
+    this.authentified = new Subject();
+    this.authentifiedObservable = this.authentified.asObservable();
+    return this.delegatedLogin(this.authentifiedObservable);
+  }
+
+  protected abstract delegatedLogin(authObs: Observable<User>);
 
   get user(): User {
     return this._user;

@@ -30,10 +30,10 @@ export class LocalLoginService extends AbstractLoginService {
     this._localUser = new LocalLoginUser(value.user, value.email, value.photoUrl, value.displayName, value.uid, value.phoneNumber);
   }
 
-  public login(): Observable<User> {
+  protected delegatedLogin(authObs: Observable<User>): Observable<User> {
     //async this, must return first
     setTimeout(() => this.success(this._localUser), 300);
-    return this.authentifiedObservable;
+    return authObs;
   }
 }
 

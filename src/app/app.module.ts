@@ -60,7 +60,6 @@ import {LocalLoginPage} from '../pages/login/local-login.page';
 import {LockerEditorPageModule} from '../pages/locker-editor/locker-editor.page.module';
 import {LockerEditor2PageModule} from '../pages/locker-editor2/locker-editor2.page.module';
 import {AndroidPermissions} from '@ionic-native/android-permissions';
-import { NativeProvider } from '../providers/native/native';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -151,12 +150,11 @@ export const fireConfig = {
               },
               SplashScreen,
               Statistics,
-              StatusBar,
-    NativeProvider
+              StatusBar
             ], exports: [
-              StatisticsComponent,
-              DefaultImageDirective
-            ]
+    StatisticsComponent,
+    DefaultImageDirective
+  ]
           })
 export class AppModule {
 }
