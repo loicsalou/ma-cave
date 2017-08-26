@@ -34,11 +34,11 @@ export class ImagePersistenceService extends PersistenceService {
     }
   }
 
-  initialize(user) {
+  protected initialize(user) {
     super.initialize(user);
   }
 
-  cleanup() {
+  protected cleanup() {
     super.cleanup();
   }
 

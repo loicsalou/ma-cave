@@ -4,8 +4,6 @@
 import {Injectable} from '@angular/core';
 import {Bottle, BottleMetadata} from '../model/bottle';
 import {Observable} from 'rxjs';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import * as firebase from 'firebase/app';
 import {Image} from '../model/image';
 import {FileItem} from './file-item';
 import {UploadMetadata} from './image-persistence.service';
@@ -14,7 +12,6 @@ import {NativeStorage} from '@ionic-native/native-storage';
 import {User} from '../model/user';
 import {Platform} from 'ionic-angular';
 import {BottleFactory} from '../model/bottle.factory';
-import Reference = firebase.database.Reference;
 import {Subject} from 'rxjs/Subject';
 
 /**
@@ -37,8 +34,6 @@ export class NativeStorageService {
   public XREF_ROOT: string;
 
   private cordova: boolean = false;
-  private _bottles: Subject<Bottle[]> = new Subject<Bottle[]>();
-  private _allBottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
 
   /**
    * ATTENTION CE SERVICE NE PEUT PAS DEPENDRE DU LOGINSERVICE ! IL EST PROVIDER DE DONNEES POUR LE LOGIN LOCAL ET
@@ -55,7 +50,8 @@ export class NativeStorageService {
     this.IMAGES_ROOT = this.IMAGES_FOLDER;
     this.XREF_ROOT = this.XREF_FOLDER;
     this.USER_ROOT = this.USERS_ROOT + this.SEP + (user ? user.user : '' );
-    //this.notificationService.debugAlert('NativeStorage: init avec user.user=' + user.user + ' - USER_ROOT=' + this.USER_ROOT);
+    //this.notificationService.debugAlert('NativeStorage: init avec user.user=' + user.user + ' - USER_ROOT=' +
+    // this.USER_ROOT);
     this.BOTTLES_ROOT = this.USER_ROOT + this.SEP + NativeStorageService.BOTTLES_FOLDER;
     this.saveUser(user);
   }
@@ -63,10 +59,6 @@ export class NativeStorageService {
   public cleanup() {
     this.BOTTLES_ROOT = undefined;
     this.IMAGES_ROOT = undefined;
-  }
-
-  get allBottlesObservable(): Observable<Bottle[ ]> {
-    return this._allBottlesObservable;
   }
 
   public deleteImage(file: File): Promise<any> {
@@ -98,46 +90,29 @@ export class NativeStorageService {
     this.notificationService.warning('Non supporté hors connexion');
     return undefined;
   }
-  //
-  //private uploadToStorage(imageBlob, name: string): Promise<any> {
-  //  this.notificationService.warning('Non supporté hors connexion');
-  //  return undefined;
-  //}
-  //
-  //private saveToDatabaseAssetList(uploadSnapshot, meta: BottleMetadata): Promise<UploadMetadata> {
-  //  this.notificationService.warning('Non supporté hors connexion');
-  //  return undefined;
-  //}
-  //
-  //private getUploadImageMeta(snap): UploadMetadata {
-  //  return {
-  //    downloadURL: snap.downloadURL,
-  //    imageName: snap.metadata.name,
-  //    contentType: snap.metadata.contentType,
-  //    totalBytes: snap.totalBytes,
-  //    updated: snap.metadata.updated,
-  //    timeCreated: snap.metadata.timeCreated,
-  //    uploadState: snap.state
-  //  }
-  //}
 
-  public fetchAllBottles() {
+  public fetchAllBottles(): Observable<Bottle[]> {
+    let bottlesSubject: Subject<Bottle[]> = new Subject<Bottle[]>();
+    let allBottlesObservable: Observable<Bottle[]> = bottlesSubject.asObservable();
+
     if (this.cordova) {
-
       this.nativeStorage.getItem(this.BOTTLES_ROOT)
         .then(
-          data => {
+          bottles => {
             //load then prepare loaded bottles for the app
-            let btl = data.map((bottle: Bottle) => this.bottleFactory.create(bottle));
-            //let btl = JSON.parse(data).map((bottle: Bottle) => this.bottleFactory.create(bottle));
-            this._bottles.next(btl);
+            let btl = bottles.map((bottle: Bottle) => this.bottleFactory.create(bottle));
+            bottlesSubject.next(btl);
+            bottlesSubject.complete();
           },
           error => {
             //this.notificationService.debugAlert('pas de donnée locale trouvée ' + this.BOTTLES_ROOT, error);
           }
-        ).catch(error => this.notificationService.debugAlert('(catch) La récupération locale des données a échoué' +
-                                                             ' depuis ' + this.BOTTLES_ROOT, error));
+        )
+        .catch(error => this.notificationService.debugAlert('(catch) La récupération locale des données a échoué' +
+        ' depuis ' + this.BOTTLES_ROOT, error));
     }
+
+    return allBottlesObservable;
   }
 
   public update(bottles: Bottle[ ]): Promise<any> {
@@ -148,10 +123,10 @@ export class NativeStorageService {
   public save(bottles: Bottle[ ]): Promise<any> {
     if (this.cordova) {
       return this.nativeStorage.setItem(this.BOTTLES_ROOT, bottles)
-      .then(
-        result => this.notificationService.debugAlert('sauvegarde locale OK'),
-        error => this.notificationService.debugAlert('sauvegarde locale En erreur ! ' + error)
-      );
+        .then(
+          result => this.notificationService.debugAlert('sauvegarde locale OK'),
+          error => this.notificationService.debugAlert('sauvegarde locale En erreur ! ' + error)
+        );
     }
   }
 
@@ -180,7 +155,8 @@ export class NativeStorageService {
         (users: User[]) => {
           //this.notificationService.debugAlert('Récupéré ' + JSON.stringify(users.map(u => u.email)));
           users.push(user);
-          //this.notificationService.debugAlert('push du user dans le tableau des users OK nb=' + JSON.stringify(users.map(u => u.email)));
+          //this.notificationService.debugAlert('push du user dans le tableau des users OK nb=' +
+          // JSON.stringify(users.map(u => u.email)));
           let usersByMail = new Map<string, User>();
           users.forEach((u: User) => {
             if (!usersByMail.has(u.email)) {
@@ -191,7 +167,8 @@ export class NativeStorageService {
             }
           });
           users = Array.from(usersByMail.values());
-          //this.notificationService.debugAlert('élim doubles fait. Reste ' + JSON.stringify(users.map(u => u.email)) + '. Sauvegarde...');
+          //this.notificationService.debugAlert('élim doubles fait. Reste ' + JSON.stringify(users.map(u => u.email)) +
+          // '. Sauvegarde...');
           this.nativeStorage.setItem(this.KNOWN_USERS, users);
           //this.notificationService.debugAlert('Sauvegarde liste utilisateurs OK');
         }).catch(err => {

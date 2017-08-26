@@ -53,8 +53,8 @@ export class FirebaseConnectionService {
   private userRootRef: Reference;
 
   private bottlesRootRef: Reference;
-  private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
-  private _allBottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
+  private _bottles: BehaviorSubject<Bottle[]>;
+  private _allBottlesObservable: Observable<Bottle[]>;
   private firebaseBottlesSub: Subscription;
 
   private cellarRootRef: Reference;
@@ -172,6 +172,9 @@ export class FirebaseConnectionService {
 // ===================================================== BOTTLES
 
   get allBottlesObservable(): Observable<Bottle[ ]> {
+    this._bottles = new BehaviorSubject<Bottle[]>([]);
+    this._allBottlesObservable = this._bottles.asObservable();
+
     return this._allBottlesObservable;
   }
 
@@ -241,7 +244,7 @@ export class FirebaseConnectionService {
 
   private fetchBottlesFromCache(): boolean {
     if (this.platform.is('cordova')) {
-      this.localStorageSub = this.localStorage.allBottlesObservable.take(1).subscribe(
+      this.localStorageSub = this.localStorage.fetchAllBottles().subscribe(
         (bottles: Bottle[]) => this.handleCacheObservable(bottles),
         error => this.notificationService.error('L\'accès à la liste locale des bouteilles a échoué !', error),
         () => this.notificationService.debugAlert('Récupération unique des bouteilles dans le cache OK')
@@ -598,16 +601,11 @@ export class FirebaseConnectionService {
   disconnectListeners() {
     this.firebaseBottlesSub.unsubscribe()
   }
-}
 
-//
-//function matchByKeyAndLastUpdateDate(fbBottle, cacheBottle) {
-//  if (!cacheBottle) {
-//    //une bouteille est dans FB mais pas dans le cache ==> il n'y a pas matching
-//    return false;
-//  }
-//  return (fbBottle.lastUpdated === cacheBottle.lastUpdated && fbBottle.$key === cacheBottle.id);
-//}
+  reconnectListeners() {
+    this.fetchAllBottlesFromDB();
+  }
+}
 
 function matchByKey(fbBottle, cacheBottle) {
   return (fbBottle.id === cacheBottle.id);

@@ -44,12 +44,12 @@ export class CellarPersistenceService extends PersistenceService implements Cell
     return this._allLockersObservable;
   }
 
-  initialize(user) {
+  protected initialize(user) {
     super.initialize(user);
     this.fetchAllLockers();
   }
 
-  cleanup() {
+  protected cleanup() {
     super.cleanup();
     this.allLockersArray = undefined;
   }

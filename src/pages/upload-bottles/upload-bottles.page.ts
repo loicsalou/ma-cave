@@ -140,7 +140,10 @@ export class UploadBottlesPage {
                            this.notificationService.askNoChoice('app.information', 'app.importation-successful',
                                                                 {time: (endTimestamp - startTimestamp)})
                              .subscribe(
-                               () => this.forceLogout(loading)
+                               () => {
+                                 //this.forceLogout(loading);
+                                 this.bottleService.reconnectListeners();
+                               }
                              );
                          }
                        )

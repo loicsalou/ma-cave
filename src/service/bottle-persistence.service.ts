@@ -49,13 +49,13 @@ export class BottlePersistenceService extends PersistenceService {
     }
   }
 
-  initialize(user: User) {
+  protected initialize(user: User) {
     super.initialize(user);
     this.dataConnection.initialize(user);
     this.fetchAllBottles();
   }
 
-  cleanup() {
+  protected cleanup() {
     super.cleanup();
     this.dataConnectionSub.unsubscribe();
     this.dataConnection.cleanup();
@@ -72,7 +72,7 @@ export class BottlePersistenceService extends PersistenceService {
     }
   }
 
-  public fetchFromDatabase() {
+  private fetchFromDatabase() {
     let items = this.dataConnection.allBottlesObservable;
     this.dataConnectionSub = items.subscribe((bottles: Bottle[]) => {
                                                this.setAllBottlesArray(bottles);
@@ -262,12 +262,6 @@ export class BottlePersistenceService extends PersistenceService {
     this._filtersObservable.next(filters);
   }
 
-  public setCellarContent(bottles: Bottle[]) {
-    this.cellarImported = true;
-    this.allBottlesArray = bottles;
-    this._bottles.next(this.allBottlesArray);
-  }
-
   getBottle(id: string): Bottle {
     return this.allBottlesArray.find(btl => btl.id === id);
   }
@@ -289,6 +283,10 @@ export class BottlePersistenceService extends PersistenceService {
 
   disconnectListeners() {
     this.dataConnection.disconnectListeners();
+  }
+
+  reconnectListeners() {
+    this.dataConnection.reconnectListeners();
   }
 }
 
