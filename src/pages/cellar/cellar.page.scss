@@ -1,5 +1,12 @@
 .cellar-page {
 
+  div[left][bottom] {
+    bottom: 65px;
+    left: 10px;
+    position: fixed;
+    z-index: 999;
+  }
+
   div.slide-zoom {
     height: 100%;
   }

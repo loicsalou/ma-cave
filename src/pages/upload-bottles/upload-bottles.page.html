@@ -4,16 +4,15 @@
   See http://ionicframework.com/docs/components/#navigation for more info on
   Ionic pages and navigation.
 -->
-<ion-header>
-  
+<ion-header style="display: flex" class="page-upload-bottles">
   <ion-navbar>
-    <ion-title>upload-bottles</ion-title>
+    <ion-title>Administration</ion-title>
   </ion-navbar>
-
+  <img src="assets/icon/primary-logout.png" icon-only (click)="logout()"/>
 </ion-header>
 
 
-<ion-content padding>
+<ion-content padding class="page-upload-bottles">
   
   <div>
     <ion-card class="card-background">
@@ -114,10 +113,10 @@
     <div *ngIf="! platformIsCordova()">
       <input type="file" id="input" (change)="readBrowserFile($event)">
     </div>
-    <p>{{bottleService.loginService.user.user}}</p>
+    <p *ngIf="bottleService.loginService.user">{{bottleService.loginService.user.user}}</p>
   </div>
   
-  <button ion-button (click)="test()">Voir local storage</button>
+  <button ion-button (click)="showLocalStorage()">Voir local storage</button>
   <div *ngIf="localStorageKeys">
     <ion-item *ngFor="let key of localStorageKeys">
       <label (click)="loadTempValueFor(key)">{{key}}</label>

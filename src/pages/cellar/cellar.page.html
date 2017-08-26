@@ -19,10 +19,10 @@
     </ion-slides>
   </ion-row>
   
-  <ion-row *ngIf="bottlesToPlace">
+  <div *ngIf="bottlesToPlace" bottom left>
     <locker #placedLockerComponent [locker]="bottlesToPlaceLocker" [content]="bottlesToPlace"
             (onCellSelected)="cellSelected($event)"></locker>
-  </ion-row>
+  </div>
   
   <ion-fab bottom right>
     <button ion-fab>

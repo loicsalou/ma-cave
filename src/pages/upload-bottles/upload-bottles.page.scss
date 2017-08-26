@@ -1,3 +1,16 @@
 page-upload-bottles {
 
+  img {
+    height: 30vh;
+    opacity: 1;
+    padding-botton: 5px;
+
+    &[icon-only] {
+      width: 35px;
+      height: 35px;
+      margin: 8px 8px 8px 0;
+      align-self: center;
+    }
+  }
+
 }

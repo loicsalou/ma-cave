@@ -594,6 +594,10 @@ export class FirebaseConnectionService {
   setConnectionAllowed(b: boolean) {
     this.connectionAllowed = b;
   }
+
+  disconnectListeners() {
+    this.firebaseBottlesSub.unsubscribe()
+  }
 }
 
 //

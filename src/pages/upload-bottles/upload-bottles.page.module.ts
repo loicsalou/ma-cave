@@ -9,13 +9,14 @@ import {BarcodeScanner} from '@ionic-native/barcode-scanner';
 import {FilePath} from '@ionic-native/file-path';
 import {HttpModule} from '@angular/http';
 import {CavusService} from '../../service/cavus.service';
+import {SharedModule} from '../../components/shared.module';
 
 @NgModule({
             declarations: [
               UploadBottlesPage
             ],
             imports: [
-              IonicPageModule.forChild(UploadBottlesPage), HttpModule
+              IonicPageModule.forChild(UploadBottlesPage), HttpModule, SharedModule
             ],
             exports: [
               UploadBottlesPage
