@@ -90,6 +90,7 @@ export class UploadBottlesPage {
   }
 
   private setupUpload(file: any) {
+    this.bottleService.disconnectListeners();
     let loading = this.loadingController.create({
                                                   spinner: 'bubbles',
                                                   content: 'Importation en cours...'
@@ -108,27 +109,30 @@ export class UploadBottlesPage {
 
   private processParsing(loading: Loading, file: File) {
     let nbBottles = 0;
+    let parsedBottles = [];
     let saved = 0;
 
     this.importProvider.parseFile(file)
       .subscribe(bottle => {
-                   nbBottles++;
-                   this.bottleService.save([ bottle ]).then(
-                     () => {
-                       loading.setContent('sauvegarde en cours: ' + saved++);
-                       if (saved===nbBottles) {
-                         loading.setContent('sauvegarde terminée correctement');
-                         setTimeout(() => this.dismissLoading(loading), 1000);
-                       }
-                     }
-                   )
+                   parsedBottles.push(bottle);
+                   loading.setContent('Analyse du lot ' + nbBottles++);
                  },
                  err => {
                    this.notificationService.error('Erreur de parsing: ' + err);
                    this.dismissLoading(loading);
                  },
                  () => {
-                   loading.setContent('Nombre de lignes parsées : ' + nbBottles);
+                   loading.setContent('Sauvegarde de ' + nbBottles + ' lots : ');
+                   this.bottleService.save(parsedBottles).then(
+                     () => {
+                       loading.setContent('Sauvegarde terminée correctement');
+                       setTimeout(() => {
+                         this.dismissLoading(loading);
+                         this.forceLogout(loading);
+                       }, 1000);
+                     }
+                   )
+
                  }
       );
   }
@@ -155,6 +159,12 @@ export class UploadBottlesPage {
     this.localStorage.getValue(key)
       .then(v => this.tempValue = JSON.stringify(v))
       .catch(err => alert('accès à la valeur de ' + key + ' KO: ' + JSON.stringify(err)));
+  }
+
+  private forceLogout(loading: Loading) {
+    this.notificationService.askNoChoice('app.must-logout-title', 'app.must-logout').subscribe(
+      () => this.logout()
+    )
   }
 }
 

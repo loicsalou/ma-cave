@@ -19,6 +19,8 @@
   "young": "Jeune",
   "app": {
     "please-login": "Authentification",
+    "must-logout": "Vous devez vous reconnecter",
+    "must-logout-title": "Déconnexion",
     "checking-login": "Authentification en cours...",
     "connection": "Connexion",
     "exit-title": "Sortir ?",

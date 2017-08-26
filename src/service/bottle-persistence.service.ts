@@ -286,6 +286,10 @@ export class BottlePersistenceService extends PersistenceService {
   createBottle(btl: Bottle): Bottle {
     return this.bottleFactory.create(btl)
   }
+
+  disconnectListeners() {
+    this.dataConnection.disconnectListeners();
+  }
 }
 
 

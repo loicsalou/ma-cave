@@ -66,7 +66,7 @@ export class NotificationService {
     }
   }
 
-  ask(title: string, message: string,): Observable<boolean> {
+  ask(title: string, message: string): Observable<boolean> {
     title = this.translateService.instant(title);
     message = this.translateService.instant(message);
 
@@ -82,6 +82,25 @@ export class NotificationService {
                                                 },
                                                 {
                                                   text: 'Oui',
+                                                  handler: () => response.next(true)
+                                                }
+                                              ]
+                                            });
+    alert.present();
+    return response.asObservable();
+  }
+
+  askNoChoice(title: string, message: string): Observable<boolean> {
+    title = this.translateService.instant(title);
+    message = this.translateService.instant(message);
+
+    let response: Subject<boolean> = new Subject();
+    let alert = this.alertController.create({
+                                              title: title,
+                                              message: message,
+                                              buttons: [
+                                                {
+                                                  text: 'Ok',
                                                   handler: () => response.next(true)
                                                 }
                                               ]
