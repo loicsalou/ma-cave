@@ -115,8 +115,8 @@ export class BottlePersistenceService extends PersistenceService {
     )
   }
 
-  public initializeDB(bottles: Bottle[]) {
-    this.save(bottles);
+  public initializeDB(bottles: Bottle[]): Promise<any> {
+    return this.save(bottles);
   }
 
   get allBottlesObservable(): Observable<Bottle[]> {
