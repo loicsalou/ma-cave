@@ -10,6 +10,8 @@ import {LocalLoginPage} from '../login/local-login.page';
 import {FirebaseConnectionService} from '../../service/firebase-connection.service';
 import {NotificationService} from '../../service/notification.service';
 import {DeviceFeedback} from '@ionic-native/device-feedback';
+import {AndroidPermissions} from '@ionic-native/android-permissions';
+import {NativeProvider} from '../../providers/native/native';
 
 @Component({
              selector: 'page-home',
@@ -28,10 +30,10 @@ export class HomePage implements OnInit, AfterViewInit {
   private locidentifying: boolean = false;
   private anoidentifying: boolean = false;
 
-  constructor(public navCtrl: NavController, public platform: Platform, public loginService: LoginService,
-              private modalController: ModalController, private splashScreen: SplashScreen, private deviceFeedBack: DeviceFeedback,
-              private notificationService: NotificationService, private dataConnection: FirebaseConnectionService) {
-    this.enableExitOnConfirm();
+  constructor(public navCtrl: NavController, public loginService: LoginService,
+              private modalController: ModalController, private deviceFeedBack: DeviceFeedback,
+              private notificationService: NotificationService, private dataConnection: FirebaseConnectionService,
+              private nativeProvider: NativeProvider) {
   }
 
   ngOnInit(): void {
@@ -39,15 +41,12 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.platform.ready().then(() => {
-      this.splashScreen.hide();
-    });
+    this.nativeProvider.initNativeFeatures();
   }
 
   facebookLogin() {
     this.fbidentifying = true;
-    this.deviceFeedBack.haptic(0);
-    this.deviceFeedBack.acoustic();
+    this.nativeProvider.feedBack();
     this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
       this.handleLoginEvent(user);
       this.fbidentifying = false;
@@ -57,8 +56,7 @@ export class HomePage implements OnInit, AfterViewInit {
 
   emailLogin() {
     this.mailidentifying = true;
-    this.deviceFeedBack.haptic(0);
-    this.deviceFeedBack.acoustic();
+    this.nativeProvider.feedBack();
     this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
       this.handleLoginEvent(user);
       if (user) {
@@ -72,8 +70,7 @@ export class HomePage implements OnInit, AfterViewInit {
 
   localLogin() {
     this.locidentifying = true;
-    this.deviceFeedBack.haptic(0);
-    this.deviceFeedBack.acoustic();
+    this.nativeProvider.feedBack();
     this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
       this.handleLoginEvent(user);
       if (user) {
@@ -87,8 +84,7 @@ export class HomePage implements OnInit, AfterViewInit {
 
   anonymousLogin() {
     this.anoidentifying = true;
-    this.deviceFeedBack.haptic(0);
-    this.deviceFeedBack.acoustic();
+    this.nativeProvider.feedBack();
     this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
       this.handleLoginEvent(user);
       this.anoidentifying = false;
@@ -128,23 +124,5 @@ export class HomePage implements OnInit, AfterViewInit {
       this.loginSubscription.unsubscribe();
       this.enableExitOnConfirm();
     }
-  }
-
-  enableExitOnConfirm() {
-    this.platform.ready().then(() => {
-      this.platform.registerBackButtonAction(() => {
-        if (this.navCtrl.canGoBack()) {
-          this.navCtrl.pop();
-        } else {
-          this.notificationService.ask('app.exit-title', 'app.exit-message').subscribe(
-            response => {
-              if (response) {
-                this.platform.exitApp()
-              }
-            }
-          )
-        }
-      });
-    });
   }
 }

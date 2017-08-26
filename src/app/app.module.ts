@@ -19,7 +19,6 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {Http, HttpModule} from '@angular/http';
 import {BottleDetailPage} from '../pages/bottle-detail/page-bottle-detail';
 import {UpdatePage} from '../pages/update/update.page';
-import {Camera} from '@ionic-native/camera';
 import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
 import {BrowserModule} from '@angular/platform-browser';
@@ -60,6 +59,8 @@ import {LocalLoginService} from '../service/local-login.service';
 import {LocalLoginPage} from '../pages/login/local-login.page';
 import {LockerEditorPageModule} from '../pages/locker-editor/locker-editor.page.module';
 import {LockerEditor2PageModule} from '../pages/locker-editor2/locker-editor2.page.module';
+import {AndroidPermissions} from '@ionic-native/android-permissions';
+import { NativeProvider } from '../providers/native/native';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -125,7 +126,7 @@ export const fireConfig = {
               BottleFactory,
               Bottles,
               BottlePersistenceService,
-              Camera,
+              AndroidPermissions,
               DistributeService,
               EmailLoginService,
               {provide: ErrorHandler, useClass: IonicErrorHandler},
@@ -150,7 +151,8 @@ export const fireConfig = {
               },
               SplashScreen,
               Statistics,
-              StatusBar
+              StatusBar,
+    NativeProvider
             ], exports: [
               StatisticsComponent,
               DefaultImageDirective
