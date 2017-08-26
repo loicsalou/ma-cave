@@ -8,6 +8,9 @@ import {ChartComponent} from './chart/chart.component';
 import {ChartsModule} from 'ng2-charts';
 import {DeviceFeedback} from '@ionic-native/device-feedback';
 import {ImportProvider} from '../providers/import/import';
+import {NativeProvider} from '../providers/native/native';
+import {Network} from '@ionic-native/network';
+import {Camera} from '@ionic-native/camera';
 
 @NgModule({
             declarations: [
@@ -29,7 +32,10 @@ import {ImportProvider} from '../providers/import/import';
               ProgressBarComponent
             ],
             providers: [
+              Camera,
               DeviceFeedback,
+              NativeProvider,
+              Network,
               ImportProvider
             ]
           })
