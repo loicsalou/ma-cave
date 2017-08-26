@@ -12,7 +12,7 @@ import {NotificationService} from '../../service/notification.service';
 import {CellarPage} from '../cellar/cellar.page';
 import {BottleListComponent} from '../../components/list/bottle-list.component';
 import {TranslateService} from '@ngx-translate/core';
-import {DeviceFeedback} from '@ionic-native/device-feedback';
+import {NativeProvider} from '../../providers/native/native';
 
 @Component({
              selector: 'page-browse',
@@ -34,13 +34,12 @@ export class BrowsePage implements OnInit, OnDestroy {
 
   constructor(public navCtrl: NavController, public platform: Platform, private bottlesService: BottlePersistenceService,
               private loginService: LoginService, private notificationService: NotificationService,
-              private translateService: TranslateService, private deviceFeedback: DeviceFeedback, params?: NavParams) {
+              private translateService: TranslateService, private nativeProvider: NativeProvider, params?: NavParams) {
     this.navParams = params;
   }
 
   ngOnInit() {
-    this.deviceFeedback.acoustic();
-    this.deviceFeedback.haptic(0);
+    this.nativeProvider.feedBack();
     this.notificationService.traceInfo('Initialisation de la page de browse');
     this.setFilter();
     this.filterSubscription = this.bottlesService.filtersObservable.subscribe(
@@ -104,7 +103,7 @@ export class BrowsePage implements OnInit, OnDestroy {
     this.listComponent.resetSelection();
   }
 
-  registerSelectionAsFavorite() {
+  async registerSelectionAsFavorite() {
     let favoriteStatus;
     let selectedBottles: Bottle[] = this.bottles.filter(btl => btl.selected);
     selectedBottles.forEach(btl => {

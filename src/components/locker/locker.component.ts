@@ -4,6 +4,7 @@ import {Bottle, Position} from '../../model/bottle';
 import {Gesture} from 'ionic-angular';
 import {Dimension} from '../../model/locker';
 import {DeviceFeedback} from '@ionic-native/device-feedback';
+import {NativeProvider} from '../../providers/native/native';
 
 export abstract class LockerComponent {
 
@@ -26,12 +27,11 @@ export abstract class LockerComponent {
   @ViewChild('zoomable') zoomable: ElementRef;
 
 
-  constructor(private deviceFeedback: DeviceFeedback) {
+  constructor(private nativeProvider: NativeProvider) {
   }
 
   protected hapticConfirm() {
-    this.deviceFeedback.acoustic();
-    this.deviceFeedback.haptic(0);
+    this.nativeProvider.feedBack();
   }
 
   /**

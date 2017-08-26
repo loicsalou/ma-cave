@@ -27,7 +27,6 @@ import {BottleFactory} from '../model/bottle.factory';
 export class BottlePersistenceService extends PersistenceService {
   private BOTTLES_ROOT: string;
 
-  private cellarImported: boolean = false;
   private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
   private _allBottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
   private _filteredBottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
@@ -52,7 +51,13 @@ export class BottlePersistenceService extends PersistenceService {
   protected initialize(user: User) {
     super.initialize(user);
     this.dataConnection.initialize(user);
-    this.fetchAllBottles();
+    let items = this.dataConnection.allBottlesObservable;
+    this.dataConnectionSub = items.subscribe((bottles: Bottle[]) => {
+                                               this.setAllBottlesArray(bottles);
+                                               this.filterOn(this.filters);
+                                             },
+                                             error => this.notificationService.error('L\'accès à la liste des bouteilles a échoué !', error));
+    this.dataConnection.fetchAllBottles();
   }
 
   protected cleanup() {
@@ -62,24 +67,6 @@ export class BottlePersistenceService extends PersistenceService {
     this.BOTTLES_ROOT = undefined;
     this.allBottlesArray = undefined;
     this.filters = undefined;
-  }
-
-  public fetchAllBottles() {
-    if (this.cellarImported) {
-      this._bottles.next(this.allBottlesArray);
-    } else {
-      this.fetchFromDatabase();
-    }
-  }
-
-  private fetchFromDatabase() {
-    let items = this.dataConnection.allBottlesObservable;
-    this.dataConnectionSub = items.subscribe((bottles: Bottle[]) => {
-                                               this.setAllBottlesArray(bottles);
-                                               this.filterOn(this.filters);
-                                             },
-                                             error => this.notificationService.error('L\'accès à la liste des bouteilles a échoué !', error));
-    this.dataConnection.fetchAllBottles();
   }
 
   public update(bottles: Bottle[]) {
@@ -117,6 +104,33 @@ export class BottlePersistenceService extends PersistenceService {
 
   public initializeDB(bottles: Bottle[]): Promise<any> {
     return this.save(bottles);
+  }
+
+  public getBottle(id: string): Bottle {
+    return this.allBottlesArray.find(btl => btl.id === id);
+  }
+
+  public getBottlesInLocker(locker: Locker): Bottle[] {
+    return this.allBottlesArray.filter(
+      bottle => bottle.positions.filter(pos => pos.lockerId === locker.id).length > 0
+    )
+  }
+
+  /**
+   * creates a clean bottle starting from any bottle-like structured Data
+   * @param {Bottle} btl
+   * @returns {Bottle}
+   */
+  public createBottle(btl: Bottle): Bottle {
+    return this.bottleFactory.create(btl)
+  }
+
+  public disconnectListeners() {
+    this.dataConnection.disconnectListeners();
+  }
+
+  public reconnectListeners() {
+    this.dataConnection.reconnectListeners();
   }
 
   get allBottlesObservable(): Observable<Bottle[]> {
@@ -260,33 +274,6 @@ export class BottlePersistenceService extends PersistenceService {
   private setFilters(filters: FilterSet) {
     this.filters = filters;
     this._filtersObservable.next(filters);
-  }
-
-  getBottle(id: string): Bottle {
-    return this.allBottlesArray.find(btl => btl.id === id);
-  }
-
-  getBottlesInLocker(locker: Locker): Bottle[] {
-    return this.allBottlesArray.filter(
-      bottle => bottle.positions.filter(pos => pos.lockerId === locker.id).length > 0
-    )
-  }
-
-  /**
-   * creates a clean bottle starting from any bottle-like structured Data
-   * @param {Bottle} btl
-   * @returns {Bottle}
-   */
-  createBottle(btl: Bottle): Bottle {
-    return this.bottleFactory.create(btl)
-  }
-
-  disconnectListeners() {
-    this.dataConnection.disconnectListeners();
-  }
-
-  reconnectListeners() {
-    this.dataConnection.reconnectListeners();
   }
 }
 
