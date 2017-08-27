@@ -55,13 +55,12 @@ export class CellarPersistenceService extends PersistenceService implements Cell
   }
 
   private fetchAllLockers() {
-    this.dataConnection.allLockersObservable.subscribe(
+    this.dataConnection.fetchAllLockers().subscribe(
       (lockers: Locker[]) => {
         this.allLockersArray = lockers.map((locker: Locker) => this.lockerFactory.create(locker));
         this._lockers.next(this.allLockersArray);
       }
     );
-    this.dataConnection.fetchAllLockers();
   }
 
   createLocker(locker: Locker): void {

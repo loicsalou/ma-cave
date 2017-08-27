@@ -6,6 +6,7 @@ import {NotificationService} from '../../service/notification.service';
 import {Cell, LockerComponent, Row} from './locker.component';
 import {Gesture} from 'ionic-angular';
 import {DeviceFeedback} from '@ionic-native/device-feedback';
+import {NativeProvider} from '../../providers/native/native';
 
 /**
  * Generated class for the SimpleLockerComponent component.
@@ -33,8 +34,8 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   rows: Row[];
   private bogusBottles = [];
 
-  constructor(private notificationService: NotificationService, deviceFeedback: DeviceFeedback) {
-    super(deviceFeedback)
+  constructor(private notificationService: NotificationService, nativeProvider: NativeProvider) {
+    super(nativeProvider)
   }
 
   ngOnInit(): void {

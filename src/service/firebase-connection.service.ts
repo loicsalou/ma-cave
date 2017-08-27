@@ -56,19 +56,15 @@ export class FirebaseConnectionService {
   private _bottles: BehaviorSubject<Bottle[]>;
   private _allBottlesObservable: Observable<Bottle[]>;
   private firebaseBottlesSub: Subscription;
+  private cacheDaemonSubscription: Subscription; // watches changes that happened since last known update in cache
 
   private cellarRootRef: Reference;
   private _lockers: BehaviorSubject<Locker[]> = new BehaviorSubject<Locker[]>([]);
-  private _allLockersObservable: Observable<Locker[]> = this._lockers.asObservable();
-  private firebaseLockersSub: Subscription;
 
   private imageStorageRef: firebase.storage.Reference;
   private _uploadProgressEvent: Subject<number> = new Subject<number>();
   private cacheBottles: Bottle[];
   private connectionAllowed: boolean = true;
-  private localStorageSub: Subscription;
-
-  //date de dernière mise à jour d'une bouteille dans le cache
 
   constructor(private bottleFactory: BottleFactory,
               private angularFirebase: AngularFireDatabase, private loginService: LoginService,
@@ -98,45 +94,35 @@ export class FirebaseConnectionService {
     this.IMAGES_ROOT = undefined;
     this.imageStorageRef = undefined;
     this._bottles.next([]);
-    this._lockers.next([]);
-    if (this.localStorageSub) {
-      this.localStorageSub.unsubscribe();
-    }
     this.firebaseBottlesSub.unsubscribe();
+    if (this.cacheDaemonSubscription) {
+      this.cacheDaemonSubscription.unsubscribe();
+    }
   }
 
   // ===================================================== LOCKERS
 
-  get allLockersObservable(): Observable<Locker[]> {
-    return this._allLockersObservable;
-  }
-
-  public fetchAllLockers() {
-    this.notificationService.debugAlert('fetchAllLockersFromDB()');
-    let items = this.angularFirebase.list(this.CELLAR_ROOT, {
-      query: {
-        orderByChild: 'lastUpdated'
-      }
-    });
-
-    this.firebaseLockersSub = items.subscribe(
-      (lockers: Locker[]) => {
-        if (lockers.length > 0) {
-          //prepare loaded bottles for the app
-          this._lockers.next(lockers.map(l => {
-            l[ 'id' ] = l[ '$key' ];
-            return l;
-          }));
-
-          // on sauve dans le cache
-          //this.localStorage.save(lockers);
+  public fetchAllLockers(): Observable<Locker[]> {
+    return this.angularFirebase
+      .list(this.CELLAR_ROOT, {
+        query: {
+          orderByChild: 'lastUpdated'
         }
-      },
-      error => {
-        this._lockers.error(error);
-      },
-      () => this._lockers.complete()
-    );
+      })
+      .take(1)
+      .map(
+        (lockers: Locker[]) => {
+          if (lockers.length > 0) {
+            //prepare loaded bottles for the app
+            lockers = lockers.map(
+              l => {
+                l[ 'id' ] = l[ '$key' ];
+                return l;
+              })
+          }
+          return lockers
+        }
+      )
   }
 
   public createLocker(locker: Locker): void {
@@ -174,7 +160,6 @@ export class FirebaseConnectionService {
   get allBottlesObservable(): Observable<Bottle[ ]> {
     this._bottles = new BehaviorSubject<Bottle[]>([]);
     this._allBottlesObservable = this._bottles.asObservable();
-
     return this._allBottlesObservable;
   }
 
@@ -187,17 +172,16 @@ export class FirebaseConnectionService {
    */
   public fetchAllBottles() {
     this.notificationService.debugAlert('fetchAllBottles()');
-    // on prend déjà ce qu'on a dans le caceh
-    this.fetchBottlesFromCache();
-    //option: pas de connexion autorisée ==> on se contente de ça
-    if (!this.connectionAllowed) {
-      return;
+    // on prend déjà ce qu'on a dans le cache
+    if (this.platform.is('cordova')) {
+      this.firebaseBottlesSub = this.fetchBottlesFromCordovaCache();
+    } else if (this.connectionAllowed) {
+      this.firebaseBottlesSub = this.fetchAllBottlesFromDB();
     }
-    //on vérifie maintenant la cohérence avec la DB
-    this.fetchAllBottlesFromDB();
   }
 
-  private fetchAllBottlesFromDB() {
+  //============== NO CACHE AVAILABLE
+  private fetchAllBottlesFromDB(): Subscription {
     this.notificationService.debugAlert('fetchAllBottlesFromDB()');
     let items = this.angularFirebase.list(this.BOTTLES_ROOT, {
       query: {
@@ -205,7 +189,7 @@ export class FirebaseConnectionService {
       }
     });
 
-    this.firebaseBottlesSub = items.subscribe(
+    return items.subscribe(
       (bottles: Bottle[]) => {
         if (bottles.length > 0) {
           //prepare loaded bottles for the app
@@ -224,10 +208,59 @@ export class FirebaseConnectionService {
     );
   }
 
+  //============== CACHE IS AVAILABLE
+  private fetchBottlesFromCordovaCache(): Subscription {
+    return this.localStorage.fetchAllBottles().subscribe(
+      (bottles: Bottle[]) => this.handleCacheObservable(bottles),
+      error => {
+        this.notificationService.debugAlert('L\'accès à la liste locale des bouteilles a échoué !', JSON.stringify(error));
+        return this.fetchAllBottlesFromDB();
+      },
+      () => this.notificationService.debugAlert('Récupération unique des bouteilles dans le cache OK')
+    );
+  }
+
+  private handleCacheObservable(bottles: Bottle[ ]) {
+    //d'abord on émet ce qu'on a dans le cache
+    this.notificationService.debugAlert('handleCacheObservable()' + (bottles ? bottles.length : 'rien dans le cache'));
+    this._bottles.next(bottles);
+    //puis on trie par date de dernière mise à jour et on va chercher en DB ce qui a été mise à jour depuis pour
+    // remettre le cache à jour
+    this.cacheBottles = bottles;
+    if (this.cacheBottles.length > 0) {
+      this.cacheBottles.sort(sortByLastUpdate).reverse();
+      let lastupdated = 0;
+      if (this.cacheBottles.length > 0) {
+        lastupdated = this.cacheBottles[ 0 ].lastUpdated;
+      }
+      //récupérer en DB toutes les bouteilles mises à jour depuis la date de dernière mise à jour du cache (le +1 permet
+      // d'exclure la date la plus récente en local puisqu'on l'a déjà)
+      this.fetchBottlesFromDBStartingAt(lastupdated + 1, this.cacheBottles[ 0 ][ 'id' ])
+    }
+  }
+
+  private fetchBottlesFromDBStartingAt(startDate: number, key: string) {
+    this.notificationService.debugAlert('fetchAllBottles() - cacheAvailable - chargement des mises à jour depuis '
+      + startDate + ' key=' + key);
+    let items = this.queryOrderByLastUpdate(startDate);
+    this.cacheDaemonSubscription = items.subscribe(
+      (bottles: Bottle[]) => {
+        this.notificationService.debugAlert(bottles.length + ' mises à jour depuis la DB - ' + startDate +
+          ' - ' + JSON.stringify(bottles));
+        if (bottles.length > 0) {
+          //prepare loaded bottles for the app
+          this.updateCache(bottles.map((bottle: Bottle) => this.bottleFactory.create(bottle)));
+        }
+      },
+      error => this.notificationService.error('Impossible de récupérer les bouteilles depuis ' + new Date(startDate).toDateString(), error),
+      () => this.notificationService.debugAlert('Vérification de la validité du cache depuis ' + new Date(startDate).toDateString())
+    );
+  }
+
   /**
-   * query the db and loads nbrows last updated bottles.
+   * query the db and loads all bottles updated after the most recent one in the cache
    * return the corresponding observable.
-   * @param nbrows that should be retrieved from the DB
+   * @param fromLastUpdated most recent known bottle in cache
    */
   private queryOrderByLastUpdate(fromLastUpdated: number): FirebaseListObservable<any[ ]> {
     if (isNaN(fromLastUpdated)
@@ -242,53 +275,49 @@ export class FirebaseConnectionService {
     return this.angularFirebase.list(this.BOTTLES_ROOT, {query});
   }
 
-  private fetchBottlesFromCache(): boolean {
-    if (this.platform.is('cordova')) {
-      this.localStorageSub = this.localStorage.fetchAllBottles().subscribe(
-        (bottles: Bottle[]) => this.handleCacheObservable(bottles),
-        error => this.notificationService.error('L\'accès à la liste locale des bouteilles a échoué !', error),
-        () => this.notificationService.debugAlert('Récupération unique des bouteilles dans le cache OK')
-      );
+  /**
+   * comparer firebaseBottles avec this.cacheBottles et si des bouteilles ont été ajoutées ou mises à jour
+   * dans la base, on enlève du cache les anciennes versions et on ajoute les différences dans le cache puis il
+   faut encore sauvegarder le cache dans le native storage.
+   * @param firebaseBottles contient les bouteilles qui sont différentes dans la DB firebase et dans le cache. La DB
+   * est bien sûr la référence.
+   * @returns {boolean} indicating if cache is up to date after change or not
+   */
+  private updateCache(firebaseBottles: Bottle[ ]): boolean {
+    //
+    if (!this.cacheBottles) {
+      this.cacheBottles = [];
+    }
+    if (firebaseBottles.length !== 0) {
+      this.notificationService.debugAlert('updateCache() - contrôle du cache: ' + firebaseBottles.length + ' différences' +
+        ' trouvées');
+      //create new cache: remove updated bottles then add updated to cache bottles and we're done
+      let size = this.cacheBottles.length;
+      let newCache = _.pullAllWith(this.cacheBottles, firebaseBottles, matchByKey);
+      let sizeAfterRemove = this.cacheBottles.length;
+      newCache = _.concat(this.cacheBottles, firebaseBottles);
+      let finalsize = newCache.length;
+      this.notificationService.debugAlert('taille du cache avant / après suppression / après màj=' + size + '/' + sizeAfterRemove + '/' + finalsize);
 
-      this.localStorage.fetchAllBottles();
+      // on upgrade le cache
+      this.localStorage.save(newCache);
+      this._bottles.next(newCache);
+      this.cacheBottles = newCache;
+      this.notificationService.information('cache rafraichi: ' + firebaseBottles.length + ' ajouts / modifications');
       return true;
-    }
-    return false;
-  }
-
-  private handleCacheObservable(bottles: Bottle[ ]) {
-    //d'abord on émet ce qu'on a dans le cache
-    this.notificationService.debugAlert('handleCacheObservable()' + (bottles ? bottles.length : 'rien dans le cache'));
-    this._bottles.next(bottles);
-    //puis on trie par date de dernière mise à jour et on va chercher en DB ce qui a été mise à jour depuis pour
-    // remettre le cache à jour
-    this.cacheBottles = bottles;
-    if (this.cacheBottles.length > 0) {
-      this.cacheBottles.sort(sortByLastUpdate).reverse();
-      this.fetchBottlesFromDBStartingAt(this.cacheBottles[ 0 ].lastUpdated + 1, this.cacheBottles[ 0 ][ 'id' ])
+    } else {
+      this.notificationService.debugAlert('cache déjà à jour');
+      return false;
     }
   }
 
-  private fetchBottlesFromDBStartingAt(startDate: number, key: string) {
-    this.notificationService.debugAlert('fetchAllBottles() - cacheAvailable - chargement des mises à jour depuis '
-      + startDate + ' key=' + key);
-    //récupérer en DB toutes les bouteilles mises à jour depuis la date de dernière mise à jour du cache (le +1 permet
-    // d'exclure la date la plus récente en local puisqu'on l'a déjà)
-    let items = this.queryOrderByLastUpdate(startDate);
-    this.firebaseBottlesSub = items.take(1).subscribe(
-      (bottles: Bottle[]) => {
-        this.notificationService.debugAlert(bottles.length + ' mises à jour depuis la DB - ' + startDate +
-          ' - ' + JSON.stringify(bottles));
-        if (bottles.length > 0) {
-          //prepare loaded bottles for the app
-          this.updateCache(bottles.map((bottle: Bottle) => this.bottleFactory.create(bottle)));
-        }
-      },
-      error => this.notificationService.error('Impossible de récupérer les bouteilles depuis ' + new Date(startDate).toDateString(), error),
-      () => this.notificationService.debugAlert('Vérification de la validité du cache depuis ' + new Date(startDate).toDateString())
-    );
-  }
+  //============================= Image management
 
+  /**
+   * Delete an image in Firebase storage
+   * @param {File} file
+   * @returns {Promise<any>}
+   */
   public deleteImage(file: File): Promise<any> {
     if (!
         this.connectionAllowed
@@ -306,34 +335,11 @@ export class FirebaseConnectionService {
     })
   }
 
-  public uploadImageToStorage(imageBlob, name: string): Promise<UploadTaskSnapshot> {
-    if (!
-        this.connectionAllowed
-    ) {
-      this.notificationService.failed('app.unavailable-function');
-      return;
-    }
-    let fileName = name + '-' + new Date().getTime() + '.jpg';
-
-    return new Promise<UploadTaskSnapshot>((resolve, reject) => {
-
-      let fileRef = this.imageStorageRef.child(fileName);
-      let uploadTask = fileRef.put(imageBlob);
-
-      uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
-                    (snapshot) => {
-                      let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                      this._uploadProgressEvent.next(Math.round(progress));
-                    },
-                    (error) => {
-                      reject(error);
-                    },
-                    () => {
-                      resolve(uploadTask.snapshot);
-                    })
-    });
-  }
-
+  /**
+   * list images in Firebase Storage
+   * @param {Bottle} bottle
+   * @returns {Observable<Image[]>}
+   */
   public listBottleImages(bottle: Bottle): Observable<Image[ ]> {
     if (!
         this.connectionAllowed
@@ -351,6 +357,12 @@ export class FirebaseConnectionService {
     );
   }
 
+  /**
+   * upload any file to Firebase storage
+   * @param fileOrBlob
+   * @param {BottleMetadata} meta
+   * @returns {Promise<void | UploadMetadata>}
+   */
   public uploadFileOrBlob(fileOrBlob, meta: BottleMetadata): Promise<void | UploadMetadata> {
     if (!
         this.connectionAllowed
@@ -431,6 +443,7 @@ export class FirebaseConnectionService {
     }
   }
 
+  // ======================== Gestion des bouteilles
   /**
    * met à jour dans une transaction les bouteilles passées en paramètre.
    * Soit toute la mise à jour est faite, soit rien n'est mis à jour.
@@ -447,13 +460,16 @@ export class FirebaseConnectionService {
       let updates = {};
       bottles.forEach(bottle => {
         bottle[ 'lastUpdated' ] = new Date().getTime();
-        updates[ '/' + bottle.id ] = bottle;
+        updates[ '/' + bottle.id ] = sanitizeBeforeSave(bottle);
       });
+      this.notificationService.debugAlert('sur le point de this.bottlesRootRef.update(' + JSON.stringify(updates) + ')');
       this.bottlesRootRef.update(updates, (
         err => {
           if (err == null) {
+            this.notificationService.debugAlert('mise à jour OK');
             resolve(null)
           } else {
+            this.notificationService.debugAlert('mise à jour KO ' + err);
             reject(err)
           }
         }
@@ -468,8 +484,10 @@ export class FirebaseConnectionService {
    * @param {Locker} locker casier contenant les bouteilles
    * @returns {Promise<any>}
    */
-  public updateLockerAndBottles(bottles: Bottle[], locker: Locker): Promise<any> {
-    if (!this.connectionAllowed) {
+  public updateLockerAndBottles(bottles: Bottle[ ], locker: Locker): Promise<any> {
+    if (!
+        this.connectionAllowed
+    ) {
       this.notificationService.failed('update.failed');
       return undefined;
     }
@@ -555,41 +573,6 @@ export class FirebaseConnectionService {
     )
   }
 
-  /**
-   * comparer firebaseBottles avec this.cacheBottles et si des bouteilles ont été ajoutées ou mises à jour
-   * dans la base, on enlève du cache les anciennes versions et on ajoute les différences dans le cache puis il
-   faut encore sauvegarder le cache dans le native storage.
-   * @param firebaseBottles contient les bouteilles qui sont différentes dans la DB firebase et dans le cache. La DB
-   * est bien sûr la référence.
-   * @returns {boolean} indicating if cache is up to date after change or not
-   */
-  private updateCache(firebaseBottles: Bottle[ ]): boolean {
-    //
-    if (!this.cacheBottles) {
-      this.cacheBottles = [];
-    }
-    if (firebaseBottles.length !== 0) {
-      this.notificationService.debugAlert('updateCache() - contrôle du cache: ' + firebaseBottles.length + ' différences' +
-        ' trouvées');
-      //create new cache: remove updated bottles then add updated to cache bottles and we're done
-      let size = this.cacheBottles.length;
-      let newCache = _.pullAllWith(this.cacheBottles, firebaseBottles, matchByKey);
-      let sizeAfterRemove = this.cacheBottles.length;
-      newCache = _.concat(this.cacheBottles, firebaseBottles);
-      let finalsize = newCache.length;
-      this.notificationService.debugAlert('taille du cache avant / après suppression / après màj=' + size + '/' + sizeAfterRemove + '/' + finalsize);
-
-      // on upgrade le cache
-      this.localStorage.save(newCache);
-      this.cacheBottles = newCache;
-      this.notificationService.information('cache rafraichi: ' + firebaseBottles.length + ' ajouts / modifications');
-      return true;
-    } else {
-      this.notificationService.debugAlert('cache déjà à jour');
-      return false;
-    }
-  }
-
   isConnectionAllowed(): boolean {
     return this.connectionAllowed;
   }
@@ -603,7 +586,7 @@ export class FirebaseConnectionService {
   }
 
   reconnectListeners() {
-    this.fetchAllBottlesFromDB();
+    this.fetchAllBottles();
   }
 }
 
