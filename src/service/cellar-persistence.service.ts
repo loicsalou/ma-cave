@@ -15,6 +15,7 @@ import {FirebaseConnectionService} from './firebase-connection.service';
 import {Bottle} from '../model/bottle';
 import {BottlePersistenceService} from './bottle-persistence.service';
 import {TranslateService} from '@ngx-translate/core';
+import {Subscription} from 'rxjs/Subscription';
 
 /**
  * Services related to the cellar itself, locker and place of the lockers.
@@ -27,6 +28,7 @@ export class CellarPersistenceService extends PersistenceService implements Cell
   private _lockers: BehaviorSubject<Locker[]> = new BehaviorSubject<Locker[]>([]);
   private _allLockersObservable: Observable<Locker[]> = this._lockers.asObservable();
   private allLockersArray: Locker[];
+  private lockersSubscription: Subscription;
 
   constructor(private dataConnection: FirebaseConnectionService,
               private lockerFactory: LockerFactory,
@@ -46,16 +48,17 @@ export class CellarPersistenceService extends PersistenceService implements Cell
 
   protected initialize(user) {
     super.initialize(user);
-    this.fetchAllLockers();
+    this.initLockers();
   }
 
   protected cleanup() {
     super.cleanup();
     this.allLockersArray = undefined;
+    this.lockersSubscription.unsubscribe();
   }
 
-  private fetchAllLockers() {
-    this.dataConnection.fetchAllLockers().subscribe(
+  private initLockers() {
+    this.lockersSubscription = this.dataConnection.fetchAllLockers().subscribe(
       (lockers: Locker[]) => {
         this.allLockersArray = lockers.map((locker: Locker) => this.lockerFactory.create(locker));
         this._lockers.next(this.allLockersArray);
@@ -78,7 +81,7 @@ export class CellarPersistenceService extends PersistenceService implements Cell
     if (locker[ 'dimensions' ]) {
       locker[ 'dimensions' ] = locker[ 'dimensions' ].map(
         dim => {
-          return { x: +dim.x, y: +dim.y }
+          return {x: +dim.x, y: +dim.y}
         }
       )
     }

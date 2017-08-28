@@ -109,7 +109,6 @@ export class FirebaseConnectionService {
           orderByChild: 'lastUpdated'
         }
       })
-      .take(1)
       .map(
         (lockers: Locker[]) => {
           if (lockers.length > 0) {
