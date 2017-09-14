@@ -16,7 +16,6 @@ import {BottlePersistenceService} from '../service/bottle-persistence.service';
 import {DistributeService} from '../service/distribute.service';
 import {TranslateLoader, TranslateModule, TranslateService} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
-import {Http, HttpModule} from '@angular/http';
 import {BottleDetailPage} from '../pages/bottle-detail/page-bottle-detail';
 import {UpdatePage} from '../pages/update/update.page';
 import {StatusBar} from '@ionic-native/status-bar';
@@ -60,6 +59,7 @@ import {LocalLoginPage} from '../pages/login/local-login.page';
 import {LockerEditorPageModule} from '../pages/locker-editor/locker-editor.page.module';
 import {LockerEditor2PageModule} from '../pages/locker-editor2/locker-editor2.page.module';
 import {AndroidPermissions} from '@ionic-native/android-permissions';
+import {HttpClient, HttpClientModule} from '@angular/common/http';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -92,7 +92,7 @@ export const fireConfig = {
               LockerEditorPageModule,
               LockerEditor2PageModule,
               DashboardPageModule,
-              HttpModule,
+              HttpClientModule,
               ProfilePageModule,
               SharedModule,
               StatisticsComponentModule,
@@ -100,7 +100,7 @@ export const fireConfig = {
                                         loader: {
                                           provide: TranslateLoader,
                                           useFactory: (createTranslateLoader),
-                                          deps: [ Http ]
+                                          deps: [ HttpClient ]
                                         }
                                       }),
               UploadBottlesModule
@@ -131,6 +131,7 @@ export const fireConfig = {
               {provide: ErrorHandler, useClass: IonicErrorHandler},
               Facebook,
               FacebookLoginService,
+              HttpClient,
               ImagePersistenceService,
               FirebaseConnectionService,
               LocalLoginService,
@@ -159,7 +160,7 @@ export const fireConfig = {
 export class AppModule {
 }
 
-export function createTranslateLoader(http: Http) {
+export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
 }
 

@@ -391,7 +391,7 @@ export class FirebaseConnectionService {
 
       uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
                     (snapshot) => {
-                      let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                      let progress = (uploadTask.snapshot.bytesTransferred / uploadTask.snapshot.totalBytes) * 100;
                       this._uploadProgressEvent.next(Math.round(progress));
                     },
                     (error) => {
