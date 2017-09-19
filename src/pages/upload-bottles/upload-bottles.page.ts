@@ -89,6 +89,20 @@ export class UploadBottlesPage {
     this.setupUpload(file);
   }
 
+  public emptyLockers() {
+    this.bottleService.allBottlesObservable.take(1).subscribe(
+      bottles => {
+        let updatedBottles = bottles.map(
+          bottle => {
+            bottle.positions=[];
+            return bottle;
+          }
+        );
+        this.bottleService.update(updatedBottles);
+      }
+    )
+  }
+
   private setupUpload(file: any) {
     if (this.deleteBefore) {
       this.bottleService.deleteBottles();
