@@ -132,4 +132,8 @@ export class NotificationService {
     // à remplacer par un log si nécessaire
     console.warn(new Date().getTime() + ' ' + trace);
   }
+
+  receiving(s: string) {
+// voir si on peut afficher un signal visuel discret
+  }
 }

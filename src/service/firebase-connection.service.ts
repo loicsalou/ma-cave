@@ -302,7 +302,7 @@ export class FirebaseConnectionService {
       this.localStorage.save(newCache);
       this._bottles.next(newCache);
       this.cacheBottles = newCache;
-      this.notificationService.information('cache rafraichi: ' + firebaseBottles.length + ' ajouts / modifications');
+      this.notificationService.receiving('cache rafraichi: ' + firebaseBottles.length + ' ajouts / modifications');
       return true;
     } else {
       this.notificationService.debugAlert('cache déjà à jour');
