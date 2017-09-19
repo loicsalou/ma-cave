@@ -64,6 +64,9 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
       ;
     }
     this.bottlesToHighlight = this.params.data[ 'bottlesToHighlight' ];
+    if (this.bottlesToHighlight) {
+      this.notificationService.debugAlert('nombre de bouteilles à mettre en valeur: ' + this.bottlesToHighlight.length);
+    }
     this.lockersSub = this.cellarService.allLockersObservable.subscribe(
       lockers => {
         this.otherLockers = lockers;
@@ -151,7 +154,11 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
 
   private isBottleToHighlight(bottle: Bottle) {
     if (this.bottlesToHighlight) {
-      return this.bottlesToHighlight.find(btl => btl.id === bottle.id) !== undefined
+      let ret = this.bottlesToHighlight.find(btl => btl.id === bottle.id) !== undefined;
+      if (ret) {
+        this.notificationService.debugAlert('highlighted: ' + bottle.nomCru);
+      }
+      return ret;
     }
     else {
       return false;

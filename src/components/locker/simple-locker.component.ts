@@ -125,7 +125,12 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
     if (!this.highlighted) {
       return false;
     }
-    return this.highlighted.find(btl => btl.id === bottle.id) !== undefined;
+
+    let ret= this.highlighted.find(btl => btl.id === bottle.id) !== undefined;
+    if (ret) {
+      this.notificationService.debugAlert('highlighted: ' + bottle.nomCru);
+    }
+    return ret;
   }
 
   ngAfterViewInit(): void {

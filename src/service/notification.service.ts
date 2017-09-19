@@ -120,16 +120,16 @@ export class NotificationService {
 
   traceInfo(trace: string) {
     // à remplacer par un log si nécessaire
-    console.info(trace);
+    console.info(new Date().getTime() + ' ' + trace);
   }
 
   traceDebug(trace: string) {
     // à remplacer par un log si nécessaire
-    console.debug(trace);
+    console.debug(new Date().getTime() + ' ' + trace);
   }
 
   traceWarn(trace: string) {
     // à remplacer par un log si nécessaire
-    console.warn(trace);
+    console.warn(new Date().getTime() + ' ' + trace);
   }
 }
