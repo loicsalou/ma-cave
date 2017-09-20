@@ -3,7 +3,7 @@ import {InfiniteScroll, NavController, NavParams, Platform, VirtualScroll} from 
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {Bottle} from '../../model/bottle';
 import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
-import {ListBottleEvent} from '../../components/list/bottle-list-event';
+import {BottleEvent} from '../../components/list/bottle-event';
 import {FilterSet} from '../../components/distribution/distribution';
 import {Subscription} from 'rxjs/Subscription';
 import * as _ from 'lodash';
@@ -178,8 +178,8 @@ export class BrowsePage implements OnInit, OnDestroy {
     this.bottlesService.filterOn(this.filterSet);
   }
 
-  triggerDetail(bottleEvent: ListBottleEvent) {
-    this.navCtrl.push(BottleDetailPage, {bottleEvent: bottleEvent});
+  triggerDetail(bottle: Bottle) {
+    this.navCtrl.push(BottleDetailPage, {bottleEvent: {bottles: this.allBottles, bottle: bottle}});
   }
 
   private setFilterSet(filterSet: FilterSet) {

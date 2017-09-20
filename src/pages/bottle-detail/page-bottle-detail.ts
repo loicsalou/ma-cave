@@ -1,7 +1,7 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {NavController, NavParams, Slides} from 'ionic-angular';
 import {Bottle} from '../../model/bottle';
-import {ListBottleEvent} from '../../components/list/bottle-list-event';
+import {BottleEvent} from '../../components/list/bottle-event';
 import {UpdatePage} from '../update/update.page';
 import * as _ from 'lodash';
 import {LoginService} from '../../service/login.service';
@@ -36,10 +36,10 @@ export class BottleDetailPage implements OnInit {
   private originalIndex: number;
 
   constructor(public navCtrl: NavController, navParams: NavParams, private loginService: LoginService) {
-    let bottleEvent: ListBottleEvent = navParams.data[ 'bottleEvent' ];
+    let bottleEvent: BottleEvent = navParams.data[ 'bottleEvent' ];
     this.wholeSelection = bottleEvent.bottles;
     this.bottle = bottleEvent.bottle;
-    this.originalIndex = bottleEvent.index;
+    this.originalIndex = this.wholeSelection.findIndex((bottle: Bottle) => bottle.id===this.bottle.id);
   }
 
   ngOnInit(): void {

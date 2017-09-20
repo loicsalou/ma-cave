@@ -1,8 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {Bottle} from '../../model/bottle';
-import {ListBottleEvent} from './bottle-list-event';
-import {ItemSliding, NavController, ToastController} from 'ionic-angular';
+import {ItemSliding, NavController} from 'ionic-angular';
 import {CellarPage} from '../../pages/cellar/cellar.page';
 import {NativeProvider} from '../../providers/native/native';
 
@@ -16,10 +15,10 @@ export class BottleItemComponent {
   @Input()
   bottle: Bottle;
   @Output()
-  showDetail: EventEmitter<ListBottleEvent> = new EventEmitter();
+  showDetail: EventEmitter<Bottle> = new EventEmitter();
   private nbSelected = 0;
 
-  constructor(private bottlesService: BottlePersistenceService, private toastCtrl: ToastController,
+  constructor(private bottlesService: BottlePersistenceService,
               private navCtrl: NavController, private nativeProvider: NativeProvider) {
   }
 
@@ -27,8 +26,8 @@ export class BottleItemComponent {
     this.isFilterPanelShown = true;
   }
 
-  triggerDetail(bottle: Bottle, index: number) {
-    this.showDetail.emit(<ListBottleEvent>{bottle: bottle, bottles: [this.bottle], index: index});
+  triggerDetail(bottle: Bottle) {
+    this.showDetail.emit(bottle);
   }
 
   switchSelected(event: Event, bottle: Bottle) {
