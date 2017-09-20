@@ -68,8 +68,37 @@ export class ChartComponent implements OnInit {
       legend: {
         display: this.legend !== undefined,
         position: this.legend !== undefined ? this.legend : 'top'
+      },
+      scaleShowValues: true,
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }],
+        xAxes: [{
+          ticks: {
+            autoSkip: false
+          }
+        }]
       }
+
     };
+    //options: {
+    //  scaleShowValues: true,
+    //    scales: {
+    //    yAxes: [{
+    //      ticks: {
+    //        beginAtZero: true
+    //      }
+    //    }],
+    //      xAxes: [{
+    //      ticks: {
+    //        autoSkip: false
+    //      }
+    //    }]
+    //  }
+    //}
   }
 
   chartHovered(event: any) {
