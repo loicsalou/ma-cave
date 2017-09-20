@@ -6,8 +6,8 @@ import {BottlePersistenceService} from '../../service/bottle-persistence.service
 import {Bottle} from '../../model/bottle';
 import {FilterSet} from '../../components/distribution/distribution';
 import {Subscription} from 'rxjs/Subscription';
-import {DeviceFeedback} from '@ionic-native/device-feedback';
 import {NativeProvider} from '../../providers/native/native';
+import {NotificationService} from '../../service/notification.service';
 
 @Component({
              selector: 'page-dashboard',
@@ -20,7 +20,7 @@ export class DashboardPage implements OnInit, OnDestroy {
   totalNumberOfBottles: number = 0;
   private bottleSub: Subscription;
 
-  constructor(public navCtrl: NavController, public loginService: LoginService,
+  constructor(public navCtrl: NavController, public loginService: LoginService, private notificationService: NotificationService,
               private bottleService: BottlePersistenceService, private nativeProvider: NativeProvider) {
   }
 
@@ -45,6 +45,7 @@ export class DashboardPage implements OnInit, OnDestroy {
   filterOnText(event: any) {
     let text = event.target.value;
     if (text != undefined && text.length != 0) {
+      this.notificationService.debugAlert('recherche de: ' + text);
       this.navCtrl.push(BrowsePage, {
         text: text
       })

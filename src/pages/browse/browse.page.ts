@@ -42,15 +42,18 @@ export class BrowsePage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
     this.nativeProvider.feedBack();
-    this.setFilter();
+    this.initFilterFromNavParams();
+    this.bottlesService.filterOn(this.filterSet);
     this.filterSubscription = this.bottlesService.filtersObservable.subscribe(
       filterSet => {
+        this.notificationService.debugAlert('filterSetReceived:' + filterSet.text);
         this.setFilterSet(filterSet);
       });
+
     this.bottleSubscription = this.bottlesService.filteredBottlesObservable.subscribe(
       (received: Bottle[]) => {
+        this.notificationService.debugAlert('received:' + (received ? received.length : 0) + ' bottles');
         let deb = new Date().getTime();
         this.allBottles = received;
         this.bottles = [];
@@ -92,8 +95,10 @@ export class BrowsePage implements OnInit, OnDestroy {
         let added = this.allBottles.slice(size, size + 50);
         this.bottles = this.bottles.concat(added);
         this.doInfinite(infiniteScroll);
-      } else if (infiniteScroll) {
-        infiniteScroll.complete();
+      } else {
+        if (infiniteScroll) {
+          infiniteScroll.complete();
+        }
       }
 
     }, 10);
@@ -145,15 +150,16 @@ export class BrowsePage implements OnInit, OnDestroy {
   }
 
 // in case user navigated to here from the home page then we have search param ==> filter on this text
-  private setFilter() {
+  private initFilterFromNavParams() {
+    this.notificationService.debugAlert('BrowsPage.initFilterFromNavParams()');
     if (this.navParams != undefined) {
       if (this.navParams.data[ 'text' ] != null) {
+        this.notificationService.debugAlert('BrowsPage.initFilterFromNavParams(' + this.navParams.data[ 'text' ] + ')');
         this.filterSet.text = this.navParams.data[ 'text' ].split(' ');
       } else if (this.navParams.data[ 'filterSet' ] != null) {
         this.filterSet = this.navParams.data[ 'filterSet' ];
       }
     }
-    this.bottlesService.filterOn(this.filterSet);
   }
 
   public isSearchVisible(): boolean {

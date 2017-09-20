@@ -253,7 +253,8 @@ export class BottlePersistenceService extends PersistenceService {
     return list.filter(bottle => {
                          let matching = false;
                          for (let key in bottle) {
-                           if (bottle[ key ].toString().toLocaleLowerCase().indexOf(keywordLower) !== -1) {
+                           let value=bottle[ key ] ? bottle[ key ].toString() : '';
+                           if (value.toLocaleLowerCase().indexOf(keywordLower) !== -1) {
                              matching = true;
                            }
                          }
@@ -265,7 +266,7 @@ export class BottlePersistenceService extends PersistenceService {
   private filterByAttribute(fromList: Bottle[ ], attribute: string, admissibleValues: string[ ]) {
     return fromList.filter(bottle => {
       let ret = true;
-      let attrValue = bottle[ attribute ].toString();
+      let attrValue = bottle[ attribute ] ? bottle[ attribute ].toString() : '';
       //admissibleValues.forEach(admissibleValue => ret = ret && attrValue.indexOf(admissibleValue) !== -1);
       return admissibleValues.indexOf(attrValue) !== -1;
     })

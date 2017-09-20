@@ -11,6 +11,7 @@ import {ImportProvider} from '../providers/import/import';
 import {NativeProvider} from '../providers/native/native';
 import {Network} from '@ionic-native/network';
 import {Camera} from '@ionic-native/camera';
+import {CaveErrorHandler} from '../service/cave-error.handler';
 
 @NgModule({
             declarations: [
@@ -36,7 +37,8 @@ import {Camera} from '@ionic-native/camera';
               DeviceFeedback,
               NativeProvider,
               Network,
-              ImportProvider
+              ImportProvider,
+              CaveErrorHandler
             ]
           })
 export class SharedModule {
