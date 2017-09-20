@@ -4,7 +4,7 @@ import {Bottle} from '../../model/bottle';
 import {ListBottleEvent} from './bottle-list-event';
 import {ItemSliding, NavController, ToastController} from 'ionic-angular';
 import {CellarPage} from '../../pages/cellar/cellar.page';
-import {DeviceFeedback} from '@ionic-native/device-feedback';
+import {NativeProvider} from '../../providers/native/native';
 
 @Component({
              selector: 'bottle-list',
@@ -20,7 +20,7 @@ export class BottleListComponent {
   private nbSelected = 0;
 
   constructor(private bottlesService: BottlePersistenceService, private toastCtrl: ToastController,
-              private navCtrl: NavController, private deviceFeedback: DeviceFeedback) {
+              private navCtrl: NavController, private nativeProvider: NativeProvider) {
   }
 
   filter() {
@@ -60,7 +60,14 @@ export class BottleListComponent {
   manageFavorites(slidingItem: ItemSliding, bottle: Bottle) {
     bottle.favorite = bottle.favorite ? !bottle.favorite : true;
     slidingItem.close();
-    this.bottlesService.update([ bottle ]);
+    this.updateBottle(bottle);
+  }
+
+  updateBottle(bottle) {
+    setTimeout(
+      () => this.bottlesService.update([ bottle ]),
+      10000
+    );
   }
 
   isBottleInBasket(bottle: Bottle): boolean {
@@ -68,19 +75,17 @@ export class BottleListComponent {
   }
 
   locateBottles(event: Event, slidingItem: ItemSliding, bottles: Bottle[]) {
-    this.deviceFeedback.acoustic();
-    this.deviceFeedback.haptic(0);
+    this.nativeProvider.feedBack();
     event.stopPropagation();
     slidingItem.close();
     this.navCtrl.push(CellarPage, {bottlesToHighlight: bottles});
   }
 
   addToFavorite(event: Event, slidingItem: ItemSliding, bottle: Bottle) {
-    this.deviceFeedback.acoustic();
-    this.deviceFeedback.haptic(0);
+    this.nativeProvider.feedBack();
     event.stopPropagation();
     bottle.favorite = bottle.favorite ? !bottle.favorite : true;
-    this.bottlesService.update([bottle]);
+    this.bottlesService.update([ bottle ]);
     slidingItem.close();
   }
 

@@ -116,6 +116,13 @@
     <p *ngIf="bottleService.loginService.user">{{bottleService.loginService.user.user}}</p>
   </div>
   
+  <div>
+    <button ion-button align-items-start round icon-only block (click)="emptyLockers()">
+      <ion-icon name="trash"></ion-icon>
+      Vider les casiers
+    </button>
+  </div>
+  
   <button ion-button (click)="showLocalStorage()">Voir local storage</button>
   <div *ngIf="localStorageKeys">
     <ion-item *ngFor="let key of localStorageKeys">

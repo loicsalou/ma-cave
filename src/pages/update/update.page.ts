@@ -25,23 +25,15 @@ import {NgForm} from '@angular/forms';
              // warning: few browsers support shadow DOM encapsulation at this time
              encapsulation: ViewEncapsulation.Emulated
            })
-export class UpdatePage implements OnInit, OnDestroy {
+export class UpdatePage implements OnInit {
 
   bottle: Bottle;
   images: Array<{ src: String }> = [];
-  private imagesSubscription: Subscription;
   private aoc: AocInfo[];
-  unchanged = false;
-  loadingInProgress: boolean = false;
   progress: number = 0;
   private missingImages: string[] = [];
-  private progressSubscription: Subscription;
   private forceLeave: boolean = true;
   private metadata: BottleMetadata;
-  selectOptions={
-    enableBackdropDismiss: true,
-
-  };
 
   @ViewChild('bottleForm') bottleForm: NgForm;
 
@@ -53,19 +45,9 @@ export class UpdatePage implements OnInit, OnDestroy {
     this.metadata = Configuration.getMetadata(this.bottle);
   }
 
-  ngOnDestroy(): void {
-    this.cleanupSubscriptions();
-  }
-
-  cleanupSubscriptions(): void {
-    this.imagesSubscription.unsubscribe();
-    this.progressSubscription.unsubscribe();
-  }
-
   ngOnInit(): void {
     this.loadRegionAreas();
-    let imagesObservable = this.imageService.getList(this.bottle);
-    this.imagesSubscription = imagesObservable.subscribe(
+    this.imageService.getList(this.bottle).take(1).subscribe(
       images => {
         this.images = images.map(
           image => {
@@ -74,7 +56,7 @@ export class UpdatePage implements OnInit, OnDestroy {
         );
       }
     );
-    this.progressSubscription = this.imageService.progressEvent.subscribe(
+    this.imageService.progressEvent.subscribe(
       value => this.progress = value
     );
   }
@@ -89,10 +71,6 @@ export class UpdatePage implements OnInit, OnDestroy {
           );
       });
     }
-  }
-
-  ionViewDidLeave() {
-    this.cleanupSubscriptions();
   }
 
   logout() {

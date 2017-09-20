@@ -90,9 +90,9 @@ export class NotificationService {
     return response.asObservable();
   }
 
-  askNoChoice(title: string, message: string): Observable<boolean> {
+  askNoChoice(title: string, message: string, params?: Object): Observable<boolean> {
     title = this.translateService.instant(title);
-    message = this.translateService.instant(message);
+    message = this.translateService.instant(message, params);
 
     let response: Subject<boolean> = new Subject();
     let alert = this.alertController.create({
@@ -120,16 +120,20 @@ export class NotificationService {
 
   traceInfo(trace: string) {
     // à remplacer par un log si nécessaire
-    console.info(trace);
+    console.info(new Date().getTime() + ' ' + trace);
   }
 
   traceDebug(trace: string) {
     // à remplacer par un log si nécessaire
-    console.debug(trace);
+    console.debug(new Date().getTime() + ' ' + trace);
   }
 
   traceWarn(trace: string) {
     // à remplacer par un log si nécessaire
-    console.warn(trace);
+    console.warn(new Date().getTime() + ' ' + trace);
+  }
+
+  receiving(s: string) {
+// voir si on peut afficher un signal visuel discret
   }
 }

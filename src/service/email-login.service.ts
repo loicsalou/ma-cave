@@ -44,7 +44,7 @@ export class EmailLoginService extends AbstractLoginService {
     this._psw = value;
   }
 
-  public login(): Observable<User> {
+  protected delegatedLogin(authObs: Observable<User>): Observable<User> {
     let self = this;
     let popup = this.notificationService.createLoadingPopup('app.checking-login');
     firebase.auth().signInWithEmailAndPassword(this.username, this.psw)
@@ -70,7 +70,7 @@ export class EmailLoginService extends AbstractLoginService {
         );
       });
 
-    return this.authentifiedObservable;
+    return authObs;
   }
 }
 

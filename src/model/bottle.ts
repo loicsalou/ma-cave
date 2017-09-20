@@ -37,7 +37,9 @@ export class Bottle implements ImgDefaultable {
 
   constructor(json: Object) {
     Object.assign(this, json);
-    this.id = json[ '$key' ];
+    if (! json['id']) {
+      this.id = json[ '$key' ];
+    }
     this.selected = false;
   }
 

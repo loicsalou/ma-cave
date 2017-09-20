@@ -6,6 +6,7 @@ import {NotificationService} from '../../service/notification.service';
 import {Cell, LockerComponent, Row} from './locker.component';
 import {Gesture} from 'ionic-angular';
 import {DeviceFeedback} from '@ionic-native/device-feedback';
+import {NativeProvider} from '../../providers/native/native';
 
 /**
  * Generated class for the SimpleLockerComponent component.
@@ -33,8 +34,8 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   rows: Row[];
   private bogusBottles = [];
 
-  constructor(private notificationService: NotificationService, deviceFeedback: DeviceFeedback) {
-    super(deviceFeedback)
+  constructor(private notificationService: NotificationService, nativeProvider: NativeProvider) {
+    super(nativeProvider)
   }
 
   ngOnInit(): void {
@@ -124,7 +125,12 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
     if (!this.highlighted) {
       return false;
     }
-    return this.highlighted.find(btl => btl.id === bottle.id) !== undefined;
+
+    let ret= this.highlighted.find(btl => btl.id === bottle.id) !== undefined;
+    if (ret) {
+      this.notificationService.debugAlert('highlighted: ' + bottle.nomCru);
+    }
+    return ret;
   }
 
   ngAfterViewInit(): void {

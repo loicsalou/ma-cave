@@ -6,6 +6,7 @@ import {ProfilePage} from '../profile/profile';
 import {BrowsePage} from '../browse/browse.page';
 import {CellarPage} from '../cellar/cellar.page';
 import {NavController, Platform} from 'ionic-angular';
+import {NotificationService} from '../../service/notification.service';
 
 @Component({
              templateUrl: 'tabs.html'
@@ -20,7 +21,7 @@ export class TabsPage {
   dashboardRoot: any = DashboardPage;
   adminRoot: any = UploadBottlesPage;
 
-  constructor(platform: Platform, navCtrl: NavController) {
+  constructor(platform: Platform, navCtrl: NavController, private notificationService: NotificationService) {
     platform.ready().then(() => {
       platform.registerBackButtonAction(() => {
         if (navCtrl.canGoBack()) {
@@ -30,5 +31,9 @@ export class TabsPage {
         }
       });
     });
+  }
+
+  trace() {
+    this.notificationService.traceDebug('TabsPage: activation du browse');
   }
 }

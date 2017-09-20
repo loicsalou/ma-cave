@@ -22,7 +22,7 @@ export class FacebookLoginService extends AbstractLoginService {
     super(notificationService);
   }
 
-  public login(): Observable<User> {
+  protected delegatedLogin(authObs: Observable<User>): Observable<User> {
     let self = this;
     let popup = this.notificationService.createLoadingPopup('app.checking-login');
     self.facebook.login([ 'email' ]).then((response) => {
@@ -49,7 +49,7 @@ export class FacebookLoginService extends AbstractLoginService {
       }
     );
 
-    return this.authentifiedObservable;
+    return authObs;
   }
 }
 

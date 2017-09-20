@@ -41,7 +41,7 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.nativeProvider.initNativeFeatures();
+    this.nativeProvider.initNativeFeatures(this.navCtrl);
   }
 
   facebookLogin() {
@@ -122,7 +122,6 @@ export class HomePage implements OnInit, AfterViewInit {
       // pas de onDestroy ici car après un logout on reste quand même sur le home ==> il faut faire l'unsubscribe à
       // la main
       this.loginSubscription.unsubscribe();
-      this.enableExitOnConfirm();
     }
   }
 }

@@ -12,7 +12,7 @@ import {LockerEditor2Page} from '../locker-editor2/locker-editor2.page';
 import {Cell} from '../../components/locker/locker.component';
 import {LockerEditorPage} from '../locker-editor/locker-editor.page';
 import * as _ from 'lodash';
-import {DeviceFeedback} from '@ionic-native/device-feedback';
+import {NativeProvider} from '../../providers/native/native';
 
 /**
  * Generated class for the CellarPage page.
@@ -49,13 +49,12 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
   private scale: number = 1;
 
   constructor(private cellarService: CellarPersistenceService, private bottleService: BottlePersistenceService,
-              private notificationService: NotificationService, private deviceFeedback: DeviceFeedback,
+              private notificationService: NotificationService, private nativeProvider: NativeProvider,
               private modalCtrl: ModalController, private params: NavParams) {
   }
 
   ngOnInit(): void {
-    this.deviceFeedback.acoustic();
-    this.deviceFeedback.haptic(0);
+    this.nativeProvider.feedBack();
     this.bottlesToPlace = this.params.data[ 'bottlesToPlace' ];
     if (this.bottlesToPlace && this.bottlesToPlace.length > 0) {
       this.bottlesToPlaceLocker = new SimpleLocker(undefined, 'placedLocker', LockerType.simple, {
@@ -65,6 +64,9 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
       ;
     }
     this.bottlesToHighlight = this.params.data[ 'bottlesToHighlight' ];
+    if (this.bottlesToHighlight) {
+      this.notificationService.debugAlert('nombre de bouteilles à mettre en valeur: ' + this.bottlesToHighlight.length);
+    }
     this.lockersSub = this.cellarService.allLockersObservable.subscribe(
       lockers => {
         this.otherLockers = lockers;
@@ -109,8 +111,7 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   updateLocker() {
-    this.deviceFeedback.acoustic();
-    this.deviceFeedback.haptic(0);
+    this.nativeProvider.feedBack();
     let editorModal = this.modalCtrl.create(LockerEditor2Page, {
       locker: this.paginatedLocker,
       content: this.lockerContent
@@ -129,8 +130,7 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showTip() {
-    this.deviceFeedback.acoustic();
-    this.deviceFeedback.haptic(0);
+    this.nativeProvider.feedBack();
     this.pendingBottleTipVisible = true;
     setTimeout(() => {
       this.pendingBottleTipVisible = false;
@@ -154,7 +154,11 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
 
   private isBottleToHighlight(bottle: Bottle) {
     if (this.bottlesToHighlight) {
-      return this.bottlesToHighlight.find(btl => btl.id === bottle.id) !== undefined
+      let ret = this.bottlesToHighlight.find(btl => btl.id === bottle.id) !== undefined;
+      if (ret) {
+        this.notificationService.debugAlert('highlighted: ' + bottle.nomCru);
+      }
+      return ret;
     }
     else {
       return false;
@@ -162,8 +166,7 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   cellSelected(cell: Cell) {
-    this.deviceFeedback.acoustic();
-    this.deviceFeedback.haptic(this.pendingCell ? 1 : 0);
+    this.nativeProvider.feedBack();
 
     if (cell) {
       if (this.pendingCell) {

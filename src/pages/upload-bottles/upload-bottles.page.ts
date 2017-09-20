@@ -89,7 +89,24 @@ export class UploadBottlesPage {
     this.setupUpload(file);
   }
 
+  public emptyLockers() {
+    this.bottleService.allBottlesObservable.take(1).subscribe(
+      bottles => {
+        let updatedBottles = bottles.map(
+          bottle => {
+            bottle.positions=[];
+            return bottle;
+          }
+        );
+        this.bottleService.update(updatedBottles);
+      }
+    )
+  }
+
   private setupUpload(file: any) {
+    if (this.deleteBefore) {
+      this.bottleService.deleteBottles();
+    }
     this.bottleService.disconnectListeners();
     let loading = this.loadingController.create({
                                                   spinner: 'bubbles',
@@ -111,28 +128,46 @@ export class UploadBottlesPage {
     let nbBottles = 0;
     let parsedBottles = [];
     let saved = 0;
-
+    let startTimestamp = new Date().getTime();
     this.importProvider.parseFile(file)
       .subscribe(bottle => {
                    parsedBottles.push(bottle);
-                   loading.setContent('Analyse du lot ' + nbBottles++);
+                   //ralentit très fortement le device (android en tout cas)
+                   //loading.setContent('Analyse du lot ' + nbBottles++);
                  },
                  err => {
                    this.notificationService.error('Erreur de parsing: ' + err);
                    this.dismissLoading(loading);
                  },
                  () => {
-                   loading.setContent('Sauvegarde de ' + nbBottles + ' lots : ');
-                   this.bottleService.save(parsedBottles).then(
+                   this.dismissLoading(loading);
+                   loading = this.loadingController.create({
+                                                             spinner: 'bubbles',
+                                                             content: 'Sauvegarde de ' + parsedBottles.length + ' lots : '
+                                                           });
+                   loading.present().then(
                      () => {
-                       loading.setContent('Sauvegarde terminée correctement');
-                       setTimeout(() => {
-                         this.dismissLoading(loading);
-                         this.forceLogout(loading);
-                       }, 1000);
+                       this.bottleService.save(parsedBottles).then(
+                         () => {
+                           this.dismissLoading(loading);
+                           let endTimestamp = new Date().getTime();
+                           this.notificationService.askNoChoice('app.information', 'app.importation-successful',
+                                                                {time: (endTimestamp - startTimestamp)})
+                             .subscribe(
+                               () => {
+                                 //this.forceLogout(loading);
+                                 this.bottleService.reconnectListeners();
+                               }
+                             );
+                         }
+                       )
+                     }
+                   ).catch(
+                     err => {
+                       this.notificationService.error('Erreur durant le process d\'importation !' + err);
+                       this.dismissLoading(loading);
                      }
                    )
-
                  }
       );
   }

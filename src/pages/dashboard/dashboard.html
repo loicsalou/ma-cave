@@ -7,23 +7,28 @@
 
 <ion-content align-items-center class="page-dashboard card-background-page page">
   
-  <ion-card class="card-background" *ngIf="bottles">
-    <ion-item>
-      <label>{{'bottles' | translate}}</label>
-      <span>{{totalNumberOfBottles}}</span>
-    </ion-item>
-  </ion-card>
-  
   <ion-card class="card-background by-label">
     <ion-title>{{'statistics.repartition-par-type'| translate}}</ion-title>
-    <statistics [type]="'bar'" [axis]="'label'" [topMost]="5" [legend]="'none'"
+    <statistics [type]="'bar'" [axis]="'label'" [topMost]="10" [legend]="'none'"
                 (filterApplied)="browse($event)"></statistics>
   </ion-card>
   
   <ion-card class="card-background by-region">
     <ion-title>{{'statistics.repartition-par-region'| translate}}</ion-title>
-    <statistics [type]="'doughnut'" [axis]="'subregion_label'" [topMost]="7" [legend]="'right'"
+    <statistics [type]="'bar'" [axis]="'subregion_label'" [topMost]="7" [legend]="'none'"
                 (filterApplied)="browse($event)"></statistics>
+  </ion-card>
+  
+  <ion-card class="card-background" *ngIf="bottles">
+    <ion-item>
+      <label>{{'bottles' | translate}}</label>
+      <span>{{totalNumberOfBottles}}</span>
+    </ion-item>
+    <button ion-button outline small round icon-left>
+      <ion-icon name="star"></ion-icon>
+      Favorites
+    </button>
+    <ion-segment-button></ion-segment-button>
   </ion-card>
 
 </ion-content>

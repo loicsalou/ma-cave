@@ -6,6 +6,7 @@ import {Dimension, Locker, LockerType} from '../../model/locker';
 import {SimpleLockerComponent} from './simple-locker.component';
 import {SimpleLocker} from '../../model/simple-locker';
 import {DeviceFeedback} from '@ionic-native/device-feedback';
+import {NativeProvider} from '../../providers/native/native';
 
 /**
  * Generated class for the CompositeLockerComponent component.
@@ -33,8 +34,8 @@ export class FridgeLockerComponent extends LockerComponent implements OnInit {
 
   @ViewChildren(SimpleLockerComponent) rackComponents: QueryList<SimpleLockerComponent>;
 
-  constructor(private notificationService: NotificationService, deviceFeedback: DeviceFeedback) {
-    super(deviceFeedback)
+  constructor(private notificationService: NotificationService, nativeProvider: NativeProvider) {
+    super(nativeProvider)
   }
 
   ngOnInit(): void {

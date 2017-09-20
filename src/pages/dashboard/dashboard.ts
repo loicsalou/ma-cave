@@ -7,6 +7,7 @@ import {Bottle} from '../../model/bottle';
 import {FilterSet} from '../../components/distribution/distribution';
 import {Subscription} from 'rxjs/Subscription';
 import {DeviceFeedback} from '@ionic-native/device-feedback';
+import {NativeProvider} from '../../providers/native/native';
 
 @Component({
              selector: 'page-dashboard',
@@ -20,12 +21,11 @@ export class DashboardPage implements OnInit, OnDestroy {
   private bottleSub: Subscription;
 
   constructor(public navCtrl: NavController, public loginService: LoginService,
-              private bottleService: BottlePersistenceService, private deviceFeedback: DeviceFeedback) {
+              private bottleService: BottlePersistenceService, private nativeProvider: NativeProvider) {
   }
 
   ngOnInit(): void {
-    this.deviceFeedback.acoustic();
-    this.deviceFeedback.haptic(0);
+    this.nativeProvider.feedBack();
 
     this.version = require('../../../package.json').version;
     this.bottleSub = this.bottleService.allBottlesObservable.subscribe(

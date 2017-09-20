@@ -12,7 +12,7 @@ import {NotificationService} from '../../service/notification.service';
 import {CellarPage} from '../cellar/cellar.page';
 import {BottleListComponent} from '../../components/list/bottle-list.component';
 import {TranslateService} from '@ngx-translate/core';
-import {DeviceFeedback} from '@ionic-native/device-feedback';
+import {NativeProvider} from '../../providers/native/native';
 
 @Component({
              selector: 'page-browse',
@@ -34,23 +34,22 @@ export class BrowsePage implements OnInit, OnDestroy {
 
   constructor(public navCtrl: NavController, public platform: Platform, private bottlesService: BottlePersistenceService,
               private loginService: LoginService, private notificationService: NotificationService,
-              private translateService: TranslateService, private deviceFeedback: DeviceFeedback, params?: NavParams) {
+              private translateService: TranslateService, private nativeProvider: NativeProvider, params?: NavParams) {
+    this.notificationService.traceDebug('BrowsePage.constructor');
     this.navParams = params;
   }
 
   ngOnInit() {
-    this.deviceFeedback.acoustic();
-    this.deviceFeedback.haptic(0);
-    this.notificationService.traceInfo('Initialisation de la page de browse');
+
+    this.nativeProvider.feedBack();
     this.setFilter();
     this.filterSubscription = this.bottlesService.filtersObservable.subscribe(
       filterSet => {
-        this.notificationService.traceInfo('Nouveau filtre reçu: ' + filterSet);
         this.setFilterSet(filterSet);
       });
     this.bottleSubscription = this.bottlesService.filteredBottlesObservable.subscribe(
       (received: Bottle[]) => {
-        this.notificationService.traceInfo('Réception des bouteilles');
+        let deb=new Date().getTime();
         this.bottles = received;
         this.nbOfBottles = 0;
         if (received) {
@@ -70,13 +69,13 @@ export class BrowsePage implements OnInit, OnDestroy {
           );
         }
       },
-      error => this.notificationService.error('Erreur lors de l\'accès à la base de données' + error),
-      () => this.notificationService.traceInfo('Récupération de ' + this.nbOfBottles + ' bouteilles terminée')
+      error => this.notificationService.error('BrowsePage: Erreur lors de l\'accès à la base de données' + error),
+      () => this.notificationService.traceInfo('BrowsePage: ngOnInit, récupération de ' + this.nbOfBottles + ' bouteilles terminée')
     );
+    let fin=new Date().getTime();
   }
 
   ngOnDestroy(): void {
-    this.notificationService.traceInfo('Libération de la page de browse');
     this.bottleSubscription.unsubscribe();
     this.filterSubscription.unsubscribe();
   }
@@ -104,7 +103,7 @@ export class BrowsePage implements OnInit, OnDestroy {
     this.listComponent.resetSelection();
   }
 
-  registerSelectionAsFavorite() {
+  async registerSelectionAsFavorite() {
     let favoriteStatus;
     let selectedBottles: Bottle[] = this.bottles.filter(btl => btl.selected);
     selectedBottles.forEach(btl => {
@@ -120,7 +119,6 @@ export class BrowsePage implements OnInit, OnDestroy {
 
 // in case user navigated to here from the home page then we have search param ==> filter on this text
   private setFilter() {
-    this.notificationService.traceInfo('Vérification des paramètres du filtre');
     if (this.navParams != undefined) {
       if (this.navParams.data[ 'text' ] != null) {
         this.filterSet.text = this.navParams.data[ 'text' ].split(' ');
