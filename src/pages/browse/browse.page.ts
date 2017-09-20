@@ -1,16 +1,16 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {NavController, NavParams, Platform} from 'ionic-angular';
+import {InfiniteScroll, NavController, NavParams, Platform, VirtualScroll} from 'ionic-angular';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {Bottle} from '../../model/bottle';
 import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
-import {ListBottleEvent} from '../../components/list/bottle-list-event';
+import {BottleEvent} from '../../components/list/bottle-event';
 import {FilterSet} from '../../components/distribution/distribution';
 import {Subscription} from 'rxjs/Subscription';
 import * as _ from 'lodash';
 import {LoginService} from '../../service/login.service';
 import {NotificationService} from '../../service/notification.service';
 import {CellarPage} from '../cellar/cellar.page';
-import {BottleListComponent} from '../../components/list/bottle-list.component';
+import {BottleItemComponent} from '../../components/list/bottle-item.component';
 import {TranslateService} from '@ngx-translate/core';
 import {NativeProvider} from '../../providers/native/native';
 
@@ -23,6 +23,7 @@ export class BrowsePage implements OnInit, OnDestroy {
   private bottleSubscription: Subscription;
   private filterSubscription: Subscription;
   private searchBarVisible: boolean = false;
+  allBottles: Bottle[];
   bottles: Bottle[];
 
   filterSet: FilterSet = new FilterSet(this.translateService);
@@ -30,7 +31,8 @@ export class BrowsePage implements OnInit, OnDestroy {
   private nbOfBottles: number = 0;
 
   @ViewChild('bottleList')
-  listComponent: BottleListComponent;
+  listComponent: BottleItemComponent;
+  @ViewChild(VirtualScroll) vs: VirtualScroll;
 
   constructor(public navCtrl: NavController, public platform: Platform, private bottlesService: BottlePersistenceService,
               private loginService: LoginService, private notificationService: NotificationService,
@@ -49,8 +51,9 @@ export class BrowsePage implements OnInit, OnDestroy {
       });
     this.bottleSubscription = this.bottlesService.filteredBottlesObservable.subscribe(
       (received: Bottle[]) => {
-        let deb=new Date().getTime();
-        this.bottles = received;
+        let deb = new Date().getTime();
+        this.allBottles = received;
+        this.bottles = [];
         this.nbOfBottles = 0;
         if (received) {
           this.nbOfBottles = received.reduce(
@@ -59,25 +62,41 @@ export class BrowsePage implements OnInit, OnDestroy {
           );
         }
         if (this.filterSet && this.filterSet.sortOption) {
-          this.bottles = _.orderBy(this.bottles,
-                                   [ this.filterSet.sortOption.sortOn, 'country_label', 'subregion_label', 'area_label', 'nomCru', 'millesime' ],
-                                   [ this.filterSet.sortOption.sortOrder == undefined ? 'asc' : this.filterSet.sortOption.sortOrder, 'asc', 'asc', 'asc', 'asc', 'asc' ]
+          this.allBottles = _.orderBy(this.allBottles,
+                  [ this.filterSet.sortOption.sortOn, 'country_label', 'subregion_label', 'area_label', 'nomCru', 'millesime' ],
+                  [ this.filterSet.sortOption.sortOrder == undefined ? 'asc' : this.filterSet.sortOption.sortOrder,
+                                        'asc', 'asc', 'asc', 'asc', 'asc' ]
           );
         } else {
-          this.bottles = _.orderBy(this.bottles, [ 'country_label', 'subregion_label', 'area_label', 'nomCru', 'millesime' ],
-                                   [ 'asc', 'asc', 'asc', 'asc', 'asc' ]
+          this.allBottles = _.orderBy(this.allBottles, [ 'quantite_courante', 'country_label', 'subregion_label',
+                                        'area_label', 'nomCru', 'millesime' ], [ 'asc', 'asc', 'asc', 'asc', 'asc' ]
           );
         }
+        this.doInfinite(null);
       },
       error => this.notificationService.error('BrowsePage: Erreur lors de l\'accès à la base de données' + error),
       () => this.notificationService.traceInfo('BrowsePage: ngOnInit, récupération de ' + this.nbOfBottles + ' bouteilles terminée')
     );
-    let fin=new Date().getTime();
+    let fin = new Date().getTime();
   }
 
   ngOnDestroy(): void {
     this.bottleSubscription.unsubscribe();
     this.filterSubscription.unsubscribe();
+  }
+
+  doInfinite(infiniteScroll: InfiniteScroll) {
+    setTimeout(() => {
+      if (this.bottles.length < this.allBottles.length) {
+        let size = this.bottles.length;
+        let added = this.allBottles.slice(size, size + 100);
+        this.bottles = this.bottles.concat(added);
+        this.doInfinite(infiniteScroll);
+      } else if (infiniteScroll) {
+        infiniteScroll.complete();
+      }
+
+    }, 100);
   }
 
   logout() {
@@ -86,7 +105,8 @@ export class BrowsePage implements OnInit, OnDestroy {
   }
 
   anyBottleSelected(): boolean {
-    return this.listComponent.anyBottleSelected();
+    return false
+    //TODO return this.listComponent.anyBottleSelected();
   }
 
   placeSelection() {
@@ -158,8 +178,8 @@ export class BrowsePage implements OnInit, OnDestroy {
     this.bottlesService.filterOn(this.filterSet);
   }
 
-  triggerDetail(bottleEvent: ListBottleEvent) {
-    this.navCtrl.push(BottleDetailPage, {bottleEvent: bottleEvent});
+  triggerDetail(bottle: Bottle) {
+    this.navCtrl.push(BottleDetailPage, {bottleEvent: {bottles: this.allBottles, bottle: bottle}});
   }
 
   private setFilterSet(filterSet: FilterSet) {

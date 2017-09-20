@@ -5,7 +5,7 @@ import {Injectable} from '@angular/core';
 import {Bottle, Position} from './bottle';
 import {TranslateService} from '@ngx-translate/core';
 import {Statistics} from './statistics';
-import {BottleIconPipe} from '../components/list/bottle-item-component/bottle-icon.pipe';
+import {BottleIconPipe} from '../components/list/bottle-icon.pipe';
 
 /**
  * Instanciation des bouteilles.
