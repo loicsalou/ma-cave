@@ -20,8 +20,8 @@ export class TabsPage {
   browseRoot: any = BrowsePage;
   cellarRoot: any = CellarPage;
   dashboardRoot: any = DashboardPage;
-  //adminRoot: any = UploadBottlesPage;
-  adminRoot: any = TestPage;
+  adminRoot: any = UploadBottlesPage;
+  //adminRoot: any = TestPage;
 
   constructor(platform: Platform, navCtrl: NavController, private notificationService: NotificationService) {
     platform.ready().then(() => {

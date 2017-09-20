@@ -3,7 +3,6 @@ import {InfiniteScroll, NavController, NavParams, Platform, VirtualScroll} from 
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {Bottle} from '../../model/bottle';
 import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
-import {BottleEvent} from '../../components/list/bottle-event';
 import {FilterSet} from '../../components/distribution/distribution';
 import {Subscription} from 'rxjs/Subscription';
 import * as _ from 'lodash';
@@ -25,6 +24,7 @@ export class BrowsePage implements OnInit, OnDestroy {
   private searchBarVisible: boolean = false;
   allBottles: Bottle[];
   bottles: Bottle[];
+  nbSelected = 0;
 
   filterSet: FilterSet = new FilterSet(this.translateService);
   private navParams: NavParams;
@@ -63,13 +63,13 @@ export class BrowsePage implements OnInit, OnDestroy {
         }
         if (this.filterSet && this.filterSet.sortOption) {
           this.allBottles = _.orderBy(this.allBottles,
-                  [ this.filterSet.sortOption.sortOn, 'country_label', 'subregion_label', 'area_label', 'nomCru', 'millesime' ],
-                  [ this.filterSet.sortOption.sortOrder == undefined ? 'asc' : this.filterSet.sortOption.sortOrder,
+                                      [ this.filterSet.sortOption.sortOn, 'country_label', 'subregion_label', 'area_label', 'nomCru', 'millesime' ],
+                                      [ this.filterSet.sortOption.sortOrder == undefined ? 'asc' : this.filterSet.sortOption.sortOrder,
                                         'asc', 'asc', 'asc', 'asc', 'asc' ]
           );
         } else {
           this.allBottles = _.orderBy(this.allBottles, [ 'quantite_courante', 'country_label', 'subregion_label',
-                                        'area_label', 'nomCru', 'millesime' ], [ 'asc', 'asc', 'asc', 'asc', 'asc' ]
+            'area_label', 'nomCru', 'millesime' ], [ 'desc', 'asc', 'asc', 'asc', 'asc', 'asc' ]
           );
         }
         this.doInfinite(null);
@@ -89,14 +89,18 @@ export class BrowsePage implements OnInit, OnDestroy {
     setTimeout(() => {
       if (this.bottles.length < this.allBottles.length) {
         let size = this.bottles.length;
-        let added = this.allBottles.slice(size, size + 100);
+        let added = this.allBottles.slice(size, size + 50);
         this.bottles = this.bottles.concat(added);
         this.doInfinite(infiniteScroll);
       } else if (infiniteScroll) {
         infiniteScroll.complete();
       }
 
-    }, 100);
+    }, 10);
+  }
+
+  anyBottleSelected(): boolean {
+    return this.nbSelected > 0;
   }
 
   logout() {
@@ -104,23 +108,18 @@ export class BrowsePage implements OnInit, OnDestroy {
     this.navCtrl.popToRoot();
   }
 
-  anyBottleSelected(): boolean {
-    return false
-    //TODO return this.listComponent.anyBottleSelected();
-  }
-
   placeSelection() {
     let selectedBottles = this.bottles.filter(btl => btl.selected);
     this.navCtrl.push(CellarPage, {bottlesToPlace: selectedBottles});
     selectedBottles.forEach(btl => delete btl.selected);
-    this.listComponent.resetSelection();
+    this.resetSelection();
   }
 
   locateSelection() {
     let selectedBottles = this.bottles.filter(btl => btl.selected);
     this.navCtrl.push(CellarPage, {bottlesToHighlight: selectedBottles});
     selectedBottles.forEach(btl => delete btl.selected);
-    this.listComponent.resetSelection();
+    this.resetSelection();
   }
 
   async registerSelectionAsFavorite() {
@@ -134,7 +133,15 @@ export class BrowsePage implements OnInit, OnDestroy {
       delete btl.selected;
     });
     this.bottlesService.update(selectedBottles);
-    this.listComponent.resetSelection();
+    this.resetSelection();
+  }
+
+  /**
+   * prend en compte le nouvel état sélectionnée ou pas pour une bouteille
+   * @param {Bottle} bottle
+   */
+  switchSelected(bottle: Bottle) {
+    this.nbSelected += bottle.selected ? 1 : -1;
   }
 
 // in case user navigated to here from the home page then we have search param ==> filter on this text
@@ -185,6 +192,11 @@ export class BrowsePage implements OnInit, OnDestroy {
   private setFilterSet(filterSet: FilterSet) {
     this.filterSet = filterSet;
     this.searchBarVisible = false;
+  }
+
+  private resetSelection() {
+    this.bottles.forEach(bottle => bottle.selected = false);
+    this.nbSelected = 0;
   }
 }
 
