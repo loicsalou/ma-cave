@@ -109,7 +109,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
     }
 
     //on enlève / regroupe les bouteilles représentant un pourcentage inférieur au seuil minimal d'importance
-    let splitted = this.splitData(distribution, 0.02, this.topMost);
+    let splitted = this.splitData(distribution, 0.005, this.topMost);
     let significantData = splitted.selected;
     this.others = splitted.others;
     //on extrait les indexes (couleur du vin par ex)
@@ -129,7 +129,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
     }
 
     //on enlève / regroupe les bouteilles représentant un pourcentage inférieur au seuil minimal d'importance
-    let splitted = this.splitData(distribution, 0.02, this.topMost);
+    let splitted = this.splitData(distribution, 0.01, this.topMost);
     let significantData = splitted.selected;
     this.others = splitted.others;
     //on extrait les indexes (couleur du vin par ex)

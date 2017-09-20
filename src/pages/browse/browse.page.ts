@@ -40,53 +40,42 @@ export class BrowsePage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.notificationService.traceDebug('BrowsePage.ngOnInit, début');
 
     this.nativeProvider.feedBack();
-    this.notificationService.traceInfo('Initialisation de la page de browse');
     this.setFilter();
     this.filterSubscription = this.bottlesService.filtersObservable.subscribe(
       filterSet => {
-        this.notificationService.traceInfo('Nouveau filtre reçu: ' + filterSet);
         this.setFilterSet(filterSet);
       });
     this.bottleSubscription = this.bottlesService.filteredBottlesObservable.subscribe(
       (received: Bottle[]) => {
         let deb=new Date().getTime();
-        this.notificationService.traceInfo('BrowsePage: ngOnInit, réception des bouteilles');
         this.bottles = received;
         this.nbOfBottles = 0;
         if (received) {
-          this.notificationService.traceInfo('BrowsePage: ngOnInit, reduce, début');
           this.nbOfBottles = received.reduce(
             (tot: number, btl: Bottle) => tot + +btl.quantite_courante,
             0
           );
-          this.notificationService.traceInfo('BrowsePage: ngOnInit, reduce, fin');
         }
         if (this.filterSet && this.filterSet.sortOption) {
-          this.notificationService.traceInfo('BrowsePage: ngOnInit, tri, début');
           this.bottles = _.orderBy(this.bottles,
                                    [ this.filterSet.sortOption.sortOn, 'country_label', 'subregion_label', 'area_label', 'nomCru', 'millesime' ],
                                    [ this.filterSet.sortOption.sortOrder == undefined ? 'asc' : this.filterSet.sortOption.sortOrder, 'asc', 'asc', 'asc', 'asc', 'asc' ]
           );
-          this.notificationService.traceInfo('BrowsePage: ngOnInit, tri, fin');
         } else {
           this.bottles = _.orderBy(this.bottles, [ 'country_label', 'subregion_label', 'area_label', 'nomCru', 'millesime' ],
                                    [ 'asc', 'asc', 'asc', 'asc', 'asc' ]
           );
         }
-        this.notificationService.debugAlert('temps d\'initialisation '+(fin-deb));
       },
       error => this.notificationService.error('BrowsePage: Erreur lors de l\'accès à la base de données' + error),
       () => this.notificationService.traceInfo('BrowsePage: ngOnInit, récupération de ' + this.nbOfBottles + ' bouteilles terminée')
     );
-    this.notificationService.traceDebug('BrowsePage.ngOnInit, fin');
     let fin=new Date().getTime();
   }
 
   ngOnDestroy(): void {
-    this.notificationService.traceInfo('Libération de la page de browse');
     this.bottleSubscription.unsubscribe();
     this.filterSubscription.unsubscribe();
   }
@@ -109,7 +98,6 @@ export class BrowsePage implements OnInit, OnDestroy {
 
   locateSelection() {
     let selectedBottles = this.bottles.filter(btl => btl.selected);
-    this.notificationService.debugAlert('nombre de bouteilles à localiser: ' + selectedBottles.length);
     this.navCtrl.push(CellarPage, {bottlesToHighlight: selectedBottles});
     selectedBottles.forEach(btl => delete btl.selected);
     this.listComponent.resetSelection();
@@ -131,7 +119,6 @@ export class BrowsePage implements OnInit, OnDestroy {
 
 // in case user navigated to here from the home page then we have search param ==> filter on this text
   private setFilter() {
-    this.notificationService.traceInfo('Vérification des paramètres du filtre');
     if (this.navParams != undefined) {
       if (this.navParams.data[ 'text' ] != null) {
         this.filterSet.text = this.navParams.data[ 'text' ].split(' ');
