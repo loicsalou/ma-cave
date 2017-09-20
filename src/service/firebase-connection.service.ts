@@ -21,6 +21,7 @@ import {User} from '../model/user';
 import {Subscription} from 'rxjs/Subscription';
 import {SimpleLocker} from '../model/simple-locker';
 import {Locker} from '../model/locker';
+import {Query} from 'angularfire2/database/interfaces';
 import Reference = firebase.database.Reference;
 import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
 
@@ -46,6 +47,10 @@ export class FirebaseConnectionService {
   private LOCKER_CONTENT_ROOT: string;
   private static LOCKER_CONTENT_FOLDER = 'content';
   private lockerContentRootRef: Reference;
+
+  private PROFILE_ROOT: string;
+  private static PROFILE_CONTENT_FOLDER = 'profile';
+  private profileRootRef: Reference;
 
   protected XREF_FOLDER = 'xref';
   public XREF_ROOT: string;
@@ -79,11 +84,13 @@ export class FirebaseConnectionService {
     this.BOTTLES_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.BOTTLES_FOLDER;
     this.CELLAR_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.CELLAR_FOLDER;
     this.LOCKER_CONTENT_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.LOCKER_CONTENT_FOLDER;
+    this.PROFILE_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.PROFILE_CONTENT_FOLDER;
 
     this.userRootRef = this.angularFirebase.database.ref(this.USER_ROOT);
     this.bottlesRootRef = this.angularFirebase.database.ref(this.BOTTLES_ROOT);
     this.cellarRootRef = this.angularFirebase.database.ref(this.CELLAR_ROOT);
     this.lockerContentRootRef = this.angularFirebase.database.ref(this.LOCKER_CONTENT_ROOT);
+    this.profileRootRef = this.angularFirebase.database.ref(this.PROFILE_ROOT);
     this.imageStorageRef = this.angularFirebase.app.storage().ref(this.IMAGES_ROOT);
   }
 
@@ -587,6 +594,42 @@ export class FirebaseConnectionService {
   reconnectListeners() {
     this.fetchAllBottles();
   }
+
+  getMostUsedQueries(nb: number):Observable<SearchCriteria[]> {
+    let query: Query = {
+      orderByChild: 'lastUpdated',
+      limitToLast: nb
+    };
+
+    return this.angularFirebase.list(this.PROFILE_ROOT, {query})
+      .flatMap(arr => {
+        if (arr) {
+          return Observable.of(arr.reverse());
+        } else {
+          return Observable.of([]);
+        }
+      });
+  }
+
+  updateQueryStats(keywords: string[]) {
+    let key = keywords.join('-');
+    this.profileRootRef.child(key).once('value').then(
+      snapshot => {
+        if (snapshot.val()) {
+          let count = snapshot.val().count + 1;
+          this.profileRootRef.child(key).update({keywords: keywords, count: count});
+        } else {
+          this.profileRootRef.child(key).set({keywords: keywords, count: 1});
+        }
+      },
+      onerror => console.error('firebase error: ' + onerror)
+    )
+  }
+}
+
+export interface SearchCriteria {
+  keywords: string[];
+  count: number;
 }
 
 function matchByKey(fbBottle, cacheBottle) {

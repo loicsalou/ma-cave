@@ -4,6 +4,10 @@ $font-path: "../assets/fonts";
 
 @import "ionic.globals";
 
+// Font Awesome
+$fa-font-path: $font-path;
+@import "font-awesome";
+
 // Shared Variables
 // --------------------------------------------------
 // To customize the look and feel of this app, you can override
