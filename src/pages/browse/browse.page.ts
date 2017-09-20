@@ -10,7 +10,7 @@ import * as _ from 'lodash';
 import {LoginService} from '../../service/login.service';
 import {NotificationService} from '../../service/notification.service';
 import {CellarPage} from '../cellar/cellar.page';
-import {BottleListComponent} from '../../components/list/bottle-list.component';
+import {BottleItemComponent} from '../../components/list/bottle-item.component';
 import {TranslateService} from '@ngx-translate/core';
 import {NativeProvider} from '../../providers/native/native';
 
@@ -31,7 +31,7 @@ export class BrowsePage implements OnInit, OnDestroy {
   private nbOfBottles: number = 0;
 
   @ViewChild('bottleList')
-  listComponent: BottleListComponent;
+  listComponent: BottleItemComponent;
   @ViewChild(VirtualScroll) vs: VirtualScroll;
 
   constructor(public navCtrl: NavController, public platform: Platform, private bottlesService: BottlePersistenceService,

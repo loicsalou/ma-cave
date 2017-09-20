@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {IonicModule, IonicPageModule} from 'ionic-angular';
 import {BrowsePage} from './browse.page';
 import {BrowserModule} from '@angular/platform-browser';
-import {BottleListComponent} from '../../components/list/bottle-list.component';
+import {BottleItemComponent} from '../../components/list/bottle-item.component';
 import {FilterPage} from '../filters/filter.page';
 import {DistributionComponent} from '../../components/distribution/distribution';
 import {SharedModule} from '../../components/shared.module';
@@ -11,7 +11,7 @@ import {TranslateModule} from '@ngx-translate/core';
 @NgModule({
             declarations: [
               BrowsePage,
-              BottleListComponent,
+              BottleItemComponent,
               FilterPage,
               DistributionComponent
             ],
@@ -24,7 +24,7 @@ import {TranslateModule} from '@ngx-translate/core';
             ],
             exports: [
               BrowsePage,
-              BottleListComponent,
+              BottleItemComponent,
               FilterPage,
               DistributionComponent
             ]

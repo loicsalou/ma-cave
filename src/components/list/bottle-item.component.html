@@ -1,7 +1,4 @@
-<!--<ion-list sliding="true" class="bottle-page">-->
-
-<ion-item-sliding (click)="triggerDetail(bottle,ix)" #item>
-  <!--*ngFor="let bottle of bottles; let ix=index">-->
+<ion-item-sliding (click)="triggerDetail(bottle,ix)" class="bottle-item" #item>
   <ion-item>
     <ion-row>
       <ion-col col-2 style="padding-right:10px;">
@@ -41,6 +38,3 @@
   </ion-item-options>
 
 </ion-item-sliding>
-
-
-<!--</ion-list>-->

@@ -7,11 +7,11 @@ import {CellarPage} from '../../pages/cellar/cellar.page';
 import {NativeProvider} from '../../providers/native/native';
 
 @Component({
-             selector: 'bottle-list',
-             templateUrl: 'bottle-list.component.html',
-             styleUrls: [ '/bottle-list.component.scss' ]
+             selector: 'bottle-item',
+             templateUrl: 'bottle-item.component.html',
+             styleUrls: [ '/bottle-item.component.scss' ]
            })
-export class BottleListComponent {
+export class BottleItemComponent {
   isFilterPanelShown = false;
   @Input()
   bottle: Bottle;
