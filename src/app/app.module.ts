@@ -60,6 +60,7 @@ import {LockerEditorPageModule} from '../pages/locker-editor/locker-editor.page.
 import {LockerEditor2PageModule} from '../pages/locker-editor2/locker-editor2.page.module';
 import {AndroidPermissions} from '@ionic-native/android-permissions';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
+import {TestPageModule} from '../pages/test/test.module';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -103,7 +104,8 @@ export const fireConfig = {
                                           deps: [ HttpClient ]
                                         }
                                       }),
-              UploadBottlesModule
+              UploadBottlesModule,
+              TestPageModule
             ],
             bootstrap: [ IonicApp ],
             entryComponents: [

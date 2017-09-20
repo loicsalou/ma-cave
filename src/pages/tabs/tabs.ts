@@ -7,6 +7,7 @@ import {BrowsePage} from '../browse/browse.page';
 import {CellarPage} from '../cellar/cellar.page';
 import {NavController, Platform} from 'ionic-angular';
 import {NotificationService} from '../../service/notification.service';
+import {TestPage} from '../test/test';
 
 @Component({
              templateUrl: 'tabs.html'
@@ -19,7 +20,8 @@ export class TabsPage {
   browseRoot: any = BrowsePage;
   cellarRoot: any = CellarPage;
   dashboardRoot: any = DashboardPage;
-  adminRoot: any = UploadBottlesPage;
+  //adminRoot: any = UploadBottlesPage;
+  adminRoot: any = TestPage;
 
   constructor(platform: Platform, navCtrl: NavController, private notificationService: NotificationService) {
     platform.ready().then(() => {

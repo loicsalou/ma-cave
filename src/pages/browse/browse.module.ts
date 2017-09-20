@@ -1,5 +1,5 @@
 import {NgModule} from '@angular/core';
-import {IonicModule} from 'ionic-angular';
+import {IonicModule, IonicPageModule} from 'ionic-angular';
 import {BrowsePage} from './browse.page';
 import {BrowserModule} from '@angular/platform-browser';
 import {BottleListComponent} from '../../components/list/bottle-list.component';
@@ -17,6 +17,7 @@ import {TranslateModule} from '@ngx-translate/core';
             ],
             imports: [
               IonicModule,
+              IonicPageModule.forChild(BrowsePage),
               BrowserModule,
               SharedModule,
               TranslateModule

@@ -14,7 +14,7 @@ import {NativeProvider} from '../../providers/native/native';
 export class BottleListComponent {
   isFilterPanelShown = false;
   @Input()
-  bottles: Bottle[];
+  bottle: Bottle;
   @Output()
   showDetail: EventEmitter<ListBottleEvent> = new EventEmitter();
   private nbSelected = 0;
@@ -28,7 +28,7 @@ export class BottleListComponent {
   }
 
   triggerDetail(bottle: Bottle, index: number) {
-    this.showDetail.emit(<ListBottleEvent>{bottle: bottle, bottles: this.bottles, index: index});
+    this.showDetail.emit(<ListBottleEvent>{bottle: bottle, bottles: [this.bottle], index: index});
   }
 
   switchSelected(event: Event, bottle: Bottle) {

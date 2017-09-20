@@ -38,7 +38,14 @@
 
 <ion-content class="page-browse page">
   <ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>
-  <bottle-list #bottleList [bottles]="bottles" (showDetail)="triggerDetail($event)"></bottle-list>
+  <ion-list sliding="true" class="bottle-page" [virtualScroll]="bottles" #bottleList >
+    <div *virtualItem="let bottle" style="width: 100%">
+      <bottle-list [bottle]="bottle" (showDetail)="triggerDetail($event)"></bottle-list>
+    </div>
+  </ion-list>
+  <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
   
   <ion-fab bottom right *ngIf="anyBottleSelected()">
     <button ion-fab>
