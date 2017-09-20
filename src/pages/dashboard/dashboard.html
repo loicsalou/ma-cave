@@ -24,7 +24,7 @@
       <label>{{'bottles' | translate}}</label>
       <span>{{totalNumberOfBottles}}</span>
     </ion-item>
-    <button ion-button outline small round icon-left>
+    <button ion-button outline small round icon-left (click)="showFavorites()">
       <ion-icon name="star"></ion-icon>
       Favorites
     </button>

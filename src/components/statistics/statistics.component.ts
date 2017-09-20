@@ -76,7 +76,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.bottlesSub=this.bottlesService.allBottlesObservable.subscribe((bottles: Bottle[]) => {
+    this.bottlesSub = this.bottlesService.allBottlesObservable.subscribe((bottles: Bottle[]) => {
       this.createChart(bottles.filter(btl => +btl.quantite_courante > 0));
     });
   }

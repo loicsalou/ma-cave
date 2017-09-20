@@ -8,6 +8,7 @@ import {FilterSet} from '../../components/distribution/distribution';
 import {Subscription} from 'rxjs/Subscription';
 import {NativeProvider} from '../../providers/native/native';
 import {NotificationService} from '../../service/notification.service';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
              selector: 'page-dashboard',
@@ -21,7 +22,8 @@ export class DashboardPage implements OnInit, OnDestroy {
   private bottleSub: Subscription;
 
   constructor(public navCtrl: NavController, public loginService: LoginService, private notificationService: NotificationService,
-              private bottleService: BottlePersistenceService, private nativeProvider: NativeProvider) {
+              private bottleService: BottlePersistenceService, private nativeProvider: NativeProvider,
+              private translateService: TranslateService) {
   }
 
   ngOnInit(): void {
@@ -64,5 +66,11 @@ export class DashboardPage implements OnInit, OnDestroy {
   logout() {
     this.loginService.logout();
     this.navCtrl.popToRoot();
+  }
+
+  showFavorites() {
+    let fs: FilterSet = new FilterSet(this.translateService);
+    fs.favoriteOnly = true;
+    this.navCtrl.push(BrowsePage, {filterSet: fs});
   }
 }
