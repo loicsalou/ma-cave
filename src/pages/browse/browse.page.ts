@@ -126,6 +126,12 @@ export class BrowsePage implements OnInit, OnDestroy {
     selectedBottles.forEach(btl => delete btl.selected);
     this.resetSelection();
   }
+  //
+  //ionViewWillLeave() {
+  //  if (this.navCtrl.canGoBack()) {
+  //    this.navCtrl.pop();
+  //  }
+  //}
 
   async registerSelectionAsFavorite() {
     let favoriteStatus;
