@@ -29,6 +29,9 @@ export class FilterPage implements OnInit, OnChanges, OnDestroy {
   constructor(private bottlesService: BottlePersistenceService, private menuController: MenuController) {
   }
 
+  //ionViewWillLeave() {
+  //  console.log("leaving FilterPage");
+  //}
   ngOnInit(): void {
     this.filtersSub = this.bottlesService.filtersObservable.subscribe(
       filterSet => this.filterSet = filterSet

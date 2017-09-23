@@ -4,6 +4,7 @@ import {Bottle} from '../../model/bottle';
 import {ItemSliding, NavController} from 'ionic-angular';
 import {CellarPage} from '../../pages/cellar/cellar.page';
 import {NativeProvider} from '../../providers/native/native';
+import {SelectedEvent} from './selected-event';
 
 @Component({
              selector: 'bottle-item',
@@ -16,7 +17,8 @@ export class BottleItemComponent {
   bottle: Bottle;
   @Output()
   showDetail: EventEmitter<Bottle> = new EventEmitter();
-  private nbSelected = 0;
+  @Output()
+  selected: EventEmitter<Bottle> = new EventEmitter();
 
   constructor(private bottlesService: BottlePersistenceService,
               private navCtrl: NavController, private nativeProvider: NativeProvider) {
@@ -33,19 +35,11 @@ export class BottleItemComponent {
   switchSelected(event: Event, bottle: Bottle) {
     event.stopPropagation();
     bottle.selected = !bottle.selected;
-    if (bottle.selected) {
-      this.nbSelected++;
-    } else {
-      this.nbSelected--;
-    }
+    this.selected.emit(bottle);
   }
 
   numberNotPlaced(bottle: Bottle): number {
     return bottle.numberToBePlaced();
-  }
-
-  anyBottleSelected(): boolean {
-    return this.nbSelected > 0;
   }
 
   isSelected(bottle) {
@@ -54,23 +48,6 @@ export class BottleItemComponent {
 
   isBottleFavorite(bottle: Bottle): boolean {
     return bottle.favorite;
-  }
-
-  manageFavorites(slidingItem: ItemSliding, bottle: Bottle) {
-    bottle.favorite = bottle.favorite ? !bottle.favorite : true;
-    slidingItem.close();
-    this.updateBottle(bottle);
-  }
-
-  updateBottle(bottle) {
-    setTimeout(
-      () => this.bottlesService.update([ bottle ]),
-      10000
-    );
-  }
-
-  isBottleInBasket(bottle: Bottle): boolean {
-    return bottle[ 'in-basket' ];
   }
 
   locateBottles(event: Event, slidingItem: ItemSliding, bottles: Bottle[]) {
@@ -86,10 +63,6 @@ export class BottleItemComponent {
     bottle.favorite = bottle.favorite ? !bottle.favorite : true;
     this.bottlesService.update([ bottle ]);
     slidingItem.close();
-  }
-
-  resetSelection() {
-    this.nbSelected = 0;
   }
 }
 

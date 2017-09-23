@@ -11,7 +11,7 @@ import * as _ from 'lodash';
 import {LoginService} from './login.service';
 import {PersistenceService} from './persistence.service';
 import {NotificationService} from './notification.service';
-import {FirebaseConnectionService} from './firebase-connection.service';
+import {FirebaseConnectionService, SearchCriteria} from './firebase-connection.service';
 import {User} from '../model/user';
 import {Subscription} from 'rxjs/Subscription';
 import {Locker} from '../model/locker';
@@ -100,10 +100,6 @@ export class BottlePersistenceService extends PersistenceService {
       () => this.notificationService.information('Suppression effectuée'),
       error => this.notificationService.failed('La suppression des bouteilles a échoué', error)
     )
-  }
-
-  public initializeDB(bottles: Bottle[]): Promise<any> {
-    return this.save(bottles);
   }
 
   public getBottle(id: string): Bottle {
@@ -219,6 +215,10 @@ export class BottlePersistenceService extends PersistenceService {
     this._filteredBottles.next(filtered);
   }
 
+  getMostUsedQueries(nb: number = 5): Observable<SearchCriteria[]> {
+    return this.dataConnection.getMostUsedQueries(nb);
+  }
+
   private setAllBottlesArray(bottles: Bottle[]) {
     this.allBottlesArray = bottles;
     this._bottles.next(bottles);
@@ -234,6 +234,13 @@ export class BottlePersistenceService extends PersistenceService {
     if (!keywords || keywords.length == 0) {
       return fromList;
     }
+    keywords = keywords.map(
+      kw => {
+        return kw.trim().toLowerCase()
+      }
+    );
+    keywords = keywords.sort();
+    this.dataConnection.updateQueryStats(keywords);
     let filtered = fromList;
     keywords.forEach(keyword => {
       filtered = this.filterOnKeyword(filtered, keyword);
@@ -253,7 +260,8 @@ export class BottlePersistenceService extends PersistenceService {
     return list.filter(bottle => {
                          let matching = false;
                          for (let key in bottle) {
-                           if (bottle[ key ].toString().toLocaleLowerCase().indexOf(keywordLower) !== -1) {
+                           let value = bottle[ key ] ? bottle[ key ].toString() : '';
+                           if (value.toLocaleLowerCase().indexOf(keywordLower) !== -1) {
                              matching = true;
                            }
                          }
@@ -265,7 +273,7 @@ export class BottlePersistenceService extends PersistenceService {
   private filterByAttribute(fromList: Bottle[ ], attribute: string, admissibleValues: string[ ]) {
     return fromList.filter(bottle => {
       let ret = true;
-      let attrValue = bottle[ attribute ].toString();
+      let attrValue = bottle[ attribute ] ? bottle[ attribute ].toString() : '';
       //admissibleValues.forEach(admissibleValue => ret = ret && attrValue.indexOf(admissibleValue) !== -1);
       return admissibleValues.indexOf(attrValue) !== -1;
     })
@@ -274,6 +282,10 @@ export class BottlePersistenceService extends PersistenceService {
   private setFilters(filters: FilterSet) {
     this.filters = filters;
     this._filtersObservable.next(filters);
+  }
+
+  removeFromQueryStats(keywords: any) {
+    this.dataConnection.removeFromQueryStats(keywords);
   }
 }
 

@@ -13,14 +13,13 @@ import {FileItem} from './file-item';
 import {UploadMetadata} from './image-persistence.service';
 import {NotificationService} from './notification.service';
 import {Subject} from 'rxjs/Subject';
-import {NativeStorageService} from './native-storage.service';
 import {Platform} from 'ionic-angular';
-import * as _ from 'lodash';
 import {BottleFactory} from '../model/bottle.factory';
 import {User} from '../model/user';
 import {Subscription} from 'rxjs/Subscription';
 import {SimpleLocker} from '../model/simple-locker';
 import {Locker} from '../model/locker';
+import {Query} from 'angularfire2/database/interfaces';
 import Reference = firebase.database.Reference;
 import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
 
@@ -47,6 +46,10 @@ export class FirebaseConnectionService {
   private static LOCKER_CONTENT_FOLDER = 'content';
   private lockerContentRootRef: Reference;
 
+  private PROFILE_ROOT: string;
+  private static PROFILE_CONTENT_FOLDER = 'profile';
+  private profileRootRef: Reference;
+
   protected XREF_FOLDER = 'xref';
   public XREF_ROOT: string;
 
@@ -56,19 +59,16 @@ export class FirebaseConnectionService {
   private _bottles: BehaviorSubject<Bottle[]>;
   private _allBottlesObservable: Observable<Bottle[]>;
   private firebaseBottlesSub: Subscription;
-  private cacheDaemonSubscription: Subscription; // watches changes that happened since last known update in cache
 
   private cellarRootRef: Reference;
-  private _lockers: BehaviorSubject<Locker[]> = new BehaviorSubject<Locker[]>([]);
 
   private imageStorageRef: firebase.storage.Reference;
   private _uploadProgressEvent: Subject<number> = new Subject<number>();
-  private cacheBottles: Bottle[];
   private connectionAllowed: boolean = true;
 
   constructor(private bottleFactory: BottleFactory,
               private angularFirebase: AngularFireDatabase, private loginService: LoginService,
-              private notificationService: NotificationService, private localStorage: NativeStorageService,
+              private notificationService: NotificationService,
               private platform: Platform) {
   }
 
@@ -79,11 +79,13 @@ export class FirebaseConnectionService {
     this.BOTTLES_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.BOTTLES_FOLDER;
     this.CELLAR_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.CELLAR_FOLDER;
     this.LOCKER_CONTENT_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.LOCKER_CONTENT_FOLDER;
+    this.PROFILE_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.PROFILE_CONTENT_FOLDER;
 
     this.userRootRef = this.angularFirebase.database.ref(this.USER_ROOT);
     this.bottlesRootRef = this.angularFirebase.database.ref(this.BOTTLES_ROOT);
     this.cellarRootRef = this.angularFirebase.database.ref(this.CELLAR_ROOT);
     this.lockerContentRootRef = this.angularFirebase.database.ref(this.LOCKER_CONTENT_ROOT);
+    this.profileRootRef = this.angularFirebase.database.ref(this.PROFILE_ROOT);
     this.imageStorageRef = this.angularFirebase.app.storage().ref(this.IMAGES_ROOT);
   }
 
@@ -95,13 +97,9 @@ export class FirebaseConnectionService {
     this.imageStorageRef = undefined;
     this._bottles.next([]);
     this.firebaseBottlesSub.unsubscribe();
-    if (this.cacheDaemonSubscription) {
-      this.cacheDaemonSubscription.unsubscribe();
-    }
   }
 
   // ===================================================== LOCKERS
-
   public fetchAllLockers(): Observable<Locker[]> {
     return this.angularFirebase
       .list(this.CELLAR_ROOT, {
@@ -171,12 +169,7 @@ export class FirebaseConnectionService {
    */
   public fetchAllBottles() {
     this.notificationService.debugAlert('fetchAllBottles()');
-    // on prend déjà ce qu'on a dans le cache
-    if (this.platform.is('cordova')) {
-      this.firebaseBottlesSub = this.fetchBottlesFromCordovaCache();
-    } else if (this.connectionAllowed) {
-      this.firebaseBottlesSub = this.fetchAllBottlesFromDB();
-    }
+    this.firebaseBottlesSub = this.fetchAllBottlesFromDB();
   }
 
   //============== NO CACHE AVAILABLE
@@ -195,64 +188,12 @@ export class FirebaseConnectionService {
           this._bottles.next(bottles.map(
             (bottle: Bottle) => this.bottleFactory.create(bottle))
           );
-
-          // on sauve dans le cache
-          this.localStorage.save(bottles);
         }
       },
       error => {
         this._bottles.error(error);
       },
       () => this._bottles.complete()
-    );
-  }
-
-  //============== CACHE IS AVAILABLE
-  private fetchBottlesFromCordovaCache(): Subscription {
-    return this.localStorage.fetchAllBottles().subscribe(
-      (bottles: Bottle[]) => this.handleCacheObservable(bottles),
-      error => {
-        this.notificationService.debugAlert('L\'accès à la liste locale des bouteilles a échoué !', JSON.stringify(error));
-        return this.fetchAllBottlesFromDB();
-      },
-      () => this.notificationService.debugAlert('Récupération unique des bouteilles dans le cache OK')
-    );
-  }
-
-  private handleCacheObservable(bottles: Bottle[ ]) {
-    //d'abord on émet ce qu'on a dans le cache
-    this.notificationService.debugAlert('handleCacheObservable()' + (bottles ? bottles.length : 'rien dans le cache'));
-    this._bottles.next(bottles);
-    //puis on trie par date de dernière mise à jour et on va chercher en DB ce qui a été mise à jour depuis pour
-    // remettre le cache à jour
-    this.cacheBottles = bottles;
-    if (this.cacheBottles.length > 0) {
-      this.cacheBottles.sort(sortByLastUpdate).reverse();
-      let lastupdated = 0;
-      if (this.cacheBottles.length > 0) {
-        lastupdated = this.cacheBottles[ 0 ].lastUpdated;
-      }
-      //récupérer en DB toutes les bouteilles mises à jour depuis la date de dernière mise à jour du cache (le +1 permet
-      // d'exclure la date la plus récente en local puisqu'on l'a déjà)
-      this.fetchBottlesFromDBStartingAt(lastupdated + 1, this.cacheBottles[ 0 ][ 'id' ])
-    }
-  }
-
-  private fetchBottlesFromDBStartingAt(startDate: number, key: string) {
-    this.notificationService.debugAlert('fetchAllBottles() - cacheAvailable - chargement des mises à jour depuis '
-      + startDate + ' key=' + key);
-    let items = this.queryOrderByLastUpdate(startDate);
-    this.cacheDaemonSubscription = items.subscribe(
-      (bottles: Bottle[]) => {
-        this.notificationService.debugAlert(bottles.length + ' mises à jour depuis la DB - ' + startDate +
-          ' - ' + JSON.stringify(bottles));
-        if (bottles.length > 0) {
-          //prepare loaded bottles for the app
-          this.updateCache(bottles.map((bottle: Bottle) => this.bottleFactory.create(bottle)));
-        }
-      },
-      error => this.notificationService.error('Impossible de récupérer les bouteilles depuis ' + new Date(startDate).toDateString(), error),
-      () => this.notificationService.debugAlert('Vérification de la validité du cache depuis ' + new Date(startDate).toDateString())
     );
   }
 
@@ -274,44 +215,7 @@ export class FirebaseConnectionService {
     return this.angularFirebase.list(this.BOTTLES_ROOT, {query});
   }
 
-  /**
-   * comparer firebaseBottles avec this.cacheBottles et si des bouteilles ont été ajoutées ou mises à jour
-   * dans la base, on enlève du cache les anciennes versions et on ajoute les différences dans le cache puis il
-   faut encore sauvegarder le cache dans le native storage.
-   * @param firebaseBottles contient les bouteilles qui sont différentes dans la DB firebase et dans le cache. La DB
-   * est bien sûr la référence.
-   * @returns {boolean} indicating if cache is up to date after change or not
-   */
-  private updateCache(firebaseBottles: Bottle[ ]): boolean {
-    //
-    if (!this.cacheBottles) {
-      this.cacheBottles = [];
-    }
-    if (firebaseBottles.length !== 0) {
-      this.notificationService.debugAlert('updateCache() - contrôle du cache: ' + firebaseBottles.length + ' différences' +
-        ' trouvées');
-      //create new cache: remove updated bottles then add updated to cache bottles and we're done
-      let size = this.cacheBottles.length;
-      let newCache = _.pullAllWith(this.cacheBottles, firebaseBottles, matchByKey);
-      let sizeAfterRemove = this.cacheBottles.length;
-      newCache = _.concat(this.cacheBottles, firebaseBottles);
-      let finalsize = newCache.length;
-      this.notificationService.debugAlert('taille du cache avant / après suppression / après màj=' + size + '/' + sizeAfterRemove + '/' + finalsize);
-
-      // on upgrade le cache
-      this.localStorage.save(newCache);
-      this._bottles.next(newCache);
-      this.cacheBottles = newCache;
-      this.notificationService.receiving('cache rafraichi: ' + firebaseBottles.length + ' ajouts / modifications');
-      return true;
-    } else {
-      this.notificationService.debugAlert('cache déjà à jour');
-      return false;
-    }
-  }
-
   //============================= Image management
-
   /**
    * Delete an image in Firebase storage
    * @param {File} file
@@ -587,6 +491,49 @@ export class FirebaseConnectionService {
   reconnectListeners() {
     this.fetchAllBottles();
   }
+
+  getMostUsedQueries(nb: number): Observable<SearchCriteria[]> {
+    let query: Query = {
+      orderByChild: 'lastUpdated',
+      limitToLast: nb
+    };
+
+    return this.angularFirebase.list(this.PROFILE_ROOT, {query})
+      .flatMap(arr => {
+        if (arr) {
+          return Observable.of(arr.reverse());
+        } else {
+          return Observable.of([]);
+        }
+      });
+  }
+
+  updateQueryStats(keywords: string[]) {
+    let key = keywords.join('-');
+    this.profileRootRef.child(key).once('value').then(
+      snapshot => {
+        if (snapshot.val()) {
+          let count = snapshot.val().count + 1;
+          this.profileRootRef.child(key).update({keywords: keywords, count: count});
+        } else {
+          this.profileRootRef.child(key).set({keywords: keywords, count: 1});
+        }
+      },
+      onerror => console.error('firebase error: ' + onerror)
+    )
+  }
+
+  removeFromQueryStats(keywords: any) {
+    let key = keywords.join('-');
+    this.profileRootRef.child(key).remove(
+      errorOrNull => console.info('removeFromQueryStats ended with '+errorOrNull)
+    )
+  }
+}
+
+export interface SearchCriteria {
+  keywords: string[];
+  count: number;
 }
 
 function matchByKey(fbBottle, cacheBottle) {

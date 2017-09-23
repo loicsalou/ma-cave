@@ -61,6 +61,7 @@ import {LockerEditor2PageModule} from '../pages/locker-editor2/locker-editor2.pa
 import {AndroidPermissions} from '@ionic-native/android-permissions';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {TestPageModule} from '../pages/test/test.module';
+import {CaveErrorHandler} from '../service/cave-error.handler';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -130,7 +131,6 @@ export const fireConfig = {
               AndroidPermissions,
               DistributeService,
               EmailLoginService,
-              {provide: ErrorHandler, useClass: IonicErrorHandler},
               Facebook,
               FacebookLoginService,
               HttpClient,

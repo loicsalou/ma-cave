@@ -1,9 +1,8 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {InfiniteScroll, NavController, NavParams, Platform, VirtualScroll} from 'ionic-angular';
+import {InfiniteScroll, MenuController, NavController, NavParams, Platform, VirtualScroll} from 'ionic-angular';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {Bottle} from '../../model/bottle';
 import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
-import {BottleEvent} from '../../components/list/bottle-event';
 import {FilterSet} from '../../components/distribution/distribution';
 import {Subscription} from 'rxjs/Subscription';
 import * as _ from 'lodash';
@@ -25,6 +24,7 @@ export class BrowsePage implements OnInit, OnDestroy {
   private searchBarVisible: boolean = false;
   allBottles: Bottle[];
   bottles: Bottle[];
+  nbSelected = 0;
 
   filterSet: FilterSet = new FilterSet(this.translateService);
   private navParams: NavParams;
@@ -35,22 +35,25 @@ export class BrowsePage implements OnInit, OnDestroy {
   @ViewChild(VirtualScroll) vs: VirtualScroll;
 
   constructor(public navCtrl: NavController, public platform: Platform, private bottlesService: BottlePersistenceService,
-              private loginService: LoginService, private notificationService: NotificationService,
+              private loginService: LoginService, private notificationService: NotificationService, private menuController: MenuController,
               private translateService: TranslateService, private nativeProvider: NativeProvider, params?: NavParams) {
     this.notificationService.traceDebug('BrowsePage.constructor');
     this.navParams = params;
   }
 
   ngOnInit() {
-
     this.nativeProvider.feedBack();
-    this.setFilter();
+    this.initFilterFromNavParams();
+    this.bottlesService.filterOn(this.filterSet);
     this.filterSubscription = this.bottlesService.filtersObservable.subscribe(
       filterSet => {
+        this.notificationService.debugAlert('filterSetReceived:' + filterSet.text);
         this.setFilterSet(filterSet);
       });
+
     this.bottleSubscription = this.bottlesService.filteredBottlesObservable.subscribe(
       (received: Bottle[]) => {
+        this.notificationService.debugAlert('received:' + (received ? received.length : 0) + ' bottles');
         let deb = new Date().getTime();
         this.allBottles = received;
         this.bottles = [];
@@ -63,13 +66,13 @@ export class BrowsePage implements OnInit, OnDestroy {
         }
         if (this.filterSet && this.filterSet.sortOption) {
           this.allBottles = _.orderBy(this.allBottles,
-                  [ this.filterSet.sortOption.sortOn, 'country_label', 'subregion_label', 'area_label', 'nomCru', 'millesime' ],
-                  [ this.filterSet.sortOption.sortOrder == undefined ? 'asc' : this.filterSet.sortOption.sortOrder,
+                                      [ this.filterSet.sortOption.sortOn, 'country_label', 'subregion_label', 'area_label', 'nomCru', 'millesime' ],
+                                      [ this.filterSet.sortOption.sortOrder == undefined ? 'asc' : this.filterSet.sortOption.sortOrder,
                                         'asc', 'asc', 'asc', 'asc', 'asc' ]
           );
         } else {
           this.allBottles = _.orderBy(this.allBottles, [ 'quantite_courante', 'country_label', 'subregion_label',
-                                        'area_label', 'nomCru', 'millesime' ], [ 'asc', 'asc', 'asc', 'asc', 'asc' ]
+            'area_label', 'nomCru', 'millesime' ], [ 'desc', 'asc', 'asc', 'asc', 'asc', 'asc' ]
           );
         }
         this.doInfinite(null);
@@ -89,14 +92,20 @@ export class BrowsePage implements OnInit, OnDestroy {
     setTimeout(() => {
       if (this.bottles.length < this.allBottles.length) {
         let size = this.bottles.length;
-        let added = this.allBottles.slice(size, size + 100);
+        let added = this.allBottles.slice(size, size + 50);
         this.bottles = this.bottles.concat(added);
         this.doInfinite(infiniteScroll);
-      } else if (infiniteScroll) {
-        infiniteScroll.complete();
+      } else {
+        if (infiniteScroll) {
+          infiniteScroll.complete();
+        }
       }
 
-    }, 100);
+    }, 10);
+  }
+
+  anyBottleSelected(): boolean {
+    return this.nbSelected > 0;
   }
 
   logout() {
@@ -104,23 +113,18 @@ export class BrowsePage implements OnInit, OnDestroy {
     this.navCtrl.popToRoot();
   }
 
-  anyBottleSelected(): boolean {
-    return false
-    //TODO return this.listComponent.anyBottleSelected();
-  }
-
   placeSelection() {
     let selectedBottles = this.bottles.filter(btl => btl.selected);
     this.navCtrl.push(CellarPage, {bottlesToPlace: selectedBottles});
     selectedBottles.forEach(btl => delete btl.selected);
-    this.listComponent.resetSelection();
+    this.resetSelection();
   }
 
   locateSelection() {
     let selectedBottles = this.bottles.filter(btl => btl.selected);
     this.navCtrl.push(CellarPage, {bottlesToHighlight: selectedBottles});
     selectedBottles.forEach(btl => delete btl.selected);
-    this.listComponent.resetSelection();
+    this.resetSelection();
   }
 
   async registerSelectionAsFavorite() {
@@ -134,19 +138,28 @@ export class BrowsePage implements OnInit, OnDestroy {
       delete btl.selected;
     });
     this.bottlesService.update(selectedBottles);
-    this.listComponent.resetSelection();
+    this.resetSelection();
+  }
+
+  /**
+   * prend en compte le nouvel état sélectionnée ou pas pour une bouteille
+   * @param {Bottle} bottle
+   */
+  switchSelected(bottle: Bottle) {
+    this.nbSelected += bottle.selected ? 1 : -1;
   }
 
 // in case user navigated to here from the home page then we have search param ==> filter on this text
-  private setFilter() {
+  private initFilterFromNavParams() {
+    this.notificationService.debugAlert('BrowsPage.initFilterFromNavParams()');
     if (this.navParams != undefined) {
       if (this.navParams.data[ 'text' ] != null) {
+        this.notificationService.debugAlert('BrowsPage.initFilterFromNavParams(' + this.navParams.data[ 'text' ] + ')');
         this.filterSet.text = this.navParams.data[ 'text' ].split(' ');
       } else if (this.navParams.data[ 'filterSet' ] != null) {
         this.filterSet = this.navParams.data[ 'filterSet' ];
       }
     }
-    this.bottlesService.filterOn(this.filterSet);
   }
 
   public isSearchVisible(): boolean {
@@ -185,6 +198,11 @@ export class BrowsePage implements OnInit, OnDestroy {
   private setFilterSet(filterSet: FilterSet) {
     this.filterSet = filterSet;
     this.searchBarVisible = false;
+  }
+
+  private resetSelection() {
+    this.bottles.forEach(bottle => bottle.selected = false);
+    this.nbSelected = 0;
   }
 }
 

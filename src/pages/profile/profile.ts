@@ -3,6 +3,7 @@ import {NavController} from 'ionic-angular';
 import {LoginService} from '../../service/login.service';
 import {User} from '../../model/user';
 import Platform = NodeJS.Platform;
+import {NotificationService} from '../../service/notification.service';
 
 @Component({
              selector: 'page-profile',
@@ -15,7 +16,7 @@ export class ProfilePage implements OnInit {
   private userDataKeys: string[];
   private userDataValues: any[];
 
-  constructor(public loginService: LoginService, private navCtrl: NavController) {
+  constructor(public loginService: LoginService, private notificationService: NotificationService) {
   }
 
   ngOnInit(): void {
@@ -25,6 +26,7 @@ export class ProfilePage implements OnInit {
     this.userDataKeys.forEach(key => {
       this.userDataValues.push(this.loginService.user[ key ])
     });
+    this.notificationService.debugAlert('photo user='+JSON.stringify(this.loginService.user));
   }
 
   get user(): User {

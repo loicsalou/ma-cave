@@ -62,6 +62,9 @@
     "suggestion": "Suggestions",
     "volume": "Format"
   },
+  "dashboard": {
+    "usual-queries": "Requêtes fréquentes"
+  },
   "filter": {
     "history": "Historique",
     "favorite-only": "Favoris seuls",

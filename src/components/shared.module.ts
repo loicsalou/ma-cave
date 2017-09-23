@@ -1,5 +1,5 @@
-import {NgModule} from '@angular/core';
-import {IonicModule} from 'ionic-angular';
+import {ErrorHandler, NgModule} from '@angular/core';
+import {IonicErrorHandler, IonicModule} from 'ionic-angular';
 import {DefaultImageDirective} from '../directives/default-image/default-image';
 import {BottleIconPipe} from './list/bottle-icon.pipe';
 import {ImageAttacherComponent} from './image-attacher/image-attacher';
@@ -36,7 +36,8 @@ import {Camera} from '@ionic-native/camera';
               DeviceFeedback,
               NativeProvider,
               Network,
-              ImportProvider
+              ImportProvider,
+              {provide: ErrorHandler, useClass: IonicErrorHandler}
             ]
           })
 export class SharedModule {

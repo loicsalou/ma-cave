@@ -40,7 +40,8 @@
   <ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>
   <ion-list sliding="true" class="bottle-page" [virtualScroll]="bottles" #bottleList >
     <div *virtualItem="let bottle" style="width: 100%">
-      <bottle-item [bottle]="bottle" (showDetail)="triggerDetail($event)"></bottle-item>
+      <bottle-item [bottle]="bottle" (showDetail)="triggerDetail($event)"
+                   (selected)="switchSelected($event)"></bottle-item>
     </div>
   </ion-list>
   <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
