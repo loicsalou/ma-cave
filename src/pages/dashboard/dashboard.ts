@@ -11,6 +11,7 @@ import {NotificationService} from '../../service/notification.service';
 import {TranslateService} from '@ngx-translate/core';
 import {SearchCriteria} from '../../service/firebase-connection.service';
 import {PopoverPage} from './popover.page';
+import {Action} from '../../model/action';
 
 @Component({
              selector: 'page-dashboard',
@@ -55,9 +56,14 @@ export class DashboardPage implements OnInit, OnDestroy {
 
   showPopover(myEvent) {
     let popover = this.popoverCtrl.create(PopoverPage, this.mostUsedQueries,{cssClass:'shadowed-grey'});
-    popover.onDidDismiss((keywords: string[]) => {
-      if (keywords) {
-        this.filterOnTextAndNavigate(keywords);
+    popover.onDidDismiss((action: Action) => {
+      let keywords=action.param;
+      if (action.name==='remove') {
+        this.bottleService.removeFromQueryStats(keywords);
+      } else {
+        if (keywords) {
+          this.filterOnTextAndNavigate(keywords);
+        }
       }
     })
     popover.present({

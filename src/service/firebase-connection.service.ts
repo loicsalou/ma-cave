@@ -522,6 +522,13 @@ export class FirebaseConnectionService {
       onerror => console.error('firebase error: ' + onerror)
     )
   }
+
+  removeFromQueryStats(keywords: any) {
+    let key = keywords.join('-');
+    this.profileRootRef.child(key).remove(
+      errorOrNull => console.info('removeFromQueryStats ended with '+errorOrNull)
+    )
+  }
 }
 
 export interface SearchCriteria {

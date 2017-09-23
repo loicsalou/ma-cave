@@ -29,11 +29,12 @@ export class PopoverPage {
   }
 
   choose(item: SearchCriteria) {
-    this.viewCtrl.dismiss(item.keywords);
+    this.viewCtrl.dismiss({name: 'select', param: item.keywords});
   }
 
   removeSearch(event: Event, item: SearchCriteria) {
     event.preventDefault();
+    this.viewCtrl.dismiss({name: 'remove', param: item.keywords});
   }
 
   present(itemKeywords: string[]): string {

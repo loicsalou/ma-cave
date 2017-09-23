@@ -283,6 +283,10 @@ export class BottlePersistenceService extends PersistenceService {
     this.filters = filters;
     this._filtersObservable.next(filters);
   }
+
+  removeFromQueryStats(keywords: any) {
+    this.dataConnection.removeFromQueryStats(keywords);
+  }
 }
 
 
