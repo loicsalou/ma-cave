@@ -10,8 +10,12 @@ import {ViewController} from 'ionic-angular';
                    <ion-list-header>
                      <ion-title>{{'dashboard.usual-queries' | translate}}</ion-title>
                    </ion-list-header>
-                   <button ion-item (click)="choose(item)" *ngFor="let item of items">{{present(item.keywords)}}
-                   </button>
+                   <div *ngFor="let item of items" style="display: flex; align-items: center;">
+                     <button ion-item (click)="choose(item)" style="flex-grow: 1;">
+                       <span style="flex-grow: 1;">{{present(item.keywords)}}</span>
+                     </button>
+                     <ion-icon name="trash" (click)="removeSearch($event, item)" style="padding:5px"></ion-icon>
+                   </div>
                  </ion-list>
                </div>`,
              styleUrls: [ '/popover.page.scss' ]
@@ -26,6 +30,10 @@ export class PopoverPage {
 
   choose(item: SearchCriteria) {
     this.viewCtrl.dismiss(item.keywords);
+  }
+
+  removeSearch(event: Event, item: SearchCriteria) {
+    event.preventDefault();
   }
 
   present(itemKeywords: string[]): string {
