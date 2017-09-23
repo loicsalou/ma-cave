@@ -131,7 +131,6 @@ export const fireConfig = {
               AndroidPermissions,
               DistributeService,
               EmailLoginService,
-              {provide: ErrorHandler, useClass: CaveErrorHandler},
               Facebook,
               FacebookLoginService,
               HttpClient,

@@ -54,7 +54,7 @@ export class DashboardPage implements OnInit, OnDestroy {
   }
 
   showPopover(myEvent) {
-    let popover = this.popoverCtrl.create(PopoverPage, this.mostUsedQueries);
+    let popover = this.popoverCtrl.create(PopoverPage, this.mostUsedQueries,{cssClass:'shadowed-grey'});
     popover.onDidDismiss((keywords: string[]) => {
       if (keywords) {
         this.filterOnTextAndNavigate(keywords);

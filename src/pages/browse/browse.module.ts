@@ -28,8 +28,6 @@ import {CaveErrorHandler} from '../../service/cave-error.handler';
               BottleItemComponent,
               FilterPage,
               DistributionComponent
-            ],
-            providers: [ {provide: ErrorHandler, useClass: CaveErrorHandler},
             ]
           })
 export class BrowseModule {

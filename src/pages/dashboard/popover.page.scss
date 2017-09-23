@@ -1,0 +1,17 @@
+.shadowed-grey .popover-content {
+  padding: 2px;
+  box-shadow: 0px 0px 10px 3px black;
+  border: black solid thin;
+
+  .inner {
+    margin: 3px;
+  }
+}
+
+.toolbar-title {
+  color: white;
+}
+
+.list-header {
+  background-color: lightgrey;
+}

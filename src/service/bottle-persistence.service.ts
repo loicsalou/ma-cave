@@ -102,10 +102,6 @@ export class BottlePersistenceService extends PersistenceService {
     )
   }
 
-  public initializeDB(bottles: Bottle[]): Promise<any> {
-    return this.save(bottles);
-  }
-
   public getBottle(id: string): Bottle {
     return this.allBottlesArray.find(btl => btl.id === id);
   }

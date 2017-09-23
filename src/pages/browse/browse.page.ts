@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {InfiniteScroll, NavController, NavParams, Platform, VirtualScroll} from 'ionic-angular';
+import {InfiniteScroll, MenuController, NavController, NavParams, Platform, VirtualScroll} from 'ionic-angular';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {Bottle} from '../../model/bottle';
 import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
@@ -35,7 +35,7 @@ export class BrowsePage implements OnInit, OnDestroy {
   @ViewChild(VirtualScroll) vs: VirtualScroll;
 
   constructor(public navCtrl: NavController, public platform: Platform, private bottlesService: BottlePersistenceService,
-              private loginService: LoginService, private notificationService: NotificationService,
+              private loginService: LoginService, private notificationService: NotificationService, private menuController: MenuController,
               private translateService: TranslateService, private nativeProvider: NativeProvider, params?: NavParams) {
     this.notificationService.traceDebug('BrowsePage.constructor');
     this.navParams = params;
@@ -126,12 +126,6 @@ export class BrowsePage implements OnInit, OnDestroy {
     selectedBottles.forEach(btl => delete btl.selected);
     this.resetSelection();
   }
-  //
-  //ionViewWillLeave() {
-  //  if (this.navCtrl.canGoBack()) {
-  //    this.navCtrl.pop();
-  //  }
-  //}
 
   async registerSelectionAsFavorite() {
     let favoriteStatus;

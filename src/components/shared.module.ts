@@ -1,5 +1,5 @@
-import {NgModule} from '@angular/core';
-import {IonicModule} from 'ionic-angular';
+import {ErrorHandler, NgModule} from '@angular/core';
+import {IonicErrorHandler, IonicModule} from 'ionic-angular';
 import {DefaultImageDirective} from '../directives/default-image/default-image';
 import {BottleIconPipe} from './list/bottle-icon.pipe';
 import {ImageAttacherComponent} from './image-attacher/image-attacher';
@@ -11,7 +11,6 @@ import {ImportProvider} from '../providers/import/import';
 import {NativeProvider} from '../providers/native/native';
 import {Network} from '@ionic-native/network';
 import {Camera} from '@ionic-native/camera';
-import {CaveErrorHandler} from '../service/cave-error.handler';
 
 @NgModule({
             declarations: [
@@ -38,7 +37,7 @@ import {CaveErrorHandler} from '../service/cave-error.handler';
               NativeProvider,
               Network,
               ImportProvider,
-              CaveErrorHandler
+              {provide: ErrorHandler, useClass: IonicErrorHandler}
             ]
           })
 export class SharedModule {

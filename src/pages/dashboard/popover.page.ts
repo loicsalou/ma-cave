@@ -5,10 +5,16 @@ import {ViewController} from 'ionic-angular';
 @Component({
              selector: 'items-page',
              template: `
-               <ion-list>
-                 <ion-list-header>{{'dashboard.usual-queries' | translate}}</ion-list-header>
-                 <button ion-item (click)="choose(item)" *ngFor="let item of items">{{present(item.keywords)}}</button>
-               </ion-list>`
+               <div class="inner">
+                 <ion-list>
+                   <ion-list-header>
+                     <ion-title>{{'dashboard.usual-queries' | translate}}</ion-title>
+                   </ion-list-header>
+                   <button ion-item (click)="choose(item)" *ngFor="let item of items">{{present(item.keywords)}}
+                   </button>
+                 </ion-list>
+               </div>`,
+             styleUrls: [ '/popover.page.scss' ]
            })
 export class PopoverPage {
 
