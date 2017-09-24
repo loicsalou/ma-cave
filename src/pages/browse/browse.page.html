@@ -1,44 +1,40 @@
 <ion-header class="page-browse header">
+  <ion-navbar style="display:flex">
+    <button ion-fab left mini menuToggle style="display: inline !important;">
+      <ion-icon name="menu"></ion-icon>
+    </button>
   
-  <ion-grid>
-    
-    <ion-row nowrap align-items-center="">
-      <ion-col col-auto>
-        <button ion-button menuToggle>
-          <ion-icon name="menu"></ion-icon>
-        </button>
-      </ion-col>
+    <ion-grid>
       
-      <ion-col>
-        <ion-searchbar [placeholder]="Chercher" [autocomplete]="on" [autocorrect]="on" [animated]="true"
-                       (search)="filterOnText($event)" *ngIf="isSearchVisible()">
-        </ion-searchbar>
+      <ion-row nowrap align-items-center>
+        <ion-col>
+          <ion-searchbar [placeholder]="Chercher" [autocomplete]="on" [autocorrect]="on" [animated]="true"
+                         (search)="filterOnText($event)" *ngIf="isSearchVisible()">
+          </ion-searchbar>
+          
+          <div *ngIf="!isSearchVisible()" (click)="showSearchBar()">
+            <ion-title wrap *ngIf="! filterSet.isEmpty()">{{ filterSet.toMessage() }}</ion-title>
+            <ion-note style="color: black; padding-left: 15px;">{{numberOfLots()}} {{'crus'|translate}} / {{numberOfBottles()}}
+              {{'bottles'|translate}}
+            </ion-note>
+          </div>
+        </ion-col>
         
-        <div *ngIf="!isSearchVisible()" (click)="showSearchBar()">
-          <ion-title wrap>{{ filterSet.toMessage() }}</ion-title>
-          <ion-note style="color: black; padding-left: 15px;">{{numberOfLots()}} crus / {{numberOfBottles()}}
-            bouteilles
-          </ion-note>
-        </div>
-      </ion-col>
-      
-      <img src="assets/icon/primary-logout.png" icon-only (click)="logout()"
-           class="action-image toolbar-background-md"/>
-    </ion-row>
-  
-  </ion-grid>
+        <img src="assets/icon/primary-logout.png" icon-only (click)="logout()"
+             class="action-image toolbar-background-md"/>
+      </ion-row>
+    </ion-grid>
+  </ion-navbar>
 
 </ion-header>
 
 <ion-menu class="page-browse" [content]="content" id="menu-components">
-  
   <page-filter [bottles]="bottles"></page-filter>
-
 </ion-menu>
 
 <ion-content class="page-browse page">
   <ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>
-  <ion-list sliding="true" class="bottle-page" [virtualScroll]="bottles" #bottleList >
+  <ion-list sliding="true" class="bottle-page" [virtualScroll]="bottles" #bottleList>
     <div *virtualItem="let bottle" style="width: 100%">
       <bottle-item [bottle]="bottle" (showDetail)="triggerDetail($event)"
                    (selected)="switchSelected($event)"></bottle-item>

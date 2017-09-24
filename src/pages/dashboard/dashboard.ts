@@ -55,10 +55,10 @@ export class DashboardPage implements OnInit, OnDestroy {
   }
 
   showPopover(myEvent) {
-    let popover = this.popoverCtrl.create(PopoverPage, this.mostUsedQueries,{cssClass:'shadowed-grey'});
+    let popover = this.popoverCtrl.create(PopoverPage, this.mostUsedQueries, {cssClass: 'shadowed-grey'});
     popover.onDidDismiss((action: Action) => {
-      let keywords=action.param;
-      if (action.name==='remove') {
+      let keywords = action.param;
+      if (action.name === 'remove') {
         this.bottleService.removeFromQueryStats(keywords);
       } else {
         if (keywords) {
@@ -87,12 +87,17 @@ export class DashboardPage implements OnInit, OnDestroy {
     }
   }
 
-  browse(chosenFilter: FilterSet) {
-    this.navCtrl.push(BrowsePage, {filterSet: chosenFilter});
-    //this.bottleService.filterOn(chosenFilter);
+  showOverdue() {
+    let fs: FilterSet = new FilterSet(this.translateService);
+    fs.overdueOnly = true;
+    this.navCtrl.push(BrowsePage, {filterSet: fs});
   }
 
-  browseCellar() {
+  showFiltered(chosenFilter: FilterSet) {
+    this.navCtrl.push(BrowsePage, {filterSet: chosenFilter});
+  }
+
+  showAll() {
     this.navCtrl.push(BrowsePage);
   }
 

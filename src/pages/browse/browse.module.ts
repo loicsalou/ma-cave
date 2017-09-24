@@ -1,4 +1,4 @@
-import {ErrorHandler, NgModule} from '@angular/core';
+import {NgModule} from '@angular/core';
 import {IonicModule, IonicPageModule} from 'ionic-angular';
 import {BrowsePage} from './browse.page';
 import {BrowserModule} from '@angular/platform-browser';
@@ -7,7 +7,6 @@ import {FilterPage} from '../filters/filter.page';
 import {DistributionComponent} from '../../components/distribution/distribution';
 import {SharedModule} from '../../components/shared.module';
 import {TranslateModule} from '@ngx-translate/core';
-import {CaveErrorHandler} from '../../service/cave-error.handler';
 
 @NgModule({
             declarations: [

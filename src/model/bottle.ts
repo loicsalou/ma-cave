@@ -34,6 +34,7 @@ export class Bottle implements ImgDefaultable {
   volume: string;
   metadata?: BottleMetadata;
   defaultImage ?: string;
+  overdue?: boolean;
 
   constructor(json: Object) {
     Object.assign(this, json);

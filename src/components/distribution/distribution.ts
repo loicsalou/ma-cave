@@ -146,11 +146,13 @@ export class FilterSet {
   classe_age?: string[];
   millesime?: string[];
   history = false;
+  private _favoriteOnly = false;
+  private _overdueOnly = false;
+  private _placed = true;
+  private _toBePlaced = true;
 
   constructor(private translateService: TranslateService) {
   }
-
-  private _favoriteOnly = false;
 
   get favoriteOnly(): boolean {
     return this._favoriteOnly;
@@ -160,7 +162,13 @@ export class FilterSet {
     this._favoriteOnly = value;
   }
 
-  private _placed = true;
+  get overdueOnly(): boolean {
+    return this._overdueOnly;
+  }
+
+  set overdueOnly(value: boolean) {
+    this._overdueOnly = value;
+  }
 
   get placed(): boolean {
     return this._placed;
@@ -169,8 +177,6 @@ export class FilterSet {
   set placed(value: boolean) {
     this._placed = value;
   }
-
-  private _toBePlaced = true;
 
   get toBePlaced(): boolean {
     return this._toBePlaced;
@@ -222,6 +228,10 @@ export class FilterSet {
     this._favoriteOnly = !this._favoriteOnly
   }
 
+  switchOverdue() {
+    this._overdueOnly = !this._overdueOnly
+  }
+
   /**
    * empty si aucun filtrage en place susceptible de changer la liste chargée de la base.
    * A noter le "favoriteOnly" ne permet que de se concentrer sur les bouteilles favorites. Si il est à false one ne
@@ -229,8 +239,9 @@ export class FilterSet {
    * @returns {boolean}
    */
   isEmpty() {
-    return (!this.hasText() && !this.hasAppellations() && !this.hasAges() && !this.hasCouleurs() && !this.hasMillesimes()
-      && !this.hasRegions() && this.history && this._placed && this._toBePlaced && !this._favoriteOnly);
+    return (!this.favoriteOnly && !this.overdueOnly && !this.hasText() && !this.hasAppellations() && !this.hasAges() &&
+      !this.hasCouleurs() && !this.hasMillesimes() && !this.hasRegions() && this.history && this._placed &&
+      this._toBePlaced);
   }
 
   reset() {
@@ -240,9 +251,10 @@ export class FilterSet {
     this.classe_age = undefined;
     this.millesime = undefined;
     this.subregion_label = undefined;
-    //this.history = false;
-    //this._placed = true;
-    //this._toBePlaced = true;
+    this.favoriteOnly = false;
+    this.overdueOnly = false;
+    this.placed = true;
+    this.toBePlaced = true;
   }
 
   toString() {
@@ -258,6 +270,12 @@ export class FilterSet {
   toMessage() {
     let strings = [];
 
+    if (this.favoriteOnly) {
+      strings.push(this.translateService.instant('filter.favorite-only'));
+    }
+    if (this.overdueOnly) {
+      strings.push(this.translateService.instant('filter.overdue-only'));
+    }
     if (this.hasText()) {
       strings.push(this.text);
     }
@@ -281,7 +299,7 @@ export class FilterSet {
     if (strings.length == 0) {
       return '';
     } else {
-      return strings.reduce((s1, s2) => s1 + ' & ' + s2);
+      return strings.join('&');
     }
   }
 

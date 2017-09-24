@@ -163,6 +163,10 @@ export class BottlePersistenceService extends PersistenceService {
         filtered = filtered.filter(btl => +btl.quantite_courante > 0);
       }
       //ne garder que les bouteilles favorites, sinon toutes
+      if (filters.overdueOnly) {
+        filtered = filtered.filter(btl => btl.overdue);
+      }
+      //ne garder que les bouteilles favorites, sinon toutes
       if (filters.favoriteOnly) {
         filtered = filtered.filter(btl => btl.favorite);
       }
