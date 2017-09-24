@@ -3,6 +3,7 @@
   "bottle-detail": "Informations détaillées",
   "bottles": "Bouteilles",
   "cancel": "Annuler",
+  "crus": "crus",
   "details": "Détails",
   "infos": "Informations pratiques",
   "lockers": "Vos casiers",
@@ -63,11 +64,13 @@
     "volume": "Format"
   },
   "dashboard": {
-    "usual-queries": "Requêtes fréquentes"
+    "usual-queries": "Requêtes fréquentes",
+    "see-all": "Voir les {{nb}} bouteilles"
   },
   "filter": {
     "history": "Historique",
-    "favorite-only": "Favoris seuls",
+    "favorite-only": "Favorites",
+    "overdue-only": "à surveiller",
     "placement-placed": "Bouteilles placées",
     "placement-to-be-placed": "Bouteilles à placer",
     "placed-only": "déjà placées",

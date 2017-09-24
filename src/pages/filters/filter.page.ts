@@ -65,6 +65,11 @@ export class FilterPage implements OnInit, OnChanges, OnDestroy {
     this.bottlesService.filterOn(this.filterSet);
   }
 
+  switchOverdue(event) {
+    this.filterSet.switchOverdue();
+    this.bottlesService.filterOn(this.filterSet);
+  }
+
   switchedPlaced(event) {
     this.filterSet.placed = event.checked;
     this.bottlesService.filterOn(this.filterSet);

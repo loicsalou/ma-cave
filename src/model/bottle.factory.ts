@@ -26,7 +26,8 @@ export class BottleFactory {
       .setDefaultImage(btl)
       .ensurePositionsInitialized(btl)
       .mapPositions(btl)
-      .ensureDataTypes(btl);
+      .ensureDataTypes(btl)
+      .setOverdue(btl);
 
     return btl;
   }
@@ -76,6 +77,16 @@ export class BottleFactory {
       bottle[ 'classe_age' ] = this.i18n.instant('old');
     } else {
       bottle[ 'classe_age' ] = this.i18n.instant('very-old');
+    }
+
+    return this;
+  }
+
+  private setOverdue(bottle: Bottle): BottleFactory {
+    if (bottle.millesime !== '-') {
+      bottle.overdue=+bottle.millesime + +bottle.garde_max <= this.currentYear
+    } else {
+      bottle.overdue=false;
     }
 
     return this;

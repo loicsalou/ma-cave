@@ -7,6 +7,8 @@
           <img src="{{ bottle.label | bottleIcon }}" class="overridable logo" *ngIf="!isSelected(bottle)">
           <img src="assets/icon/starred.png" *ngIf="isBottleFavorite(bottle) && !isSelected(bottle)"
                class="overridable logo">
+          <img src="assets/icon/alert-status.png" *ngIf="bottle.overdue && !isSelected(bottle)"
+               class="overridable logo">
         </ion-avatar>
       </ion-col>
       <ion-col col-9 text-wrap>

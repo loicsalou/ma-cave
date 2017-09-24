@@ -16,7 +16,7 @@ import {NativeProvider} from '../../providers/native/native';
 @Component({
              selector: 'page-browse',
              templateUrl: 'browse.page.html',
-             styleUrls: [ '/src/pages/browse/browse.page.scss' ]
+             styleUrls: [ '/src/pages/showFiltered/showFiltered.page.scss' ]
            })
 export class BrowsePage implements OnInit, OnDestroy {
   private bottleSubscription: Subscription;
@@ -160,6 +160,10 @@ export class BrowsePage implements OnInit, OnDestroy {
         this.filterSet = this.navParams.data[ 'filterSet' ];
       }
     }
+  }
+
+  ionViewWillLeave() {
+    this.menuController.close()
   }
 
   public isSearchVisible(): boolean {
