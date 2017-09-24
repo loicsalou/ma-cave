@@ -3,29 +3,21 @@
     <button ion-fab left mini menuToggle style="display: inline !important;">
       <ion-icon name="menu"></ion-icon>
     </button>
-  
-    <ion-grid>
-      
       <ion-row nowrap align-items-center>
-        <ion-col>
           <ion-searchbar [placeholder]="Chercher" [autocomplete]="on" [autocorrect]="on" [animated]="true"
                          (search)="filterOnText($event)" *ngIf="isSearchVisible()">
           </ion-searchbar>
-          
           <div *ngIf="!isSearchVisible()" (click)="showSearchBar()">
             <ion-title wrap *ngIf="! filterSet.isEmpty()">{{ filterSet.toMessage() }}</ion-title>
-            <ion-note style="color: black; padding-left: 15px;">{{numberOfLots()}} {{'crus'|translate}} / {{numberOfBottles()}}
-              {{'bottles'|translate}}
+            <ion-note style="color: black; padding-left: 15px;">{{numberOfLots()}} {{'crus'|translate}} /
+              {{numberOfBottles()}} {{'bottles'|translate}}
             </ion-note>
           </div>
-        </ion-col>
-        
-        <img src="assets/icon/primary-logout.png" icon-only (click)="logout()"
-             class="action-image toolbar-background-md"/>
+          <img src="assets/icon/primary-logout.png" icon-only (click)="logout()"
+               class="action-image toolbar-background-md" style="margin-left: auto;"/>
       </ion-row>
-    </ion-grid>
+  
   </ion-navbar>
-
 </ion-header>
 
 <ion-menu class="page-browse" [content]="content" id="menu-components">
