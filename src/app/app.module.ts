@@ -172,6 +172,6 @@ export function createLoginFactory(ano: AnonymousLoginService, ema: EmailLoginSe
 }
 
 export function createNotificationFactory(alrt: AlertController, toast: ToastController, translate: TranslateService,
-                                          loadingCtrl: LoadingController) {
+                                          loadingCtrl: LoadingController ) {
   return new NotificationService(alrt, toast, translate, loadingCtrl);
 }

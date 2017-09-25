@@ -7,6 +7,7 @@ import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {AngularFireDatabase, FirebaseListObservable} from 'angularfire2/database';
 import * as firebase from 'firebase/app';
+import * as moment from 'moment';
 import {LoginService} from './login.service';
 import {Image} from '../model/image';
 import {FileItem} from './file-item';
@@ -50,6 +51,10 @@ export class FirebaseConnectionService {
   private static PROFILE_CONTENT_FOLDER = 'profile';
   private profileRootRef: Reference;
 
+  private ERROR_ROOT: string;
+  private static ERROR_CONTENT_FOLDER: string = 'error';
+  private errorRootRef: Reference;
+
   protected XREF_FOLDER = 'xref';
   public XREF_ROOT: string;
 
@@ -80,13 +85,29 @@ export class FirebaseConnectionService {
     this.CELLAR_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.CELLAR_FOLDER;
     this.LOCKER_CONTENT_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.LOCKER_CONTENT_FOLDER;
     this.PROFILE_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.PROFILE_CONTENT_FOLDER;
+    this.ERROR_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.ERROR_CONTENT_FOLDER;
 
     this.userRootRef = this.angularFirebase.database.ref(this.USER_ROOT);
     this.bottlesRootRef = this.angularFirebase.database.ref(this.BOTTLES_ROOT);
     this.cellarRootRef = this.angularFirebase.database.ref(this.CELLAR_ROOT);
     this.lockerContentRootRef = this.angularFirebase.database.ref(this.LOCKER_CONTENT_ROOT);
     this.profileRootRef = this.angularFirebase.database.ref(this.PROFILE_ROOT);
+    this.errorRootRef = this.angularFirebase.database.ref(this.ERROR_ROOT);
     this.imageStorageRef = this.angularFirebase.app.storage().ref(this.IMAGES_ROOT);
+
+    this.initLogging();
+  }
+
+  private initLogging() {
+    this.angularFirebase.list(this.ERROR_ROOT).map(
+      errors => {
+        if (errors && errors.length > 3) {
+          this.errorRootRef.limitToFirst(1).ref.remove();
+        }
+      }
+    ).take(1).subscribe(
+      () => this.errorRootRef = this.errorRootRef.push(moment().format('YYYY-MM-DD HH:mm:ss'))
+    );
   }
 
   public cleanup() {
@@ -97,6 +118,22 @@ export class FirebaseConnectionService {
     this.imageStorageRef = undefined;
     this._bottles.next([]);
     this.firebaseBottlesSub.unsubscribe();
+  }
+
+  // ===================================================== ERRORS
+
+  public logError(err: any) {
+    try {
+      err = err ? err : 'rien dans erreur';
+      let logged = '';
+      if (err instanceof Error) {
+        logged = err.toString();
+      } else {
+        logged = err.toString() + ' / ' + JSON.stringify(err);
+      }
+      this.errorRootRef.push({date: moment().format('YYYY-MM-DD HH:mm:ss'), error: logged});
+    } catch (errorInError) {
+    }
   }
 
   // ===================================================== LOCKERS
@@ -526,7 +563,7 @@ export class FirebaseConnectionService {
   removeFromQueryStats(keywords: any) {
     let key = keywords.join('-');
     this.profileRootRef.child(key).remove(
-      errorOrNull => console.info('removeFromQueryStats ended with '+errorOrNull)
+      errorOrNull => console.info('removeFromQueryStats ended with ' + errorOrNull)
     )
   }
 }
