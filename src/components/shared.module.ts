@@ -1,5 +1,5 @@
 import {ErrorHandler, NgModule} from '@angular/core';
-import {IonicErrorHandler, IonicModule} from 'ionic-angular';
+import {IonicModule} from 'ionic-angular';
 import {DefaultImageDirective} from '../directives/default-image/default-image';
 import {BottleIconPipe} from './list/bottle-icon.pipe';
 import {ImageAttacherComponent} from './image-attacher/image-attacher';
@@ -11,6 +11,8 @@ import {ImportProvider} from '../providers/import/import';
 import {NativeProvider} from '../providers/native/native';
 import {Network} from '@ionic-native/network';
 import {Camera} from '@ionic-native/camera';
+import {CaveErrorHandler} from '../service/cave-error.handler';
+import {FirebaseConnectionService} from '../service/firebase-connection.service';
 
 @NgModule({
             declarations: [
@@ -37,7 +39,7 @@ import {Camera} from '@ionic-native/camera';
               NativeProvider,
               Network,
               ImportProvider,
-              {provide: ErrorHandler, useClass: IonicErrorHandler}
+              {provide: ErrorHandler, deps: [FirebaseConnectionService], useClass: CaveErrorHandler}
             ]
           })
 export class SharedModule {

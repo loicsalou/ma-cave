@@ -2,6 +2,8 @@ import {AlertController, Loading, LoadingController, ToastController} from 'ioni
 import {TranslateService} from '@ngx-translate/core';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
+import {ErrorHandler} from '@angular/core';
+import {CaveErrorHandler} from './cave-error.handler';
 
 /**
  * Created by loicsalou on 13.06.17.

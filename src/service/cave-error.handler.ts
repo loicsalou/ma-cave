@@ -1,7 +1,23 @@
-import {ErrorHandler} from '@angular/core';
+import {ErrorHandler, Injectable} from '@angular/core';
+import {FirebaseConnectionService} from './firebase-connection.service';
 
-export class CaveErrorHandler implements ErrorHandler {
-  handleError(err: any): void {
-    alert('Une erreur s\'est produite !' + err )
+@Injectable()
+export class CaveErrorHandler extends ErrorHandler {
+  constructor(private dataConnection: FirebaseConnectionService) {
+    super();
+  }
+
+  /**
+   * Copié de Ionic
+   * @param {?} err
+   * @return {?}
+   */
+  handleError(err) {
+    super.handleError(err);
+    try {
+      this.dataConnection.logError(err);
+    }
+    catch (e) {
+    }
   }
 }
