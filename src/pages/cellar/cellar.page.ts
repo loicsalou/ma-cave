@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {IonicPage, ModalController, NavParams, Slides} from 'ionic-angular';
+import {IonicPage, ModalController, NavController, NavParams, Slides} from 'ionic-angular';
 import {CellarPersistenceService} from '../../service/cellar-persistence.service';
 import {Locker, LockerType} from '../../model/locker';
 import {SimpleLockerComponent} from '../../components/locker/simple-locker.component';
@@ -13,6 +13,7 @@ import {Cell} from '../../components/locker/locker.component';
 import {LockerEditorPage} from '../locker-editor/locker-editor.page';
 import * as _ from 'lodash';
 import {NativeProvider} from '../../providers/native/native';
+import {LoginService} from '../../service/login.service';
 
 /**
  * Generated class for the CellarPage page.
@@ -48,9 +49,14 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
 
   private scale: number = 1;
 
-  constructor(private cellarService: CellarPersistenceService, private bottleService: BottlePersistenceService,
-              private notificationService: NotificationService, private nativeProvider: NativeProvider,
-              private modalCtrl: ModalController, private params: NavParams) {
+  constructor(private navCtrl: NavController,
+              private cellarService: CellarPersistenceService,
+              private bottleService: BottlePersistenceService,
+              private notificationService: NotificationService,
+              private nativeProvider: NativeProvider,
+              private modalCtrl: ModalController,
+              private loginService: LoginService,
+              private params: NavParams) {
   }
 
   ngOnInit(): void {
@@ -75,6 +81,11 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
     );
 
     this.getLockersContent(this.paginatedLocker);
+  }
+
+  logout() {
+    this.loginService.logout();
+    this.navCtrl.popToRoot();
   }
 
   ngAfterViewInit(): void {

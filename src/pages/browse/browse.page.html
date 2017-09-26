@@ -3,19 +3,25 @@
     <button ion-fab left mini menuToggle style="display: inline !important;">
       <ion-icon name="menu"></ion-icon>
     </button>
-      <ion-row nowrap align-items-center>
-          <ion-searchbar [placeholder]="Chercher" [autocomplete]="on" [autocorrect]="on" [animated]="true"
-                         (search)="filterOnText($event)" *ngIf="isSearchVisible()">
-          </ion-searchbar>
-          <div *ngIf="!isSearchVisible()" (click)="showSearchBar()">
-            <ion-title wrap *ngIf="! filterSet.isEmpty()">{{ filterSet.toMessage() }}</ion-title>
-            <ion-note style="color: black; padding-left: 15px;">{{numberOfLots()}} {{'crus'|translate}} /
-              {{numberOfBottles()}} {{'bottles'|translate}}
-            </ion-note>
-          </div>
-          <img src="assets/icon/primary-logout.png" icon-only (click)="logout()"
-               class="action-image toolbar-background-md" style="margin-left: auto;"/>
-      </ion-row>
+    <div class="search-reminder-container">
+      
+      <div class="search" [class.active]="isSearchVisible()">
+        <ion-searchbar [placeholder]="Chercher" [autocomplete]="on" [autocorrect]="on" [animated]="true"
+                       (search)="filterOnText($event)" [class.searching]="isSearchVisible()">
+        </ion-searchbar>
+      </div>
+      
+      <div class="reminder" [class.active]="!isSearchVisible()">
+        <ion-title wrap *ngIf="! filterSet.isEmpty()">{{ filterSet.toMessage() }}</ion-title>
+        <ion-note style="color: black; padding-left: 15px;">{{numberOfLots()}} {{'crus'|translate}} /
+          {{numberOfBottles()}} {{'bottles'|translate}}
+        </ion-note>
+      </div>
+  
+      <button mini style="background: transparent;" (click)="showSearchBar()">
+        <ion-icon name="search"></ion-icon>
+      </button>
+    </div>
   
   </ion-navbar>
 </ion-header>

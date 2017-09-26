@@ -39,7 +39,7 @@ export class UpdatePage implements OnInit {
 
   constructor(private navCtrl: NavController, navParams: NavParams, private bottleService: BottlePersistenceService,
               private notificationService: NotificationService, private imageService: ImagePersistenceService,
-              private loginService: LoginService, private bottles: Bottles) {
+              private bottles: Bottles) {
     //don't clone to keep firebase '$key' which is necessary to update
     this.bottle = navParams.data[ 'bottle' ];
     this.metadata = Configuration.getMetadata(this.bottle);
@@ -71,11 +71,6 @@ export class UpdatePage implements OnInit {
           );
       });
     }
-  }
-
-  logout() {
-    this.forceLeave = true; // évite l'avertissement lors du changement d'écran puisqu'on est de toute façon déloggé
-    this.loginService.logout();
   }
 
   loadRegionAreas() {

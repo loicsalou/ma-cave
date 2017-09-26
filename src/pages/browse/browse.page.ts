@@ -108,11 +108,6 @@ export class BrowsePage implements OnInit, OnDestroy {
     return this.nbSelected > 0;
   }
 
-  logout() {
-    this.loginService.logout();
-    this.navCtrl.popToRoot();
-  }
-
   placeSelection() {
     let selectedBottles = this.bottles.filter(btl => btl.selected);
     this.navCtrl.push(CellarPage, {bottlesToPlace: selectedBottles});
@@ -171,7 +166,7 @@ export class BrowsePage implements OnInit, OnDestroy {
   }
 
   public showSearchBar() {
-    this.searchBarVisible = true;
+    this.searchBarVisible = !this.searchBarVisible;
   }
 
   public numberOfBottles(): number {

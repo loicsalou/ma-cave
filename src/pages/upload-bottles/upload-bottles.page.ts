@@ -30,7 +30,7 @@ export class UploadBottlesPage {
   localStorageKeys: any;
   tempValue: any;
 
-  constructor(public navCtrl: NavController,
+  constructor(private navCtrl: NavController,
               private filepath: FilePath,
               private fileChooser: FileChooser,
               private notificationService: NotificationService,

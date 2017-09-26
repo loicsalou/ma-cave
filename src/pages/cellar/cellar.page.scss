@@ -1,10 +1,24 @@
 .cellar-page {
 
+  ion-header {
+    display: flex;
+  }
+
   div[left][bottom] {
     bottom: 65px;
     left: 10px;
     position: fixed;
     z-index: 999;
+  }
+
+  img[icon-only] {
+    position: absolute;
+    right: 0;
+    top: 2px;
+    width: 35px;
+    height: 35px;
+    margin: 8px 8px 8px 0;
+    align-self: center;
   }
 
   div.slide-zoom {
@@ -25,17 +39,6 @@
       width: 40px;
     }
   }
-  //
-  //ion-row {
-  //  max-height: 80%;
-  //  min-height: 20%;
-  //}
-  //
-  //ion-scroll {
-  //  height: 100%;
-  //  width: 100%;
-  //  white-space: nowrap;
-  //}
 
   p.tip {
     background-color: map-get($colors, light);

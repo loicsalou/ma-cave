@@ -35,7 +35,7 @@ export class BottleDetailPage implements OnInit {
   currentIndex: number;
   private originalIndex: number;
 
-  constructor(public navCtrl: NavController, navParams: NavParams, private loginService: LoginService) {
+  constructor(public navCtrl: NavController, navParams: NavParams) {
     let bottleEvent: BottleEvent = navParams.data[ 'bottleEvent' ];
     this.wholeSelection = bottleEvent.bottles;
     this.bottle = bottleEvent.bottle;
@@ -44,10 +44,6 @@ export class BottleDetailPage implements OnInit {
 
   ngOnInit(): void {
     this.slideBottles = this.extractSlideBottles(this.wholeSelection, this.originalIndex);
-  }
-
-  logout() {
-    this.loginService.logout();
   }
 
   private extractSlideBottles(bottles: Bottle[], targetIndex: number): Bottle[] {
