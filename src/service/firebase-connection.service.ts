@@ -78,7 +78,8 @@ export class FirebaseConnectionService {
   }
 
   public initialize(user: User) {
-    let userRoot = NamingStrategies.checkExists(user, true, this.loginService);
+    NamingStrategies.checkExists(user, true, this.loginService);
+    let userRoot=NamingStrategies.getFirebaseRootV5(user);
     this.USER_ROOT = FirebaseConnectionService.USERS_FOLDER + '/' + userRoot;
 
     this.IMAGES_ROOT = this.IMAGES_FOLDER;
