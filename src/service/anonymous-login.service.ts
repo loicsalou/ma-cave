@@ -53,6 +53,7 @@ export class AnonymousUser extends User {
     this.uid = undefined;
     this.phoneNumber = '00-12-00-34-99';
     this.displayName = 'Ano Nymous';
+    this.loginType = 'anonymous';
   }
 
 }

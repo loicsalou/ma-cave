@@ -48,6 +48,7 @@ export class LocalLoginUser extends User {
     this.uid = uid;
     this.phoneNumber = phoneNumber;
     this.displayName = displayName;
+    this.loginType = 'local';
   }
 
 }

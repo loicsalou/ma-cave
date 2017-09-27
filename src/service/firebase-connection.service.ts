@@ -32,13 +32,13 @@ import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
 @Injectable()
 export class FirebaseConnectionService {
   public USER_ROOT: string;
-  protected USERS_FOLDER = 'users';
+  static USERS_FOLDER = 'users';
 
   public IMAGES_ROOT: string;
   private IMAGES_FOLDER = 'images';
 
   private BOTTLES_ROOT: string;
-  private static BOTTLES_FOLDER = 'bottles';
+  static BOTTLES_FOLDER = 'bottles';
 
   private CELLAR_ROOT: string;
   private static CELLAR_FOLDER = 'cellar';
@@ -78,14 +78,16 @@ export class FirebaseConnectionService {
   }
 
   public initialize(user: User) {
+    let userRoot = NamingStrategies.checkExists(user, true, this.loginService);
+    this.USER_ROOT = FirebaseConnectionService.USERS_FOLDER + '/' + userRoot;
+
     this.IMAGES_ROOT = this.IMAGES_FOLDER;
     this.XREF_ROOT = this.XREF_FOLDER;
-    this.USER_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user;
-    this.BOTTLES_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.BOTTLES_FOLDER;
-    this.CELLAR_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.CELLAR_FOLDER;
-    this.LOCKER_CONTENT_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.LOCKER_CONTENT_FOLDER;
-    this.PROFILE_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.PROFILE_CONTENT_FOLDER;
-    this.ERROR_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.ERROR_CONTENT_FOLDER;
+    this.BOTTLES_ROOT = FirebaseConnectionService.USERS_FOLDER + '/' + userRoot + '/' + FirebaseConnectionService.BOTTLES_FOLDER;
+    this.CELLAR_ROOT = FirebaseConnectionService.USERS_FOLDER + '/' + userRoot + '/' + FirebaseConnectionService.CELLAR_FOLDER;
+    this.LOCKER_CONTENT_ROOT = FirebaseConnectionService.USERS_FOLDER + '/' + userRoot + '/' + FirebaseConnectionService.LOCKER_CONTENT_FOLDER;
+    this.PROFILE_ROOT = FirebaseConnectionService.USERS_FOLDER + '/' + userRoot + '/' + FirebaseConnectionService.PROFILE_CONTENT_FOLDER;
+    this.ERROR_ROOT = FirebaseConnectionService.USERS_FOLDER + '/' + userRoot + '/' + FirebaseConnectionService.ERROR_CONTENT_FOLDER;
 
     this.userRootRef = this.angularFirebase.database.ref(this.USER_ROOT);
     this.bottlesRootRef = this.angularFirebase.database.ref(this.BOTTLES_ROOT);
@@ -571,6 +573,47 @@ export class FirebaseConnectionService {
 export interface SearchCriteria {
   keywords: string[];
   count: number;
+}
+
+class NamingStrategies {
+  static getFirebaseRootV5(user: User): string {
+    switch (user.loginType) {
+      case 'facebook':
+        return 'fb-' + user.user;
+      case 'email':
+        return 'ml-' + user.user;
+      case 'local':
+        return 'lo-' + user.user;
+      case 'anonymous':
+        return 'ano-' + user.user;
+
+      default:
+        throw new Error('Aucune stratégie de nommage trouvée pour le type de login \'' + user.loginType + '\'')
+    }
+  }
+
+  static getFirebaseRootV4(user: User): string {
+    return user.user;
+  }
+
+  static checkExists(user: User, migrate: boolean, loginService: LoginService) {
+    let ref = firebase.database().ref(FirebaseConnectionService.USERS_FOLDER);
+    let userRoot = NamingStrategies.getFirebaseRootV4(user);
+    let currentRef=ref.child(NamingStrategies.getFirebaseRootV5(user)+'/version');
+    currentRef.once('value', (snapshot) => {
+      if (snapshot.val()!=='5') {
+        ref.child(userRoot).once('value',
+                                 snapshot => {
+                                   let newUserRoot = ref.child(NamingStrategies.getFirebaseRootV5(user));
+                                   newUserRoot.update(snapshot.val());
+                                   newUserRoot.update({'version': '5'});
+                                   alert('Données migrées en v5 - Veuillez voue relogger');
+                                   loginService.logout();
+                                 }
+        )
+      }
+    });
+  }
 }
 
 function matchByKey(fbBottle, cacheBottle) {

@@ -85,6 +85,7 @@ export class EmailLoginUser extends User {
     this.displayName = displayName ? displayName : email.split('@')[ 0 ];
     this.uid = undefined;
     this.phoneNumber = undefined;
+    this.loginType = 'email';
   }
 }
 

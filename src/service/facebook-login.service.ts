@@ -64,6 +64,7 @@ export class FacebookUser extends User {
     this.uid = uid;
     this.phoneNumber = phoneNumber;
     this.displayName = displayName;
+    this.loginType = 'facebook';
   }
 
 }
