@@ -63,7 +63,11 @@ export class EmailLoginService extends AbstractLoginService {
                   self.success(self.user)
                 }
           ).catch(err => {
-                    self.notificationService.error(err.message);
+                    if (err['code'] === 'auth/email-already-in-use') {
+                      self.notificationService.error('app.email-already-used');
+                    } else {
+                      self.notificationService.error(err.message);
+                    }
                     popup.dismiss();
                     self.loginFailed();
                   }

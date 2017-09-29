@@ -30,6 +30,7 @@
     "connection-off": "sans",
     "title": "L'assistant caviste",
     "information": "Information",
+    "email-already-used": "L'e-mail est déjà attribué (avez-vous déjà créé un compte via un login facebook ?), merci d'en choisir un autre",
     "importation-successful": "L'importation est terminée en {{time}} ms",
     "error": "Erreur !",
     "failed": "Echec !",

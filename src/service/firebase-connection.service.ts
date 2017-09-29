@@ -70,16 +70,19 @@ export class FirebaseConnectionService {
   private imageStorageRef: firebase.storage.Reference;
   private _uploadProgressEvent: Subject<number> = new Subject<number>();
   private connectionAllowed: boolean = true;
+  private namingStrategy: NamingStrategy;
 
   constructor(private bottleFactory: BottleFactory,
               private angularFirebase: AngularFireDatabase, private loginService: LoginService,
               private notificationService: NotificationService,
               private platform: Platform) {
+    this.namingStrategy = new NamingStrategy();
   }
 
   public initialize(user: User) {
-    NamingStrategies.checkExists(user, true, this.loginService);
-    let userRoot=NamingStrategies.getFirebaseRootV5(user);
+    this.namingStrategy.checkVersion(user, true, this.loginService);
+    let userRoot = this.namingStrategy.getFirebaseRootV5(user);
+    //let userRoot = this.namingStrategy.getFirebaseRootV4(user);
     this.USER_ROOT = FirebaseConnectionService.USERS_FOLDER + '/' + userRoot;
 
     this.IMAGES_ROOT = this.IMAGES_FOLDER;
@@ -576,8 +579,12 @@ export interface SearchCriteria {
   count: number;
 }
 
-class NamingStrategies {
-  static getFirebaseRootV5(user: User): string {
+class NamingStrategy {
+
+  constructor() {
+  }
+
+  getFirebaseRootV5(user: User): string {
     switch (user.loginType) {
       case 'facebook':
         return 'fb-' + user.user;
@@ -593,28 +600,38 @@ class NamingStrategies {
     }
   }
 
-  static getFirebaseRootV4(user: User): string {
+  getFirebaseRootV4(user: User): string {
     return user.user;
   }
 
-  static checkExists(user: User, migrate: boolean, loginService: LoginService) {
+  checkVersion(user: User, migrate: boolean, loginService: LoginService) {
     let ref = firebase.database().ref(FirebaseConnectionService.USERS_FOLDER);
-    let userRoot = NamingStrategies.getFirebaseRootV4(user);
-    let currentRef=ref.child(NamingStrategies.getFirebaseRootV5(user)+'/version');
+    let currentRef = ref.child(this.getFirebaseRootV5(user) + '/version');
     currentRef.once('value', (snapshot) => {
-      if (snapshot.val()!=='5') {
-        ref.child(userRoot).once('value',
-                                 snapshot => {
-                                   let newUserRoot = ref.child(NamingStrategies.getFirebaseRootV5(user));
-                                   newUserRoot.update(snapshot.val());
-                                   newUserRoot.update({'version': '5'});
-                                   alert('Données migrées en v5 - Veuillez voue relogger');
-                                   loginService.logout();
-                                 }
-        )
-      }
-    });
+                      if (snapshot.val() !== '5' && migrate) {
+                        this.migrate(ref, user, loginService);
+                      }
+                    },
+                    () => {
+                      //ancienne version
+                      if (migrate) {
+                        this.migrate(ref, user, loginService);
+                      }
+                    });
   }
+
+  private migrate(usersRoot: Reference, user: User, loginService: LoginService) {
+    let v4Root = usersRoot.child(this.getFirebaseRootV4(user));
+    v4Root.once('value', (snapshot: firebase.database.DataSnapshot) => {
+      let v5Root = usersRoot.child(this.getFirebaseRootV5(user));
+      v5Root.update(snapshot.val());
+      v5Root.update({'version': '5'});
+      v4Root.remove(() => console.info('root version 4 supprimée'));
+      alert('votre compte a été migré sous la nouvelle version, veuillez vous reconnecter');
+      loginService.logout();
+    })
+  }
+
 }
 
 function matchByKey(fbBottle, cacheBottle) {
