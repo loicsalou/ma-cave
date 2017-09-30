@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {NavController, PopoverController} from 'ionic-angular';
+import {NavController, Platform, PopoverController} from 'ionic-angular';
 import {BrowsePage} from '../browse/browse.page';
 import {LoginService} from '../../service/login.service';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
@@ -28,7 +28,16 @@ export class DashboardPage implements OnInit, OnDestroy {
 
   constructor(public navCtrl: NavController, public loginService: LoginService, private notificationService: NotificationService,
               private bottleService: BottlePersistenceService, private nativeProvider: NativeProvider,
-              private translateService: TranslateService, private popoverCtrl: PopoverController) {
+              private platform: Platform, private translateService: TranslateService, private popoverCtrl: PopoverController) {
+    platform.ready().then(() => {
+      platform.registerBackButtonAction(() => {
+        if (navCtrl.canGoBack()) {
+          navCtrl.pop();
+        } else {
+          //don't do anything
+        }
+      });
+    });
   }
 
   ngOnInit(): void {
