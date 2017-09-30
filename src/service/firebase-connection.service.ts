@@ -630,7 +630,7 @@ class NamingStrategy {
         v5Root.update(snapshot.val());
         v5Root.update({'version': '5'});
         v4Root.remove();
-        alert('votre compte a été migré sous la nouvelle version, veuillez vous reconnecter');
+        //alert('votre compte a été migré sous la nouvelle version, veuillez vous reconnecter');
         loginService.logout();
       } else {
         //initialisation des données utilisateur

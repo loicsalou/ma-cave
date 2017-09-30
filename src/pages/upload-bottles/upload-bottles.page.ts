@@ -72,7 +72,9 @@ export class UploadBottlesPage {
       .then(keys => {
         this.localStorageKeys = keys;
       })
-      .catch(err => alert('accès aux clés KO ' + err));
+      .catch(err => {
+        //alert('accès aux clés KO ' + err)
+      });
   }
 
   /**
@@ -205,7 +207,9 @@ export class UploadBottlesPage {
   loadTempValueFor(key) {
     this.localStorage.getValue(key)
       .then(v => this.tempValue = JSON.stringify(v))
-      .catch(err => alert('accès à la valeur de ' + key + ' KO: ' + JSON.stringify(err)));
+      .catch(err => {
+        //alert('accès à la valeur de ' + key + ' KO: ' + JSON.stringify(err))
+      });
   }
 
   private forceLogout(loading: Loading) {
