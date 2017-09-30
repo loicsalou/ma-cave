@@ -50,8 +50,11 @@
       {{pendingCell.bottle.millesime}}
     </ion-badge>
     <ion-fab-list side="left">
-      <button ion-fab style="border: thin solid black" (click)="withdraw()">
+      <button ion-fab style="border: thin solid black" (click)="withdraw(pendingCell)">
         <img src="assets/icon/tire-bouchon.png">
+      </button>
+      <button ion-fab style="border: thin solid black" (click)="zoomOnBottle(pendingCell)">
+        <ion-icon name="search"></ion-icon>
       </button>
     </ion-fab-list>
   </ion-fab>

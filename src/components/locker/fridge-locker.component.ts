@@ -1,12 +1,12 @@
-import {Component, Input, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {Component, Input, QueryList, ViewChildren} from '@angular/core';
 import {FridgeLocker} from '../../model/fridge-locker';
 import {Cell, LockerComponent} from './locker.component';
 import {NotificationService} from '../../service/notification.service';
 import {Dimension, Locker, LockerType} from '../../model/locker';
 import {SimpleLockerComponent} from './simple-locker.component';
 import {SimpleLocker} from '../../model/simple-locker';
-import {DeviceFeedback} from '@ionic-native/device-feedback';
 import {NativeProvider} from '../../providers/native/native';
+import {Bottle} from '../../model/bottle';
 
 /**
  * Generated class for the CompositeLockerComponent component.
@@ -19,7 +19,7 @@ import {NativeProvider} from '../../providers/native/native';
              templateUrl: './fridge-locker.component.html',
              styleUrls: [ '/fridge-locker.component.scss' ]
            })
-export class FridgeLockerComponent extends LockerComponent implements OnInit {
+export class FridgeLockerComponent extends LockerComponent {
   protected static MAX_NB_COLUMNS: number = 8;
   protected static MIN_NB_COLUMNS: number = 1;
   protected static MAX_NB_ROWS: number = 40;
@@ -38,11 +38,28 @@ export class FridgeLockerComponent extends LockerComponent implements OnInit {
     super(nativeProvider)
   }
 
-  ngOnInit(): void {
-  }
-
   get dimension(): Dimension {
     return this.fridge.dimension
+  }
+
+  /**
+   * renvoie les bouteilles de la rangée qui contient la cellule
+   * @param {Cell} cell
+   */
+  getBottlesInRowOf(cell: Cell): Bottle[] {
+    let racks = this.rackComponents.filter((locker: SimpleLockerComponent) => cell.position.inLocker(locker.locker.id));
+    let bottles = [];
+    if (racks.length > 0) {
+      let rack: SimpleLockerComponent = racks[ 0 ];
+      rack.rows.forEach(row => {
+        row.cells.forEach(cell => {
+          if (!cell.isEmpty()) {
+            bottles.push(cell.bottle);
+          }
+        })
+      })
+    }
+    return bottles;
   }
 
   public resetComponent() {
@@ -77,7 +94,7 @@ export class FridgeLockerComponent extends LockerComponent implements OnInit {
       return false
     }
     let rack = this.getNewRack();
-    rack.id=this.fridge.id;
+    rack.id = this.fridge.id;
     this.fridge.racks.unshift(rack);
     this.fridge.dimensions.unshift(rack.dimension);
     this.content.forEach(
@@ -88,7 +105,7 @@ export class FridgeLockerComponent extends LockerComponent implements OnInit {
               pos.rack++;
             }
           }
-      )
+        )
       }
     )
     //this.resetComponent();
@@ -102,7 +119,7 @@ export class FridgeLockerComponent extends LockerComponent implements OnInit {
       return false
     }
     let rack = this.getNewRack();
-    rack.id=this.fridge.id;
+    rack.id = this.fridge.id;
     this.fridge.racks.push(rack);
     this.fridge.dimensions.push(rack.dimension);
     //this.resetComponent();
@@ -110,16 +127,16 @@ export class FridgeLockerComponent extends LockerComponent implements OnInit {
 
   removeTopRack(): boolean {
     this.hapticConfirm();
-    if (this.fridge.racks.length<2) {
+    if (this.fridge.racks.length < 2) {
       this.notificationService.warning('locker-editor.mini-row-reached');
       return false
     }
-    let bottlesInRack=this.content.filter(
+    let bottlesInRack = this.content.filter(
       btl => btl.positions.filter(
         pos => pos.inRack(this.fridge.id, 0)
       ).length > 0
     )
-    if (bottlesInRack.length>0) {
+    if (bottlesInRack.length > 0) {
       this.notificationService.warning('locker-editor.rack-not-empty')
     } else {
       this.fridge.racks.shift();
@@ -141,28 +158,28 @@ export class FridgeLockerComponent extends LockerComponent implements OnInit {
 
   removeBottomRack(): boolean {
     this.hapticConfirm();
-    if (this.fridge.racks.length<2) {
+    if (this.fridge.racks.length < 2) {
       this.notificationService.warning('locker-editor.mini-row-reached');
       return false
     }
-    let rackIndex=this.fridge.racks.length-1;
-    let bottlesInRack=this.content.filter(
+    let rackIndex = this.fridge.racks.length - 1;
+    let bottlesInRack = this.content.filter(
       btl => btl.positions.filter(
         pos => pos.inRack(this.fridge.id, rackIndex)
       ).length > 0
     )
-    if (bottlesInRack.length>0) {
+    if (bottlesInRack.length > 0) {
       this.notificationService.warning('locker-editor.rack-not-empty')
     } else {
-      this.fridge.racks.splice(rackIndex,1);
-      this.fridge.dimensions.splice(rackIndex,1);
+      this.fridge.racks.splice(rackIndex, 1);
+      this.fridge.dimensions.splice(rackIndex, 1);
       //this.resetComponent();
     }
   }
 
   private getNewRack(): Locker {
     let width = this.fridge.racks.reduce((max, oneRack) => Math.max(max, oneRack.dimension.x), 0)
-    let formats = this.fridge.racks[0].supportedFormats;
+    let formats = this.fridge.racks[ 0 ].supportedFormats;
     return new SimpleLocker(undefined, '', LockerType.shifted, {
       x: width,
       y: 1

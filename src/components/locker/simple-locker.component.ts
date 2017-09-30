@@ -5,7 +5,6 @@ import {Bottle, Position} from '../../model/bottle';
 import {NotificationService} from '../../service/notification.service';
 import {Cell, LockerComponent, Row} from './locker.component';
 import {Gesture} from 'ionic-angular';
-import {DeviceFeedback} from '@ionic-native/device-feedback';
 import {NativeProvider} from '../../providers/native/native';
 
 /**
@@ -46,6 +45,16 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
 
   get dimension(): Dimension {
     return this.locker.dimension
+  }
+
+  /**
+   * renvoie les bouteilles de la rangée qui contient la cellule
+   * @param {Cell} cell
+   */
+  getBottlesInRowOf(cell: Cell): Bottle[] {
+    return this.rows[ cell.position.y ].cells.filter(
+      cell => !cell.isEmpty()
+    ).map(cell => cell.bottle);
   }
 
   isShifted(): boolean {
@@ -126,7 +135,7 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
       return false;
     }
 
-    let ret= this.highlighted.find(btl => btl.id === bottle.id) !== undefined;
+    let ret = this.highlighted.find(btl => btl.id === bottle.id) !== undefined;
     if (ret) {
       this.notificationService.debugAlert('highlighted: ' + bottle.nomCru);
     }
@@ -282,8 +291,9 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
 
   //avant d'enlever une rangée on s'assure qu'elle est vide
   public canRemoveLastRow(): boolean {
-    return this.canRemoveRow(this.dimension.y-1);
+    return this.canRemoveRow(this.dimension.y - 1);
   }
+
   //avant d'enlever une rangée on s'assure qu'elle est vide
   private canRemoveRow(rowNumber: number): boolean {
     if (!this.canDecreaseHeight()) {
@@ -303,7 +313,6 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
     return true;
   }
 
-
   //avant d'enlever une colonne on s'assure qu'elle est vide
   public canRemoveFirstColumn(): boolean {
     return this.canRemoveColumn(0)
@@ -311,8 +320,9 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
 
   //avant d'enlever une colonne on s'assure qu'elle est vide
   public canRemoveLastColumn(): boolean {
-    return this.canRemoveColumn(this.dimension.x-1);
+    return this.canRemoveColumn(this.dimension.x - 1);
   }
+
   //avant d'enlever une colonne on s'assure qu'elle est vide
   private canRemoveColumn(colNumber: number): boolean {
     if (!this.canDecreaseWidth()) {

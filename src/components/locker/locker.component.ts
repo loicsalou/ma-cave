@@ -53,6 +53,12 @@ export abstract class LockerComponent {
   //avant d'enlever la dernière colonne on s'assure qu'elle est vide
   public abstract canRemoveLastColumn(colNumber: number): boolean;
 
+  /**
+   * renvoie les bouteilles de la rangée qui contient la cellule
+   * @param {Cell} cell
+   */
+  abstract getBottlesInRowOf(cell: Cell): Bottle[];
+
   protected setupPinchZoom(elm: HTMLElement): void {
     const gesture = new Gesture(elm);
 
@@ -186,7 +192,6 @@ export abstract class LockerComponent {
 }
 
 export class Row {
-
   private id: string;
   index: number;
   cells: Cell[];
@@ -195,7 +200,6 @@ export class Row {
     this.cells = cells;
     this.index = rowIndex;
   }
-
 }
 
 export class Cell {

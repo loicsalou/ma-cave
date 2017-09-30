@@ -14,6 +14,7 @@ import {LockerEditorPage} from '../locker-editor/locker-editor.page';
 import * as _ from 'lodash';
 import {NativeProvider} from '../../providers/native/native';
 import {LoginService} from '../../service/login.service';
+import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
 
 /**
  * Generated class for the CellarPage page.
@@ -106,6 +107,19 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
     this.lockersSub.unsubscribe();
   }
 
+  zoomOnBottle(pendingCell: Cell) {
+    let bottle=this.pendingCell.bottle;
+    this.notificationService.information('faire autant de slides que de bouteilles dans la rangée');
+    this.navCtrl.push(BottleDetailPage, {bottleEvent: {bottles: [bottle], bottle: bottle}});
+  }
+
+  withdraw(pendingCell: Cell) {
+    let bottle=this.pendingCell.bottle;
+    if (bottle) {
+      this.bottleService.withdraw(bottle);
+    }
+  }
+
   resetPaginatedLocker() {
     if (this.otherLockers.length > 0) {
       let ix = this.slides.getActiveIndex();
@@ -130,12 +144,6 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
     editorModal.present();
   }
 
-  private getLockersContent(locker: Locker) {
-    this.bottleService.allBottlesObservable.subscribe(
-      (bottles: Bottle[]) => this.lockerContent = bottles
-    );
-  }
-
   deleteLocker() {
     this.cellarService.deleteLocker(this.paginatedLocker);
   }
@@ -150,30 +158,6 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
 
   slideChanged() {
     this.resetPaginatedLocker();
-  }
-
-  private moveCellContentTo(source: Cell, target: Cell) {
-    if (source) {
-      let bottle = source.withdraw();
-      bottle.removeFromPosition(source.position);
-      source.setSelected(false);
-      target.storeBottle(bottle, this.isBottleToHighlight(bottle));
-      bottle.addNewPosition(target.position);
-      this.bottleService.update([ bottle ]);
-    }
-  }
-
-  private isBottleToHighlight(bottle: Bottle) {
-    if (this.bottlesToHighlight) {
-      let ret = this.bottlesToHighlight.find(btl => btl.id === bottle.id) !== undefined;
-      if (ret) {
-        this.notificationService.debugAlert('highlighted: ' + bottle.nomCru);
-      }
-      return ret;
-    }
-    else {
-      return false;
-    }
   }
 
   cellSelected(cell: Cell) {
@@ -215,6 +199,36 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
           this.pendingCell = cell;
         }
       }
+    }
+  }
+
+  private getLockersContent(locker: Locker) {
+    this.bottleService.allBottlesObservable.subscribe(
+      (bottles: Bottle[]) => this.lockerContent = bottles
+    );
+  }
+
+  private moveCellContentTo(source: Cell, target: Cell) {
+    if (source) {
+      let bottle = source.withdraw();
+      bottle.removeFromPosition(source.position);
+      source.setSelected(false);
+      target.storeBottle(bottle, this.isBottleToHighlight(bottle));
+      bottle.addNewPosition(target.position);
+      this.bottleService.update([ bottle ]);
+    }
+  }
+
+  private isBottleToHighlight(bottle: Bottle) {
+    if (this.bottlesToHighlight) {
+      let ret = this.bottlesToHighlight.find(btl => btl.id === bottle.id) !== undefined;
+      if (ret) {
+        this.notificationService.debugAlert('highlighted: ' + bottle.nomCru);
+      }
+      return ret;
+    }
+    else {
+      return false;
     }
   }
 }
