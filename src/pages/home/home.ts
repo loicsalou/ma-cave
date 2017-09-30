@@ -33,7 +33,7 @@ export class HomePage implements OnInit, AfterViewInit {
   constructor(public navCtrl: NavController, public loginService: LoginService,
               private modalController: ModalController, private deviceFeedBack: DeviceFeedback,
               private notificationService: NotificationService, private dataConnection: FirebaseConnectionService,
-              private nativeProvider: NativeProvider) {
+              private nativeProvider: NativeProvider, private platform: Platform) {
   }
 
   ngOnInit(): void {
@@ -107,6 +107,10 @@ export class HomePage implements OnInit, AfterViewInit {
 
   isConnectionAllowed(): boolean {
     return this.dataConnection.isConnectionAllowed();
+  }
+
+  isGoogleLoginEnabled(): boolean {
+    return ! this.platform.is('cordova');
   }
 
   connectionAllowed() {

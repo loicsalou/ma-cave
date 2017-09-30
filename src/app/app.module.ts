@@ -15,7 +15,7 @@ import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
 import {BrowserModule} from '@angular/platform-browser';
 import {AngularFireModule} from 'angularfire2';
-import {AngularFireAuthModule} from 'angularfire2/auth';
+import {AngularFireAuthModule, AngularFireAuthProvider} from 'angularfire2/auth';
 import {AngularFireDatabaseModule} from 'angularfire2/database';
 import {BottleFactory} from '../model/bottle.factory';
 import {UploadBottlesModule} from '../pages/upload-bottles/upload-bottles.page.module';
@@ -55,6 +55,7 @@ import {AndroidPermissions} from '@ionic-native/android-permissions';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {TestPageModule} from '../pages/test/test.module';
 import {GoogleLoginService} from '../service/google-login.service';
+import {GooglePlus} from '@ionic-native/google-plus';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -126,6 +127,7 @@ export const fireConfig = {
               EmailLoginService,
               Facebook,
               FacebookLoginService,
+              GooglePlus,
               HttpClient,
               ImagePersistenceService,
               FirebaseConnectionService,

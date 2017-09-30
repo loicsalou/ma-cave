@@ -4,10 +4,12 @@
 import {Injectable} from '@angular/core';
 import * as firebase from 'firebase/app';
 import {AbstractLoginService} from './abstract-login.service';
-import {Facebook} from '@ionic-native/facebook';
 import {User} from '../model/user';
 import {Observable} from 'rxjs/Observable';
 import {NotificationService} from './notification.service';
+import {Platform} from 'ionic-angular';
+import {auth} from 'firebase';
+import {GooglePlus} from '@ionic-native/google-plus'; //needed for the GoogleAuthProvider
 
 /**
  * Services related to the bottles in the cellar.
@@ -18,7 +20,7 @@ import {NotificationService} from './notification.service';
 export class GoogleLoginService extends AbstractLoginService {
   userString: string;
 
-  constructor(notificationService: NotificationService) {
+  constructor(notificationService: NotificationService, private platform: Platform, private googlePlus: GooglePlus) {
     super(notificationService);
   }
 
@@ -27,30 +29,63 @@ export class GoogleLoginService extends AbstractLoginService {
     let self = this;
     firebase.auth().useDeviceLanguage();
     let popup = this.notificationService.createLoadingPopup('app.checking-login');
-    firebase.auth().signInWithPopup(provider).then(function(result) {
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      let token = result.credential.accessToken;
-      // The signed-in user info.
-      let user = result.user;
-      let googleUser=new GoogleUser(user.email, user.photoURL, user.displayName, user.uid, user.phoneNumber);
-      // close popup
-      popup.dismiss();
-      self.success(googleUser)
-    }).catch(function(error) {
-      // Handle Errors here.
-      let errorCode = error['code'];
-      let errorMessage = error['message'];
-      // The email of the user's account used.
-      let email = error['email'];
-      // The firebase.auth.AuthCredential type that was used.
-      let credential = error['credential'];
-      // close popup
-      popup.dismiss();
-      self.loginFailed();
-      self.logout();
+    if (this.platform.is('cordova')) {
+      this.loginWithCordova().subscribe()
+    } else {
+      firebase.auth().signInWithPopup(provider).then(function (result) {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        let token = result.credential.accessToken;
+        // The signed-in user info.
+        let user = result.user;
+        let googleUser = new GoogleUser(user.email, user.photoURL, user.displayName, user.uid, user.phoneNumber);
+        // close popup
+        popup.dismiss();
+        self.success(googleUser)
+      }).catch(function (error) {
+        // Handle Errors here.
+        let errorCode = error[ 'code' ];
+        let errorMessage = error[ 'message' ];
+        // The email of the user's account used.
+        let email = error[ 'email' ];
+        // The firebase.auth.AuthCredential type that was used.
+        let credential = error[ 'credential' ];
+        // close popup
+        popup.dismiss();
+        self.loginFailed();
+        self.logout();
 
-    });
+      });
+    }
+
     return authObs;
+  }
+
+  loginWithCordova(): Observable<User> {
+    return Observable.create(observer => {
+      alert('login with cordova 1');
+      return this.googlePlus.login({
+                                //your Android reverse client id
+                                'webClientId': '58435015061-8bnsnki77q4ffi25ph5plr6m694866vd.apps.googleusercontent.com'
+                              }).then(userData => {
+        alert('login with cordova OK token='+userData.idToken);
+        var token = userData.idToken;
+        const googleCredential = auth.GoogleAuthProvider.credential(token, null);
+        firebase.auth().signInWithCredential(googleCredential).then((success) => {
+          alert('firebase signin with credential OK');
+          let fbUser=firebase.auth().currentUser;
+          let ggUser=new GoogleUser(fbUser.email, fbUser.photoURL, fbUser.displayName, fbUser.uid, fbUser.phoneNumber);
+          observer.next(ggUser);
+        }).catch(error => {
+          //console.log(error);
+          alert('firebase signin with credential a planté ! '+error);
+          observer.error(error);
+        });
+      }).catch(error => {
+        //console.log(error);
+        alert('Googleplus login a planté ! '+error);
+        observer.error(error);
+      });
+    });
   }
 }
 

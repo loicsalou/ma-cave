@@ -59,6 +59,14 @@ Conclusion: toutes les images, tous les fichiers contenus dans assets sont inclu
 plutôt compliqué ! une fois suivi le tutorial https://javebratt.com/ionic-2-facebook-login/ il faut impératibvement
 - autoriser une plateforme native (android / iOS par ex) dans le compte facebook developper
 - pour cela il faut pouvoir fournir les infos techniques réclamées par FB comme le "hashage clé". Je n'ai pas compris la procédure indiquée ici: https://forum.ionicframework.com/t/facebook-plugin-not-installed-error/88285 mais en essayant l'app sur Android j'ai obtenu un message d'erreur FB lors du login m'indiquant que le hash "5a+U3FWyFV0pQSZ6FeoA3nHxGZ0=" n'est pas autorisé. Je suis donc retourné sur le compte développeur FB dans l'app, Paramètres / Général, partie plateforme android, pour ajouter ce hash dans les "Cachages clés"
+- mise à jour du 30 septembre 2017: le hashkey exigé par facebook est en fait la version base64 de l'empreinte 
+numnérique SHA1 du certificat qui a servi à signer l'APK. Pour convertir l'empreinte aller sur http://tomeko
+.net/online_tools/hex_to_base64.php 
+
+## Login Google
+- 30-09-2017 : fonctionne bien sur browser mais ERROR 10 lors du login via Cordova, apparemment un problème de signature
+ de l'APK
+   
 
 ==> ça a marché...
 
