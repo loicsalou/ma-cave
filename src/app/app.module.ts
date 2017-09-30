@@ -1,12 +1,5 @@
-import {ErrorHandler, NgModule} from '@angular/core';
-import {
-  AlertController,
-  IonicApp,
-  IonicErrorHandler,
-  IonicModule,
-  LoadingController,
-  ToastController
-} from 'ionic-angular';
+import {NgModule} from '@angular/core';
+import {AlertController, IonicApp, IonicModule, LoadingController, ToastController} from 'ionic-angular';
 import {MyCaveApp} from './app.component';
 import {ContactPage} from '../pages/contact/contact';
 import {HomePage} from '../pages/home/home';
@@ -61,7 +54,7 @@ import {LockerEditor2PageModule} from '../pages/locker-editor2/locker-editor2.pa
 import {AndroidPermissions} from '@ionic-native/android-permissions';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {TestPageModule} from '../pages/test/test.module';
-import {CaveErrorHandler} from '../service/cave-error.handler';
+import {GoogleLoginService} from '../service/google-login.service';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -137,11 +130,12 @@ export const fireConfig = {
               ImagePersistenceService,
               FirebaseConnectionService,
               LocalLoginService,
+              GoogleLoginService,
               LockerFactory,
               {
                 provide: LoginService,
                 useFactory: (createLoginFactory),
-                deps: [ AnonymousLoginService, EmailLoginService, FacebookLoginService, LocalLoginService,
+                deps: [ AnonymousLoginService, EmailLoginService, FacebookLoginService, LocalLoginService, GoogleLoginService,
                   NotificationService, NativeStorageService ]
               },
               NativeStorage,
@@ -167,11 +161,11 @@ export function createTranslateLoader(http: HttpClient) {
 }
 
 export function createLoginFactory(ano: AnonymousLoginService, ema: EmailLoginService, fac: FacebookLoginService,
-                                   lls: LocalLoginService, ns: NotificationService, lss: NativeStorageService) {
-  return new LoginService(ano, ema, fac, lls, ns, lss);
+                                   lls: LocalLoginService, ggl: GoogleLoginService, ns: NotificationService, lss: NativeStorageService) {
+  return new LoginService(ano, ema, fac, lls, ggl, ns, lss);
 }
 
 export function createNotificationFactory(alrt: AlertController, toast: ToastController, translate: TranslateService,
-                                          loadingCtrl: LoadingController ) {
+                                          loadingCtrl: LoadingController) {
   return new NotificationService(alrt, toast, translate, loadingCtrl);
 }

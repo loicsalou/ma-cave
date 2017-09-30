@@ -82,6 +82,15 @@ export class HomePage implements OnInit, AfterViewInit {
     this.loginPage.present();
   }
 
+  googleLogin() {
+    this.locidentifying = true;
+    this.nativeProvider.feedBack();
+    this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
+      this.handleLoginEvent(user);
+    });
+    this.loginService.googleLogin();
+  }
+
   anonymousLogin() {
     this.anoidentifying = true;
     this.nativeProvider.feedBack();

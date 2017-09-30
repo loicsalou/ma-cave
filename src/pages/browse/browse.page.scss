@@ -65,7 +65,7 @@
     transition: width .3s ease-in-out, .3s transform .19s ease-in-out;
 
     &.active {
-      transform: translateX(250px);
+      transform: translateX(300px);
     }
   }
 }

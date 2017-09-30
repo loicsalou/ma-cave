@@ -9,6 +9,7 @@ import {Subscription} from 'rxjs/Subscription';
 import {LocalLoginService} from './local-login.service';
 import {NativeStorageService} from './native-storage.service';
 import {AbstractLoginService} from './abstract-login.service';
+import {GoogleLoginService} from './google-login.service';
 
 /**
  * Created by loicsalou on 13.06.17.
@@ -22,7 +23,7 @@ export class LoginService {
   private currentLoginService: AbstractLoginService;
 
   constructor(private anoLogin: AnonymousLoginService, private mailLogin: EmailLoginService,
-              private fbLogin: FacebookLoginService, private locLogin: LocalLoginService,
+              private fbLogin: FacebookLoginService, private locLogin: LocalLoginService, private gglLogin: GoogleLoginService,
               private notificationService: NotificationService, private localStorage: NativeStorageService) {
   }
 
@@ -58,6 +59,18 @@ export class LoginService {
   public anonymousLogin() {
     this.currentLoginService=this.anoLogin;
     this.loginSub = this.anoLogin.login().subscribe(
+      (user: User) => {
+        this.initUser(user);
+      },
+      err => {
+        this.notificationService.failed('L\'authentification a échoué, veuillez vérifier votre saisie');
+      }
+    )
+  }
+
+  public googleLogin() {
+    this.currentLoginService=this.gglLogin;
+    this.loginSub = this.gglLogin.login().subscribe(
       (user: User) => {
         this.initUser(user);
       },
