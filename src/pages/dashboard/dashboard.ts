@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {NavController, Platform, PopoverController} from 'ionic-angular';
+import {Loading, NavController, Platform, PopoverController} from 'ionic-angular';
 import {BrowsePage} from '../browse/browse.page';
 import {LoginService} from '../../service/login.service';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
@@ -25,6 +25,7 @@ export class DashboardPage implements OnInit, OnDestroy {
   private bottleSub: Subscription;
   private queriesSub: Subscription;
   private mostUsedQueries: SearchCriteria[];
+  private popup: Loading;
 
   constructor(public navCtrl: NavController, public loginService: LoginService, private notificationService: NotificationService,
               private bottleService: BottlePersistenceService, private nativeProvider: NativeProvider,
@@ -42,14 +43,23 @@ export class DashboardPage implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.nativeProvider.feedBack();
-
+    this.popup = this.notificationService.createLoadingPopup('app.loading');
     this.version = require('../../../package.json').version;
     this.bottleSub = this.bottleService.allBottlesObservable.subscribe(
       (bottles: Bottle[]) => {
         if (bottles && bottles.length > 0) {
           this.bottles = bottles;
           this.totalNumberOfBottles = bottles.reduce((tot: number, btl: Bottle) => tot + +btl.quantite_courante, 0);
+          setTimeout(() => {
+            this.popup.dismiss(), 300
+          });
         }
+      },
+      () => {
+        this.popup.dismiss()
+      },
+      () => {
+        this.popup.dismiss()
       }
     );
 
@@ -85,17 +95,6 @@ export class DashboardPage implements OnInit, OnDestroy {
     this.filterOnTextAndNavigate(text.split(' '));
   }
 
-  private filterOnTextAndNavigate(texts: string[]) {
-    let fs: FilterSet = new FilterSet(this.translateService);
-    if (texts != undefined && texts.length != 0) {
-      this.notificationService.debugAlert('recherche de: ' + texts);
-      fs.text = texts;
-      this.navCtrl.push(BrowsePage, {
-        filterSet: fs
-      })
-    }
-  }
-
   showOverdue() {
     let fs: FilterSet = new FilterSet(this.translateService);
     fs.overdueOnly = true;
@@ -119,5 +118,16 @@ export class DashboardPage implements OnInit, OnDestroy {
     let fs: FilterSet = new FilterSet(this.translateService);
     fs.favoriteOnly = true;
     this.navCtrl.push(BrowsePage, {filterSet: fs});
+  }
+
+  private filterOnTextAndNavigate(texts: string[]) {
+    let fs: FilterSet = new FilterSet(this.translateService);
+    if (texts != undefined && texts.length != 0) {
+      this.notificationService.debugAlert('recherche de: ' + texts);
+      fs.text = texts;
+      this.navCtrl.push(BrowsePage, {
+        filterSet: fs
+      })
+    }
   }
 }
