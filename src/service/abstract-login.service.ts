@@ -2,6 +2,7 @@ import {Observable} from 'rxjs/Observable';
 import {User} from '../model/user';
 import {NotificationService} from './notification.service';
 import {Subject} from 'rxjs/Subject';
+import * as firebase from 'firebase/app';
 
 /**
  * Created by loicsalou on 13.06.17.
@@ -29,6 +30,33 @@ export abstract class AbstractLoginService {
 
   protected abstract delegatedLogin(authObs: Observable<User>);
 
+  createAccount(user: any, pass: any) {
+    this.notificationService.error('La création de ce type de compte n\'est pas activée')
+  }
+
+  deleteAccount() {
+    //"resetting-password": "Demande de réinitialisation en cours...",
+    //  "deleting-account": "Suppression du compte en cours...",
+    let self = this;
+    let popup = this.notificationService.createLoadingPopup('app.deleting-account');
+    var user = firebase.auth().currentUser;
+
+    user.delete().then(function () {
+      self.notificationService.information('app.deleting-account-succeeded');
+      setTimeout(() => {
+        popup.dismiss();
+        self.logout();
+      },100);
+    }).catch(function (error) {
+      popup.dismiss();
+      self.notificationService.error('app.deleting-account-failed');
+    });
+  }
+
+  resetPassword(user: string) {
+    this.notificationService.error('La réinitialisation du mot de passe pour ce type de compte n\'est pas activée')
+  }
+
   get user(): User {
     return this._user;
   }
@@ -37,8 +65,12 @@ export abstract class AbstractLoginService {
     this._user = value;
   }
 
-  public loginFailed() {
+  public logout() {
     this.authentified.next(undefined);
+  }
+
+  public loginFailed() {
+    this.notificationService.error('app.login-failed');
   }
 
   public success(user: User) {

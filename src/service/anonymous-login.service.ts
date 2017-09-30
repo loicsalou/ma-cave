@@ -34,7 +34,7 @@ export class AnonymousLoginService extends AbstractLoginService {
         },
         err => {
           popup.dismiss();
-          self.loginFailed();
+          self.logout();
           self.notificationService.error('Problème réseau', 'Impossible de s\'authentifier')
         }
       );
@@ -53,6 +53,7 @@ export class AnonymousUser extends User {
     this.uid = undefined;
     this.phoneNumber = '00-12-00-34-99';
     this.displayName = 'Ano Nymous';
+    this.loginType = 'anonymous';
   }
 
 }

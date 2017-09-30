@@ -32,13 +32,13 @@ import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
 @Injectable()
 export class FirebaseConnectionService {
   public USER_ROOT: string;
-  protected USERS_FOLDER = 'users';
+  static USERS_FOLDER = 'users';
 
   public IMAGES_ROOT: string;
   private IMAGES_FOLDER = 'images';
 
   private BOTTLES_ROOT: string;
-  private static BOTTLES_FOLDER = 'bottles';
+  static BOTTLES_FOLDER = 'bottles';
 
   private CELLAR_ROOT: string;
   private static CELLAR_FOLDER = 'cellar';
@@ -70,22 +70,28 @@ export class FirebaseConnectionService {
   private imageStorageRef: firebase.storage.Reference;
   private _uploadProgressEvent: Subject<number> = new Subject<number>();
   private connectionAllowed: boolean = true;
+  private namingStrategy: NamingStrategy;
 
   constructor(private bottleFactory: BottleFactory,
               private angularFirebase: AngularFireDatabase, private loginService: LoginService,
               private notificationService: NotificationService,
               private platform: Platform) {
+    this.namingStrategy = new NamingStrategy();
   }
 
   public initialize(user: User) {
+    this.namingStrategy.checkVersion(user, true, this.loginService);
+    let userRoot = this.namingStrategy.getFirebaseRootV5(user);
+    //let userRoot = this.namingStrategy.getFirebaseRootV4(user);
+    this.USER_ROOT = FirebaseConnectionService.USERS_FOLDER + '/' + userRoot;
+
     this.IMAGES_ROOT = this.IMAGES_FOLDER;
     this.XREF_ROOT = this.XREF_FOLDER;
-    this.USER_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user;
-    this.BOTTLES_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.BOTTLES_FOLDER;
-    this.CELLAR_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.CELLAR_FOLDER;
-    this.LOCKER_CONTENT_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.LOCKER_CONTENT_FOLDER;
-    this.PROFILE_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.PROFILE_CONTENT_FOLDER;
-    this.ERROR_ROOT = this.USERS_FOLDER + '/' + this.loginService.user.user + '/' + FirebaseConnectionService.ERROR_CONTENT_FOLDER;
+    this.BOTTLES_ROOT = FirebaseConnectionService.USERS_FOLDER + '/' + userRoot + '/' + FirebaseConnectionService.BOTTLES_FOLDER;
+    this.CELLAR_ROOT = FirebaseConnectionService.USERS_FOLDER + '/' + userRoot + '/' + FirebaseConnectionService.CELLAR_FOLDER;
+    this.LOCKER_CONTENT_ROOT = FirebaseConnectionService.USERS_FOLDER + '/' + userRoot + '/' + FirebaseConnectionService.LOCKER_CONTENT_FOLDER;
+    this.PROFILE_ROOT = FirebaseConnectionService.USERS_FOLDER + '/' + userRoot + '/' + FirebaseConnectionService.PROFILE_CONTENT_FOLDER;
+    this.ERROR_ROOT = FirebaseConnectionService.USERS_FOLDER + '/' + userRoot + '/' + FirebaseConnectionService.ERROR_CONTENT_FOLDER;
 
     this.userRootRef = this.angularFirebase.database.ref(this.USER_ROOT);
     this.bottlesRootRef = this.angularFirebase.database.ref(this.BOTTLES_ROOT);
@@ -566,11 +572,85 @@ export class FirebaseConnectionService {
       errorOrNull => console.info('removeFromQueryStats ended with ' + errorOrNull)
     )
   }
+
+  deleteAccount(): Observable<boolean> {
+    let sub=new Subject<boolean>();
+    this.userRootRef.remove(error => {
+      if (error) {
+        this.notificationService.error('app.data-deletion-failed', error);
+        sub.next(false);
+      } else {
+        sub.next(true);
+      }
+    });
+    return sub.asObservable();
+  }
 }
 
 export interface SearchCriteria {
   keywords: string[];
   count: number;
+}
+
+class NamingStrategy {
+
+  constructor() {
+  }
+
+  getFirebaseRootV5(user: User): string {
+    switch (user.loginType) {
+      case 'facebook':
+        return 'fb-' + user.user;
+      case 'email':
+        return 'ml-' + user.user;
+      case 'local':
+        return 'lo-' + user.user;
+      case 'anonymous':
+        return 'ano-' + user.user;
+
+      default:
+        throw new Error('Aucune stratégie de nommage trouvée pour le type de login \'' + user.loginType + '\'')
+    }
+  }
+
+  getFirebaseRootV4(user: User): string {
+    return user.user;
+  }
+
+  checkVersion(user: User, migrate: boolean, loginService: LoginService) {
+    let ref = firebase.database().ref(FirebaseConnectionService.USERS_FOLDER);
+    let currentRef = ref.child(this.getFirebaseRootV5(user) + '/version');
+    currentRef.once('value', (snapshot) => {
+                      if (snapshot.val() !== '5' && migrate) {
+                        this.migrate(ref, user, loginService);
+                      }
+                    },
+                    () => {
+                      //ancienne version
+                      if (migrate) {
+                        this.migrate(ref, user, loginService);
+                      }
+                    });
+  }
+
+  private migrate(usersRoot: Reference, user: User, loginService: LoginService) {
+    let v4Root = usersRoot.child(this.getFirebaseRootV4(user));
+    v4Root.once('value', (snapshot: firebase.database.DataSnapshot) => {
+      let v5Root = usersRoot.child(this.getFirebaseRootV5(user));
+      if (snapshot.val()) {
+        //ancienne version existante ==> migrer et relogger
+        v5Root.update(snapshot.val());
+        v5Root.update({'version': '5'});
+        v4Root.remove();
+        alert('votre compte a été migré sous la nouvelle version, veuillez vous reconnecter');
+        loginService.logout();
+      } else {
+        //initialisation des données utilisateur
+        v5Root.update({'version': '5'});
+      }
+    })
+  }
+
 }
 
 function matchByKey(fbBottle, cacheBottle) {

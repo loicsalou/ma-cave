@@ -17,6 +17,7 @@ import {Subscription} from 'rxjs/Subscription';
 import {Locker} from '../model/locker';
 import {TranslateService} from '@ngx-translate/core';
 import {BottleFactory} from '../model/bottle.factory';
+import {Subject} from 'rxjs/Subject';
 
 /**
  * Services related to the bottles in the cellar.
@@ -290,6 +291,20 @@ export class BottlePersistenceService extends PersistenceService {
 
   removeFromQueryStats(keywords: any) {
     this.dataConnection.removeFromQueryStats(keywords);
+  }
+
+  deleteAccountData(): Observable<boolean> {
+    let sub=new Subject<boolean>();
+    this.notificationService.ask('question', 'app.keep-or-delete-data').take(1).subscribe(
+      resp => {
+        if (resp) {
+          this.dataConnection.deleteAccount().take(1).subscribe(
+            result => sub.next(result)
+          )
+        }
+      }
+    );
+    return sub.asObservable();
   }
 }
 

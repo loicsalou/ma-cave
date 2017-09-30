@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {LoginService} from '../../service/login.service';
 import {NotificationService} from '../../service/notification.service';
+import {EmailLoginService} from '../../service/email-login.service';
 
 @Component({
              selector: 'login-page',
@@ -13,11 +14,18 @@ export class EmailLoginPage {
   psw: string;
 
   constructor(private loginService: LoginService, private notificationService: NotificationService) {
-    //super(loginService, notificationService);
   }
 
   public signin() {
     this.loginService.emailLogin(this.user, this.psw);
+  }
+
+  createAccount() {
+    this.loginService.createAccount(this.user, this.psw);
+  }
+
+  resetPassword() {
+    this.loginService.resetEmailPassword(this.user);
   }
 
   keyup(event) {

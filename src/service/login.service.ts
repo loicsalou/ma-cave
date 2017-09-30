@@ -8,6 +8,7 @@ import {NotificationService} from './notification.service';
 import {Subscription} from 'rxjs/Subscription';
 import {LocalLoginService} from './local-login.service';
 import {NativeStorageService} from './native-storage.service';
+import {AbstractLoginService} from './abstract-login.service';
 
 /**
  * Created by loicsalou on 13.06.17.
@@ -18,13 +19,32 @@ export class LoginService {
 
   private _user: User;
   private loginSub: Subscription;
+  private currentLoginService: AbstractLoginService;
 
   constructor(private anoLogin: AnonymousLoginService, private mailLogin: EmailLoginService,
               private fbLogin: FacebookLoginService, private locLogin: LocalLoginService,
               private notificationService: NotificationService, private localStorage: NativeStorageService) {
   }
 
+  createAccount(user: string, psw: string) {
+    this.currentLoginService.createAccount(user, psw);
+  }
+
+  deleteAccount() {
+    this.currentLoginService.deleteAccount();
+  }
+
+  resetEmailPassword(user: string) {
+    this.currentLoginService=this.mailLogin;
+    this.resetPassword(user);
+  }
+
+  resetPassword(user: string) {
+    this.currentLoginService.resetPassword(user);
+  }
+
   public localLogin(user: User) {
+    this.currentLoginService=this.locLogin;
     this.locLogin.localUser = user;
     this.loginSub = this.locLogin.login().subscribe(
       (user: User) => {
@@ -36,6 +56,7 @@ export class LoginService {
   }
 
   public anonymousLogin() {
+    this.currentLoginService=this.anoLogin;
     this.loginSub = this.anoLogin.login().subscribe(
       (user: User) => {
         this.initUser(user);
@@ -47,6 +68,7 @@ export class LoginService {
   }
 
   public emailLogin(login: string, psw: string) {
+    this.currentLoginService=this.mailLogin;
     this.mailLogin.username = login;
     this.mailLogin.psw = psw;
     this.loginSub = this.mailLogin.login().subscribe(
@@ -60,6 +82,7 @@ export class LoginService {
   }
 
   public facebookLogin() {
+    this.currentLoginService=this.fbLogin;
     this.loginSub = this.fbLogin.login().subscribe(
       (user: User) => this.initUser(user),
       error => this.notificationService.failed('L\'authentification Facebook a échoué, veuillez vérifier votre' +

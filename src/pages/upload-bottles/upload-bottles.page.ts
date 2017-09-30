@@ -42,6 +42,18 @@ export class UploadBottlesPage {
               private importProvider: ImportProvider) {
   }
 
+  deleteAccount() {
+    this.notificationService.ask('question', 'app.confirm').take(1).subscribe(
+      result => {
+        if (result) {
+          this.bottleService.deleteAccountData().subscribe(
+            result => this.loginService.deleteAccount()
+          );
+        }
+      }
+    );
+  }
+
   logout() {
     this.loginService.logout();
     this.navCtrl.popToRoot();
@@ -94,7 +106,7 @@ export class UploadBottlesPage {
       bottles => {
         let updatedBottles = bottles.map(
           bottle => {
-            bottle.positions=[];
+            bottle.positions = [];
             return bottle;
           }
         );

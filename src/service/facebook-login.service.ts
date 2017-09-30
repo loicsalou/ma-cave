@@ -38,13 +38,13 @@ export class FacebookLoginService extends AbstractLoginService {
         })
         .catch(error => {
           popup.dismiss();
-          self.loginFailed();
+          self.logout();
           self.notificationService.failed('l\'authentification a échoué (Promise.catch)', error);
         })
     }).catch(
       error => {
         popup.dismiss();
-        self.loginFailed();
+        self.logout();
         self.notificationService.failed('l\'authentification a échoué (catch)', error);
       }
     );
@@ -64,6 +64,7 @@ export class FacebookUser extends User {
     this.uid = uid;
     this.phoneNumber = phoneNumber;
     this.displayName = displayName;
+    this.loginType = 'facebook';
   }
 
 }
