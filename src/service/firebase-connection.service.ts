@@ -598,19 +598,7 @@ class NamingStrategy {
   }
 
   getFirebaseRootV5(user: User): string {
-    switch (user.loginType) {
-      case 'facebook':
-        return 'fb-' + user.user;
-      case 'email':
-        return 'ml-' + user.user;
-      case 'local':
-        return 'lo-' + user.user;
-      case 'anonymous':
-        return 'ano-' + user.user;
-
-      default:
-        throw new Error('Aucune stratégie de nommage trouvée pour le type de login \'' + user.loginType + '\'')
-    }
+    return user.user;
   }
 
   getFirebaseRootV4(user: User): string {

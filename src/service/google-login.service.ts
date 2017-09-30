@@ -65,7 +65,7 @@ export class GoogleUser extends User {
     this.uid = uid;
     this.phoneNumber = phoneNumber;
     this.displayName = displayName;
-    this.loginType = 'facebook';
+    this.loginType = 'google';
   }
 
 }

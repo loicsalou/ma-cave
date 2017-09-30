@@ -9,5 +9,5 @@ export class User {
   public displayName: string;
   public phoneNumber: string;
   public uid: string;
-  public loginType: 'facebook' | 'local' | 'anonymous' | 'email';
+  public loginType: 'facebook' | 'local' | 'anonymous' | 'email'| 'google';
 }
