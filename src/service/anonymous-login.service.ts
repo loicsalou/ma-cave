@@ -34,7 +34,7 @@ export class AnonymousLoginService extends AbstractLoginService {
         },
         err => {
           popup.dismiss();
-          self.loginFailed();
+          self.logout();
           self.notificationService.error('Problème réseau', 'Impossible de s\'authentifier')
         }
       );

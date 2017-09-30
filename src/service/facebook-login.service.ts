@@ -38,13 +38,13 @@ export class FacebookLoginService extends AbstractLoginService {
         })
         .catch(error => {
           popup.dismiss();
-          self.loginFailed();
+          self.logout();
           self.notificationService.failed('l\'authentification a échoué (Promise.catch)', error);
         })
     }).catch(
       error => {
         popup.dismiss();
-        self.loginFailed();
+        self.logout();
         self.notificationService.failed('l\'authentification a échoué (catch)', error);
       }
     );

@@ -572,6 +572,19 @@ export class FirebaseConnectionService {
       errorOrNull => console.info('removeFromQueryStats ended with ' + errorOrNull)
     )
   }
+
+  deleteAccount(): Observable<boolean> {
+    let sub=new Subject<boolean>();
+    this.userRootRef.remove(error => {
+      if (error) {
+        this.notificationService.error('app.data-deletion-failed', error);
+        sub.next(false);
+      } else {
+        sub.next(true);
+      }
+    });
+    return sub.asObservable();
+  }
 }
 
 export interface SearchCriteria {
@@ -624,11 +637,17 @@ class NamingStrategy {
     let v4Root = usersRoot.child(this.getFirebaseRootV4(user));
     v4Root.once('value', (snapshot: firebase.database.DataSnapshot) => {
       let v5Root = usersRoot.child(this.getFirebaseRootV5(user));
-      v5Root.update(snapshot.val());
-      v5Root.update({'version': '5'});
-      v4Root.remove(() => console.info('root version 4 supprimée'));
-      alert('votre compte a été migré sous la nouvelle version, veuillez vous reconnecter');
-      loginService.logout();
+      if (snapshot.val()) {
+        //ancienne version existante ==> migrer et relogger
+        v5Root.update(snapshot.val());
+        v5Root.update({'version': '5'});
+        v4Root.remove();
+        alert('votre compte a été migré sous la nouvelle version, veuillez vous reconnecter');
+        loginService.logout();
+      } else {
+        //initialisation des données utilisateur
+        v5Root.update({'version': '5'});
+      }
     })
   }
 
