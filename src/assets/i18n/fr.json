@@ -144,6 +144,13 @@
     "2": "Etagère, rangées décalées",
     "3": "Etagère, rangées alignées"
   },
+  "record-output": {
+    "output-title": "Enregistrer une sortie",
+    "global-quality": "Qualités d'ensemble",
+    "maturity": "Maturité",
+    "pleasure-price": "Rapport plaisir/prix",
+    "comments": "Commentaires, mots-clés"
+  },
   "statistics": {
     "repartition-par-type": "Répartition par type de vin",
     "repartition-par-region": "Répartition par région"

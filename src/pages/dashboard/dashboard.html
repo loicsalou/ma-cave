@@ -30,7 +30,7 @@
     <ion-segment-button></ion-segment-button>
   </ion-card>
   
-  <ion-card class="card-background by-label">
+  <ion-card class="card-background by-label" (pinch)="pinched()">
     <ion-title>{{'statistics.repartition-par-type'| translate}}</ion-title>
     <statistics [type]="'bar'" [axis]="'label'" [topMost]="10" [legend]="'none'"
                 (filterApplied)="showFiltered($event)"></statistics>

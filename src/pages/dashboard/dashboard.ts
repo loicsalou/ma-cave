@@ -69,6 +69,10 @@ export class DashboardPage implements OnInit, OnDestroy {
     )
   }
 
+  pinched() {
+    alert('pinch detecté !');
+  }
+
   ngOnDestroy(): void {
     this.bottleSub.unsubscribe();
   }
