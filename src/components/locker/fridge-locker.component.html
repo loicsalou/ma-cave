@@ -2,7 +2,7 @@
 <div class="fridge-locker-component" #zoomable>
   <div class="rack">
     <locker *ngFor="let rack of fridge.racks; let ix=index" [locker]="rack" [selectable]="selectable"
-            [highlighted]="highlighted" [content]="content" [rack]="ix"
+            [highlighted]="highlighted" [content]="content" [rack]="ix" [editing]="editing"
             (onCellSelected)="cellSelected($event)"></locker>
   </div>
 </div>

@@ -14,6 +14,8 @@ import {LockerEditorPage} from '../locker-editor/locker-editor.page';
 import * as _ from 'lodash';
 import {NativeProvider} from '../../providers/native/native';
 import {LoginService} from '../../service/login.service';
+import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
+import {Observable} from 'rxjs/Observable';
 
 /**
  * Generated class for the CellarPage page.
@@ -48,6 +50,7 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('zoomable') zoomable: ElementRef;
 
   private scale: number = 1;
+  private bottlesSubscription: Subscription;
 
   constructor(private navCtrl: NavController,
               private cellarService: CellarPersistenceService,
@@ -80,7 +83,7 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
       }
     );
 
-    this.getLockersContent(this.paginatedLocker);
+    this.getLockersContent();
   }
 
   logout() {
@@ -104,6 +107,20 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.lockersSub.unsubscribe();
+    this.bottlesSubscription.unsubscribe();
+  }
+
+  zoomOnBottle(pendingCell: Cell) {
+    let bottle = this.pendingCell.bottle;
+    let zoomedBottles = this.getBottlesInRowOf(this.pendingCell);
+    this.navCtrl.push(BottleDetailPage, {bottleEvent: {bottles: zoomedBottles, bottle: bottle}});
+  }
+
+  withdraw(pendingCell: Cell) {
+    let bottle = this.pendingCell.bottle;
+    if (bottle) {
+      this.bottleService.withdraw(bottle);
+    }
   }
 
   resetPaginatedLocker() {
@@ -130,12 +147,6 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
     editorModal.present();
   }
 
-  private getLockersContent(locker: Locker) {
-    this.bottleService.allBottlesObservable.subscribe(
-      (bottles: Bottle[]) => this.lockerContent = bottles
-    );
-  }
-
   deleteLocker() {
     this.cellarService.deleteLocker(this.paginatedLocker);
   }
@@ -150,6 +161,62 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
 
   slideChanged() {
     this.resetPaginatedLocker();
+  }
+
+  cellSelected(cell: Cell) {
+    this.nativeProvider.feedBack();
+
+    if (cell) {
+      if (this.pendingCell) {
+        if (cell.bottle && cell.bottle.id === this.pendingCell.bottle.id) {
+          //déplacer une bouteille vers un casier qui contient la même n'a pas de sens et fout la grouille...
+          if (cell.position.equals(this.pendingCell.position)) {
+            //retour à la case départ
+            this.pendingCell = undefined;
+            this.selectedCell.setSelected(false);
+            this.selectedCell = undefined;
+            return;
+          }
+          else {
+            //autant garder la bouteille d'origine sélectionnée comme celle que l'on déplace
+            return;
+          }
+        }
+        // une cellule était déjà sélectionnée qui contenait une bouteille
+        // - déplacer cette bouteille dans la nouvelle cellule et déselectionner les 2 cellules
+        // - si la nouvelle cellule contient aussi une bouteille alors la cellule sélectionnée devient cette
+        // nouvelle cellule, sinon on déplace la bouteille et on déselectionne les 2 cellules
+        let targetCell = _.clone(cell);
+        //on déplace la bouteille pré-enregistrée dans la cellule choisie
+        this.moveCellContentTo(this.pendingCell, cell);
+        //plus de cellule sélectionnée
+        this.pendingCell = undefined;
+        if (!targetCell.isEmpty()) {
+          this.pendingCell = targetCell;
+        } else {
+          this.selectedCell.setSelected(false);
+        }
+      } else {
+        //aucune cellule n'était sélectionnée
+        if (cell.isEmpty()) {
+          //cellule vide mais rien en transit ==> erreur
+          this.notificationService.warning('La cellule sélectionnée est vide');
+        } else {
+          //nouvelle bouteille en transit ==> on marque la cellule comme en transit et on stocke localement
+          this.selectedCell = cell;
+          this.selectedCell.setSelected(true);
+          this.pendingCell = cell;
+        }
+      }
+    }
+  }
+
+  private getLockersContent() {
+    this.bottlesSubscription = this.bottleService.allBottlesObservable.subscribe(
+      (bottles: Bottle[]) => {
+        this.lockerContent = bottles
+      }
+    );
   }
 
   private moveCellContentTo(source: Cell, target: Cell) {
@@ -176,45 +243,20 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  cellSelected(cell: Cell) {
-    this.nativeProvider.feedBack();
-
-    if (cell) {
-      if (this.pendingCell) {
-        if (cell.position.equals(this.pendingCell.position)) {
-          if (cell.bottle && cell.bottle.id === this.pendingCell.bottle.id) {
-            this.pendingCell = undefined;
-            this.selectedCell.setSelected(false);
-            this.selectedCell = undefined;
-            return;
-          }
-        }
-        // une cellule était déjà sélectionnée qui contenait une bouteille
-        // - déplacer cette bouteille dans la nouvelle cellule et déselectionner les 2 cellules
-        // - si la nouvelle cellule contient aussi une bouteille alors la cellule sélectionnée devient cette
-        // nouvelle cellule, sinon on déplace la bouteille et on déselectionne les 2 cellules
-        let incomingCell = _.clone(cell);
-        //on déplace la bouteille pré-enregistrée dans la cellule choisie
-        this.moveCellContentTo(this.pendingCell, cell);
-        //plus de cellule sélectionnée
-        this.pendingCell = undefined;
-        if (!incomingCell.isEmpty()) {
-          this.pendingCell = incomingCell;
-        } else {
-          this.selectedCell.setSelected(false);
-        }
-      } else {
-        //aucune cellule n'était sélectionnée
-        if (cell.isEmpty()) {
-          //cellule vide mais rien en transit ==> erreur
-          this.notificationService.warning('La cellule sélectionnée est vide');
-        } else {
-          //nouvelle bouteille en transit ==> on marque la cellule comme en transit et on stocke localement
-          this.selectedCell = cell;
-          this.selectedCell.setSelected(true);
-          this.pendingCell = cell;
+  private getBottlesInRowOf(pendingCell: Cell) {
+    let allBottlesInRow = [];
+    this.lockerContent.forEach(
+      bottle => {
+        if (bottle.positions) {
+          return bottle.positions.forEach(
+            pos => {
+              if (pos.inLocker(pendingCell.position.lockerId) && (pos.y === pendingCell.position.y)) {
+                allBottlesInRow.push(bottle)
+              }
+            })
         }
       }
-    }
+    );
+    return allBottlesInRow;
   }
 }

@@ -294,7 +294,7 @@ export class BottlePersistenceService extends PersistenceService {
   }
 
   deleteAccountData(): Observable<boolean> {
-    let sub=new Subject<boolean>();
+    let sub = new Subject<boolean>();
     this.notificationService.ask('question', 'app.keep-or-delete-data').take(1).subscribe(
       resp => {
         if (resp) {
@@ -305,6 +305,10 @@ export class BottlePersistenceService extends PersistenceService {
       }
     );
     return sub.asObservable();
+  }
+
+  withdraw(bottle: Bottle) {
+    alert('La bouteille ' + bottle.nomCru + ' a été retirée et ajoutée au sorties');
   }
 }
 
