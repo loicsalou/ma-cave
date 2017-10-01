@@ -47,16 +47,6 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
     return this.locker.dimension
   }
 
-  /**
-   * renvoie les bouteilles de la rangée qui contient la cellule
-   * @param {Cell} cell
-   */
-  getBottlesInRowOf(cell: Cell): Bottle[] {
-    return this.rows[ cell.position.y ].cells.filter(
-      cell => !cell.isEmpty()
-    ).map(cell => cell.bottle);
-  }
-
   isShifted(): boolean {
     return this.locker.type == LockerType.shifted
   }

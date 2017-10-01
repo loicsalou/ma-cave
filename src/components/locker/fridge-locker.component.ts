@@ -42,26 +42,6 @@ export class FridgeLockerComponent extends LockerComponent {
     return this.fridge.dimension
   }
 
-  /**
-   * renvoie les bouteilles de la rangée qui contient la cellule
-   * @param {Cell} cell
-   */
-  getBottlesInRowOf(cell: Cell): Bottle[] {
-    let racks = this.rackComponents.filter((locker: SimpleLockerComponent) => cell.position.inLocker(locker.locker.id));
-    let bottles = [];
-    if (racks.length > 0) {
-      let rack: SimpleLockerComponent = racks[ 0 ];
-      rack.rows.forEach(row => {
-        row.cells.forEach(cell => {
-          if (!cell.isEmpty()) {
-            bottles.push(cell.bottle);
-          }
-        })
-      })
-    }
-    return bottles;
-  }
-
   public resetComponent() {
     this.rackComponents.forEach(
       (rack: LockerComponent) => {

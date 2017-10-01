@@ -108,13 +108,13 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   zoomOnBottle(pendingCell: Cell) {
-    let bottle=this.pendingCell.bottle;
-    this.notificationService.information('faire autant de slides que de bouteilles dans la rangée');
-    this.navCtrl.push(BottleDetailPage, {bottleEvent: {bottles: [bottle], bottle: bottle}});
+    let bottle = this.pendingCell.bottle;
+    let zoomedBottles = this.getBottlesInRowOf(this.pendingCell);
+    this.navCtrl.push(BottleDetailPage, {bottleEvent: {bottles: zoomedBottles, bottle: bottle}});
   }
 
   withdraw(pendingCell: Cell) {
-    let bottle=this.pendingCell.bottle;
+    let bottle = this.pendingCell.bottle;
     if (bottle) {
       this.bottleService.withdraw(bottle);
     }
@@ -165,11 +165,17 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
 
     if (cell) {
       if (this.pendingCell) {
-        if (cell.position.equals(this.pendingCell.position)) {
-          if (cell.bottle && cell.bottle.id === this.pendingCell.bottle.id) {
+        if (cell.bottle && cell.bottle.id === this.pendingCell.bottle.id) {
+          //déplacer une bouteille vers un casier qui contient la même n'a pas de sens et fout la grouille...
+          if (cell.position.equals(this.pendingCell.position)) {
+            //retour à la case départ
             this.pendingCell = undefined;
             this.selectedCell.setSelected(false);
             this.selectedCell = undefined;
+            return;
+          }
+          else {
+            //autant garder la bouteille d'origine sélectionnée comme celle que l'on déplace
             return;
           }
         }
@@ -177,13 +183,13 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
         // - déplacer cette bouteille dans la nouvelle cellule et déselectionner les 2 cellules
         // - si la nouvelle cellule contient aussi une bouteille alors la cellule sélectionnée devient cette
         // nouvelle cellule, sinon on déplace la bouteille et on déselectionne les 2 cellules
-        let incomingCell = _.clone(cell);
+        let targetCell = _.clone(cell);
         //on déplace la bouteille pré-enregistrée dans la cellule choisie
         this.moveCellContentTo(this.pendingCell, cell);
         //plus de cellule sélectionnée
         this.pendingCell = undefined;
-        if (!incomingCell.isEmpty()) {
-          this.pendingCell = incomingCell;
+        if (!targetCell.isEmpty()) {
+          this.pendingCell = targetCell;
         } else {
           this.selectedCell.setSelected(false);
         }
@@ -230,5 +236,22 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
     else {
       return false;
     }
+  }
+
+  private getBottlesInRowOf(pendingCell: Cell) {
+    let allBottlesInRow = [];
+    this.lockerContent.forEach(
+      bottle => {
+        if (bottle.positions) {
+          return bottle.positions.forEach(
+            pos => {
+              if (pos.inLocker(pendingCell.position.lockerId) && (pos.y === pendingCell.position.y)) {
+                allBottlesInRow.push(bottle)
+              }
+            })
+        }
+      }
+    );
+    return allBottlesInRow;
   }
 }
