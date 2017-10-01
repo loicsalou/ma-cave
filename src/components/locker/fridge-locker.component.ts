@@ -6,7 +6,6 @@ import {Dimension, Locker, LockerType} from '../../model/locker';
 import {SimpleLockerComponent} from './simple-locker.component';
 import {SimpleLocker} from '../../model/simple-locker';
 import {NativeProvider} from '../../providers/native/native';
-import {Bottle} from '../../model/bottle';
 
 /**
  * Generated class for the CompositeLockerComponent component.
@@ -25,12 +24,15 @@ export class FridgeLockerComponent extends LockerComponent {
   protected static MAX_NB_ROWS: number = 40;
   protected static MIN_NB_ROWS: number = 1;
 
-  //racks composant le frigo, càd npmbre de rangées
+  //racks composant le frigo, càd nombre de rangées
   //chaque rangée est en fait un locker ayant ses propres dimensions l x L
   //Celles-ci n'ont pas forcément toutes la même hauteur, ex dans un frigo, les étagères permettent de créer des
   // racks de différentes hauteurs
   @Input()
   fridge: FridgeLocker;
+
+  @Input()
+  editing: boolean = false;
 
   @ViewChildren(SimpleLockerComponent) rackComponents: QueryList<SimpleLockerComponent>;
 
@@ -43,11 +45,13 @@ export class FridgeLockerComponent extends LockerComponent {
   }
 
   public resetComponent() {
-    this.rackComponents.forEach(
-      (rack: LockerComponent) => {
-        rack.resetComponent();
-      }
-    )
+    if (this.rackComponents) {
+      this.rackComponents.forEach(
+        (rack: LockerComponent) => {
+          rack.resetComponent();
+        }
+      )
+    }
   }
 
   anyRackSelected() {

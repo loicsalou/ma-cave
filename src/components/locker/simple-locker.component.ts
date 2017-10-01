@@ -30,6 +30,9 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   @Input()
   rack: number = 0;
 
+  @Input()
+  editing: boolean = false;
+
   rows: Row[];
   private bogusBottles = [];
 
@@ -152,7 +155,9 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
     function onPress(ev) {
       self.currentGesture = 'press';
       ev.preventDefault();
-      self.selected = !self.selected;
+      if (self.editing) {
+        self.selected = !self.selected;
+      }
     }
   }
 

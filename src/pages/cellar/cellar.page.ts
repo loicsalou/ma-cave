@@ -15,6 +15,7 @@ import * as _ from 'lodash';
 import {NativeProvider} from '../../providers/native/native';
 import {LoginService} from '../../service/login.service';
 import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
+import {Observable} from 'rxjs/Observable';
 
 /**
  * Generated class for the CellarPage page.
@@ -49,6 +50,7 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('zoomable') zoomable: ElementRef;
 
   private scale: number = 1;
+  private bottlesSubscription: Subscription;
 
   constructor(private navCtrl: NavController,
               private cellarService: CellarPersistenceService,
@@ -81,7 +83,7 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
       }
     );
 
-    this.getLockersContent(this.paginatedLocker);
+    this.getLockersContent();
   }
 
   logout() {
@@ -105,6 +107,7 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.lockersSub.unsubscribe();
+    this.bottlesSubscription.unsubscribe();
   }
 
   zoomOnBottle(pendingCell: Cell) {
@@ -208,9 +211,11 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  private getLockersContent(locker: Locker) {
-    this.bottleService.allBottlesObservable.subscribe(
-      (bottles: Bottle[]) => this.lockerContent = bottles
+  private getLockersContent() {
+    this.bottlesSubscription = this.bottleService.allBottlesObservable.subscribe(
+      (bottles: Bottle[]) => {
+        this.lockerContent = bottles
+      }
     );
   }
 

@@ -46,7 +46,7 @@
     <button ion-fab class="pending-bottle" (click)="showTip()">
       <img src="{{ pendingCell.bottle.label | bottleIcon }}">
     </button>
-    <ion-badge class="tip" *ngIf="pendingBottleTipVisible && pendingCell">{{pendingCell.bottle.nomCru}} -
+    <ion-badge class="tip" *ngIf="pendingCell">{{pendingCell.bottle.nomCru}} -
       {{pendingCell.bottle.millesime}}
     </ion-badge>
     <ion-fab-list side="left">

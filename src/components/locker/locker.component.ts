@@ -1,12 +1,11 @@
-import {ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {ElementRef, EventEmitter, Input, OnChanges, Output, ViewChild} from '@angular/core';
 import {Configuration} from '../config/Configuration';
 import {Bottle, Position} from '../../model/bottle';
 import {Gesture} from 'ionic-angular';
 import {Dimension} from '../../model/locker';
-import {DeviceFeedback} from '@ionic-native/device-feedback';
 import {NativeProvider} from '../../providers/native/native';
 
-export abstract class LockerComponent {
+export abstract class LockerComponent implements OnChanges {
 
   @Input()
   content: Bottle[] = [];
@@ -26,12 +25,17 @@ export abstract class LockerComponent {
 
   @ViewChild('zoomable') zoomable: ElementRef;
 
-
   constructor(private nativeProvider: NativeProvider) {
   }
 
   protected hapticConfirm() {
     this.nativeProvider.feedBack();
+  }
+
+  ngOnChanges(changeEvent) {
+    if (changeEvent[ 'content' ]) {
+      this.resetComponent();
+    }
   }
 
   /**
