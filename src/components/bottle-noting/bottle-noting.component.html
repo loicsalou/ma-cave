@@ -1,0 +1,37 @@
+<div class="bottle-noting note">
+  <rating [labels]="qualityLabels" [title]="'record-output.global-quality'" (rated)="setGlobalQuality($event)"></rating>
+</div>
+
+<div class="bottle-noting note">
+  <rating [labels]="pleasurePriceLabels" [title]="'record-output.pleasure-price'"
+          (rated)="setPleasurePrice($event)"></rating>
+</div>
+
+<div class="bottle-noting maturity">
+  <h4>{{ 'record-output.maturity' | translate }}</h4>
+  <ion-segment [(ngModel)]="maturityNote" color="secondary">
+    <ion-segment-button value="0">
+      {{'ratings.too-young' | translate}}
+    </ion-segment-button>
+    <ion-segment-button value="1">
+      {{'ratings.good' | translate}}
+    </ion-segment-button>
+    <ion-segment-button value="2">
+      {{'ratings.passing' | translate}}
+    </ion-segment-button>
+    <ion-segment-button value="3">
+      {{'ratings.passed' | translate}}
+    </ion-segment-button>
+  </ion-segment>
+  
+  <span *ngIf="maturityNote">{{maturityTexts[maturityNote]}}</span>
+</div>
+
+<ion-item class="bottle-noting comments">
+  <ion-label>{{ 'record-output.comments' | translate }}</ion-label>
+  <ion-textarea [(ngModel)]="comments" name="comments" class="form-control"></ion-textarea>
+</ion-item>
+
+<ion-item>
+  <button ion-button (click)="submitRating()">Noter</button>
+</ion-item>

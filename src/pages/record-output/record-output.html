@@ -1,29 +1,14 @@
-<ion-header>
+<ion-header class="page-record-output">
   <ion-navbar>
     <ion-title>{{'record-output.output-title' | translate}}</ion-title>
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
-  
-  <ion-item>
-    <ion-label>{{ 'record-output.global-quality' | translate }}</ion-label>
-    <rating [size]="10"></rating>
-  </ion-item>
-  
-  <ion-item>
-    <ion-label>{{ 'record-output.maturity' | translate }}</ion-label>
-    <rating [size]="10"></rating>
-  </ion-item>
-  
-  <ion-item>
-    <ion-label>{{ 'record-output.pleasure-price' | translate }}</ion-label>
-    <rating [size]="10"></rating>
-  </ion-item>
-  
-  <ion-item>
-    <ion-label>{{ 'record-output.comments' | translate }}</ion-label>
-    <ion-textarea [(ngModel)]="comments" name="comments" class="form-control"></ion-textarea>
-  </ion-item>
+<ion-content padding class="page-record-output">
+
+<bottle-noting [bottle]="bottle" (noted)="bottleNoted(bottle, $event)"></bottle-noting>
 
 </ion-content>
+
+<!--<ion-footer class="page-record-output">-->
+<!--</ion-footer>-->

@@ -13,6 +13,10 @@ import {Network} from '@ionic-native/network';
 import {Camera} from '@ionic-native/camera';
 import {CaveErrorHandler} from '../service/cave-error.handler';
 import {FirebaseConnectionService} from '../service/firebase-connection.service';
+import {RatingComponent} from './rating/rating';
+import {FormsModule} from '@angular/forms';
+import {TranslateModule, TranslatePipe} from '@ngx-translate/core';
+import {BottleNotingComponent} from './bottle-noting/bottle-noting.component';
 
 @NgModule({
             declarations: [
@@ -20,18 +24,26 @@ import {FirebaseConnectionService} from '../service/firebase-connection.service'
               ChartComponent,
               DefaultImageDirective,
               ImageAttacherComponent,
-              ProgressBarComponent
+              ProgressBarComponent,
+              RatingComponent,
+              BottleNotingComponent
             ],
             imports: [
               ChartsModule,
-              IonicModule
+              FormsModule,
+              IonicModule,
+              TranslateModule
             ],
             exports: [
               BottleIconPipe,
               ChartComponent,
               DefaultImageDirective,
               ImageAttacherComponent,
-              ProgressBarComponent
+              ProgressBarComponent,
+              RatingComponent,
+              TranslatePipe,
+              RatingComponent,
+              BottleNotingComponent
             ],
             providers: [
               Camera,
@@ -39,7 +51,7 @@ import {FirebaseConnectionService} from '../service/firebase-connection.service'
               NativeProvider,
               Network,
               ImportProvider,
-              {provide: ErrorHandler, deps: [FirebaseConnectionService], useClass: CaveErrorHandler}
+              {provide: ErrorHandler, deps: [ FirebaseConnectionService ], useClass: CaveErrorHandler}
             ]
           })
 export class SharedModule {

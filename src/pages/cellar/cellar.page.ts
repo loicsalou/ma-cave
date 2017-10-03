@@ -16,6 +16,7 @@ import {NativeProvider} from '../../providers/native/native';
 import {LoginService} from '../../service/login.service';
 import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
 import {Observable} from 'rxjs/Observable';
+import {RecordOutputPage} from '../record-output/record-output';
 
 /**
  * Generated class for the CellarPage page.
@@ -120,6 +121,8 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
     let bottle = this.pendingCell.bottle;
     if (bottle) {
       this.bottleService.withdraw(bottle);
+      let popup=this.modalCtrl.create(RecordOutputPage, {bottle: bottle});
+      popup.present();
     }
   }
 

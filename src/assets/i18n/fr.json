@@ -144,6 +144,41 @@
     "2": "Etagère, rangées décalées",
     "3": "Etagère, rangées alignées"
   },
+  "ratings": {
+    "quality": [
+      "Mauvais/défaut",
+      "Médiocre",
+      "Limite",
+      "Moyen",
+      "Pas mal",
+      "Bien",
+      "Très bien",
+      "Excellent",
+      "Magnifique",
+      "Exceptionnel"
+    ],
+    "pleasure-price": [
+      "Mauvais",
+      "Médiocre",
+      "Limite",
+      "Juste",
+      "Bon",
+      "Très bon",
+      "Excellent"
+    ],
+    "maturity": [
+      "Jeune",
+      "Bien",
+      "Déclin",
+      "Passé"
+    ],
+    "maturity-texts": [
+      "Trop jeune, vin à attendre encore",
+      "Bon à boire, peut attendre encore",
+      "Encore bon mais à boire",
+      "Vin passé ou madérisé, à cuisiner"
+    ]
+  },
   "record-output": {
     "output-title": "Enregistrer une sortie",
     "global-quality": "Qualités d'ensemble",

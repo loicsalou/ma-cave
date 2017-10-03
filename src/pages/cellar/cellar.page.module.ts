@@ -14,6 +14,8 @@ import {FormsModule} from '@angular/forms';
 import {FirebaseConnectionService} from '../../service/firebase-connection.service';
 import {LockerEditor2Page} from '../locker-editor2/locker-editor2.page';
 import {LockerEditor2PageModule} from '../locker-editor2/locker-editor2.page.module';
+import {RecordOutputPageModule} from '../record-output/record-output.module';
+import {RecordOutputPage} from '../record-output/record-output';
 
 @NgModule({
             declarations: [
@@ -27,8 +29,8 @@ import {LockerEditor2PageModule} from '../locker-editor2/locker-editor2.page.mod
               IonicPageModule.forChild(CellarPage),
               LockerEditorPageModule,
               LockerEditor2PageModule,
-              SharedModule,
-              TranslateModule
+              RecordOutputPageModule,
+              SharedModule
             ],
             exports: [
               CellarPage,
@@ -43,7 +45,8 @@ import {LockerEditor2PageModule} from '../locker-editor2/locker-editor2.page.mod
             ],
             entryComponents: [
               LockerEditorPage,
-              LockerEditor2Page
+              LockerEditor2Page,
+              RecordOutputPage
             ]
           })
 export class CellarPageModule {

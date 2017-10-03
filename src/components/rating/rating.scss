@@ -1,3 +1,25 @@
 rating {
+  display: flex;
+  width: 100%;
+
+  .stars {
+    margin-top: 10px;
+  }
+
+  h4 > span {
+    background-color: inherit;
+  }
+
+  span {
+    flex-grow: 1;
+    background-color: lightgray;
+    margin-top: 15px;
+    padding: 5px;
+    font-size: 2rem;
+
+    &.lighten {
+      color: yellow;
+    }
+  }
 
 }
