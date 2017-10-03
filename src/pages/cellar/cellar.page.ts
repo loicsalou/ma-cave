@@ -122,6 +122,9 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
     if (bottle) {
       this.bottleService.withdraw(bottle);
       let popup=this.modalCtrl.create(RecordOutputPage, {bottle: bottle});
+      popup.onDidDismiss(
+        () => pendingCell.setSelected(false)
+      )
       popup.present();
     }
   }

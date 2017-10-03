@@ -1,8 +1,8 @@
 import {Component} from '@angular/core';
-import {IonicPage, NavController, NavParams} from 'ionic-angular';
+import {IonicPage, NavController, NavParams, ViewController} from 'ionic-angular';
 import {Bottle} from '../../model/bottle';
-import {TranslateService} from '@ngx-translate/core';
 import {BottleNoting} from '../../components/bottle-noting/bottle-noting.component';
+import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 
 /**
  * Generated class for the RecordOutputPage page.
@@ -21,12 +21,13 @@ export class RecordOutputPage {
 
   bottle: Bottle;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private translateService: TranslateService) {
+  constructor(public navCtrl: NavController, public bottleService: BottlePersistenceService, public navParams: NavParams,
+              public viewCtrl: ViewController) {
     this.bottle = navParams.data[ 'bottle' ];
   }
 
   bottleNoted(bottle: Bottle, notes: BottleNoting) {
-    alert('quality:' + notes.quality.note + '\nmaturity:' + notes.maturity.note + '\npleasurePrice:' +
-      notes.pleasurePrice.note + '\ncomments:' + notes.comments)
+    this.bottleService.recordNotation(bottle, notes);
+    this.viewCtrl.dismiss(notes);
   }
 }

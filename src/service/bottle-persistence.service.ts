@@ -18,6 +18,7 @@ import {Locker} from '../model/locker';
 import {TranslateService} from '@ngx-translate/core';
 import {BottleFactory} from '../model/bottle.factory';
 import {Subject} from 'rxjs/Subject';
+import {BottleNoting} from '../components/bottle-noting/bottle-noting.component';
 
 /**
  * Services related to the bottles in the cellar.
@@ -308,7 +309,12 @@ export class BottlePersistenceService extends PersistenceService {
   }
 
   withdraw(bottle: Bottle) {
-    alert('La bouteille ' + bottle.nomCru + ' a été retirée et ajoutée au sorties');
+    this.notificationService.information('La bouteille ' + bottle.nomCru + ' a été retirée et ajoutée au sorties');
+  }
+
+  recordNotation(bottle: Bottle, notes: BottleNoting) {
+    this.notificationService.information('quality:' + notes.quality.note + '\nmaturity:' + notes.maturity.note + '\npleasurePrice:' +
+      notes.pleasurePrice.note + '\ncomments:' + notes.comments);
   }
 }
 
