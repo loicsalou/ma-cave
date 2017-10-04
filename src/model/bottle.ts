@@ -2,6 +2,7 @@
  * Created by loicsalou on 01.03.17.
  */
 import {ImgDefaultable} from '../directives/default-image/img-defaultable';
+import {BottleNoting} from '../components/bottle-noting/bottle-noting.component';
 
 export class Bottle implements ImgDefaultable {
 
@@ -36,10 +37,10 @@ export class Bottle implements ImgDefaultable {
   defaultImage ?: string;
   overdue?: boolean;
 
-  constructor(json: Object) {
-    Object.assign(this, json);
-    if (! json['id']) {
-      this.id = json[ '$key' ];
+  constructor(jsonOrBottle: Object) {
+    Object.assign(this, jsonOrBottle);
+    if (! jsonOrBottle['id']) {
+      this.id = jsonOrBottle[ '$key' ];
     }
     this.selected = false;
   }

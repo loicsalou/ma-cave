@@ -8,23 +8,12 @@
 </div>
 
 <div class="bottle-noting maturity">
-  <h4>{{ 'record-output.maturity' | translate }}</h4>
+  <h4>{{ 'record-output.maturity' | translate }}:<span *ngIf="maturityNote">{{maturityTexts[maturityNote]}}</span></h4>
   <ion-segment [(ngModel)]="maturityNote" color="secondary">
-    <ion-segment-button value="0">
-      {{'ratings.too-young' | translate}}
-    </ion-segment-button>
-    <ion-segment-button value="1">
-      {{'ratings.good' | translate}}
-    </ion-segment-button>
-    <ion-segment-button value="2">
-      {{'ratings.passing' | translate}}
-    </ion-segment-button>
-    <ion-segment-button value="3">
-      {{'ratings.passed' | translate}}
+    <ion-segment-button *ngFor="let maturityLevel of maturityLabels;let ix=index" [value]="ix">
+      {{maturityLabels[ix]}}
     </ion-segment-button>
   </ion-segment>
-  
-  <span *ngIf="maturityNote">{{maturityTexts[maturityNote]}}</span>
 </div>
 
 <ion-item class="bottle-noting comments">

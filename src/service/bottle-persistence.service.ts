@@ -2,7 +2,7 @@
  * Created by loicsalou on 28.02.17.
  */
 import {Injectable} from '@angular/core';
-import {Bottle} from '../model/bottle';
+import {Bottle, Position} from '../model/bottle';
 import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {FilterSet} from '../components/distribution/distribution';
@@ -19,6 +19,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {BottleFactory} from '../model/bottle.factory';
 import {Subject} from 'rxjs/Subject';
 import {BottleNoting} from '../components/bottle-noting/bottle-noting.component';
+import {Withdrawal} from '../model/withdrawal';
 
 /**
  * Services related to the bottles in the cellar.
@@ -308,13 +309,18 @@ export class BottlePersistenceService extends PersistenceService {
     return sub.asObservable();
   }
 
-  withdraw(bottle: Bottle) {
+  withdraw(bottle: Bottle, position: Position) {
     this.notificationService.information('La bouteille ' + bottle.nomCru + ' a été retirée et ajoutée au sorties');
+    bottle.removeFromPosition(position);
+    bottle.quantite_courante--;
+    this.dataConnection.update([bottle]);
   }
 
   recordNotation(bottle: Bottle, notes: BottleNoting) {
     this.notificationService.information('quality:' + notes.quality.note + '\nmaturity:' + notes.maturity.note + '\npleasurePrice:' +
       notes.pleasurePrice.note + '\ncomments:' + notes.comments);
+    let withdrawal=new Withdrawal(bottle, notes);
+    this.dataConnection.recordNotation(withdrawal);
   }
 }
 

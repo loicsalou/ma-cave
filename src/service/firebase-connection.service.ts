@@ -21,6 +21,7 @@ import {Subscription} from 'rxjs/Subscription';
 import {SimpleLocker} from '../model/simple-locker';
 import {Locker} from '../model/locker';
 import {Query} from 'angularfire2/database/interfaces';
+import {Withdrawal} from '../model/withdrawal';
 import Reference = firebase.database.Reference;
 import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
 
@@ -37,8 +38,14 @@ export class FirebaseConnectionService {
   public IMAGES_ROOT: string;
   private IMAGES_FOLDER = 'images';
 
+  public SHARED_ROOT: string;
+  private SHARED_FOLDER = 'shared';
+  static NOTATION_FOLDER = 'notation';
+
   private BOTTLES_ROOT: string;
   static BOTTLES_FOLDER = 'bottles';
+
+  static WITHDRAW_FOLDER = 'withdraw';
 
   private CELLAR_ROOT: string;
   private static CELLAR_FOLDER = 'cellar';
@@ -67,6 +74,7 @@ export class FirebaseConnectionService {
 
   private cellarRootRef: Reference;
 
+  private sharedDataRef: firebase.storage.Reference;
   private imageStorageRef: firebase.storage.Reference;
   private _uploadProgressEvent: Subject<number> = new Subject<number>();
   private connectionAllowed: boolean = true;
@@ -86,6 +94,7 @@ export class FirebaseConnectionService {
     this.USER_ROOT = FirebaseConnectionService.USERS_FOLDER + '/' + userRoot;
 
     this.IMAGES_ROOT = this.IMAGES_FOLDER;
+    this.SHARED_ROOT = this.SHARED_FOLDER;
     this.XREF_ROOT = this.XREF_FOLDER;
     this.BOTTLES_ROOT = FirebaseConnectionService.USERS_FOLDER + '/' + userRoot + '/' + FirebaseConnectionService.BOTTLES_FOLDER;
     this.CELLAR_ROOT = FirebaseConnectionService.USERS_FOLDER + '/' + userRoot + '/' + FirebaseConnectionService.CELLAR_FOLDER;
@@ -100,6 +109,7 @@ export class FirebaseConnectionService {
     this.profileRootRef = this.angularFirebase.database.ref(this.PROFILE_ROOT);
     this.errorRootRef = this.angularFirebase.database.ref(this.ERROR_ROOT);
     this.imageStorageRef = this.angularFirebase.app.storage().ref(this.IMAGES_ROOT);
+    this.sharedDataRef = this.angularFirebase.app.storage().ref(this.SHARED_ROOT);
 
     this.initLogging();
   }
@@ -574,7 +584,7 @@ export class FirebaseConnectionService {
   }
 
   deleteAccount(): Observable<boolean> {
-    let sub=new Subject<boolean>();
+    let sub = new Subject<boolean>();
     this.userRootRef.remove(error => {
       if (error) {
         this.notificationService.error('app.data-deletion-failed', error);
@@ -584,6 +594,14 @@ export class FirebaseConnectionService {
       }
     });
     return sub.asObservable();
+  }
+
+  recordNotation(withdrawal: Withdrawal) {
+    //TODO
+    alert('retrait de ' + withdrawal.nomCru + ' - ' + withdrawal.millesime + ' notes:' + JSON.stringify(withdrawal.notation));
+    this.userRootRef.child(FirebaseConnectionService.WITHDRAW_FOLDER).push(withdrawal);
+    //this.sharedDataRef.child(this.SHARED_FOLDER)
+    //Trouver la cuvée et mettre les notes dedans
   }
 }
 
