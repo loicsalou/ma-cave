@@ -1,34 +1,31 @@
-rating {
-  display: flex;
+.rating {
+  display: block;
   width: 100%;
-
-  .stars {
-    .input {
-      margin-top: 10px;
-      margin-top: 15px;
-      font-size: 2rem;
-      padding: 5px;
-
-      h4 > span {
-        background-color: inherit;
-      }
-    }
-
-    .output {
-      margin-top: 3px;
-      margin-top: 3px;
-
-      i.fa {
-        font-size: .7rem;
-      }
-    }
-  }
 
   span {
     flex-grow: 1;
-
+    text-align: center;
     &.lighten {
       color: yellow;
+    }
+  }
+
+  &.input {
+    .stars {
+      display: flex;
+      margin: 10px 0 0 0;
+      font-size: 2rem;
+      padding: 5px;
+      background-color: lightgrey;
+    }
+  }
+
+  &.output {
+    margin-top: 3px;
+    margin-top: 3px;
+
+    i.fa {
+      font-size: .9rem;
     }
   }
 

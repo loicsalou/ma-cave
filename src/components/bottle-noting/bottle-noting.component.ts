@@ -63,6 +63,10 @@ export class BottleNotingComponent {
     this.pleasurePrice = note;
   }
 
+  cancelRating() {
+    this.noted.emit(undefined);
+  }
+
   submitRating() {
     this.setMaturity(this.maturityNote);
     this.noted.emit({
