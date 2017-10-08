@@ -310,17 +310,28 @@ export class BottlePersistenceService extends PersistenceService {
   }
 
   withdraw(bottle: Bottle, position: Position) {
-    this.notificationService.information('La bouteille ' + bottle.nomCru + ' a été retirée et ajoutée au sorties');
-    bottle.removeFromPosition(position);
-    bottle.quantite_courante--;
-    this.dataConnection.update([bottle]);
+    this.dataConnection.withdraw(bottle, position);
   }
 
-  recordNotation(bottle: Bottle, notes: BottleNoting) {
-    this.notificationService.information('quality:' + notes.quality.note + '\nmaturity:' + notes.maturity.note + '\npleasurePrice:' +
-      notes.pleasurePrice.note + '\ncomments:' + notes.comments);
-    let withdrawal=new Withdrawal(bottle, notes);
-    this.dataConnection.recordNotation(withdrawal);
+  recordBottleNotation(bottle: Bottle, notes: BottleNoting) {
+    let withdrawal = new Withdrawal(bottle, notes);
+    this.recordWidthdrawNotation(withdrawal, notes);
+  }
+
+  recordWidthdrawNotation(withdrawal: Withdrawal, notes: BottleNoting) {
+    this.dataConnection.recordNotation(withdrawal, notes);
+  }
+
+  fetchAllWithdrawals(): Observable<Withdrawal[]> {
+    return this.dataConnection.fetchAllWithdrawals();
+      //.flatMap(
+      //  // wd.notation==null seulement == au lieu de === pour que ça matche aussi avec undefined
+      //  (wds: Withdrawal[]) => Observable.of(wds.filter(wd => wd.notation==null))
+      //);
+  }
+
+  deleteLogs() {
+    this.dataConnection.deleteLogs()
   }
 }
 

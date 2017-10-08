@@ -1,5 +1,5 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Loading, NavController, Platform, PopoverController} from 'ionic-angular';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Loading, ModalController, NavController, Platform, PopoverController, VirtualScroll} from 'ionic-angular';
 import {BrowsePage} from '../browse/browse.page';
 import {LoginService} from '../../service/login.service';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
@@ -12,6 +12,9 @@ import {TranslateService} from '@ngx-translate/core';
 import {SearchCriteria} from '../../service/firebase-connection.service';
 import {PopoverPage} from './popover.page';
 import {Action} from '../../model/action';
+import {BottleItemComponent} from '../../components/list/bottle-item.component';
+import {Withdrawal} from '../../model/withdrawal';
+import {RecordOutputPage} from '../record-output/record-output';
 
 @Component({
              selector: 'page-dashboard',
@@ -27,9 +30,18 @@ export class DashboardPage implements OnInit, OnDestroy {
   private mostUsedQueries: SearchCriteria[];
   private popup: Loading;
 
+  withdrawals: Withdrawal[] = [];
+  private allWithdrawals: Withdrawal[];
+  private withdrawalsSub: Subscription;
+  @ViewChild('withdrawals')
+  listComponent: BottleItemComponent;
+  @ViewChild(VirtualScroll) vs: VirtualScroll;
+  private withdrawalCardStyle: { 'min-height': string; 'height': string };
+
   constructor(public navCtrl: NavController, public loginService: LoginService, private notificationService: NotificationService,
               private bottleService: BottlePersistenceService, private nativeProvider: NativeProvider,
-              private platform: Platform, private translateService: TranslateService, private popoverCtrl: PopoverController) {
+              private platform: Platform, private translateService: TranslateService,
+              private popoverCtrl: PopoverController, private modalCtrl: ModalController) {
     platform.ready().then(() => {
       platform.registerBackButtonAction(() => {
         if (navCtrl.canGoBack()) {
@@ -63,18 +75,50 @@ export class DashboardPage implements OnInit, OnDestroy {
       }
     );
 
+    this.withdrawalsSub = this.bottleService.fetchAllWithdrawals().subscribe(
+      (withdrawals: Withdrawal[]) => {
+        this.withdrawals = withdrawals;
+        let height = 30 + Math.min(3, withdrawals.length) * 92;
+        this.withdrawalCardStyle = {'min-height': '120px', 'height': height + 'px'};
+        //this.allWithdrawals = withdrawals;
+        //this.doInfinite(null);
+      },
+      () => {
+        this.notificationService.error('messages.withdrawals-load-error')
+      }
+    );
+
     let obs = this.bottleService.getMostUsedQueries();
     this.queriesSub = obs.subscribe(
       (queries: SearchCriteria[]) => this.mostUsedQueries = queries
     )
   }
 
-  pinched() {
-    alert('pinch detecté !');
-  }
+  //
+  //doInfinite(infiniteScroll: InfiniteScroll) {
+  //  setTimeout(() => {
+  //    if (this.withdrawals.length < this.allWithdrawals.length) {
+  //      let size = this.withdrawals.length;
+  //      let added = this.allWithdrawals.slice(size, size + 4);
+  //      this.withdrawals = this.withdrawals.concat(added);
+  //      this.doInfinite(infiniteScroll);
+  //    } else {
+  //      if (infiniteScroll) {
+  //        infiniteScroll.complete();
+  //      }
+  //    }
+  //
+  //  }, 10);
+  //}
 
   ngOnDestroy(): void {
     this.bottleSub.unsubscribe();
+  }
+
+  triggerNotation(bottle) {
+    let modal = this.modalCtrl.create(RecordOutputPage, {bottle: bottle});
+    modal.present();
+
   }
 
   showPopover(myEvent) {

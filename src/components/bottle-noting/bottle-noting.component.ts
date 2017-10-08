@@ -53,6 +53,7 @@ export class BottleNotingComponent {
   setMaturity(note: number) {
     this.maturity = {
       note: this.maturityNote,
+      noteMax: this.maturityTexts.length,
       label: this.maturityLabels[ note ],
       text: this.maturityTexts[ note ]
     };

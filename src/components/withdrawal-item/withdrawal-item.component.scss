@@ -1,0 +1,25 @@
+.withdrawal-item {
+
+  h4.label {
+    display: inline;
+  }
+
+  ion-badge.compact {
+    margin: 3px 0 3px 0;
+  }
+
+  ion-label {
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+
+  ion-avatar {
+    position: relative;
+    img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-radius: 0;
+    }
+  }
+}

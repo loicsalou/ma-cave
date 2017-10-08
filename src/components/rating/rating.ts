@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 /**
  * Generated class for the RatingComponent component.
@@ -10,7 +10,9 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
              selector: 'rating',
              templateUrl: 'rating.html'
            })
-export class RatingComponent {
+export class RatingComponent implements OnInit {
+  @Input()
+  rating: Rating;
   @Input()
   labels: string[];
   @Input()
@@ -18,15 +20,25 @@ export class RatingComponent {
   @Output()
   rated: EventEmitter<Rating> = new EventEmitter();
 
-  note: number = undefined;
+  note: number;
+
+  noteArray: string[];
 
   constructor() {
+  }
+
+  ngOnInit() {
+    if (this.rating) {
+      this.noteArray = new Array<string>(this.rating.noteMax);
+      this.note = this.rating.note;
+    }
   }
 
   rate(note: number) {
     this.note = note;
     this.rated.emit({
                       note: note,
+                      noteMax: this.labels.length,
                       label: this.labels[ note ]
                     });
   }
@@ -34,6 +46,7 @@ export class RatingComponent {
 
 export interface Rating {
   note: number;
+  noteMax: number;
   label: string;
   text?: string;
 }

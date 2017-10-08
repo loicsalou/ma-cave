@@ -2,7 +2,7 @@
  * Created by loicsalou on 28.02.17.
  */
 import {Injectable} from '@angular/core';
-import {Bottle, BottleMetadata} from '../model/bottle';
+import {Bottle, BottleMetadata, Position} from '../model/bottle';
 import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {AngularFireDatabase, FirebaseListObservable} from 'angularfire2/database';
@@ -16,12 +16,14 @@ import {NotificationService} from './notification.service';
 import {Subject} from 'rxjs/Subject';
 import {Platform} from 'ionic-angular';
 import {BottleFactory} from '../model/bottle.factory';
+import {WithdrawalFactory} from '../model/withdrawal.factory';
 import {User} from '../model/user';
 import {Subscription} from 'rxjs/Subscription';
 import {SimpleLocker} from '../model/simple-locker';
 import {Locker} from '../model/locker';
 import {Query} from 'angularfire2/database/interfaces';
 import {Withdrawal} from '../model/withdrawal';
+import {BottleNoting} from '../components/bottle-noting/bottle-noting.component';
 import Reference = firebase.database.Reference;
 import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
 
@@ -34,21 +36,31 @@ import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
 export class FirebaseConnectionService {
   public USER_ROOT: string;
   static USERS_FOLDER = 'users';
+  private userRootRef: Reference;
 
   public IMAGES_ROOT: string;
   private IMAGES_FOLDER = 'images';
+  private imageStorageRef: firebase.storage.Reference;
 
   public SHARED_ROOT: string;
   private SHARED_FOLDER = 'shared';
+  private sharedDataRef: firebase.storage.Reference;
   static NOTATION_FOLDER = 'notation';
 
   private BOTTLES_ROOT: string;
   static BOTTLES_FOLDER = 'bottles';
-
-  static WITHDRAW_FOLDER = 'withdraw';
+  private bottlesRootRef: Reference;
+  private _bottles: BehaviorSubject<Bottle[]>;
+  private _allBottlesObservable: Observable<Bottle[]>;
+  private firebaseBottlesSub: Subscription;
 
   private CELLAR_ROOT: string;
   private static CELLAR_FOLDER = 'cellar';
+  private cellarRootRef: Reference;
+
+  private WITHDRAW_ROOT: string;
+  private static WITHDRAW_FOLDER = 'withdraw';
+  private withdrawRootRef: Reference;
 
   private LOCKER_CONTENT_ROOT: string;
   private static LOCKER_CONTENT_FOLDER = 'content';
@@ -65,22 +77,11 @@ export class FirebaseConnectionService {
   protected XREF_FOLDER = 'xref';
   public XREF_ROOT: string;
 
-  private userRootRef: Reference;
-
-  private bottlesRootRef: Reference;
-  private _bottles: BehaviorSubject<Bottle[]>;
-  private _allBottlesObservable: Observable<Bottle[]>;
-  private firebaseBottlesSub: Subscription;
-
-  private cellarRootRef: Reference;
-
-  private sharedDataRef: firebase.storage.Reference;
-  private imageStorageRef: firebase.storage.Reference;
   private _uploadProgressEvent: Subject<number> = new Subject<number>();
   private connectionAllowed: boolean = true;
   private namingStrategy: NamingStrategy;
 
-  constructor(private bottleFactory: BottleFactory,
+  constructor(private bottleFactory: BottleFactory, private withdrawalFactory: WithdrawalFactory,
               private angularFirebase: AngularFireDatabase, private loginService: LoginService,
               private notificationService: NotificationService,
               private platform: Platform) {
@@ -90,7 +91,6 @@ export class FirebaseConnectionService {
   public initialize(user: User) {
     this.namingStrategy.checkVersion(user, true, this.loginService);
     let userRoot = this.namingStrategy.getFirebaseRootV5(user);
-    //let userRoot = this.namingStrategy.getFirebaseRootV4(user);
     this.USER_ROOT = FirebaseConnectionService.USERS_FOLDER + '/' + userRoot;
 
     this.IMAGES_ROOT = this.IMAGES_FOLDER;
@@ -98,6 +98,7 @@ export class FirebaseConnectionService {
     this.XREF_ROOT = this.XREF_FOLDER;
     this.BOTTLES_ROOT = FirebaseConnectionService.USERS_FOLDER + '/' + userRoot + '/' + FirebaseConnectionService.BOTTLES_FOLDER;
     this.CELLAR_ROOT = FirebaseConnectionService.USERS_FOLDER + '/' + userRoot + '/' + FirebaseConnectionService.CELLAR_FOLDER;
+    this.WITHDRAW_ROOT = FirebaseConnectionService.USERS_FOLDER + '/' + userRoot + '/' + FirebaseConnectionService.WITHDRAW_FOLDER;
     this.LOCKER_CONTENT_ROOT = FirebaseConnectionService.USERS_FOLDER + '/' + userRoot + '/' + FirebaseConnectionService.LOCKER_CONTENT_FOLDER;
     this.PROFILE_ROOT = FirebaseConnectionService.USERS_FOLDER + '/' + userRoot + '/' + FirebaseConnectionService.PROFILE_CONTENT_FOLDER;
     this.ERROR_ROOT = FirebaseConnectionService.USERS_FOLDER + '/' + userRoot + '/' + FirebaseConnectionService.ERROR_CONTENT_FOLDER;
@@ -108,6 +109,7 @@ export class FirebaseConnectionService {
     this.lockerContentRootRef = this.angularFirebase.database.ref(this.LOCKER_CONTENT_ROOT);
     this.profileRootRef = this.angularFirebase.database.ref(this.PROFILE_ROOT);
     this.errorRootRef = this.angularFirebase.database.ref(this.ERROR_ROOT);
+    this.withdrawRootRef = this.angularFirebase.database.ref(this.WITHDRAW_ROOT);
     this.imageStorageRef = this.angularFirebase.app.storage().ref(this.IMAGES_ROOT);
     this.sharedDataRef = this.angularFirebase.app.storage().ref(this.SHARED_ROOT);
 
@@ -115,15 +117,11 @@ export class FirebaseConnectionService {
   }
 
   private initLogging() {
-    this.angularFirebase.list(this.ERROR_ROOT).map(
-      errors => {
-        if (errors && errors.length > 3) {
-          this.errorRootRef.limitToFirst(1).ref.remove();
-        }
+    this.errorRootRef.once('value', (snap: firebase.database.DataSnapshot) => {
+      if (snap.numChildren() > 3) {
+        this.errorRootRef.limitToFirst(1).ref.remove();
       }
-    ).take(1).subscribe(
-      () => this.errorRootRef = this.errorRootRef.push(moment().format('YYYY-MM-DD HH:mm:ss'))
-    );
+    })
   }
 
   public cleanup() {
@@ -150,6 +148,98 @@ export class FirebaseConnectionService {
       this.errorRootRef.push({date: moment().format('YYYY-MM-DD HH:mm:ss'), error: logged});
     } catch (errorInError) {
     }
+  }
+
+  // ===================================================== WITHDRAWS
+  public withdraw(bottle: Bottle, position: Position): Promise<any> {
+    if (!this.connectionAllowed) {
+      this.notificationService.failed('update.failed');
+      return undefined;
+    }
+
+    return new Promise((resolve, reject) => {
+      bottle.removeFromPosition(position);
+      bottle.quantite_courante--;
+      bottle[ 'lastUpdated' ] = new Date().getTime();
+      this.update([ bottle ]).then(
+        err => {
+          if (err == null) {
+            let withdrawal = new Withdrawal(bottle);
+            this.createWithdrawal(withdrawal);
+          } else {
+            this.notificationService.debugAlert('mise à jour KO ' + err);
+            reject(err)
+          }
+        }
+      )
+    })
+  }
+
+  //public fetchAllWithdrawals(): Observable<Withdrawal[]> {
+  //  let items= this.angularFirebase
+  //    .list(this.WITHDRAW_ROOT, {
+  //      query: {
+  //        orderByChild: 'withdrawal_date',
+  //        limitToLast: 30
+  //      }
+  //    });
+  //    items.subscribe(
+  //      (withdrawals: Withdrawal[]) => {
+  //        if (withdrawals.length > 0) {
+  //          return this.withdrawalFactory.createAll(withdrawals).map(
+  //            wth => {
+  //              wth[ 'id' ] = wth[ '$key' ];
+  //              return wth;
+  //            }
+  //          );
+  //        }
+  //        return withdrawals
+  //      }
+  //    );
+  //  return items;
+  //}
+
+  public fetchAllWithdrawals(): Observable<Withdrawal[]> {
+    return this.angularFirebase
+      .list(this.WITHDRAW_ROOT, {
+        query: {
+          orderByChild: 'withdrawal_date',
+          limitToLast: 30
+        }
+      })
+      .map(
+        (withdrawals: Withdrawal[]) => {
+          if (withdrawals.length > 0) {
+            return this.withdrawalFactory.createAll(withdrawals);
+          }
+          return withdrawals
+        }
+      )
+  }
+
+  public createWithdrawal(withdrawal: Withdrawal): void {
+    this.withdrawRootRef.push(sanitizeBeforeSave(withdrawal), (
+      err => {
+        if (err !== null) {
+          throw err
+        } else {
+          this.notificationService.debugAlert('Withdrawal created ' + withdrawal.id)
+        }
+      }
+    ))
+  }
+
+  recordNotation(withdrawal: Withdrawal, notes: BottleNoting) {
+    this.userRootRef.child(FirebaseConnectionService.WITHDRAW_FOLDER).child(withdrawal.id).update(
+      {notation: notes},
+      err => {
+        if (err) {
+          this.notificationService.error('Echec de mise mise à jour de la notation: ' + err)
+        }
+      }
+    );
+    //this.sharedDataRef.child(this.SHARED_FOLDER)
+    //Trouver la cuvée et mettre les notes dedans
   }
 
   // ===================================================== LOCKERS
@@ -596,12 +686,8 @@ export class FirebaseConnectionService {
     return sub.asObservable();
   }
 
-  recordNotation(withdrawal: Withdrawal) {
-    //TODO
-    alert('retrait de ' + withdrawal.nomCru + ' - ' + withdrawal.millesime + ' notes:' + JSON.stringify(withdrawal.notation));
-    this.userRootRef.child(FirebaseConnectionService.WITHDRAW_FOLDER).push(withdrawal);
-    //this.sharedDataRef.child(this.SHARED_FOLDER)
-    //Trouver la cuvée et mettre les notes dedans
+  deleteLogs() {
+    this.errorRootRef.remove()
   }
 }
 
@@ -675,7 +761,7 @@ function sortByLastUpdate(btl1, btl2) {
   return dt1 - dt2;
 }
 
-function sanitizeBeforeSave(object) {
+function sanitizeBeforeSave(object: any) {
   return JSON.parse(JSON.stringify(object, function (k, v) {
     if (v === undefined) {
       return null;

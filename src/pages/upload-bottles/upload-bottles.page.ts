@@ -117,6 +117,10 @@ export class UploadBottlesPage {
     )
   }
 
+  public emptyLogs() {
+    this.bottleService.deleteLogs()
+  }
+
   private setupUpload(file: any) {
     if (this.deleteBefore) {
       this.bottleService.deleteBottles();

@@ -144,6 +144,10 @@
     "2": "Etagère, rangées décalées",
     "3": "Etagère, rangées alignées"
   },
+  "messages": {
+    "withdraw-complete": "La bouteille a été sortie du stock - bonne dégustation !",
+    "withdrawals-load-error": "Un problème technique empêche l'affichage des sorties récentes"
+  },
   "ratings": {
     "quality": [
       "Mauvais/défaut",
@@ -180,6 +184,7 @@
     ]
   },
   "record-output": {
+    "recent-withdrawals":"Sorties récentes",
     "output-title": "Enregistrer une sortie",
     "global-quality": "Qualités d'ensemble",
     "maturity": "Maturité",

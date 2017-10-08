@@ -27,7 +27,20 @@ export class RecordOutputPage {
   }
 
   bottleNoted(bottle: Bottle, notes: BottleNoting) {
-    this.bottleService.recordNotation(bottle, notes);
-    this.viewCtrl.dismiss(notes);
+    notes=this.validateNotes(notes);
+    if (notes) {
+      this.bottleService.recordBottleNotation(bottle, notes);
+      this.viewCtrl.dismiss(notes);
+    }
+  }
+
+  private validateNotes(notes: BottleNoting) {
+    if (notes.comments===undefined) {
+      notes.comments='';
+    }
+    if (! (notes.pleasurePrice && notes.maturity && notes.quality)) {
+      return undefined;
+    }
+    return notes;
   }
 }

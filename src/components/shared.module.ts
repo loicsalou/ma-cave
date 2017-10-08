@@ -17,6 +17,8 @@ import {RatingComponent} from './rating/rating';
 import {FormsModule} from '@angular/forms';
 import {TranslateModule, TranslatePipe} from '@ngx-translate/core';
 import {BottleNotingComponent} from './bottle-noting/bottle-noting.component';
+import {BottleItemComponent} from './list/bottle-item.component';
+import {WithdrawalItemComponent} from './withdrawal-item/withdrawal-item.component';
 
 @NgModule({
             declarations: [
@@ -26,6 +28,8 @@ import {BottleNotingComponent} from './bottle-noting/bottle-noting.component';
               ImageAttacherComponent,
               ProgressBarComponent,
               RatingComponent,
+              BottleItemComponent,
+              WithdrawalItemComponent,
               BottleNotingComponent
             ],
             imports: [
@@ -36,6 +40,7 @@ import {BottleNotingComponent} from './bottle-noting/bottle-noting.component';
             ],
             exports: [
               BottleIconPipe,
+              BottleItemComponent,
               ChartComponent,
               DefaultImageDirective,
               ImageAttacherComponent,
@@ -43,6 +48,7 @@ import {BottleNotingComponent} from './bottle-noting/bottle-noting.component';
               RatingComponent,
               TranslatePipe,
               RatingComponent,
+              WithdrawalItemComponent,
               BottleNotingComponent
             ],
             providers: [

@@ -10,6 +10,8 @@ export class Withdrawal extends Bottle {
   constructor(bottle: Bottle, note?: BottleNoting) {
     super(bottle);
     this.withdrawal_date = moment().format('YYYY-MM-DD HH:mm:ss');
-    this.notation = note;
+    if (note) {
+      this.notation = note;
+    }
   }
 }
