@@ -1,0 +1,16 @@
+<div class="rating input" *ngIf="labels">
+  <h4>{{ title | translate }}:<span *ngIf="note!==undefined">{{labels[note]}}</span></h4>
+  
+  <div class="stars"><span *ngFor="let x of labels;let ix=index" [class.lighten]="ix <= note" (click)="rate(ix)">
+    <i class="fa fa-star" aria-hidden="true"></i>
+  </span>
+  </div>
+</div>
+<div class="rating output" *ngIf="! labels">
+  <div class="stars">
+    <span>{{rating.label}}:</span>
+    <span *ngFor="let x of noteArray;let ix=index" [class.lighten]="ix <= note">
+      <i class="fa fa-star" aria-hidden="true"></i>
+    </span>
+  </div>
+</div>

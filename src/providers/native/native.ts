@@ -67,18 +67,18 @@ export class NativeProvider {
   private initNetworkWatching() {
 // watch network for a disconnect
     this.disconnectSubscription = this.network.onDisconnect().subscribe(() => {
-      this.notificationService.information('Réseau absent...');
+      //this.notificationService.information('Réseau absent...');
     });
 
 // watch network for a connection
     this.connectSubscription = this.network.onConnect().subscribe(() => {
-      this.notificationService.information('Reconnexion au réseau');
+      //this.notificationService.information('Reconnexion au réseau');
       // We just got a connection but we need to wait briefly
       // before we determine the connection type. Might need to wait.
       // prior to doing any api requests as well.
       setTimeout(() => {
         if (this.network.type === 'wifi') {
-          this.notificationService.information('Connexion wifi trouvée');
+          //this.notificationService.information('Connexion wifi trouvée');
         }
       }, 3000);
     });

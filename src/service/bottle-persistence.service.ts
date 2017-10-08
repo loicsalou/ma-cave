@@ -2,7 +2,7 @@
  * Created by loicsalou on 28.02.17.
  */
 import {Injectable} from '@angular/core';
-import {Bottle} from '../model/bottle';
+import {Bottle, Position} from '../model/bottle';
 import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {FilterSet} from '../components/distribution/distribution';
@@ -18,6 +18,8 @@ import {Locker} from '../model/locker';
 import {TranslateService} from '@ngx-translate/core';
 import {BottleFactory} from '../model/bottle.factory';
 import {Subject} from 'rxjs/Subject';
+import {BottleNoting} from '../components/bottle-noting/bottle-noting.component';
+import {Withdrawal} from '../model/withdrawal';
 
 /**
  * Services related to the bottles in the cellar.
@@ -307,8 +309,29 @@ export class BottlePersistenceService extends PersistenceService {
     return sub.asObservable();
   }
 
-  withdraw(bottle: Bottle) {
-    alert('La bouteille ' + bottle.nomCru + ' a été retirée et ajoutée au sorties');
+  withdraw(bottle: Bottle, position: Position) {
+    this.dataConnection.withdraw(bottle, position);
+  }
+
+  recordBottleNotation(bottle: Bottle, notes: BottleNoting) {
+    let withdrawal = new Withdrawal(bottle, notes);
+    this.recordWidthdrawNotation(withdrawal, notes);
+  }
+
+  recordWidthdrawNotation(withdrawal: Withdrawal, notes: BottleNoting) {
+    this.dataConnection.recordNotation(withdrawal, notes);
+  }
+
+  fetchAllWithdrawals(): Observable<Withdrawal[]> {
+    return this.dataConnection.fetchAllWithdrawals();
+      //.flatMap(
+      //  // wd.notation==null seulement == au lieu de === pour que ça matche aussi avec undefined
+      //  (wds: Withdrawal[]) => Observable.of(wds.filter(wd => wd.notation==null))
+      //);
+  }
+
+  deleteLogs() {
+    this.dataConnection.deleteLogs()
   }
 }
 

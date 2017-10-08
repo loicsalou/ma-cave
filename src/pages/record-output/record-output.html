@@ -1,0 +1,14 @@
+<ion-header class="page-record-output">
+  <ion-navbar>
+    <ion-title>{{'record-output.output-title' | translate}}</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding class="page-record-output">
+
+<bottle-noting [bottle]="bottle" (noted)="bottleNoted(bottle, $event)"></bottle-noting>
+
+</ion-content>
+
+<!--<ion-footer class="page-record-output">-->
+<!--</ion-footer>-->

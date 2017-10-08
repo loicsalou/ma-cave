@@ -54,7 +54,6 @@ export class BrowsePage implements OnInit, OnDestroy {
     this.bottleSubscription = this.bottlesService.filteredBottlesObservable.subscribe(
       (received: Bottle[]) => {
         this.notificationService.debugAlert('received:' + (received ? received.length : 0) + ' bottles');
-        let deb = new Date().getTime();
         this.allBottles = received;
         this.bottles = [];
         this.nbOfBottles = 0;
@@ -80,7 +79,6 @@ export class BrowsePage implements OnInit, OnDestroy {
       error => this.notificationService.error('BrowsePage: Erreur lors de l\'accès à la base de données' + error),
       () => this.notificationService.traceInfo('BrowsePage: ngOnInit, récupération de ' + this.nbOfBottles + ' bouteilles terminée')
     );
-    let fin = new Date().getTime();
   }
 
   ngOnDestroy(): void {

@@ -15,7 +15,6 @@ import * as _ from 'lodash';
 import {NativeProvider} from '../../providers/native/native';
 import {LoginService} from '../../service/login.service';
 import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
-import {Observable} from 'rxjs/Observable';
 
 /**
  * Generated class for the CellarPage page.
@@ -119,7 +118,10 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
   withdraw(pendingCell: Cell) {
     let bottle = this.pendingCell.bottle;
     if (bottle) {
-      this.bottleService.withdraw(bottle);
+      this.bottleService.withdraw(bottle, pendingCell.position);
+      this.pendingCell.setSelected(false);
+      this.pendingCell = undefined;
+      this.notificationService.information('messages.withdraw-complete');
     }
   }
 

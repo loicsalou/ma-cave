@@ -56,6 +56,7 @@ import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {TestPageModule} from '../pages/test/test.module';
 import {GoogleLoginService} from '../service/google-login.service';
 import {GooglePlus} from '@ionic-native/google-plus';
+import {WithdrawalFactory} from '../model/withdrawal.factory';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -120,6 +121,7 @@ export const fireConfig = {
             providers: [
               AnonymousLoginService,
               BottleFactory,
+              WithdrawalFactory,
               Bottles,
               BottlePersistenceService,
               AndroidPermissions,
