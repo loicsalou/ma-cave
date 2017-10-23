@@ -1,27 +1,32 @@
-<div class="bottle-noting note">
-  <rating [labels]="qualityLabels" [title]="'record-output.global-quality'" (rated)="setGlobalQuality($event)"></rating>
-</div>
-
-<div class="bottle-noting note">
-  <rating [labels]="pleasurePriceLabels" [title]="'record-output.pleasure-price'"
-          (rated)="setPleasurePrice($event)"></rating>
-</div>
-
-<div class="bottle-noting maturity">
-  <h4>{{ 'record-output.maturity' | translate }}:<span *ngIf="maturityNote">{{maturityTexts[maturityNote]}}</span></h4>
-  <ion-segment [(ngModel)]="maturityNote" color="secondary">
-    <ion-segment-button *ngFor="let maturityLevel of maturityLabels;let ix=index" [value]="ix">
-      {{maturityLabels[ix]}}
-    </ion-segment-button>
-  </ion-segment>
-</div>
-
-<ion-item class="bottle-noting comments">
-  <ion-label>{{ 'record-output.comments' | translate }}</ion-label>
-  <ion-textarea [(ngModel)]="comments" name="comments" class="form-control"></ion-textarea>
-</ion-item>
-
-<ion-item>
-  <button ion-button (click)="submitRating()">Noter</button>
-  <button ion-button (click)="cancelRating()">Annuler</button>
-</ion-item>
+<form #notingForm class="ng-form" (ngSubmit)="submitRating()">
+  <div class="bottle-noting note form-group">
+    <rating [labels]="qualityLabels" [title]="'record-output.global-quality'"
+            (rated)="setGlobalQuality($event)"></rating>
+  </div>
+  
+  <div class="bottle-noting note form-group">
+    <rating [labels]="pleasurePriceLabels" [title]="'record-output.pleasure-price'"
+            (rated)="setPleasurePrice($event)"></rating>
+  </div>
+  
+  <div class="bottle-noting maturity form-group">
+    <h4>{{ 'record-output.maturity' | translate }}:<span *ngIf="maturityNote">{{maturityTexts[maturityNote]}}</span>
+    </h4>
+    <ion-segment [(ngModel)]="maturityNote" name="maturityNote" color="secondary" required>
+      <ion-segment-button *ngFor="let maturityLevel of maturityLabels;let ix=index" [value]="ix">
+        {{maturityLabels[ix]}}
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+  
+  <ion-item class="bottle-noting comments form-group">
+    <ion-label>{{ 'record-output.comments' | translate }}</ion-label>
+    <ion-textarea [(ngModel)]="comments" name="comments" class="form-control"></ion-textarea>
+  </ion-item>
+  
+  <ion-item>
+    <button ion-button type="submit" [disabled]="!notingForm.valid" style="padding: 5px 15px 5px 15px">Noter
+    </button>
+    <button ion-button (click)="notingForm.reset();cancelRating()">Annuler</button>
+  </ion-item>
+</form>

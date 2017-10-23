@@ -43,14 +43,18 @@
   .search {
     display: flex;
     height: 100%;
-    right: -40px;
+    left: -250px;
+    //right: -40px;
     position: absolute;
     top: 0;
+    opacity: 0;
     width: 0;
-    transition: width .3s ease-in-out, .3s transform .3s ease-in-out;
+    transition: width .3s ease-in-out, .3s transform ease-in-out, .3s opacity ease-in-out;
 
     &.active {
-      transform: translateX(-80px);
+      opacity: 1;
+      transform: translateX(260px);
+      //transform: translateX(-80px);
       width: 81%;
     }
   }
@@ -60,12 +64,14 @@
     position: absolute;
     left: -250px;
     top: 0;
+    opacity: 0;
     height: 0;
     width: 86%;
-    transition: width .3s ease-in-out, .3s transform .19s ease-in-out;
+    transition: width .3s ease-in-out, .3s transform .19s ease-in-out, .3s opacity ease-in-out;
 
     &.active {
-      transform: translateX(300px);
+      opacity: 1;
+      transform: translateX(260px);
     }
   }
 }

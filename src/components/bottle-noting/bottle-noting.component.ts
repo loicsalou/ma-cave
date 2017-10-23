@@ -1,7 +1,8 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {Bottle} from '../../model/bottle';
 import {TranslateService} from '@ngx-translate/core';
 import {Rating} from '../rating/rating';
+import {NgForm} from '@angular/forms';
 
 /**
  * Generated class for the BottleNotingComponent component.
@@ -30,6 +31,8 @@ export class BottleNotingComponent {
   pleasurePriceLabels: string[];
   maturityLabels: string[];
   maturityTexts: string[];
+
+  @ViewChild('notingForm') notingForm: NgForm;
 
   constructor(private translateService: TranslateService) {
     this.translateService.get('ratings.quality').subscribe(
@@ -68,14 +71,33 @@ export class BottleNotingComponent {
   }
 
   submitRating() {
-    this.setMaturity(this.maturityNote);
-    this.noted.emit({
-                      quality: this.quality,
-                      maturity: this.maturity,
-                      pleasurePrice: this.pleasurePrice,
-                      comments: this.comments
-                    })
+    if (this.validateNotes()) {
+      this.setMaturity(this.maturityNote);
+      this.noted.emit({
+                        quality: this.quality,
+                        maturity: this.maturity,
+                        pleasurePrice: this.pleasurePrice,
+                        comments: this.comments
+                      });
+    }
   }
+
+  private validateNotes(): boolean {
+    if (this.comments === undefined) {
+      this.comments = '';
+    }
+    if (!this.pleasurePrice) {
+      return false;
+    }
+    if (!this.maturity) {
+      return false;
+    }
+    if (!this.quality) {
+      return false;
+    }
+    return true;
+  }
+
 }
 
 export interface BottleNoting {
