@@ -162,18 +162,18 @@
       "Exceptionnel"
     ],
     "pleasure-price": [
-      "Mauvais",
-      "Médiocre",
-      "Limite",
-      "Juste",
-      "Bon",
-      "Très bon",
-      "Excellent"
+      "Trop cher",
+      "Cher",
+      "Un peu cher",
+      "Juste prix",
+      "Prix intéressant",
+      "Bonne affaire",
+      "Excellente affaire"
     ],
     "maturity": [
-      "Jeune",
-      "Bien",
-      "Déclin",
+      "Trop jeune",
+      "Prêt à boire",
+      "A boire",
       "Passé"
     ],
     "maturity-texts": [
@@ -185,7 +185,7 @@
   },
   "record-output": {
     "recent-withdrawals":"Sorties récentes",
-    "output-title": "Enregistrer une sortie",
+    "output-title": "Notes de dégustation",
     "global-quality": "Qualités d'ensemble",
     "maturity": "Maturité",
     "pleasure-price": "Rapport plaisir/prix",

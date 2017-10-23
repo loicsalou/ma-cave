@@ -27,18 +27,21 @@ export class RecordOutputPage {
   }
 
   bottleNoted(bottle: Bottle, notes: BottleNoting) {
-    notes=this.validateNotes(notes);
-    if (notes) {
-      this.bottleService.recordBottleNotation(bottle, notes);
+    if (!notes) {
       this.viewCtrl.dismiss(notes);
+    } else {
+      if (this.validateNotes(notes)) {
+        this.bottleService.recordBottleNotation(bottle, notes);
+        this.viewCtrl.dismiss(notes);
+      }
     }
   }
 
   private validateNotes(notes: BottleNoting) {
-    if (notes.comments===undefined) {
-      notes.comments='';
+    if (notes.comments === undefined) {
+      notes.comments = '';
     }
-    if (! (notes.pleasurePrice && notes.maturity && notes.quality)) {
+    if (!(notes.pleasurePrice && notes.maturity && notes.quality)) {
       return undefined;
     }
     return notes;

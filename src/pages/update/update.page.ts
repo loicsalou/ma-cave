@@ -1,12 +1,9 @@
-import {Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {Bottle, BottleMetadata} from '../../model/bottle';
 import {NavController, NavParams} from 'ionic-angular';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
-import {Camera} from '@ionic-native/camera';
 import {ImagePersistenceService} from '../../service/image-persistence.service';
-import {Subscription} from 'rxjs/Subscription';
 import {AocInfo, Bottles} from '../../components/config/Bottles';
-import {LoginService} from '../../service/login.service';
 import {NotificationService} from '../../service/notification.service';
 import * as _ from 'lodash';
 import {Configuration} from '../../components/config/Configuration';
