@@ -5,7 +5,8 @@ import {Injectable} from '@angular/core';
 import {Bottle, BottleMetadata, Position} from '../model/bottle';
 import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {AngularFireDatabase, FirebaseListObservable} from 'angularfire2/database';
+//import {AngularFireDatabase, FirebaseListObservable} from 'angularfire2/database';
+import {AngularFireDatabase} from 'angularfire2/database';
 import * as firebase from 'firebase/app';
 import * as moment from 'moment';
 import {LoginService} from './login.service';
@@ -21,11 +22,13 @@ import {User} from '../model/user';
 import {Subscription} from 'rxjs/Subscription';
 import {SimpleLocker} from '../model/simple-locker';
 import {Locker} from '../model/locker';
-import {Query} from 'angularfire2/database/interfaces';
+//import {Query} from 'angularfire2/database/interfaces';
 import {Withdrawal} from '../model/withdrawal';
 import {BottleNoting} from '../components/bottle-noting/bottle-noting.component';
 import Reference = firebase.database.Reference;
 import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
+import { Reference as FbStorageTypesReference } from '@firebase/storage-types';
+import {of} from 'rxjs/observable/of';
 
 /**
  * Services related to the bottles in the cellar.
@@ -34,49 +37,38 @@ import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
  */
 @Injectable()
 export class FirebaseConnectionService {
-  public USER_ROOT: string;
   static USERS_FOLDER = 'users';
-  private userRootRef: Reference;
-
-  public IMAGES_ROOT: string;
-  private IMAGES_FOLDER = 'images';
-  private imageStorageRef: firebase.storage.Reference;
-
-  public SHARED_ROOT: string;
-  private SHARED_FOLDER = 'shared';
-  private sharedDataRef: firebase.storage.Reference;
   static NOTATION_FOLDER = 'notation';
-
-  private BOTTLES_ROOT: string;
   static BOTTLES_FOLDER = 'bottles';
+  private static CELLAR_FOLDER = 'cellar';
+  private static WITHDRAW_FOLDER = 'withdraw';
+  private static LOCKER_CONTENT_FOLDER = 'content';
+  private static PROFILE_CONTENT_FOLDER = 'profile';
+  private static ERROR_CONTENT_FOLDER: string = 'error';
+  public USER_ROOT: string;
+  public IMAGES_ROOT: string;
+  public SHARED_ROOT: string;
+  public XREF_ROOT: string;
+  protected XREF_FOLDER = 'xref';
+  private userRootRef: Reference;
+  private IMAGES_FOLDER = 'images';
+  private imageStorageRef: FbStorageTypesReference;
+  private SHARED_FOLDER = 'shared';
+  private sharedDataRef: FbStorageTypesReference;
+  private BOTTLES_ROOT: string;
   private bottlesRootRef: Reference;
   private _bottles: BehaviorSubject<Bottle[]>;
-  private _allBottlesObservable: Observable<Bottle[]>;
   private firebaseBottlesSub: Subscription;
-
   private CELLAR_ROOT: string;
-  private static CELLAR_FOLDER = 'cellar';
   private cellarRootRef: Reference;
-
   private WITHDRAW_ROOT: string;
-  private static WITHDRAW_FOLDER = 'withdraw';
   private withdrawRootRef: Reference;
-
   private LOCKER_CONTENT_ROOT: string;
-  private static LOCKER_CONTENT_FOLDER = 'content';
   private lockerContentRootRef: Reference;
-
   private PROFILE_ROOT: string;
-  private static PROFILE_CONTENT_FOLDER = 'profile';
   private profileRootRef: Reference;
-
   private ERROR_ROOT: string;
-  private static ERROR_CONTENT_FOLDER: string = 'error';
   private errorRootRef: Reference;
-
-  protected XREF_FOLDER = 'xref';
-  public XREF_ROOT: string;
-
   private _uploadProgressEvent: Subject<number> = new Subject<number>();
   private connectionAllowed: boolean = true;
   private namingStrategy: NamingStrategy;
@@ -86,6 +78,14 @@ export class FirebaseConnectionService {
               private notificationService: NotificationService,
               private platform: Platform) {
     this.namingStrategy = new NamingStrategy();
+  }
+
+  private _allBottlesObservable: Observable<Bottle[]>;
+
+  get allBottlesObservable(): Observable<Bottle[ ]> {
+    this._bottles = new BehaviorSubject<Bottle[]>([]);
+    this._allBottlesObservable = this._bottles.asObservable();
+    return this._allBottlesObservable;
   }
 
   public initialize(user: User) {
@@ -114,14 +114,6 @@ export class FirebaseConnectionService {
     this.sharedDataRef = this.angularFirebase.app.storage().ref(this.SHARED_ROOT);
 
     this.initLogging();
-  }
-
-  private initLogging() {
-    this.errorRootRef.once('value', (snap: firebase.database.DataSnapshot) => {
-      if (snap.numChildren() > 3) {
-        this.errorRootRef.limitToFirst(1).ref.remove();
-      }
-    })
   }
 
   public cleanup() {
@@ -175,38 +167,15 @@ export class FirebaseConnectionService {
     })
   }
 
-  //public fetchAllWithdrawals(): Observable<Withdrawal[]> {
-  //  let items= this.angularFirebase
-  //    .list(this.WITHDRAW_ROOT, {
-  //      query: {
-  //        orderByChild: 'withdrawal_date',
-  //        limitToLast: 30
-  //      }
-  //    });
-  //    items.subscribe(
-  //      (withdrawals: Withdrawal[]) => {
-  //        if (withdrawals.length > 0) {
-  //          return this.withdrawalFactory.createAll(withdrawals).map(
-  //            wth => {
-  //              wth[ 'id' ] = wth[ '$key' ];
-  //              return wth;
-  //            }
-  //          );
-  //        }
-  //        return withdrawals
-  //      }
-  //    );
-  //  return items;
-  //}
-
   public fetchAllWithdrawals(): Observable<Withdrawal[]> {
     return this.angularFirebase
-      .list(this.WITHDRAW_ROOT, {
-        query: {
-          orderByChild: 'withdrawal_date',
-          limitToLast: 30
-        }
-      })
+      .list<Withdrawal>(this.WITHDRAW_ROOT).valueChanges()
+                        //, {
+                        //  query: {
+                        //    orderByChild: 'withdrawal_date',
+                        //    limitToLast: 30
+                        //  }
+                        //})
       .map(
         (withdrawals: Withdrawal[]) => {
           if (withdrawals.length > 0) {
@@ -245,11 +214,12 @@ export class FirebaseConnectionService {
   // ===================================================== LOCKERS
   public fetchAllLockers(): Observable<Locker[]> {
     return this.angularFirebase
-      .list(this.CELLAR_ROOT, {
-        query: {
-          orderByChild: 'lastUpdated'
-        }
-      })
+      .list<Locker>(this.CELLAR_ROOT).valueChanges()
+      //, {
+      //  query: {
+      //    orderByChild: 'lastUpdated'
+      //  }
+      //})
       .map(
         (lockers: Locker[]) => {
           if (lockers.length > 0) {
@@ -297,12 +267,6 @@ export class FirebaseConnectionService {
 
 // ===================================================== BOTTLES
 
-  get allBottlesObservable(): Observable<Bottle[ ]> {
-    this._bottles = new BehaviorSubject<Bottle[]>([]);
-    this._allBottlesObservable = this._bottles.asObservable();
-    return this._allBottlesObservable;
-  }
-
   /**
    * récupérer du cache si il y en a un.
    * prendre la date de mise à jour la plus récente dans le cache et aller chercher en DB les màj plus récentes que
@@ -313,49 +277,6 @@ export class FirebaseConnectionService {
   public fetchAllBottles() {
     this.notificationService.debugAlert('fetchAllBottles()');
     this.firebaseBottlesSub = this.fetchAllBottlesFromDB();
-  }
-
-  //============== NO CACHE AVAILABLE
-  private fetchAllBottlesFromDB(): Subscription {
-    this.notificationService.debugAlert('fetchAllBottlesFromDB()');
-    let items = this.angularFirebase.list(this.BOTTLES_ROOT, {
-      query: {
-        orderByChild: 'lastUpdated'
-      }
-    });
-
-    return items.subscribe(
-      (bottles: Bottle[]) => {
-        if (bottles.length > 0) {
-          //prepare loaded bottles for the app
-          this._bottles.next(bottles.map(
-            (bottle: Bottle) => this.bottleFactory.create(bottle))
-          );
-        }
-      },
-      error => {
-        this._bottles.error(error);
-      },
-      () => this._bottles.complete()
-    );
-  }
-
-  /**
-   * query the db and loads all bottles updated after the most recent one in the cache
-   * return the corresponding observable.
-   * @param fromLastUpdated most recent known bottle in cache
-   */
-  private queryOrderByLastUpdate(fromLastUpdated: number): FirebaseListObservable<any[ ]> {
-    if (isNaN(fromLastUpdated)
-    ) {
-      fromLastUpdated = 0;
-    }
-    let query = {
-      orderByChild: 'lastUpdated',
-      startAt: fromLastUpdated
-    };
-
-    return this.angularFirebase.list(this.BOTTLES_ROOT, {query});
   }
 
   //============================= Image management
@@ -393,14 +314,16 @@ export class FirebaseConnectionService {
       this.notificationService.failed('app.unavailable-function');
       return undefined;
     }
-    return this.angularFirebase.list(this.XREF_ROOT, {
-                                       query: {
-                                         limitToFirst: 10,
-                                         orderByChild: 'bottleId',
-                                         equalTo: bottle.id
-                                       }
-                                     }
-    );
+    return this.angularFirebase.list<Image>(this.XREF_ROOT
+    //  , {
+    //                                   query: {
+    //                                     limitToFirst: 10,
+    //                                     orderByChild: 'bottleId',
+    //                                     equalTo: bottle.id
+    //                                   }
+    //                                 }
+    //);
+    ).valueChanges();
   }
 
   /**
@@ -426,67 +349,6 @@ export class FirebaseConnectionService {
           this.notificationService.error('Une erreur s\'est produite en tentant d\'enregistrer l\'image dans la base' +
             ' de données', error);
         });
-  }
-
-  private uploadToStorage(imageBlob, name: string): Promise<UploadTaskSnapshot> {
-    let fileName = name + '-' + new Date().getTime() + '.jpg';
-
-    return new Promise<UploadTaskSnapshot>((resolve, reject) => {
-
-      let fileRef = this.imageStorageRef.child(fileName);
-      let uploadTask = fileRef.put(imageBlob);
-
-      uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
-                    (snapshot) => {
-                      let progress = (uploadTask.snapshot.bytesTransferred / uploadTask.snapshot.totalBytes) * 100;
-                      this._uploadProgressEvent.next(Math.round(progress));
-                    },
-                    (error) => {
-                      reject(error);
-                    },
-                    () => {
-                      resolve(uploadTask.snapshot);
-                    })
-    });
-  }
-
-  private saveToDatabaseAssetList(uploadSnapshot, meta: BottleMetadata): Promise<UploadMetadata> {
-    let ref = firebase.database().ref(this.XREF_ROOT);
-
-    return new Promise((resolve, reject) => {
-
-      // we will save meta data of image in database
-      let dataToSave = {
-        'URL': uploadSnapshot.downloadURL, // url to access file
-        'name': uploadSnapshot.metadata.name, // name of the file
-        'owner': firebase.auth().currentUser.uid,
-        'email': firebase.auth().currentUser.email,
-        'lastUpdated': new Date().getTime(),
-        'keywords': meta.keywords,
-        'subregion_label': meta.subregion_label,
-        'area_label': meta.area_label,
-        'nomCru': meta.nomCru,
-      };
-
-      ref.push(dataToSave, (response) => {
-        //la réponse est null, donc on renvoie ce qui nous intéresse
-        resolve(this.getUploadImageMeta(uploadSnapshot));
-      }).catch((_error) => {
-        reject(_error);
-      });
-    });
-  }
-
-  private getUploadImageMeta(snap): UploadMetadata {
-    return {
-      downloadURL: snap.downloadURL,
-      imageName: snap.metadata.name,
-      contentType: snap.metadata.contentType,
-      totalBytes: snap.totalBytes,
-      updated: snap.metadata.updated,
-      timeCreated: snap.metadata.timeCreated,
-      uploadState: snap.state
-    }
   }
 
   // ======================== Gestion des bouteilles
@@ -636,12 +498,13 @@ export class FirebaseConnectionService {
   }
 
   getMostUsedQueries(nb: number): Observable<SearchCriteria[]> {
-    let query: Query = {
-      orderByChild: 'lastUpdated',
-      limitToLast: nb
-    };
+    //let query: Query = {
+    //  orderByChild: 'lastUpdated',
+    //  limitToLast: nb
+    //};
 
-    return this.angularFirebase.list(this.PROFILE_ROOT, {query})
+    return this.angularFirebase.list<SearchCriteria>(this.PROFILE_ROOT).valueChanges()
+      //, {query})
       .flatMap(arr => {
         if (arr) {
           return Observable.of(arr.reverse());
@@ -688,6 +551,119 @@ export class FirebaseConnectionService {
 
   deleteLogs() {
     this.errorRootRef.remove()
+  }
+
+  private initLogging() {
+    this.errorRootRef.once('value', (snap: firebase.database.DataSnapshot) => {
+      if (snap.numChildren() > 3) {
+        this.errorRootRef.limitToFirst(1).ref.remove();
+      }
+    })
+  }
+
+  //============== NO CACHE AVAILABLE
+  private fetchAllBottlesFromDB(): Subscription {
+    this.notificationService.debugAlert('fetchAllBottlesFromDB()');
+    let items = this.angularFirebase.list<Bottle>(this.BOTTLES_ROOT).valueChanges();
+    //  , {
+    //  query: {
+    //    orderByChild: 'lastUpdated'
+    //  }
+    //});
+
+    return items.subscribe(
+      (bottles: Bottle[]) => {
+        if (bottles.length > 0) {
+          //prepare loaded bottles for the app
+          this._bottles.next(bottles.map(
+            (bottle: Bottle) => this.bottleFactory.create(bottle))
+          );
+        }
+      },
+      error => {
+        this._bottles.error(error);
+      },
+      () => this._bottles.complete()
+    );
+  }
+
+  /**
+   * query the db and loads all bottles updated after the most recent one in the cache
+   * return the corresponding observable.
+   * @param fromLastUpdated most recent known bottle in cache
+   */
+  //private queryOrderByLastUpdate(fromLastUpdated: number): FirebaseListObservable<any[ ]> {
+  private queryOrderByLastUpdate(fromLastUpdated: number): Observable<Bottle[ ]> {
+    if (isNaN(fromLastUpdated)
+    ) {
+      fromLastUpdated = 0;
+    }
+    let query = {
+      orderByChild: 'lastUpdated',
+      startAt: fromLastUpdated
+    };
+
+    return this.angularFirebase.list<Bottle>(this.BOTTLES_ROOT).valueChanges();
+      //, {query});
+  }
+
+  private uploadToStorage(imageBlob, name: string): Promise<UploadTaskSnapshot> {
+    let fileName = name + '-' + new Date().getTime() + '.jpg';
+
+    return new Promise<UploadTaskSnapshot>((resolve, reject) => {
+
+      let fileRef = this.imageStorageRef.child(fileName);
+      let uploadTask = fileRef.put(imageBlob);
+
+      uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
+                    (snapshot) => {
+                      let progress = (uploadTask.snapshot.bytesTransferred / uploadTask.snapshot.totalBytes) * 100;
+                      this._uploadProgressEvent.next(Math.round(progress));
+                    },
+                    (error) => {
+                      reject(error);
+                    },
+                    () => {
+                      resolve(uploadTask.snapshot as any);
+                    });
+    });
+  }
+
+  private saveToDatabaseAssetList(uploadSnapshot, meta: BottleMetadata): Promise<UploadMetadata> {
+    let ref = firebase.database().ref(this.XREF_ROOT);
+
+    return new Promise((resolve, reject) => {
+
+      // we will save meta data of image in database
+      let dataToSave = {
+        'URL': uploadSnapshot.downloadURL, // url to access file
+        'name': uploadSnapshot.metadata.name, // name of the file
+        'owner': firebase.auth().currentUser.uid,
+        'email': firebase.auth().currentUser.email,
+        'lastUpdated': new Date().getTime(),
+        'keywords': meta.keywords,
+        'subregion_label': meta.subregion_label,
+        'area_label': meta.area_label,
+        'nomCru': meta.nomCru,
+      };
+
+      ref.push(dataToSave, (response) => {
+        //la réponse est null, donc on renvoie ce qui nous intéresse
+        resolve(this.getUploadImageMeta(uploadSnapshot));
+      });
+    });
+  }
+
+  private getUploadImageMeta(snap): UploadMetadata {
+    return {
+      downloadURL: snap.downloadURL,
+      imageName: snap.metadata.name,
+      contentType: snap.metadata.contentType,
+      totalBytes: snap.totalBytes,
+      updated: snap.metadata.updated,
+      timeCreated: snap.metadata.timeCreated,
+      uploadState: snap.state
+    }
   }
 }
 
