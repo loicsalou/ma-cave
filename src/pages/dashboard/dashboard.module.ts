@@ -1,7 +1,6 @@
 import {NgModule, NO_ERRORS_SCHEMA} from '@angular/core';
 import {IonicModule, IonicPageModule} from 'ionic-angular';
 import {DashboardPage} from './dashboard';
-import {StatisticsComponentModule} from '../../components/statistics/statistics.component.module';
 import {TranslateModule} from '@ngx-translate/core';
 import {NativeStorageService} from '../../service/native-storage.service';
 import {PopoverPage} from './popover.page';
@@ -18,7 +17,6 @@ import {SharedModule} from '../../components/shared.module';
               BrowserModule,
               SharedModule,
               IonicPageModule.forChild(DashboardPage),
-              StatisticsComponentModule,
               TranslateModule
             ],
             exports: [
