@@ -1,61 +1,37 @@
 import {NgModule} from '@angular/core';
 import {AlertController, IonicApp, IonicModule, LoadingController, ToastController} from 'ionic-angular';
 import {MyCaveApp} from './app.component';
-import {ContactPage} from '../pages/contact/contact';
-import {HomePage} from '../pages/home/home';
-import {TabsPage} from '../pages/tabs/tabs';
-import {BrowsePage} from '../pages/browse/browse.page';
-import {BottlePersistenceService} from '../service/bottle-persistence.service';
-import {DistributeService} from '../service/distribute.service';
+import {ContactPage} from '../_features/admin/contact/contact';
+import {HomePage} from './home/home';
+import {TabsPage} from './tabs/tabs';
+import {BrowsePage} from '../_features/browse/browse/browse.page';
 import {TranslateLoader, TranslateModule, TranslateService} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
-import {BottleDetailPage} from '../pages/bottle-detail/page-bottle-detail';
-import {UpdatePage} from '../pages/update/update.page';
-import {StatusBar} from '@ionic-native/status-bar';
-import {SplashScreen} from '@ionic-native/splash-screen';
+import {BottleDetailPage} from '../_features/browse/bottle-detail/page-bottle-detail';
+import {UpdatePage} from '../_features/browse/update/update.page';
 import {BrowserModule} from '@angular/platform-browser';
-import {AngularFireModule} from 'angularfire2';
-import {AngularFireAuthModule} from 'angularfire2/auth';
-import {AngularFireDatabaseModule} from 'angularfire2/database';
-import {BottleFactory} from '../model/bottle.factory';
-import {UploadBottlesModule} from '../pages/upload-bottles/upload-bottles.page.module';
-import {UploadBottlesPage} from '../pages/upload-bottles/upload-bottles.page';
 import {ChartsModule} from 'ng2-charts';
 import '../../node_modules/chart.js/dist/Chart.bundle.min.js';
-import {EmailLoginPage} from '../pages/login/email-login.page';
-import {ImagePersistenceService} from '../service/image-persistence.service';
-import {Bottles} from '../config/Bottles';
+import {EmailLoginPage} from '../_features/admin/login/email-login.page';
 import {AnonymousLoginService} from '../service/anonymous-login.service';
 import {EmailLoginService} from '../service/email-login.service';
-import {Facebook} from '@ionic-native/facebook';
 import {LoginService} from '../service/login.service';
 import {FacebookLoginService} from '../service/facebook-login.service';
-import {DashboardPage} from '../pages/dashboard/dashboard';
-import {ProfilePageModule} from '../pages/profile/profile.module';
+import {DashboardPage} from '../_features/browse/dashboard/dashboard';
+import {AdminFeatureModule} from '../_features/admin/admin-feature.module';
 import {NotificationService} from '../service/notification.service';
 import {DefaultImageDirective} from '../directives/default-image/default-image';
-import {DashboardPageModule} from '../pages/dashboard/dashboard.module';
-import {StatisticsComponent} from '../components/statistics/statistics.component';
-import {Statistics} from '../model/statistics';
 import {SharedModule} from '../components/shared.module';
-import {BrowseModule} from '../pages/browse/browse.module';
-import {BottleDetailModule} from '../pages/bottle-detail/bottle-detail.module';
-import {LockerFactory} from '../model/locker.factory';
-import {CellarPage} from '../pages/cellar/cellar.page';
-import {CellarPageModule} from '../pages/cellar/cellar.page.module';
-import {FirebaseConnectionService} from '../service/firebase-connection.service';
+import {BrowseModule} from '../_features/browse/browse.module';
+import {BottleDetailModule} from '../_features/browse/bottle-detail/bottle-detail.module';
+import {CellarPage} from '../_features/racks/cellar/cellar.page';
+import {CellarPageModule} from '../_features/racks/cellar.page.module';
 import {NativeStorageService} from '../service/native-storage.service';
-import {NativeStorage} from '@ionic-native/native-storage';
 import {LocalLoginService} from '../service/local-login.service';
-import {LocalLoginPage} from '../pages/login/local-login.page';
-import {LockerEditorPageModule} from '../pages/locker-editor/locker-editor.page.module';
-import {LockerEditor2PageModule} from '../pages/locker-editor2/locker-editor2.page.module';
-import {AndroidPermissions} from '@ionic-native/android-permissions';
+import {LocalLoginPage} from '../_features/admin/login/local-login.page';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
-import {TestPageModule} from '../pages/test/test.module';
 import {GoogleLoginService} from '../service/google-login.service';
-import {GooglePlus} from '@ionic-native/google-plus';
-import {WithdrawalFactory} from '../model/withdrawal.factory';
+import {CoreModule} from './core.module';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -76,20 +52,14 @@ export const fireConfig = {
               TabsPage
             ],
             imports: [
-              IonicModule.forRoot(MyCaveApp),
-              AngularFireModule.initializeApp(fireConfig),
-              AngularFireAuthModule,
-              AngularFireDatabaseModule,
-              BottleDetailModule,
-              BrowseModule,
               BrowserModule,
+              IonicModule.forRoot(MyCaveApp),
+              CoreModule,
+              BrowseModule,
               CellarPageModule,
               ChartsModule,
-              LockerEditorPageModule,
-              LockerEditor2PageModule,
-              DashboardPageModule,
               HttpClientModule,
-              ProfilePageModule,
+              AdminFeatureModule,
               SharedModule,
               TranslateModule.forRoot({
                                         loader: {
@@ -97,9 +67,7 @@ export const fireConfig = {
                                           useFactory: (createTranslateLoader),
                                           deps: [ HttpClient ]
                                         }
-                                      }),
-              UploadBottlesModule,
-              TestPageModule
+                                      })
             ],
             bootstrap: [ IonicApp ],
             entryComponents: [
@@ -109,47 +77,11 @@ export const fireConfig = {
               ContactPage,
               DashboardPage,
               EmailLoginPage,
-              LocalLoginPage,
               HomePage,
+              LocalLoginPage,
               MyCaveApp,
               TabsPage,
-              UploadBottlesPage,
               UpdatePage
-            ],
-            providers: [
-              AnonymousLoginService,
-              BottleFactory,
-              WithdrawalFactory,
-              Bottles,
-              BottlePersistenceService,
-              AndroidPermissions,
-              DistributeService,
-              EmailLoginService,
-              Facebook,
-              FacebookLoginService,
-              GooglePlus,
-              HttpClient,
-              ImagePersistenceService,
-              FirebaseConnectionService,
-              LocalLoginService,
-              GoogleLoginService,
-              LockerFactory,
-              {
-                provide: LoginService,
-                useFactory: (createLoginFactory),
-                deps: [ AnonymousLoginService, EmailLoginService, FacebookLoginService, LocalLoginService, GoogleLoginService,
-                  NotificationService, NativeStorageService ]
-              },
-              NativeStorage,
-              NativeStorageService,
-              {
-                provide: NotificationService,
-                useFactory: (createNotificationFactory),
-                deps: [ AlertController, ToastController, TranslateService, LoadingController ]
-              },
-              SplashScreen,
-              StatusBar,
-              TranslateService
             ],
             exports: [
               DefaultImageDirective

@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {Bottle} from '../../model/bottle';
 import {ItemSliding, NavController} from 'ionic-angular';
-import {CellarPage} from '../../pages/cellar/cellar.page';
+import {CellarPage} from '../../_features/racks/cellar/cellar.page';
 import {NativeProvider} from '../../providers/native/native';
 import {SelectedEvent} from './selected-event';
 

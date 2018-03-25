@@ -3,7 +3,7 @@ import {Platform} from 'ionic-angular';
 import {TranslateService} from '@ngx-translate/core';
 import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
-import {HomePage} from '../pages/home/home';
+import {HomePage} from './home/home';
 
 @Component({
              templateUrl: 'app.html'

@@ -19,6 +19,10 @@ import {TranslateModule} from '@ngx-translate/core';
 import {BottleNotingComponent} from './bottle-noting/bottle-noting.component';
 import {BottleItemComponent} from './list/bottle-item.component';
 import {WithdrawalItemComponent} from './withdrawal-item/withdrawal-item.component';
+import {StatisticsComponent} from './statistics/statistics.component';
+import {DistributionComponent} from './distribution/distribution';
+import {SimpleLockerComponent} from './locker/simple-locker.component';
+import {FridgeLockerComponent} from './locker/fridge-locker.component';
 
 @NgModule({
             declarations: [
@@ -27,9 +31,13 @@ import {WithdrawalItemComponent} from './withdrawal-item/withdrawal-item.compone
               BottleNotingComponent,
               ChartComponent,
               DefaultImageDirective,
+              DistributionComponent,
+              FridgeLockerComponent,
               ImageAttacherComponent,
               ProgressBarComponent,
               RatingComponent,
+              SimpleLockerComponent,
+              StatisticsComponent,
               WithdrawalItemComponent
             ],
             imports: [
@@ -44,9 +52,13 @@ import {WithdrawalItemComponent} from './withdrawal-item/withdrawal-item.compone
               BottleNotingComponent,
               ChartComponent,
               DefaultImageDirective,
+              DistributionComponent,
+              FridgeLockerComponent,
               ImageAttacherComponent,
               ProgressBarComponent,
               RatingComponent,
+              SimpleLockerComponent,
+              StatisticsComponent,
               WithdrawalItemComponent
             ],
             providers: [
