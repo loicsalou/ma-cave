@@ -25,7 +25,7 @@
   </ion-item>
   
   <ion-item>
-    <button ion-button type="submit" [disabled]="!notingForm.valid" style="padding: 5px 15px 5px 15px">Noter
+    <button ion-button type="submit" [disabled]="! isFormValid()" style="padding: 5px 15px 5px 15px">Noter
     </button>
     <button ion-button (click)="notingForm.reset();cancelRating()">Annuler</button>
   </ion-item>

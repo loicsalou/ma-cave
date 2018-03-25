@@ -17,11 +17,7 @@ import {BottleIconPipe} from '../components/list/bottle-icon.pipe';
 export class BottleFactory {
   currentYear = new Date().getFullYear();
 
-  constructor(private i18n: TranslateService, private _stats: Statistics) {
-  }
-
-  get stats(): Statistics {
-    return this._stats;
+  constructor(private i18n: TranslateService) {
   }
 
   public create(bottle: Bottle): Bottle {

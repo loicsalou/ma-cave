@@ -1,8 +1,9 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 @Component({
              selector: 'chart',
-             templateUrl: './chart.component.html'
+             templateUrl: './chart.component.html',
+             changeDetection: ChangeDetectionStrategy.OnPush
            })
 export class ChartComponent implements OnInit {
 

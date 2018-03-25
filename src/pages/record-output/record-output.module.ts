@@ -4,6 +4,7 @@ import {RecordOutputPage} from './record-output';
 import {CommonModule, NgSwitch} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {SharedModule} from '../../components/shared.module';
+import {TranslateModule} from '@ngx-translate/core';
 
 @NgModule({
             declarations: [
@@ -13,6 +14,7 @@ import {SharedModule} from '../../components/shared.module';
               FormsModule,
               CommonModule,
               IonicPageModule.forChild(RecordOutputPage),
+              TranslateModule.forChild(),
               SharedModule
             ],
             exports: [ NgSwitch ],

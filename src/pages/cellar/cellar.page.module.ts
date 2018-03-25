@@ -14,6 +14,7 @@ import {FirebaseConnectionService} from '../../service/firebase-connection.servi
 import {LockerEditor2Page} from '../locker-editor2/locker-editor2.page';
 import {LockerEditor2PageModule} from '../locker-editor2/locker-editor2.page.module';
 import {RecordOutputPageModule} from '../record-output/record-output.module';
+import {TranslateModule} from '@ngx-translate/core';
 
 @NgModule({
             declarations: [
@@ -28,7 +29,8 @@ import {RecordOutputPageModule} from '../record-output/record-output.module';
               LockerEditorPageModule,
               LockerEditor2PageModule,
               RecordOutputPageModule,
-              SharedModule
+              SharedModule,
+              TranslateModule.forChild()
             ],
             exports: [
               CellarPage,

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {Bottle} from '../../model/bottle';
 import {TranslateService} from '@ngx-translate/core';
 import {Rating} from '../rating/rating';
@@ -13,7 +13,8 @@ import {NgForm} from '@angular/forms';
 @Component({
              selector: 'bottle-noting',
              templateUrl: 'bottle-noting.component.html',
-             styleUrls: [ '/bottle-noting.component.scss' ]
+             styleUrls: [ '/bottle-noting.component.scss' ],
+             changeDetection: ChangeDetectionStrategy.OnPush
            })
 export class BottleNotingComponent {
   @Input()
@@ -23,7 +24,6 @@ export class BottleNotingComponent {
 
   quality: Rating = undefined;
   maturity: Rating = undefined;
-  maturityNote: number = undefined;
   pleasurePrice: Rating = undefined;
   comments: string = undefined;
 
@@ -49,17 +49,17 @@ export class BottleNotingComponent {
     );
   }
 
-  setGlobalQuality(note: Rating) {
-    this.quality = note;
-  }
-
-  setMaturity(note: number) {
+  set maturityNote(note: number) {
     this.maturity = {
-      note: this.maturityNote,
+      note: note,
       noteMax: this.maturityTexts.length,
       label: this.maturityLabels[ note ],
       text: this.maturityTexts[ note ]
     };
+  }
+
+  setGlobalQuality(note: Rating) {
+    this.quality = note;
   }
 
   setPleasurePrice(note: Rating) {
@@ -71,8 +71,7 @@ export class BottleNotingComponent {
   }
 
   submitRating() {
-    if (this.validateNotes()) {
-      this.setMaturity(this.maturityNote);
+    if (this.isFormValid()) {
       this.noted.emit({
                         quality: this.quality,
                         maturity: this.maturity,
@@ -82,7 +81,7 @@ export class BottleNotingComponent {
     }
   }
 
-  private validateNotes(): boolean {
+  isFormValid(): boolean {
     if (this.comments === undefined) {
       this.comments = '';
     }

@@ -1,5 +1,5 @@
 import {Pipe, PipeTransform} from '@angular/core';
-import {Configuration} from '../config/Configuration';
+import {Configuration} from '../../config/Configuration';
 
 /*
  * get the icon matching the wine
@@ -15,6 +15,6 @@ export class BottleIconPipe implements PipeTransform {
   }
 
   getColor(label: string): string {
-    return Configuration.colorsText2Code[ label.toLowerCase() ];
+    return label===undefined ? 'undefined' : Configuration.colorsText2Code[ label.toLowerCase() ];
   }
 }

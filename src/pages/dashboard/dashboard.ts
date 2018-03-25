@@ -82,8 +82,9 @@ export class DashboardPage implements OnInit, OnDestroy {
         //this.allWithdrawals = withdrawals;
         //this.doInfinite(null);
       },
-      () => {
-        this.notificationService.error('messages.withdrawals-load-error')
+      (err) => {
+        this.notificationService.error('messages.withdrawals-load-error');
+        console.error('DashboardPage.ngOnInit: ' + err);
       }
     );
 

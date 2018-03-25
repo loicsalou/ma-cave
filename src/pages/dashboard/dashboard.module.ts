@@ -6,11 +6,13 @@ import {NativeStorageService} from '../../service/native-storage.service';
 import {PopoverPage} from './popover.page';
 import {BrowserModule} from '@angular/platform-browser';
 import {SharedModule} from '../../components/shared.module';
+import {StatisticsComponent} from '../../components/statistics/statistics.component';
 
 @NgModule({
             declarations: [
               DashboardPage,
-              PopoverPage
+              PopoverPage,
+              StatisticsComponent
             ],
             imports: [
               IonicModule,
