@@ -1,8 +1,8 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
-import {Bottle} from '../../model/bottle';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
 import {Rating} from '../rating/rating';
 import {NgForm} from '@angular/forms';
+import {Withdrawal} from '../../model/withdrawal';
 
 /**
  * Generated class for the BottleNotingComponent component.
@@ -14,11 +14,11 @@ import {NgForm} from '@angular/forms';
              selector: 'bottle-noting',
              templateUrl: 'bottle-noting.component.html',
              styleUrls: [ '/bottle-noting.component.scss' ],
-             changeDetection: ChangeDetectionStrategy.OnPush
+             changeDetection: ChangeDetectionStrategy.Default
            })
-export class BottleNotingComponent {
+export class BottleNotingComponent implements OnInit {
   @Input()
-  bottle: Bottle;
+  bottle: Withdrawal;
   @Output()
   noted: EventEmitter<BottleNoting> = new EventEmitter();
 
@@ -49,6 +49,10 @@ export class BottleNotingComponent {
     );
   }
 
+  get maturityNote(): number {
+    return this.maturity ? this.maturity.note : undefined;
+  }
+
   set maturityNote(note: number) {
     this.maturity = {
       note: note,
@@ -56,6 +60,15 @@ export class BottleNotingComponent {
       label: this.maturityLabels[ note ],
       text: this.maturityTexts[ note ]
     };
+  }
+
+  ngOnInit() {
+    if (this.bottle.notation) {
+      this.quality = this.bottle.notation.quality;
+      this.maturity = this.bottle.notation.maturity;
+      this.pleasurePrice = this.bottle.notation.pleasurePrice;
+      this.comments = this.bottle.notation.comments;
+    }
   }
 
   setGlobalQuality(note: Rating) {
