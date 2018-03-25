@@ -1,5 +1,6 @@
 import {Pipe, PipeTransform} from '@angular/core';
 import {Configuration} from '../config/Configuration';
+
 /*
  * get the icon matching the wine
  */

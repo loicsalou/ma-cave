@@ -18,13 +18,13 @@ import {Subscription} from 'rxjs/Subscription';
 export class ImageAttacherComponent {
   progress: number;
   progressSubscription: Subscription;
-  private loadingInProgress: boolean = false;
   @Input()
   metadata: BottleMetadata;
   @Output()
   imageUrl: EventEmitter<string> = new EventEmitter<string>();
   @Output()
   error: EventEmitter<any> = new EventEmitter<any>();
+  private loadingInProgress: boolean = false;
 
   constructor(private camera: Camera, private imageService: ImagePersistenceService, private notificationService: NotificationService) {
     this.progressSubscription = this.imageService.progressEvent.subscribe(

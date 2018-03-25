@@ -8,10 +8,6 @@ import * as _ from 'lodash';
  */
 export class Configuration {
 
-  private static SPECIAL_CHARS_REMOVED = new RegExp(/[\.|\d|\n|\r|,|!|?|@]/g);
-  private static SEARCH_STRING_REMOVED_CHARS = new RegExp(/[\ |\-|\.|\d|\n|\r|,|!|?|@]/g);
-  trads = require('../../assets/i18n/fr.json');
-
   public static regionsText2Code = {
     'Alsace et Lorraine': 'alsace',
     'Beaujolais': 'beaujolais',
@@ -27,7 +23,6 @@ export class Configuration {
     'Vallée du Rhône': 'rhone',
     'Sud-Ouest': 'sud-ouest'
   }
-
   public static colorsText2Code = {
     'rouge': 'red',
     'blanc': 'white',
@@ -42,6 +37,9 @@ export class Configuration {
     'vin de paille': 'straw',
     'blanc liquoreux': 'liquorous'
   }
+  private static SPECIAL_CHARS_REMOVED = new RegExp(/[\.|\d|\n|\r|,|!|?|@]/g);
+  private static SEARCH_STRING_REMOVED_CHARS = new RegExp(/[\ |\-|\.|\d|\n|\r|,|!|?|@]/g);
+  trads = require('../../assets/i18n/fr.json');
 
   /**
    * get the search string corresponding to the given text.

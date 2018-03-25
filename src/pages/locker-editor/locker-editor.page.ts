@@ -31,13 +31,11 @@ export class LockerEditorPage {
   type: LockerType;
   //locker normal
   lockerDimension: Dimension;
+  fridgeDimension: Dimension;
+  fridgeLockersDimensions: Dimension[] = [];
   private locker: Locker;
-
   //locker composite (ex. frigo)
   private fridge: FridgeLocker;
-  fridgeDimension: Dimension;
-
-  fridgeLockersDimensions: Dimension[]=[];
 
   constructor(private navController: NavController, params: NavParams, private cellarService: CellarPersistenceService) {
     this.lockerTypes = [
@@ -69,16 +67,28 @@ export class LockerEditorPage {
     this.supportedFormats = this.getDefaultSupportedFormats();
   }
 
+  private static getDefaultLockerDimensions(): Dimension {
+    return <Dimension>{x: 4, y: 4};
+  }
+
+  private static getDefaultFridgeDimensions(): Dimension {
+    // pour l'instant en tout cas je considère qu'il n'y a qu'une colonne dans un frigo ce qui est le cas en principe
+    // la largeur ne sera donc pas éditable au moins dans un premier temps
+    return <Dimension>{x: 1, y: 5};
+  }
+
+  private static getDefaultFridgeLockersDimensions(): Array<Dimension> {
+    let def = new Array(LockerEditorPage.getDefaultFridgeDimensions().y);
+    def.fill(LockerEditorPage.getDefaultFridgeDimensions());
+    return <Dimension[]>def;
+  }
+
   test() {
     console.info();
   }
 
   isFridge(): boolean {
     return this.type === LockerType.fridge;
-  }
-
-  private getDefaultSupportedFormats(): BottleSize[] {
-    return this.lockerFormats.slice(0, 6);
   }
 
   saveLocker() {
@@ -98,22 +108,10 @@ export class LockerEditorPage {
     while (this.fridgeDimension.y > this.fridgeLockersDimensions.length) {
       this.fridgeLockersDimensions.push(LockerEditorPage.getDefaultFridgeDimensions());
     }
-    this.fridgeLockersDimensions=this.fridgeLockersDimensions.slice(0,this.fridgeDimension.y);
+    this.fridgeLockersDimensions = this.fridgeLockersDimensions.slice(0, this.fridgeDimension.y);
   }
 
-  private static getDefaultLockerDimensions(): Dimension {
-    return <Dimension>{x: 4, y: 4};
-  }
-
-  private static getDefaultFridgeDimensions(): Dimension {
-    // pour l'instant en tout cas je considère qu'il n'y a qu'une colonne dans un frigo ce qui est le cas en principe
-    // la largeur ne sera donc pas éditable au moins dans un premier temps
-    return <Dimension>{x: 1, y: 5};
-  }
-
-  private static getDefaultFridgeLockersDimensions(): Array<Dimension> {
-    let def = new Array(LockerEditorPage.getDefaultFridgeDimensions().y);
-    def.fill(LockerEditorPage.getDefaultFridgeDimensions());
-    return <Dimension[]>def;
+  private getDefaultSupportedFormats(): BottleSize[] {
+    return this.lockerFormats.slice(0, 6);
   }
 }

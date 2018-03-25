@@ -25,17 +25,16 @@ export class DashboardPage implements OnInit, OnDestroy {
   version: any;
   bottles: Bottle[];
   totalNumberOfBottles: number = 0;
+  withdrawals: Withdrawal[] = [];
+  @ViewChild('withdrawals')
+  listComponent: BottleItemComponent;
+  @ViewChild(VirtualScroll) vs: VirtualScroll;
   private bottleSub: Subscription;
   private queriesSub: Subscription;
   private mostUsedQueries: SearchCriteria[];
   private popup: Loading;
-
-  withdrawals: Withdrawal[] = [];
   private allWithdrawals: Withdrawal[];
   private withdrawalsSub: Subscription;
-  @ViewChild('withdrawals')
-  listComponent: BottleItemComponent;
-  @ViewChild(VirtualScroll) vs: VirtualScroll;
   private withdrawalCardStyle: { 'min-height': string; 'height': string };
 
   constructor(public navCtrl: NavController, public loginService: LoginService, private notificationService: NotificationService,

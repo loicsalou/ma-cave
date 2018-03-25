@@ -20,21 +20,6 @@ import {TranslateService} from '@ngx-translate/core';
              templateUrl: './statistics.component.html'
            })
 export class StatisticsComponent implements OnInit, OnDestroy {
-// axes de distribution de la distribution courante
-  @Input()
-  axis: string;
-  @Input()
-  legend: string = 'none';
-  @Input()
-  topMost: number = 6;
-  @Input()
-  type: string = 'bar';
-
-  @Output()
-  filterApplied: EventEmitter<FilterSet> = new EventEmitter<FilterSet>();
-
-  ready = false;
-
   static STANDARD_COLORS = [
     'blue', 'red', 'orange', 'aqua', 'aquamarine', 'blueviolet', 'green', 'cornsilk', 'fuchsia', 'grey', 'black'
   ];
@@ -52,15 +37,11 @@ export class StatisticsComponent implements OnInit, OnDestroy {
     'vin de paille': '#ffbf00',
     'vin jaune': '#ffff00'
   };
-
-  totalNumberOfBottles: number = 0;
-  private totalNumberOfLots: number;
-
-  // Doughnut
-  public chartLabels: string[];
-  public chartData: number[];
-  public chartType: string = 'doughnut';
-  public chartColors: string[] = [];
+// axes de distribution de la distribution courante
+  @Input()
+  axis: string;
+  @Input()
+  legend: string = 'none';
   public chartOptions = {
     scaleShowVerticalLines: false,
     responsive: true,
@@ -68,6 +49,20 @@ export class StatisticsComponent implements OnInit, OnDestroy {
       position: this.legend ? this.legend : 'none'
     }
   };
+  @Input()
+  topMost: number = 6;
+  @Input()
+  type: string = 'bar';
+  @Output()
+  filterApplied: EventEmitter<FilterSet> = new EventEmitter<FilterSet>();
+  ready = false;
+  totalNumberOfBottles: number = 0;
+  // Doughnut
+  public chartLabels: string[];
+  public chartData: number[];
+  public chartType: string = 'doughnut';
+  public chartColors: string[] = [];
+  private totalNumberOfLots: number;
   private others: KeyValue[];
   private bottlesSub: Subscription;
 
@@ -84,22 +79,6 @@ export class StatisticsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.bottlesSub) {
       this.bottlesSub.unsubscribe();
-    }
-  }
-
-  private createChart(bottles: Bottle[]) {
-    let distribution: Distribution[] = this.distributionService.distributeBy(bottles, [ this.axis ]);
-    if (bottles.length !== 0) {
-      this.totalNumberOfLots = bottles.length;
-      this.totalNumberOfBottles = bottles.reduce((tot: number, btl: Bottle) => tot + +btl.quantite_courante, 0);
-      if (this.axis == 'label') {
-        this.createLabelColorChart(distribution[ 0 ]);
-        this.ready = true;
-      }
-      else if (this.axis == 'subregion_label') {
-        this.createRegionColorChart(distribution[ 0 ]);
-        this.ready = true;
-      }
     }
   }
 
@@ -143,6 +122,41 @@ export class StatisticsComponent implements OnInit, OnDestroy {
     this.chartData = significantData.map(kv => kv.value);
   }
 
+  // events
+  public chartClicked(chartEvent: ChartEvent): void {
+    if (chartEvent) {
+      let axis = chartEvent.axis;
+      let axisValue = chartEvent.axisValue;
+      let fs: FilterSet = new FilterSet(this.translateService);
+      if (axisValue === 'autres') {
+        fs[ axis ] = this.others.map(keyValue => keyValue.key);
+      } else {
+        fs[ axis ] = [ axisValue ];
+      }
+
+      this.filterApplied.emit(fs);
+    }
+  }
+
+  public chartHovered(e: any): void {
+  }
+
+  private createChart(bottles: Bottle[]) {
+    let distribution: Distribution[] = this.distributionService.distributeBy(bottles, [ this.axis ]);
+    if (bottles.length !== 0) {
+      this.totalNumberOfLots = bottles.length;
+      this.totalNumberOfBottles = bottles.reduce((tot: number, btl: Bottle) => tot + +btl.quantite_courante, 0);
+      if (this.axis == 'label') {
+        this.createLabelColorChart(distribution[ 0 ]);
+        this.ready = true;
+      }
+      else if (this.axis == 'subregion_label') {
+        this.createRegionColorChart(distribution[ 0 ]);
+        this.ready = true;
+      }
+    }
+  }
+
   /**
    * returns a shortened distribution so every portion of the graph is visible and significant.
    * @param distribution the Distribution object
@@ -179,25 +193,6 @@ export class StatisticsComponent implements OnInit, OnDestroy {
     }
 
     return {selected: significantData, others: nonSignificantData};
-  }
-
-  // events
-  public chartClicked(chartEvent: ChartEvent): void {
-    if (chartEvent) {
-      let axis = chartEvent.axis;
-      let axisValue = chartEvent.axisValue;
-      let fs: FilterSet = new FilterSet(this.translateService);
-      if (axisValue === 'autres') {
-        fs[ axis ] = this.others.map(keyValue => keyValue.key);
-      } else {
-        fs[ axis ] = [ axisValue ];
-      }
-
-      this.filterApplied.emit(fs);
-    }
-  }
-
-  public chartHovered(e: any): void {
   }
 
 }

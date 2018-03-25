@@ -4,7 +4,6 @@ import {Bottle} from '../../model/bottle';
 import {BottleEvent} from '../../components/list/bottle-event';
 import {UpdatePage} from '../update/update.page';
 import * as _ from 'lodash';
-import {LoginService} from '../../service/login.service';
 
 /*
  Generated class for the BottleDetail page.
@@ -39,26 +38,11 @@ export class BottleDetailPage implements OnInit {
     let bottleEvent: BottleEvent = navParams.data[ 'bottleEvent' ];
     this.wholeSelection = bottleEvent.bottles;
     this.bottle = bottleEvent.bottle;
-    this.originalIndex = this.wholeSelection.findIndex((bottle: Bottle) => bottle.id===this.bottle.id);
+    this.originalIndex = this.wholeSelection.findIndex((bottle: Bottle) => bottle.id === this.bottle.id);
   }
 
   ngOnInit(): void {
     this.slideBottles = this.extractSlideBottles(this.wholeSelection, this.originalIndex);
-  }
-
-  private extractSlideBottles(bottles: Bottle[], targetIndex: number): Bottle[] {
-    let fromIndex = 0;
-    if (targetIndex < BottleDetailPage.SLIDES_BEFORE) {
-      fromIndex = 0;
-      this.currentIndex = targetIndex;
-    } else {
-      fromIndex = targetIndex - BottleDetailPage.SLIDES_BEFORE;
-      this.currentIndex = BottleDetailPage.SLIDES_BEFORE;
-    }
-    let toIndex = (fromIndex + BottleDetailPage.TOTAL_SLIDES > bottles.length ? bottles.length : fromIndex + BottleDetailPage.TOTAL_SLIDES);
-    let ret = _.slice(bottles, fromIndex, toIndex);
-
-    return ret;
   }
 
   update() {
@@ -81,5 +65,20 @@ export class BottleDetailPage implements OnInit {
   }
 
   firstSlideReached(event) {
+  }
+
+  private extractSlideBottles(bottles: Bottle[], targetIndex: number): Bottle[] {
+    let fromIndex = 0;
+    if (targetIndex < BottleDetailPage.SLIDES_BEFORE) {
+      fromIndex = 0;
+      this.currentIndex = targetIndex;
+    } else {
+      fromIndex = targetIndex - BottleDetailPage.SLIDES_BEFORE;
+      this.currentIndex = BottleDetailPage.SLIDES_BEFORE;
+    }
+    let toIndex = (fromIndex + BottleDetailPage.TOTAL_SLIDES > bottles.length ? bottles.length : fromIndex + BottleDetailPage.TOTAL_SLIDES);
+    let ret = _.slice(bottles, fromIndex, toIndex);
+
+    return ret;
   }
 }

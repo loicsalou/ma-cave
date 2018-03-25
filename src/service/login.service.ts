@@ -17,14 +17,22 @@ import {GoogleLoginService} from './google-login.service';
 export class LoginService {
   private authentified: Subject<User> = new Subject();
   public authentifiedObservable: Observable<User> = this.authentified.asObservable();
-
-  private _user: User;
   private loginSub: Subscription;
   private currentLoginService: AbstractLoginService;
 
   constructor(private anoLogin: AnonymousLoginService, private mailLogin: EmailLoginService,
               private fbLogin: FacebookLoginService, private locLogin: LocalLoginService, private gglLogin: GoogleLoginService,
               private notificationService: NotificationService, private localStorage: NativeStorageService) {
+  }
+
+  private _user: User;
+
+  get user(): User {
+    return this._user;
+  }
+
+  set user(value: User) {
+    this._user = value;
   }
 
   createAccount(user: string, psw: string) {
@@ -36,7 +44,7 @@ export class LoginService {
   }
 
   resetEmailPassword(user: string) {
-    this.currentLoginService=this.mailLogin;
+    this.currentLoginService = this.mailLogin;
     this.resetPassword(user);
   }
 
@@ -45,7 +53,7 @@ export class LoginService {
   }
 
   public localLogin(user: User) {
-    this.currentLoginService=this.locLogin;
+    this.currentLoginService = this.locLogin;
     this.locLogin.localUser = user;
     this.loginSub = this.locLogin.login().subscribe(
       (user: User) => {
@@ -57,7 +65,7 @@ export class LoginService {
   }
 
   public anonymousLogin() {
-    this.currentLoginService=this.anoLogin;
+    this.currentLoginService = this.anoLogin;
     this.loginSub = this.anoLogin.login().subscribe(
       (user: User) => {
         this.initUser(user);
@@ -69,7 +77,7 @@ export class LoginService {
   }
 
   public googleLogin() {
-    this.currentLoginService=this.gglLogin;
+    this.currentLoginService = this.gglLogin;
     this.loginSub = this.gglLogin.login().subscribe(
       (user: User) => {
         this.initUser(user);
@@ -81,7 +89,7 @@ export class LoginService {
   }
 
   public emailLogin(login: string, psw: string) {
-    this.currentLoginService=this.mailLogin;
+    this.currentLoginService = this.mailLogin;
     this.mailLogin.username = login;
     this.mailLogin.psw = psw;
     this.loginSub = this.mailLogin.login().subscribe(
@@ -95,7 +103,7 @@ export class LoginService {
   }
 
   public facebookLogin() {
-    this.currentLoginService=this.fbLogin;
+    this.currentLoginService = this.fbLogin;
     this.loginSub = this.fbLogin.login().subscribe(
       (user: User) => this.initUser(user),
       error => this.notificationService.failed('L\'authentification Facebook a échoué, veuillez vérifier votre' +
@@ -103,12 +111,12 @@ export class LoginService {
     )
   }
 
-  get user(): User {
-    return this._user;
-  }
-
-  set user(value: User) {
-    this._user = value;
+  public logout() {
+    this.loginSub.unsubscribe();
+    this.loginSub = undefined;
+    this.user = undefined;
+    this.localStorage.cleanup();
+    this.authentified.next(this.user);
   }
 
   private initUser(user: User) {
@@ -120,13 +128,5 @@ export class LoginService {
     else {
       this.logout();
     }
-  }
-
-  public logout() {
-    this.loginSub.unsubscribe();
-    this.loginSub = undefined;
-    this.user = undefined;
-    this.localStorage.cleanup();
-    this.authentified.next(this.user);
   }
 }

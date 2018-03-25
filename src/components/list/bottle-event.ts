@@ -2,6 +2,7 @@
  * Created by loicsalou on 15.03.17.
  */
 import {Bottle} from '../../model/bottle';
+
 /**
  * Evénement de sélection d'une bouteille.
  * Contient les attributs

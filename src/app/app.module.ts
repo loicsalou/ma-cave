@@ -15,7 +15,7 @@ import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
 import {BrowserModule} from '@angular/platform-browser';
 import {AngularFireModule} from 'angularfire2';
-import {AngularFireAuthModule, AngularFireAuthProvider} from 'angularfire2/auth';
+import {AngularFireAuthModule} from 'angularfire2/auth';
 import {AngularFireDatabaseModule} from 'angularfire2/database';
 import {BottleFactory} from '../model/bottle.factory';
 import {UploadBottlesModule} from '../pages/upload-bottles/upload-bottles.page.module';
@@ -35,7 +35,6 @@ import {ProfilePageModule} from '../pages/profile/profile.module';
 import {NotificationService} from '../service/notification.service';
 import {DefaultImageDirective} from '../directives/default-image/default-image';
 import {DashboardPageModule} from '../pages/dashboard/dashboard.module';
-import {StatisticsComponentModule} from '../components/statistics/statistics.component.module';
 import {StatisticsComponent} from '../components/statistics/statistics.component';
 import {Statistics} from '../model/statistics';
 import {SharedModule} from '../components/shared.module';
@@ -71,6 +70,7 @@ export const fireConfig = {
             declarations: [
               MyCaveApp,
               ContactPage,
+              StatisticsComponent,
               EmailLoginPage,
               LocalLoginPage,
               HomePage,
@@ -92,7 +92,6 @@ export const fireConfig = {
               HttpClientModule,
               ProfilePageModule,
               SharedModule,
-              StatisticsComponentModule,
               TranslateModule.forRoot({
                                         loader: {
                                           provide: TranslateLoader,
@@ -152,10 +151,11 @@ export const fireConfig = {
               SplashScreen,
               Statistics,
               StatusBar
-            ], exports: [
-    StatisticsComponent,
-    DefaultImageDirective
-  ]
+            ],
+            exports: [
+              StatisticsComponent,
+              DefaultImageDirective
+            ]
           })
 export class AppModule {
 }

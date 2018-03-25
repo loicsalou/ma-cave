@@ -16,23 +16,21 @@ import {NativeProvider} from '../../providers/native/native';
 @Component({
              selector: 'page-browse',
              templateUrl: 'browse.page.html',
-             styleUrls: [ '/src/pages/showFiltered/showFiltered.page.scss' ]
+             styleUrls: [ '/browse.page.scss' ]
            })
 export class BrowsePage implements OnInit, OnDestroy {
-  private bottleSubscription: Subscription;
-  private filterSubscription: Subscription;
-  private searchBarVisible: boolean = false;
   allBottles: Bottle[];
   bottles: Bottle[];
   nbSelected = 0;
-
   filterSet: FilterSet = new FilterSet(this.translateService);
-  private navParams: NavParams;
-  private nbOfBottles: number = 0;
-
   @ViewChild('bottleList')
   listComponent: BottleItemComponent;
   @ViewChild(VirtualScroll) vs: VirtualScroll;
+  private bottleSubscription: Subscription;
+  private filterSubscription: Subscription;
+  private searchBarVisible: boolean = false;
+  private navParams: NavParams;
+  private nbOfBottles: number = 0;
 
   constructor(public navCtrl: NavController, public platform: Platform, private bottlesService: BottlePersistenceService,
               private loginService: LoginService, private notificationService: NotificationService, private menuController: MenuController,
@@ -142,19 +140,6 @@ export class BrowsePage implements OnInit, OnDestroy {
     this.nbSelected += bottle.selected ? 1 : -1;
   }
 
-// in case user navigated to here from the home page then we have search param ==> filter on this text
-  private initFilterFromNavParams() {
-    this.notificationService.debugAlert('BrowsPage.initFilterFromNavParams()');
-    if (this.navParams != undefined) {
-      if (this.navParams.data[ 'text' ] != null) {
-        this.notificationService.debugAlert('BrowsPage.initFilterFromNavParams(' + this.navParams.data[ 'text' ] + ')');
-        this.filterSet.text = this.navParams.data[ 'text' ].split(' ');
-      } else if (this.navParams.data[ 'filterSet' ] != null) {
-        this.filterSet = this.navParams.data[ 'filterSet' ];
-      }
-    }
-  }
-
   ionViewWillLeave() {
     this.menuController.close()
   }
@@ -190,6 +175,19 @@ export class BrowsePage implements OnInit, OnDestroy {
 
   triggerDetail(bottle: Bottle) {
     this.navCtrl.push(BottleDetailPage, {bottleEvent: {bottles: this.allBottles, bottle: bottle}});
+  }
+
+// in case user navigated to here from the home page then we have search param ==> filter on this text
+  private initFilterFromNavParams() {
+    this.notificationService.debugAlert('BrowsPage.initFilterFromNavParams()');
+    if (this.navParams != undefined) {
+      if (this.navParams.data[ 'text' ] != null) {
+        this.notificationService.debugAlert('BrowsPage.initFilterFromNavParams(' + this.navParams.data[ 'text' ] + ')');
+        this.filterSet.text = this.navParams.data[ 'text' ].split(' ');
+      } else if (this.navParams.data[ 'filterSet' ] != null) {
+        this.filterSet = this.navParams.data[ 'filterSet' ];
+      }
+    }
   }
 
   private setFilterSet(filterSet: FilterSet) {

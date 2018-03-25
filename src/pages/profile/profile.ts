@@ -1,8 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {NavController} from 'ionic-angular';
 import {LoginService} from '../../service/login.service';
 import {User} from '../../model/user';
-import Platform = NodeJS.Platform;
 import {NotificationService} from '../../service/notification.service';
 
 @Component({
@@ -19,6 +17,10 @@ export class ProfilePage implements OnInit {
   constructor(public loginService: LoginService, private notificationService: NotificationService) {
   }
 
+  get user(): User {
+    return this.loginService.user;
+  }
+
   ngOnInit(): void {
     this.version = require('../../../package.json').version;
     this.userDataKeys = Object.keys(this.loginService.user);
@@ -26,11 +28,7 @@ export class ProfilePage implements OnInit {
     this.userDataKeys.forEach(key => {
       this.userDataValues.push(this.loginService.user[ key ])
     });
-    this.notificationService.debugAlert('photo user='+JSON.stringify(this.loginService.user));
-  }
-
-  get user(): User {
-    return this.loginService.user;
+    this.notificationService.debugAlert('photo user=' + JSON.stringify(this.loginService.user));
   }
 
   properties() {

@@ -161,16 +161,6 @@ export class FridgeLockerComponent extends LockerComponent {
     }
   }
 
-  private getNewRack(): Locker {
-    let width = this.fridge.racks.reduce((max, oneRack) => Math.max(max, oneRack.dimension.x), 0)
-    let formats = this.fridge.racks[ 0 ].supportedFormats;
-    return new SimpleLocker(undefined, '', LockerType.shifted, {
-      x: width,
-      y: 1
-    }, true, '', formats);
-
-  }
-
   addTopRow(): boolean {
     this.hapticConfirm();
     if (!this.canIncreaseHeight()) {
@@ -318,6 +308,62 @@ export class FridgeLockerComponent extends LockerComponent {
     return true;
   }
 
+  //avant d'enlever une rangée on s'assure qu'elle est vide + un locker a au moins une rangée
+  public canRemoveFirstRow(): boolean {
+    if (!this.canDecreaseHeight()) {
+      return false
+    }
+    let result = true;
+    this.rackComponents.filter(
+      rack => rack.selected
+    ).forEach(
+      rack => result = result && rack.canRemoveFirstRow()
+    );
+    return result
+  }
+
+  //avant d'enlever une rangée on s'assure qu'elle est vide + un locker a au moins une rangée
+  public canRemoveLastRow(): boolean {
+    if (!this.canDecreaseHeight()) {
+      return false
+    }
+    let result = true;
+    this.rackComponents.filter(
+      rack => rack.selected
+    ).forEach(
+      rack => result = result && rack.canRemoveLastRow()
+    );
+    return result
+  }
+
+  //avant d'enlever une colonne on s'assure qu'elle est vide + un locker a au moins une colonne
+  public canRemoveFirstColumn(): boolean {
+    if (!this.canDecreaseWidth()) {
+      return false
+    }
+    let result = true;
+    this.rackComponents.filter(
+      rack => rack.selected
+    ).forEach(
+      rack => result = result && rack.canRemoveFirstColumn()
+    );
+    return result
+  }
+
+  //avant d'enlever une colonne on s'assure qu'elle est vide + un locker a au moins une colonne
+  public canRemoveLastColumn(): boolean {
+    if (!this.canDecreaseWidth()) {
+      return false
+    }
+    let result = true;
+    this.rackComponents.filter(
+      rack => rack.selected
+    ).forEach(
+      rack => result = result && rack.canRemoveLastColumn()
+    );
+    return result
+  }
+
   /**
    * Comme on enlève une rangée à chaque rack sélectionné on vérifie que le frigo ne dépasse pas la hauteur
    * max d'un frigo
@@ -384,60 +430,14 @@ export class FridgeLockerComponent extends LockerComponent {
     return true
   }
 
-  //avant d'enlever une rangée on s'assure qu'elle est vide + un locker a au moins une rangée
-  public canRemoveFirstRow(): boolean {
-    if (!this.canDecreaseHeight()) {
-      return false
-    }
-    let result = true;
-    this.rackComponents.filter(
-      rack => rack.selected
-    ).forEach(
-      rack => result = result && rack.canRemoveFirstRow()
-    );
-    return result
-  }
+  private getNewRack(): Locker {
+    let width = this.fridge.racks.reduce((max, oneRack) => Math.max(max, oneRack.dimension.x), 0)
+    let formats = this.fridge.racks[ 0 ].supportedFormats;
+    return new SimpleLocker(undefined, '', LockerType.shifted, {
+      x: width,
+      y: 1
+    }, true, '', formats);
 
-  //avant d'enlever une rangée on s'assure qu'elle est vide + un locker a au moins une rangée
-  public canRemoveLastRow(): boolean {
-    if (!this.canDecreaseHeight()) {
-      return false
-    }
-    let result = true;
-    this.rackComponents.filter(
-      rack => rack.selected
-    ).forEach(
-      rack => result = result && rack.canRemoveLastRow()
-    );
-    return result
-  }
-
-  //avant d'enlever une colonne on s'assure qu'elle est vide + un locker a au moins une colonne
-  public canRemoveFirstColumn(): boolean {
-    if (!this.canDecreaseWidth()) {
-      return false
-    }
-    let result = true;
-    this.rackComponents.filter(
-      rack => rack.selected
-    ).forEach(
-      rack => result = result && rack.canRemoveFirstColumn()
-    );
-    return result
-  }
-
-  //avant d'enlever une colonne on s'assure qu'elle est vide + un locker a au moins une colonne
-  public canRemoveLastColumn(): boolean {
-    if (!this.canDecreaseWidth()) {
-      return false
-    }
-    let result = true;
-    this.rackComponents.filter(
-      rack => rack.selected
-    ).forEach(
-      rack => result = result && rack.canRemoveLastColumn()
-    );
-    return result
   }
 
   private shiftBottles(rack: number, shiftX: number, shiftY: number) {

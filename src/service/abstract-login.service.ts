@@ -8,14 +8,22 @@ import * as firebase from 'firebase/app';
  * Created by loicsalou on 13.06.17.
  */
 export abstract class AbstractLoginService {
+  protected notificationService: NotificationService;
   private authentified: Subject<User> = new Subject();
   private authentifiedObservable: Observable<User> = this.authentified.asObservable();
-  protected notificationService: NotificationService;
-
-  private _user: User;
 
   constructor(notificationService: NotificationService) {
     this.notificationService = notificationService;
+  }
+
+  private _user: User;
+
+  get user(): User {
+    return this._user;
+  }
+
+  set user(value: User) {
+    this._user = value;
   }
 
   /**
@@ -27,8 +35,6 @@ export abstract class AbstractLoginService {
     this.authentifiedObservable = this.authentified.asObservable();
     return this.delegatedLogin(this.authentifiedObservable);
   }
-
-  protected abstract delegatedLogin(authObs: Observable<User>);
 
   createAccount(user: any, pass: any) {
     this.notificationService.error('La création de ce type de compte n\'est pas activée')
@@ -46,7 +52,7 @@ export abstract class AbstractLoginService {
       setTimeout(() => {
         popup.dismiss();
         self.logout();
-      },100);
+      }, 100);
     }).catch(function (error) {
       popup.dismiss();
       self.notificationService.error('app.deleting-account-failed');
@@ -55,14 +61,6 @@ export abstract class AbstractLoginService {
 
   resetPassword(user: string) {
     this.notificationService.error('La réinitialisation du mot de passe pour ce type de compte n\'est pas activée')
-  }
-
-  get user(): User {
-    return this._user;
-  }
-
-  set user(value: User) {
-    this._user = value;
   }
 
   public logout() {
@@ -79,4 +77,6 @@ export abstract class AbstractLoginService {
       this.authentified.next(user);
     }
   }
+
+  protected abstract delegatedLogin(authObs: Observable<User>);
 }

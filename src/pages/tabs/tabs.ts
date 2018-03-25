@@ -2,11 +2,9 @@ import {Component} from '@angular/core';
 import {UploadBottlesPage} from '../upload-bottles/upload-bottles.page';
 import {DashboardPage} from '../dashboard/dashboard';
 import {ProfilePage} from '../profile/profile';
-import {BrowsePage} from '../browse/browse.page';
 import {CellarPage} from '../cellar/cellar.page';
 import {NavController, Platform} from 'ionic-angular';
 import {NotificationService} from '../../service/notification.service';
-import {HomePage} from '../home/home';
 
 @Component({
              templateUrl: 'tabs.html'

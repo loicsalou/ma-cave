@@ -40,14 +40,14 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
     super(nativeProvider)
   }
 
+  get dimension(): Dimension {
+    return this.locker.dimension
+  }
+
   ngOnInit(): void {
     if (this.locker.dimension && !this.rows) {
       this.resetComponent();
     }
-  }
-
-  get dimension(): Dimension {
-    return this.locker.dimension
   }
 
   isShifted(): boolean {
@@ -101,17 +101,6 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
     }
   }
 
-  private initRow(nbcells: number, rowIndex: number): Row {
-    let cells: Cell[] = [];
-    //let rowId = this.locker.name + '-' + rowIndex;
-    for (let i = 0; i < nbcells; i++) {
-      let position = new Position(this.locker.id, i, rowIndex, this.rack);
-      cells[ i ] = new Cell(position);
-    }
-    //return new Row(cells, rowId, rowIndex);
-    return new Row(cells, rowIndex);
-  }
-
   public placeBottle(bottle: Bottle, position: Position) {
     this.bogusBottles = [];
     if (this.rows.length < position.y || this.rows[ position.y ].cells.length < position.x) {
@@ -141,22 +130,6 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
         this.setupPinchZoom(this.zoomable.nativeElement);
       } else if (this.zoomable && this.locker.inFridge) {
         this.setupPressGesture(this.zoomable.nativeElement);
-      }
-    }
-  }
-
-  protected setupPressGesture(elm: HTMLElement): void {
-    const pressGesture = new Gesture(elm);
-
-    pressGesture.listen();
-    pressGesture.on('press', onPress);
-    let self = this;
-
-    function onPress(ev) {
-      self.currentGesture = 'press';
-      ev.preventDefault();
-      if (self.editing) {
-        self.selected = !self.selected;
       }
     }
   }
@@ -247,6 +220,42 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
     this.resetComponent();
   }
 
+  //avant d'enlever une rangée on s'assure qu'elle est vide
+  public canRemoveFirstRow(): boolean {
+    return this.canRemoveRow(0)
+  }
+
+  //avant d'enlever une rangée on s'assure qu'elle est vide
+  public canRemoveLastRow(): boolean {
+    return this.canRemoveRow(this.dimension.y - 1);
+  }
+
+  //avant d'enlever une colonne on s'assure qu'elle est vide
+  public canRemoveFirstColumn(): boolean {
+    return this.canRemoveColumn(0)
+  }
+
+  //avant d'enlever une colonne on s'assure qu'elle est vide
+  public canRemoveLastColumn(): boolean {
+    return this.canRemoveColumn(this.dimension.x - 1);
+  }
+
+  protected setupPressGesture(elm: HTMLElement): void {
+    const pressGesture = new Gesture(elm);
+
+    pressGesture.listen();
+    pressGesture.on('press', onPress);
+    let self = this;
+
+    function onPress(ev) {
+      self.currentGesture = 'press';
+      ev.preventDefault();
+      if (self.editing) {
+        self.selected = !self.selected;
+      }
+    }
+  }
+
   protected canIncreaseHeight() {
     if (this.dimension.y >= SimpleLockerComponent.MAX_NB_ROWS) {
       this.notificationService.warning('locker-editor.maxi-row-reached');
@@ -279,14 +288,15 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
     return false
   }
 
-  //avant d'enlever une rangée on s'assure qu'elle est vide
-  public canRemoveFirstRow(): boolean {
-    return this.canRemoveRow(0)
-  }
-
-  //avant d'enlever une rangée on s'assure qu'elle est vide
-  public canRemoveLastRow(): boolean {
-    return this.canRemoveRow(this.dimension.y - 1);
+  private initRow(nbcells: number, rowIndex: number): Row {
+    let cells: Cell[] = [];
+    //let rowId = this.locker.name + '-' + rowIndex;
+    for (let i = 0; i < nbcells; i++) {
+      let position = new Position(this.locker.id, i, rowIndex, this.rack);
+      cells[ i ] = new Cell(position);
+    }
+    //return new Row(cells, rowId, rowIndex);
+    return new Row(cells, rowIndex);
   }
 
   //avant d'enlever une rangée on s'assure qu'elle est vide
@@ -306,16 +316,6 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
     }
 
     return true;
-  }
-
-  //avant d'enlever une colonne on s'assure qu'elle est vide
-  public canRemoveFirstColumn(): boolean {
-    return this.canRemoveColumn(0)
-  }
-
-  //avant d'enlever une colonne on s'assure qu'elle est vide
-  public canRemoveLastColumn(): boolean {
-    return this.canRemoveColumn(this.dimension.x - 1);
   }
 
   //avant d'enlever une colonne on s'assure qu'elle est vide

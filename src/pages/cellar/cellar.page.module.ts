@@ -1,7 +1,6 @@
 import {NgModule} from '@angular/core';
 import {IonicModule, IonicPageModule} from 'ionic-angular';
 import {CellarPage} from './cellar.page';
-import {TranslateModule} from '@ngx-translate/core';
 import {SimpleLockerComponent} from '../../components/locker/simple-locker.component';
 import {CellarPersistenceService} from '../../service/cellar-persistence.service';
 import {CommonModule} from '@angular/common';

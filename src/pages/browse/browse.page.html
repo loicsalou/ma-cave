@@ -4,25 +4,25 @@
       <ion-icon name="menu"></ion-icon>
     </button>
     <div class="search-reminder-container">
-      
+
       <div class="search" [class.active]="isSearchVisible()">
         <ion-searchbar [placeholder]="Chercher" [autocomplete]="on" [autocorrect]="on" [animated]="true"
                        (search)="filterOnText($event)" [class.searching]="isSearchVisible()">
         </ion-searchbar>
       </div>
-      
+
       <div class="reminder" [class.active]="!isSearchVisible()">
         <ion-title wrap *ngIf="! filterSet.isEmpty()">{{ filterSet.toMessage() }}</ion-title>
         <ion-note style="color: black; padding-left: 15px;">{{numberOfLots()}} {{'crus'|translate}} /
           {{numberOfBottles()}} {{'bottles'|translate}}
         </ion-note>
       </div>
-  
+
       <button mini style="background: transparent;" (click)="showSearchBar()">
         <ion-icon name="search"></ion-icon>
       </button>
     </div>
-  
+
   </ion-navbar>
 </ion-header>
 
@@ -41,7 +41,7 @@
   <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
     <ion-infinite-scroll-content></ion-infinite-scroll-content>
   </ion-infinite-scroll>
-  
+
   <ion-fab bottom right *ngIf="anyBottleSelected()">
     <button ion-fab>
       <ion-icon name="menu"></ion-icon>

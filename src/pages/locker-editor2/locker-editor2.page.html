@@ -1,17 +1,17 @@
 <!-- Generated template for the LockerEditorComponent component -->
 <ion-header class="locker-editor2-page" (click)="test()">
-  
+
   <ion-navbar>
     <ion-title>{{locker.name}}
-    <span *ngIf="isLockerEditable()">{{'update.edit-locker' | translate}}</span>
-    <span *ngIf="!isLockerEditable()">{{'update.edit-racks' | translate}}</span>
+      <span *ngIf="isLockerEditable()">{{'update.edit-locker' | translate}}</span>
+      <span *ngIf="!isLockerEditable()">{{'update.edit-racks' | translate}}</span>
     </ion-title>
   </ion-navbar>
 
 </ion-header>
 
 <ion-content padding class="locker-editor2-page">
-  
+
   <ion-fab middle center *ngIf="isLockerEditable()">
     <button ion-fab mini>
       <ion-icon name="create"></ion-icon>
@@ -49,7 +49,7 @@
       </button>
     </ion-fab-list>
   </ion-fab>
-  
+
   <ion-fab middle center *ngIf="!isLockerEditable()">
     <button ion-fab mini>
       <ion-icon name="create"></ion-icon>
@@ -71,11 +71,12 @@
       </button>
     </ion-fab-list>
   </ion-fab>
-  
+
   <ion-row *ngIf="!locker.isFridge()">
-    <locker #lockerCmp [locker]="locker" [content]="lockerContent" [editing]="true" (onCellSelected)="cellSelected($event)"></locker>
+    <locker #lockerCmp [locker]="locker" [content]="lockerContent" [editing]="true"
+            (onCellSelected)="cellSelected($event)"></locker>
   </ion-row>
-  
+
   <ion-row *ngIf="locker.isFridge()">
     <fridge-locker #lockerCmp [fridge]="locker" [content]="lockerContent" [selectable]="true" [editing]="true"
                    (selected)="cellSelected($event)"></fridge-locker>

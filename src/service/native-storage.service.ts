@@ -22,16 +22,15 @@ import {Subject} from 'rxjs/Subject';
 @Injectable()
 export class NativeStorageService {
   private static BOTTLES_FOLDER = 'bottles';
-  private IMAGES_FOLDER = 'images';
   public IMAGES_ROOT: string;
+  public XREF_ROOT: string;
+  protected USERS_ROOT = 'users';
+  protected XREF_FOLDER = 'xref';
+  private IMAGES_FOLDER = 'images';
   private USER_ROOT: string;
   private SEP = '/';
-
-  protected USERS_ROOT = 'users';
   protected KNOWN_USERS = this.USERS_ROOT + this.SEP + 'list';
   private BOTTLES_ROOT: string;
-  protected XREF_FOLDER = 'xref';
-  public XREF_ROOT: string;
   private bottlesSubject: Subject<Bottle[]>;
   private bottlesObservable: Observable<Bottle[]>;
 
@@ -51,7 +50,7 @@ export class NativeStorageService {
   public initialize(user: User) {
     this.IMAGES_ROOT = this.IMAGES_FOLDER;
     this.XREF_ROOT = this.XREF_FOLDER;
-    this.USER_ROOT = this.USERS_ROOT + this.SEP + (user ? user.user : '' );
+    this.USER_ROOT = this.USERS_ROOT + this.SEP + (user ? user.user : '');
     this.BOTTLES_ROOT = this.USER_ROOT + this.SEP + NativeStorageService.BOTTLES_FOLDER;
     this.bottlesSubject = new Subject();
     this.bottlesObservable = this.bottlesSubject.asObservable();

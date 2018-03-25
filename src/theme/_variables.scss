@@ -1,12 +1,9 @@
 // Ionic Variables and Theming. For more info, please see:
 // http://ionicframework.com/docs/v2/theming/
-$font-path: "../assets/fonts";
-
-@import "ionic.globals";
+$font-path: '../assets/fonts';
 
 // Font Awesome
 $fa-font-path: $font-path;
-@import "font-awesome";
 
 // Shared Variables
 // --------------------------------------------------
@@ -14,14 +11,13 @@ $fa-font-path: $font-path;
 // the Sass variables found in Ionic's source scss files.
 // To view all the possible Ionic variables, see:
 // http://ionicframework.com/docs/v2/theming/overriding-ionic-variables/
-
 // Named Color Variables
 // --------------------------------------------------
 // Named colors makes it easy to reuse colors on various components.
 // It's highly recommended to change the default colors
 // to match your app's branding. Ionic uses a Sass map of
 // colors so you can add, rename and remove colors as needed.
-// The "primary" color is the only required color in the map.
+// The 'primary' color is the only required color in the map.
 
 $colors: (
   primary: #387ef5,
@@ -51,17 +47,17 @@ $colors: (
 // so that the above variables are used and Ionic's
 // default are overridden.
 
-@import "ionic.theme.default";
+//@_import 'ionic.theme.default';
 
 // Ionicons
 // --------------------------------------------------
 // The premium icon font for Ionic. For more info, please see:
 // http://ionicframework.com/docs/v2/ionicons/
 
-@import "ionic.ionicons";
+//@_import 'ionic.ionicons';
 
 // Fonts
 // --------------------------------------------------
 
-@import "roboto";
-@import "noto-sans";
+//@_import 'roboto';
+//@_import 'noto-sans';

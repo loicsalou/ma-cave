@@ -7,7 +7,6 @@ import {TranslateService} from '@ngx-translate/core';
 import {Statistics} from './statistics';
 import {BottleFactory} from './bottle.factory';
 import {Withdrawal} from './withdrawal';
-import {create} from 'domain';
 
 /**
  * Instanciation des sorties de bouteilles.
