@@ -30,24 +30,20 @@ import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
            })
 export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
 
-  private otherLockers: Locker[];
-  private paginatedLocker: Locker;
   @ViewChild(Slides) slides: Slides;
-
   pendingCell: Cell;
   pendingBottleTipVisible: boolean = false;
   selectedCell: Cell;
+  @ViewChild('zoomable') zoomable: ElementRef;
+  private otherLockers: Locker[];
+  private paginatedLocker: Locker;
   private lockersSub: Subscription;
   private lockerContent: Bottle[];
-
   @ViewChild('placedLockerComponent')
   private placedLockerComponent: SimpleLockerComponent;
   private bottlesToPlaceLocker: SimpleLocker;
   private bottlesToPlace: Bottle[];
   private bottlesToHighlight: Bottle[];
-
-  @ViewChild('zoomable') zoomable: ElementRef;
-
   private scale: number = 1;
   private bottlesSubscription: Subscription;
 

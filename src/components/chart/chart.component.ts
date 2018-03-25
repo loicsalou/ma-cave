@@ -60,6 +60,24 @@ export class ChartComponent implements OnInit {
     this.ready = true;
   }
 
+  chartHovered(event: any) {
+    let active = event[ 'active' ];
+    let element: any = active !== undefined && active.length > 0 ? active[ 0 ] : undefined;
+    this.trace('hover');
+  }
+
+  chartClicked(event: any) {
+    let active = event[ 'active' ];
+    let index = active !== undefined && active.length > 0 ? active[ 0 ][ '_index' ] : undefined;
+    if (index !== undefined) {
+      this.portionSelected.emit(this.getChartEvent(index));
+    }
+  }
+
+  trace(msg: string) {
+    // console.info(msg);
+  }
+
   private getOptions(): any {
     return {
       responsive: true,
@@ -71,16 +89,16 @@ export class ChartComponent implements OnInit {
       },
       scaleShowValues: true,
       scales: {
-        yAxes: [{
+        yAxes: [ {
           ticks: {
             beginAtZero: true
           }
-        }],
-        xAxes: [{
+        } ],
+        xAxes: [ {
           ticks: {
             autoSkip: false
           }
-        }]
+        } ]
       }
 
     };
@@ -99,24 +117,6 @@ export class ChartComponent implements OnInit {
     //    }]
     //  }
     //}
-  }
-
-  chartHovered(event: any) {
-    let active = event[ 'active' ];
-    let element: any = active !== undefined && active.length > 0 ? active[ 0 ] : undefined;
-    this.trace('hover');
-  }
-
-  chartClicked(event: any) {
-    let active = event[ 'active' ];
-    let index = active !== undefined && active.length > 0 ? active[ 0 ][ '_index' ] : undefined;
-    if (index !== undefined) {
-      this.portionSelected.emit(this.getChartEvent(index));
-    }
-  }
-
-  trace(msg: string) {
-    // console.info(msg);
   }
 
   private getChartEvent(index: number): ChartEvent {

@@ -26,13 +26,12 @@ export class UpdatePage implements OnInit {
 
   bottle: Bottle;
   images: Array<{ src: String }> = [];
-  private aoc: AocInfo[];
   progress: number = 0;
+  @ViewChild('bottleForm') bottleForm: NgForm;
+  private aoc: AocInfo[];
   private missingImages: string[] = [];
   private forceLeave: boolean = true;
   private metadata: BottleMetadata;
-
-  @ViewChild('bottleForm') bottleForm: NgForm;
 
   constructor(private navCtrl: NavController, navParams: NavParams, private bottleService: BottlePersistenceService,
               private notificationService: NotificationService, private imageService: ImagePersistenceService,

@@ -28,9 +28,7 @@ export abstract class LockerComponent implements OnChanges {
   constructor(private nativeProvider: NativeProvider) {
   }
 
-  protected hapticConfirm() {
-    this.nativeProvider.feedBack();
-  }
+  abstract get dimension(): Dimension;
 
   ngOnChanges(changeEvent) {
     if (changeEvent[ 'content' ]) {
@@ -43,8 +41,6 @@ export abstract class LockerComponent implements OnChanges {
    */
   public abstract resetComponent();
 
-  abstract get dimension(): Dimension;
-
   //avant d'enlever la première rangée on s'assure qu'elle est vide
   public abstract canRemoveFirstRow(rowNumber: number): boolean;
 
@@ -56,6 +52,10 @@ export abstract class LockerComponent implements OnChanges {
 
   //avant d'enlever la dernière colonne on s'assure qu'elle est vide
   public abstract canRemoveLastColumn(colNumber: number): boolean;
+
+  protected hapticConfirm() {
+    this.nativeProvider.feedBack();
+  }
 
   protected setupPinchZoom(elm: HTMLElement): void {
     const gesture = new Gesture(elm);
@@ -190,9 +190,9 @@ export abstract class LockerComponent implements OnChanges {
 }
 
 export class Row {
-  private id: string;
   index: number;
   cells: Cell[];
+  private id: string;
 
   constructor(cells: Cell[], rowIndex: number) {
     this.cells = cells;

@@ -1,9 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {IonicPage, NavController, NavParams} from 'ionic-angular';
-import {BottleSize, Dimension, Locker, LockerType} from '../../model/locker';
-import {FridgeLocker} from '../../model/fridge-locker';
+import {BottleSize, Locker, LockerType} from '../../model/locker';
 import {CellarPersistenceService} from '../../service/cellar-persistence.service';
-import {SimpleLocker} from '../../model/simple-locker';
 import {Bottle} from '../../model/bottle';
 import {NotificationService} from '../../service/notification.service';
 import {LockerComponent} from '../../components/locker/locker.component';
@@ -61,10 +59,6 @@ export class LockerEditor2Page implements OnInit {
     return this.type === LockerType.fridge;
   }
 
-  private getDefaultSupportedFormats(): BottleSize[] {
-    return this.lockerFormats.slice(0, 6);
-  }
-
   cancel() {
     //this.deviceFeedback.acoustic();
     //this.deviceFeedback.haptic(2);
@@ -79,5 +73,9 @@ export class LockerEditor2Page implements OnInit {
 
     this.bottlesService.updateLockerAndBottles(this.lockerContent, this.locker);
     this.navCtrl.pop();
+  }
+
+  private getDefaultSupportedFormats(): BottleSize[] {
+    return this.lockerFormats.slice(0, 6);
   }
 }

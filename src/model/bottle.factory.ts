@@ -20,6 +20,10 @@ export class BottleFactory {
   constructor(private i18n: TranslateService, private _stats: Statistics) {
   }
 
+  get stats(): Statistics {
+    return this._stats;
+  }
+
   public create(bottle: Bottle): Bottle {
     let btl: Bottle = new Bottle(bottle);
     this.setClasseAge(btl)
@@ -32,16 +36,12 @@ export class BottleFactory {
     return btl;
   }
 
-  get stats(): Statistics {
-    return this._stats;
-  }
-
   private ensureDataTypes(btl: Bottle): BottleFactory {
     if (!btl.quantite_courante) {
       btl.quantite_courante = 0;
     }
     if (!btl.quantite_achat) {
-      btl.quantite_achat = "0";
+      btl.quantite_achat = '0';
     }
     return this;
   }
@@ -84,9 +84,9 @@ export class BottleFactory {
 
   private setOverdue(bottle: Bottle): BottleFactory {
     if (bottle.millesime !== '-') {
-      bottle.overdue=+bottle.millesime + +bottle.garde_max <= this.currentYear
+      bottle.overdue = +bottle.millesime + +bottle.garde_max <= this.currentYear
     } else {
-      bottle.overdue=false;
+      bottle.overdue = false;
     }
 
     return this;

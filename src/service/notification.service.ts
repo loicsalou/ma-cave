@@ -2,18 +2,16 @@ import {AlertController, Loading, LoadingController, ToastController} from 'ioni
 import {TranslateService} from '@ngx-translate/core';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
-import {ErrorHandler} from '@angular/core';
-import {CaveErrorHandler} from './cave-error.handler';
 
 /**
  * Created by loicsalou on 13.06.17.
  */
 export class NotificationService {
-  private _debugMode: boolean = false;
-
   constructor(private alertController: AlertController, private toastController: ToastController,
               private translateService: TranslateService, private loadingCtrl: LoadingController) {
   }
+
+  private _debugMode: boolean = false;
 
   set debugMode(value: boolean) {
     this._debugMode = value;

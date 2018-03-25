@@ -21,9 +21,6 @@ import {TranslateService} from '@ngx-translate/core';
 @Injectable()
 export class ImagePersistenceService extends PersistenceService {
 
-  private _progressEvent: Subject<number> = new Subject<number>();
-  private progressEvent$: Observable<number> = this._progressEvent.asObservable();
-
   constructor(private dataConnection: FirebaseConnectionService,
               notificationService: NotificationService, translateService: TranslateService, loginService: LoginService) {
     super(notificationService, loginService, translateService);
@@ -34,13 +31,9 @@ export class ImagePersistenceService extends PersistenceService {
     }
   }
 
-  protected initialize(user) {
-    super.initialize(user);
-  }
+  private _progressEvent: Subject<number> = new Subject<number>();
 
-  protected cleanup() {
-    super.cleanup();
-  }
+  private progressEvent$: Observable<number> = this._progressEvent.asObservable();
 
   get progressEvent(): Observable<number> {
     return this.progressEvent$;
@@ -114,6 +107,14 @@ export class ImagePersistenceService extends PersistenceService {
           (error) => this.notificationService.error('La résolution du nom local du fichier choisi a échoué', error));
       });
     });
+  }
+
+  protected initialize(user) {
+    super.initialize(user);
+  }
+
+  protected cleanup() {
+    super.cleanup();
   }
 }
 

@@ -8,19 +8,19 @@
       <ion-label floating>E-mail</ion-label>
       <ion-input type="email" [(ngModel)]="user"></ion-input>
     </ion-item>
-    
+
     <ion-item>
       <ion-label floating>Mot de passe</ion-label>
       <ion-input type="password" [(ngModel)]="psw" (keyup)="keyup($event)"></ion-input>
     </ion-item>
-    
+
     <button ion-button icon-start margin-top align-items-center (click)="signin()">
       <ion-icon name="key" margin-right></ion-icon>
       Pousser la porte...
     </button>
   </ion-row>
-  
-  
+
+
   <ion-card class="card-background" justify-content-center style="background-color: transparent">
     <ion-card-title class="card-title">Bienvenue dans votre cave !</ion-card-title>
     <img src="assets/img/cave-moderne.jpg"/>

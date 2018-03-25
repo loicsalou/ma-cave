@@ -146,13 +146,11 @@ export class FilterSet {
   classe_age?: string[];
   millesime?: string[];
   history = false;
-  private _favoriteOnly = false;
-  private _overdueOnly = false;
-  private _placed = true;
-  private _toBePlaced = true;
 
   constructor(private translateService: TranslateService) {
   }
+
+  private _favoriteOnly = false;
 
   get favoriteOnly(): boolean {
     return this._favoriteOnly;
@@ -162,6 +160,8 @@ export class FilterSet {
     this._favoriteOnly = value;
   }
 
+  private _overdueOnly = false;
+
   get overdueOnly(): boolean {
     return this._overdueOnly;
   }
@@ -170,6 +170,8 @@ export class FilterSet {
     this._overdueOnly = value;
   }
 
+  private _placed = true;
+
   get placed(): boolean {
     return this._placed;
   }
@@ -177,6 +179,8 @@ export class FilterSet {
   set placed(value: boolean) {
     this._placed = value;
   }
+
+  private _toBePlaced = true;
 
   get toBePlaced(): boolean {
     return this._toBePlaced;

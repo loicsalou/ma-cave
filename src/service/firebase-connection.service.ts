@@ -25,10 +25,9 @@ import {Locker} from '../model/locker';
 //import {Query} from 'angularfire2/database/interfaces';
 import {Withdrawal} from '../model/withdrawal';
 import {BottleNoting} from '../components/bottle-noting/bottle-noting.component';
+import {Reference as FbStorageTypesReference} from '@firebase/storage-types';
 import Reference = firebase.database.Reference;
 import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
-import { Reference as FbStorageTypesReference } from '@firebase/storage-types';
-import {of} from 'rxjs/observable/of';
 
 /**
  * Services related to the bottles in the cellar.
@@ -170,12 +169,12 @@ export class FirebaseConnectionService {
   public fetchAllWithdrawals(): Observable<Withdrawal[]> {
     return this.angularFirebase
       .list<Withdrawal>(this.WITHDRAW_ROOT).valueChanges()
-                        //, {
-                        //  query: {
-                        //    orderByChild: 'withdrawal_date',
-                        //    limitToLast: 30
-                        //  }
-                        //})
+      //, {
+      //  query: {
+      //    orderByChild: 'withdrawal_date',
+      //    limitToLast: 30
+      //  }
+      //})
       .map(
         (withdrawals: Withdrawal[]) => {
           if (withdrawals.length > 0) {
@@ -315,14 +314,14 @@ export class FirebaseConnectionService {
       return undefined;
     }
     return this.angularFirebase.list<Image>(this.XREF_ROOT
-    //  , {
-    //                                   query: {
-    //                                     limitToFirst: 10,
-    //                                     orderByChild: 'bottleId',
-    //                                     equalTo: bottle.id
-    //                                   }
-    //                                 }
-    //);
+                                            //  , {
+                                            //                                   query: {
+                                            //                                     limitToFirst: 10,
+                                            //                                     orderByChild: 'bottleId',
+                                            //                                     equalTo: bottle.id
+                                            //                                   }
+                                            //                                 }
+                                            //);
     ).valueChanges();
   }
 
@@ -504,7 +503,7 @@ export class FirebaseConnectionService {
     //};
 
     return this.angularFirebase.list<SearchCriteria>(this.PROFILE_ROOT).valueChanges()
-      //, {query})
+    //, {query})
       .flatMap(arr => {
         if (arr) {
           return Observable.of(arr.reverse());
@@ -604,7 +603,7 @@ export class FirebaseConnectionService {
     };
 
     return this.angularFirebase.list<Bottle>(this.BOTTLES_ROOT).valueChanges();
-      //, {query});
+    //, {query});
   }
 
   private uploadToStorage(imageBlob, name: string): Promise<UploadTaskSnapshot> {

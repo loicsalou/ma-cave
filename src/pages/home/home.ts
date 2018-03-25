@@ -5,12 +5,10 @@ import {EmailLoginPage} from '../login/email-login.page';
 import {User} from '../../model/user';
 import {TabsPage} from '../tabs/tabs';
 import {Subscription} from 'rxjs/Subscription';
-import {SplashScreen} from '@ionic-native/splash-screen';
 import {LocalLoginPage} from '../login/local-login.page';
 import {FirebaseConnectionService} from '../../service/firebase-connection.service';
 import {NotificationService} from '../../service/notification.service';
 import {DeviceFeedback} from '@ionic-native/device-feedback';
-import {AndroidPermissions} from '@ionic-native/android-permissions';
 import {NativeProvider} from '../../providers/native/native';
 
 @Component({
@@ -110,7 +108,7 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   isGoogleLoginEnabled(): boolean {
-    return ! this.platform.is('cordova');
+    return !this.platform.is('cordova');
   }
 
   connectionAllowed() {

@@ -32,9 +32,19 @@ export class BottlePersistenceService extends PersistenceService {
 
   private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
   private _allBottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
+
+  get allBottlesObservable(): Observable<Bottle[]> {
+    return this._allBottlesObservable;
+  }
+
   private _filteredBottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
+
   private _filteredBottlesObservable: Observable<Bottle[]> = this._filteredBottles.asObservable();
-  private _filtersObservable: BehaviorSubject<FilterSet>;
+
+  get filteredBottlesObservable(): Observable<Bottle[]> {
+    return this._filteredBottlesObservable;
+  }
+
   private filters: FilterSet = new FilterSet(this.translateService);
   private allBottlesArray: Bottle[];
   private dataConnectionSub: Subscription;
@@ -51,25 +61,10 @@ export class BottlePersistenceService extends PersistenceService {
     }
   }
 
-  protected initialize(user: User) {
-    super.initialize(user);
-    this.dataConnection.initialize(user);
-    let items = this.dataConnection.allBottlesObservable;
-    this.dataConnectionSub = items.subscribe((bottles: Bottle[]) => {
-                                               this.setAllBottlesArray(bottles);
-                                               this.filterOn(this.filters);
-                                             },
-                                             error => this.notificationService.error('L\'accès à la liste des bouteilles a échoué !', error));
-    this.dataConnection.fetchAllBottles();
-  }
+  private _filtersObservable: BehaviorSubject<FilterSet>;
 
-  protected cleanup() {
-    super.cleanup();
-    this.dataConnectionSub.unsubscribe();
-    this.dataConnection.cleanup();
-    this.BOTTLES_ROOT = undefined;
-    this.allBottlesArray = undefined;
-    this.filters = undefined;
+  get filtersObservable(): Observable<FilterSet> {
+    return this._filtersObservable.asObservable();
   }
 
   public update(bottles: Bottle[]) {
@@ -130,18 +125,6 @@ export class BottlePersistenceService extends PersistenceService {
 
   public reconnectListeners() {
     this.dataConnection.reconnectListeners();
-  }
-
-  get allBottlesObservable(): Observable<Bottle[]> {
-    return this._allBottlesObservable;
-  }
-
-  get filteredBottlesObservable(): Observable<Bottle[]> {
-    return this._filteredBottlesObservable;
-  }
-
-  get filtersObservable(): Observable<FilterSet> {
-    return this._filtersObservable.asObservable();
   }
 
   /**
@@ -226,6 +209,70 @@ export class BottlePersistenceService extends PersistenceService {
     return this.dataConnection.getMostUsedQueries(nb);
   }
 
+  removeFromQueryStats(keywords: any) {
+    this.dataConnection.removeFromQueryStats(keywords);
+  }
+
+  deleteAccountData(): Observable<boolean> {
+    let sub = new Subject<boolean>();
+    this.notificationService.ask('question', 'app.keep-or-delete-data').take(1).subscribe(
+      resp => {
+        if (resp) {
+          this.dataConnection.deleteAccount().take(1).subscribe(
+            result => sub.next(result)
+          )
+        }
+      }
+    );
+    return sub.asObservable();
+  }
+
+  withdraw(bottle: Bottle, position: Position) {
+    this.dataConnection.withdraw(bottle, position);
+  }
+
+  recordBottleNotation(bottle: Bottle, notes: BottleNoting) {
+    let withdrawal = new Withdrawal(bottle, notes);
+    this.recordWidthdrawNotation(withdrawal, notes);
+  }
+
+  recordWidthdrawNotation(withdrawal: Withdrawal, notes: BottleNoting) {
+    this.dataConnection.recordNotation(withdrawal, notes);
+  }
+
+  fetchAllWithdrawals(): Observable<Withdrawal[]> {
+    return this.dataConnection.fetchAllWithdrawals();
+    //.flatMap(
+    //  // wd.notation==null seulement == au lieu de === pour que ça matche aussi avec undefined
+    //  (wds: Withdrawal[]) => Observable.of(wds.filter(wd => wd.notation==null))
+    //);
+  }
+
+  deleteLogs() {
+    this.dataConnection.deleteLogs()
+  }
+
+  protected initialize(user: User) {
+    super.initialize(user);
+    this.dataConnection.initialize(user);
+    let items = this.dataConnection.allBottlesObservable;
+    this.dataConnectionSub = items.subscribe((bottles: Bottle[]) => {
+                                               this.setAllBottlesArray(bottles);
+                                               this.filterOn(this.filters);
+                                             },
+                                             error => this.notificationService.error('L\'accès à la liste des bouteilles a échoué !', error));
+    this.dataConnection.fetchAllBottles();
+  }
+
+  protected cleanup() {
+    super.cleanup();
+    this.dataConnectionSub.unsubscribe();
+    this.dataConnection.cleanup();
+    this.BOTTLES_ROOT = undefined;
+    this.allBottlesArray = undefined;
+    this.filters = undefined;
+  }
+
   private setAllBottlesArray(bottles: Bottle[]) {
     this.allBottlesArray = bottles;
     this._bottles.next(bottles);
@@ -289,49 +336,6 @@ export class BottlePersistenceService extends PersistenceService {
   private setFilters(filters: FilterSet) {
     this.filters = filters;
     this._filtersObservable.next(filters);
-  }
-
-  removeFromQueryStats(keywords: any) {
-    this.dataConnection.removeFromQueryStats(keywords);
-  }
-
-  deleteAccountData(): Observable<boolean> {
-    let sub = new Subject<boolean>();
-    this.notificationService.ask('question', 'app.keep-or-delete-data').take(1).subscribe(
-      resp => {
-        if (resp) {
-          this.dataConnection.deleteAccount().take(1).subscribe(
-            result => sub.next(result)
-          )
-        }
-      }
-    );
-    return sub.asObservable();
-  }
-
-  withdraw(bottle: Bottle, position: Position) {
-    this.dataConnection.withdraw(bottle, position);
-  }
-
-  recordBottleNotation(bottle: Bottle, notes: BottleNoting) {
-    let withdrawal = new Withdrawal(bottle, notes);
-    this.recordWidthdrawNotation(withdrawal, notes);
-  }
-
-  recordWidthdrawNotation(withdrawal: Withdrawal, notes: BottleNoting) {
-    this.dataConnection.recordNotation(withdrawal, notes);
-  }
-
-  fetchAllWithdrawals(): Observable<Withdrawal[]> {
-    return this.dataConnection.fetchAllWithdrawals();
-      //.flatMap(
-      //  // wd.notation==null seulement == au lieu de === pour que ça matche aussi avec undefined
-      //  (wds: Withdrawal[]) => Observable.of(wds.filter(wd => wd.notation==null))
-      //);
-  }
-
-  deleteLogs() {
-    this.dataConnection.deleteLogs()
   }
 }
 

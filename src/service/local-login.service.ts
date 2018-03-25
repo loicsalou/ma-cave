@@ -16,7 +16,6 @@ import {NativeStorageService} from './native-storage.service';
 @Injectable()
 export class LocalLoginService extends AbstractLoginService {
 
-  private _localUser: User;
   knownUsers: User[];
 
   constructor(notificationService: NotificationService, private storageService: NativeStorageService) {
@@ -25,6 +24,8 @@ export class LocalLoginService extends AbstractLoginService {
       (users: User[]) => this.knownUsers = users
     )
   }
+
+  private _localUser: User;
 
   set localUser(value: any) {
     this._localUser = new LocalLoginUser(value.user, value.email, value.photoUrl, value.displayName, value.uid, value.phoneNumber);

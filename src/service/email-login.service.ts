@@ -17,9 +17,6 @@ import {NotificationService} from './notification.service';
 @Injectable()
 export class EmailLoginService extends AbstractLoginService {
 
-  private _username: string;
-  private _psw: string;
-
   private firebaseRef: firebase.database.Reference;
 
   constructor(notificationService: NotificationService,
@@ -28,6 +25,8 @@ export class EmailLoginService extends AbstractLoginService {
     this.firebaseRef = this.firebase.database.ref('users/');
   }
 
+  private _username: string;
+
   get username(): string {
     return this._username;
   }
@@ -35,6 +34,8 @@ export class EmailLoginService extends AbstractLoginService {
   set username(value: string) {
     this._username = value;
   }
+
+  private _psw: string;
 
   get psw(): string {
     return this._psw;

@@ -121,6 +121,26 @@ export class UploadBottlesPage {
     this.bottleService.deleteLogs()
   }
 
+  showLocalStorage() {
+    this.listLocalStorageData();
+    let u1: User = <User> {
+      user: 'u1',
+      email: 'mail1',
+      photoURL: '',
+      displayName: '',
+      phoneNumber: '',
+      uid: ''
+    };
+  }
+
+  loadTempValueFor(key) {
+    this.localStorage.getValue(key)
+      .then(v => this.tempValue = JSON.stringify(v))
+      .catch(err => {
+        //alert('accès à la valeur de ' + key + ' KO: ' + JSON.stringify(err))
+      });
+  }
+
   private setupUpload(file: any) {
     if (this.deleteBefore) {
       this.bottleService.deleteBottles();
@@ -194,26 +214,6 @@ export class UploadBottlesPage {
     if (loading) {
       loading.dismiss();
     }
-  }
-
-  showLocalStorage() {
-    this.listLocalStorageData();
-    let u1: User = <User> {
-      user: 'u1',
-      email: 'mail1',
-      photoURL: '',
-      displayName: '',
-      phoneNumber: '',
-      uid: ''
-    };
-  }
-
-  loadTempValueFor(key) {
-    this.localStorage.getValue(key)
-      .then(v => this.tempValue = JSON.stringify(v))
-      .catch(err => {
-        //alert('accès à la valeur de ' + key + ' KO: ' + JSON.stringify(err))
-      });
   }
 
   private forceLogout(loading: Loading) {
