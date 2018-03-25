@@ -7,9 +7,9 @@ import {Configuration} from './Configuration';
 @Injectable()
 export class Bottles {
 
-  public static colorsData = require('../../assets/json/colors.json');
-  public static regionsData = require('../../assets/json/regions.json');
-  public static aocData = require('../../assets/json/regions-appellations.json');
+  public static colorsData = require('../assets/json/colors.json');
+  public static regionsData = require('../assets/json/regions.json');
+  public static aocData = require('../assets/json/regions-appellations.json');
 
   public colors = [];
   public aocByArea = [];

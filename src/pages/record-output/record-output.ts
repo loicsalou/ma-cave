@@ -13,7 +13,6 @@ import {BottlePersistenceService} from '../../service/bottle-persistence.service
 
 @IonicPage()
 @Component({
-             selector: 'page-record-output',
              templateUrl: './record-output.html',
              styleUrls: [ '/record-output.scss' ]
            })

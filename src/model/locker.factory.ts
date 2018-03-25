@@ -16,7 +16,7 @@ import {SimpleLocker} from './simple-locker';
 @Injectable()
 export class LockerFactory {
 
-  constructor(private i18n: TranslateService, private _stats: Statistics) {
+  constructor(private i18n: TranslateService) {
   }
 
   public create(json): Locker {
@@ -31,11 +31,6 @@ export class LockerFactory {
                                 json[ 'supportedFormats' ], json[ 'defaultImage' ], json[ 'imageUrl' ]);
     }
     return locker;
-  }
-
-  private setDefaultImage(locker: Locker): LockerFactory {
-    locker.defaultImage = '/assets/icon/locker.png';
-    return this;
   }
 
 }

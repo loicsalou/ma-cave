@@ -17,8 +17,8 @@ import {Withdrawal} from './withdrawal';
 @Injectable()
 export class WithdrawalFactory extends BottleFactory {
 
-  constructor(i18n: TranslateService, stats: Statistics) {
-    super(i18n, stats)
+  constructor(i18n: TranslateService) {
+    super(i18n)
   }
 
   public create(withdrawal: Withdrawal): Withdrawal {

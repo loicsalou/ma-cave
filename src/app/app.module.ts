@@ -24,7 +24,7 @@ import {ChartsModule} from 'ng2-charts';
 import '../../node_modules/chart.js/dist/Chart.bundle.min.js';
 import {EmailLoginPage} from '../pages/login/email-login.page';
 import {ImagePersistenceService} from '../service/image-persistence.service';
-import {Bottles} from '../components/config/Bottles';
+import {Bottles} from '../config/Bottles';
 import {AnonymousLoginService} from '../service/anonymous-login.service';
 import {EmailLoginService} from '../service/email-login.service';
 import {Facebook} from '@ionic-native/facebook';
@@ -70,7 +70,6 @@ export const fireConfig = {
             declarations: [
               MyCaveApp,
               ContactPage,
-              StatisticsComponent,
               EmailLoginPage,
               LocalLoginPage,
               HomePage,
@@ -149,11 +148,10 @@ export const fireConfig = {
                 deps: [ AlertController, ToastController, TranslateService, LoadingController ]
               },
               SplashScreen,
-              Statistics,
-              StatusBar
+              StatusBar,
+              TranslateService
             ],
             exports: [
-              StatisticsComponent,
               DefaultImageDirective
             ]
           })

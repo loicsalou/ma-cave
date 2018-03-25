@@ -1,4 +1,4 @@
-import {BottleMetadata} from '../../model/bottle';
+import {BottleMetadata} from '../model/bottle';
 import * as _ from 'lodash';
 
 /**
@@ -39,7 +39,7 @@ export class Configuration {
   }
   private static SPECIAL_CHARS_REMOVED = new RegExp(/[\.|\d|\n|\r|,|!|?|@]/g);
   private static SEARCH_STRING_REMOVED_CHARS = new RegExp(/[\ |\-|\.|\d|\n|\r|,|!|?|@]/g);
-  trads = require('../../assets/i18n/fr.json');
+  trads = require('../assets/i18n/fr.json');
 
   /**
    * get the search string corresponding to the given text.

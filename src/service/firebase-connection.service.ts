@@ -6,7 +6,7 @@ import {Bottle, BottleMetadata, Position} from '../model/bottle';
 import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 //import {AngularFireDatabase, FirebaseListObservable} from 'angularfire2/database';
-import {AngularFireDatabase} from 'angularfire2/database';
+import {AngularFireDatabase, SnapshotAction} from 'angularfire2/database';
 import * as firebase from 'firebase/app';
 import * as moment from 'moment';
 import {LoginService} from './login.service';
@@ -168,21 +168,16 @@ export class FirebaseConnectionService {
 
   public fetchAllWithdrawals(): Observable<Withdrawal[]> {
     return this.angularFirebase
-      .list<Withdrawal>(this.WITHDRAW_ROOT).valueChanges()
-      //, {
-      //  query: {
-      //    orderByChild: 'withdrawal_date',
-      //    limitToLast: 30
-      //  }
-      //})
-      .map(
-        (withdrawals: Withdrawal[]) => {
-          if (withdrawals.length > 0) {
-            return this.withdrawalFactory.createAll(withdrawals);
-          }
-          return withdrawals
-        }
+      .list<Withdrawal>(this.WITHDRAW_ROOT).snapshotChanges()
+      .map((changes: SnapshotAction[]) =>
+             changes.map(
+               // ATTENTION l'ordre de ...c.payload.val() et id est important. Dans l'autre sens l'id est écrasé !
+               c => this.withdrawalFactory.create({
+                                                    ...c.payload.val(), id: c.payload.key
+                                                  })
+             )
       )
+      ;
   }
 
   public createWithdrawal(withdrawal: Withdrawal): void {
@@ -213,23 +208,10 @@ export class FirebaseConnectionService {
   // ===================================================== LOCKERS
   public fetchAllLockers(): Observable<Locker[]> {
     return this.angularFirebase
-      .list<Locker>(this.CELLAR_ROOT).valueChanges()
-      //, {
-      //  query: {
-      //    orderByChild: 'lastUpdated'
-      //  }
-      //})
+      .list<Locker>(this.CELLAR_ROOT).snapshotChanges()
       .map(
-        (lockers: Locker[]) => {
-          if (lockers.length > 0) {
-            //prepare loaded bottles for the app
-            lockers = lockers.map(
-              l => {
-                l[ 'id' ] = l[ '$key' ];
-                return l;
-              })
-          }
-          return lockers
+        (changes: SnapshotAction[]) => {
+          return changes.map(c => ({id: c.payload.key, ...c.payload.val()}))
         }
       )
   }
@@ -503,7 +485,6 @@ export class FirebaseConnectionService {
     //};
 
     return this.angularFirebase.list<SearchCriteria>(this.PROFILE_ROOT).valueChanges()
-    //, {query})
       .flatMap(arr => {
         if (arr) {
           return Observable.of(arr.reverse());
@@ -563,21 +544,14 @@ export class FirebaseConnectionService {
   //============== NO CACHE AVAILABLE
   private fetchAllBottlesFromDB(): Subscription {
     this.notificationService.debugAlert('fetchAllBottlesFromDB()');
-    let items = this.angularFirebase.list<Bottle>(this.BOTTLES_ROOT).valueChanges();
-    //  , {
-    //  query: {
-    //    orderByChild: 'lastUpdated'
-    //  }
-    //});
+    let items = this.angularFirebase.list<Bottle>(this.BOTTLES_ROOT).snapshotChanges();
 
     return items.subscribe(
-      (bottles: Bottle[]) => {
-        if (bottles.length > 0) {
-          //prepare loaded bottles for the app
-          this._bottles.next(bottles.map(
-            (bottle: Bottle) => this.bottleFactory.create(bottle))
-          );
-        }
+      (changes: SnapshotAction[]) => {
+        const bottles = changes.map(
+          c => this.bottleFactory.create({id: c.payload.key, ...c.payload.val()})
+        );
+        this._bottles.next(bottles);
       },
       error => {
         this._bottles.error(error);
