@@ -18,7 +18,7 @@ import {ViewController} from 'ionic-angular';
                    </div>
                  </ion-list>
                </div>`,
-             styleUrls: [ '/popover.page.scss' ]
+             // styleUrls:[ 'popover.page.scss' ]
            })
 export class PopoverPage {
 

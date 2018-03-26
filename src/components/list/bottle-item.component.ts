@@ -9,7 +9,7 @@ import {SelectedEvent} from './selected-event';
 @Component({
              selector: 'bottle-item',
              templateUrl: 'bottle-item.component.html',
-             styleUrls: [ '/bottle-item.component.scss' ]
+             // styleUrls:[ 'bottle-item.component.scss' ]
            })
 export class BottleItemComponent {
   isFilterPanelShown = false;

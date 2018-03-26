@@ -18,7 +18,7 @@ import {NgForm} from '@angular/forms';
 @Component({
              selector: 'update',
              templateUrl: 'update.page.html',
-             styleUrls: [ '/update.page.scss' ],
+             // styleUrls:[ 'update.page.scss' ],
              // warning: few browsers support shadow DOM encapsulation at this time
              encapsulation: ViewEncapsulation.Emulated
            })

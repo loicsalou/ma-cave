@@ -13,7 +13,7 @@ import {BottlePersistenceService} from '../../../service/bottle-persistence.serv
 
 @Component({
              templateUrl: './record-output.html',
-             styleUrls: [ '/record-output.scss' ]
+             // styleUrls:[ 'record-output.scss' ]
            })
 export class RecordOutputPage {
 

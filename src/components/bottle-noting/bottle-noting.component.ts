@@ -13,7 +13,7 @@ import {Withdrawal} from '../../model/withdrawal';
 @Component({
              selector: 'bottle-noting',
              templateUrl: 'bottle-noting.component.html',
-             styleUrls: [ '/bottle-noting.component.scss' ],
+             // styleUrls:[ 'bottle-noting.component.scss' ],
              changeDetection: ChangeDetectionStrategy.Default
            })
 export class BottleNotingComponent implements OnInit {

@@ -18,8 +18,8 @@ import {DeviceFeedback} from '@ionic-native/device-feedback';
  */
 @Component({
              selector: 'locker-editor2',
-             templateUrl: './update-locker.page.html',
-             styleUrls: [ '/create-locker.page.scss' ]
+             templateUrl: 'update-locker.page.html',
+             // styleUrls:[ 'update-locker.page.scss' ]
            })
 export class UpdateLockerPage implements OnInit {
   lockerFormats: BottleSize[];

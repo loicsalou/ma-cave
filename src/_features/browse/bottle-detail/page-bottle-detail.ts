@@ -14,7 +14,7 @@ import * as _ from 'lodash';
 @Component({
              selector: 'page-bottle-detail',
              templateUrl: 'page-bottle-detail.html',
-             styleUrls: [ '/page-bottle-detail.scss' ]
+             // styleUrls:[ 'page-bottle-detail.scss' ]
            })
 export class BottleDetailPage implements OnInit {
   private static SLIDES_BEFORE = 15;

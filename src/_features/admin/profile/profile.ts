@@ -6,7 +6,7 @@ import {NotificationService} from '../../../service/notification.service';
 @Component({
              selector: 'page-profile',
              templateUrl: './profile.html',
-             styleUrls: [ '/profile.scss' ]
+             // styleUrls:[ 'profile.scss' ]
            })
 export class ProfilePage implements OnInit {
   version: any;

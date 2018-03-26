@@ -16,7 +16,7 @@ import {NativeProvider} from '../../../providers/native/native';
 @Component({
              selector: 'page-browse',
              templateUrl: 'browse.page.html',
-             styleUrls: [ '/browse.page.scss' ]
+             // styleUrls:[ 'browse.page.scss' ]
            })
 export class BrowsePage implements OnInit, OnDestroy {
   allBottles: Bottle[];

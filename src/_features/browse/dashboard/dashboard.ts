@@ -19,7 +19,7 @@ import {RecordOutputPage} from '../record-output/record-output';
 @Component({
              selector: 'page-dashboard',
              templateUrl: 'dashboard.html',
-             styleUrls: [ '/dashboard.scss' ]
+             // styleUrls:[ 'dashboard.scss' ]
            })
 export class DashboardPage implements OnInit, OnDestroy {
   version: any;

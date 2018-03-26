@@ -25,7 +25,7 @@ import {CreateLockerPage} from '../create-locker/create-locker.page';
 @Component({
              selector: 'page-cellar',
              templateUrl: './cellar.page.html',
-             styleUrls: [ '/cellar.page.scss' ]
+             // styleUrls:[ 'cellar.page.scss' ]
            })
 export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
 

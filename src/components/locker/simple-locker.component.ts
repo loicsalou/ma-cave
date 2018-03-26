@@ -16,7 +16,7 @@ import {NativeProvider} from '../../providers/native/native';
 @Component({
              selector: 'locker',
              templateUrl: './simple-locker.component.html',
-             styleUrls: [ '/locker.component.scss' ]
+             // styleUrls:[ 'locker.component.scss' ]
            })
 export class SimpleLockerComponent extends LockerComponent implements OnInit, AfterViewInit {
   protected static MAX_NB_COLUMNS: number = 16;

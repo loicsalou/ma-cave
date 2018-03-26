@@ -5,7 +5,7 @@ import {Bottle} from '../../../model/bottle';
 @Component({
              selector: 'slide-bottle-detail',
              templateUrl: 'slide-bottle-detail.html',
-             styleUrls: [ '/slide-bottle-detail.scss' ]
+             // styleUrls:[ 'slide-bottle-detail.scss' ]
            })
 export class BottleDetailSlide {
 

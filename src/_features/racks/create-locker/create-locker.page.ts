@@ -15,7 +15,7 @@ import {SimpleLocker} from '../../../model/simple-locker';
 @Component({
              selector: 'locker-editor',
              templateUrl: './create-locker.page.html',
-             styleUrls: [ '/create-locker.page.scss' ]
+             // styleUrls:[ 'create-locker.page.scss' ]
            })
 export class CreateLockerPage {
 
