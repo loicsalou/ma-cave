@@ -12,19 +12,22 @@ import {UpdateLockerPage} from './update-locker/update-locker.page';
 import {CreateLockerPage} from './create-locker/create-locker.page';
 
 @NgModule({
-            declarations: [
-              CellarPage,
-              CreateLockerPage,
-              UpdateLockerPage
-            ],
             imports: [
               BrowserModule,
-              CommonModule,
               FormsModule,
               IonicModule,
               IonicPageModule.forChild(CellarPage),
               SharedModule,
               TranslateModule.forChild()
+            ],
+            declarations: [
+              CellarPage,
+              CreateLockerPage,
+              UpdateLockerPage
+            ],
+            entryComponents: [
+              CreateLockerPage,
+              UpdateLockerPage
             ],
             exports: [
               CellarPage,
@@ -34,10 +37,6 @@ import {CreateLockerPage} from './create-locker/create-locker.page';
             providers: [
               CellarPersistenceService,
               FirebaseConnectionService
-            ],
-            entryComponents: [
-              CreateLockerPage,
-              UpdateLockerPage
             ]
           })
 export class CellarFeatureModule {

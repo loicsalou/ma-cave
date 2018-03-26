@@ -23,8 +23,16 @@ import {StatisticsComponent} from './statistics/statistics.component';
 import {DistributionComponent} from './distribution/distribution';
 import {SimpleLockerComponent} from './locker/simple-locker.component';
 import {FridgeLockerComponent} from './locker/fridge-locker.component';
+import {CommonModule} from '@angular/common';
 
 @NgModule({
+            imports: [
+              ChartsModule,
+              CommonModule,
+              FormsModule,
+              IonicModule,
+              TranslateModule
+            ],
             declarations: [
               BottleIconPipe,
               BottleItemComponent,
@@ -40,17 +48,12 @@ import {FridgeLockerComponent} from './locker/fridge-locker.component';
               StatisticsComponent,
               WithdrawalItemComponent
             ],
-            imports: [
-              ChartsModule,
-              FormsModule,
-              IonicModule,
-              TranslateModule
-            ],
             exports: [
               BottleIconPipe,
               BottleItemComponent,
               BottleNotingComponent,
               ChartComponent,
+              CommonModule,
               DefaultImageDirective,
               DistributionComponent,
               FridgeLockerComponent,

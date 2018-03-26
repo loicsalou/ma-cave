@@ -13,15 +13,15 @@ import {BarcodeScanner} from '@ionic-native/barcode-scanner';
 import {FileChooser} from '@ionic-native/file-chooser';
 
 @NgModule({
-            declarations: [
-              ProfilePage,
-              UploadBottlesPage
-            ],
             imports: [
               BrowserModule,
               FormsModule,
               SharedModule,
               IonicPageModule.forChild(ProfilePage),
+            ],
+            declarations: [
+              ProfilePage,
+              UploadBottlesPage
             ],
             entryComponents: [
               ProfilePage,
@@ -32,7 +32,13 @@ import {FileChooser} from '@ionic-native/file-chooser';
               UploadBottlesPage
             ],
             providers: [
-              Transfer, TransferObject, FileChooser, Camera, File, FilePath, BarcodeScanner
+              Transfer,
+              TransferObject,
+              FileChooser,
+              Camera,
+              File,
+              FilePath,
+              BarcodeScanner
             ]
           })
 export class AdminFeatureModule {

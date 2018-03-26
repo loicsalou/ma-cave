@@ -43,14 +43,6 @@ export const fireConfig = {
 }
 
 @NgModule({
-            declarations: [
-              MyCaveApp,
-              ContactPage,
-              EmailLoginPage,
-              LocalLoginPage,
-              HomePage,
-              TabsPage
-            ],
             imports: [
               BrowserModule,
               IonicModule.forRoot(MyCaveApp),
@@ -69,7 +61,14 @@ export const fireConfig = {
                                         }
                                       })
             ],
-            bootstrap: [ IonicApp ],
+            declarations: [
+              MyCaveApp,
+              ContactPage,
+              EmailLoginPage,
+              LocalLoginPage,
+              HomePage,
+              TabsPage
+            ],
             entryComponents: [
               BottleDetailPage,
               BrowsePage,
@@ -83,9 +82,7 @@ export const fireConfig = {
               TabsPage,
               UpdatePage
             ],
-            exports: [
-              DefaultImageDirective
-            ]
+            bootstrap: [ IonicApp ],
           })
 export class AppModule {
 }

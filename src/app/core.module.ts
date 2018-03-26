@@ -41,7 +41,6 @@ export const fireConfig = {
 
 @NgModule({
             imports: [
-              CommonModule,
               AngularFireModule.initializeApp(fireConfig),
               AngularFireAuthModule,
               AngularFireDatabaseModule
