@@ -22,10 +22,10 @@ import {AdminFeatureModule} from '../_features/admin/admin-feature.module';
 import {NotificationService} from '../service/notification.service';
 import {DefaultImageDirective} from '../directives/default-image/default-image';
 import {SharedModule} from '../components/shared.module';
-import {BrowseModule} from '../_features/browse/browse.module';
+import {BrowseFeatureModule} from '../_features/browse/browse-feature.module';
 import {BottleDetailModule} from '../_features/browse/bottle-detail/bottle-detail.module';
 import {CellarPage} from '../_features/racks/cellar/cellar.page';
-import {CellarPageModule} from '../_features/racks/cellar.page.module';
+import {CellarFeatureModule} from '../_features/racks/cellar-feature.module';
 import {NativeStorageService} from '../service/native-storage.service';
 import {LocalLoginService} from '../service/local-login.service';
 import {LocalLoginPage} from '../_features/admin/login/local-login.page';
@@ -55,8 +55,8 @@ export const fireConfig = {
               BrowserModule,
               IonicModule.forRoot(MyCaveApp),
               CoreModule,
-              BrowseModule,
-              CellarPageModule,
+              BrowseFeatureModule,
+              CellarFeatureModule,
               ChartsModule,
               HttpClientModule,
               AdminFeatureModule,

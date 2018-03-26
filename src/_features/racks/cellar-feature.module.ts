@@ -40,5 +40,5 @@ import {CreateLockerPage} from './create-locker/create-locker.page';
               UpdateLockerPage
             ]
           })
-export class CellarPageModule {
+export class CellarFeatureModule {
 }

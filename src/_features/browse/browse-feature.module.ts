@@ -41,5 +41,5 @@ const pages = [
               BrowsePage
             ]
           })
-export class BrowseModule {
+export class BrowseFeatureModule {
 }
