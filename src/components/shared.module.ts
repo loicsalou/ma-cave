@@ -19,34 +19,49 @@ import {TranslateModule} from '@ngx-translate/core';
 import {BottleNotingComponent} from './bottle-noting/bottle-noting.component';
 import {BottleItemComponent} from './list/bottle-item.component';
 import {WithdrawalItemComponent} from './withdrawal-item/withdrawal-item.component';
+import {StatisticsComponent} from './statistics/statistics.component';
+import {DistributionComponent} from './distribution/distribution';
+import {SimpleLockerComponent} from './locker/simple-locker.component';
+import {FridgeLockerComponent} from './locker/fridge-locker.component';
+import {CommonModule} from '@angular/common';
 
 @NgModule({
+            imports: [
+              ChartsModule,
+              CommonModule,
+              FormsModule,
+              IonicModule,
+              TranslateModule
+            ],
             declarations: [
               BottleIconPipe,
               BottleItemComponent,
               BottleNotingComponent,
               ChartComponent,
               DefaultImageDirective,
+              DistributionComponent,
+              FridgeLockerComponent,
               ImageAttacherComponent,
               ProgressBarComponent,
               RatingComponent,
+              SimpleLockerComponent,
+              StatisticsComponent,
               WithdrawalItemComponent
-            ],
-            imports: [
-              ChartsModule,
-              FormsModule,
-              IonicModule,
-              TranslateModule
             ],
             exports: [
               BottleIconPipe,
               BottleItemComponent,
               BottleNotingComponent,
               ChartComponent,
+              CommonModule,
               DefaultImageDirective,
+              DistributionComponent,
+              FridgeLockerComponent,
               ImageAttacherComponent,
               ProgressBarComponent,
               RatingComponent,
+              SimpleLockerComponent,
+              StatisticsComponent,
               WithdrawalItemComponent
             ],
             providers: [

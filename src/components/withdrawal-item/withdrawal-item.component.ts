@@ -6,7 +6,7 @@ import {Withdrawal} from '../../model/withdrawal';
 @Component({
              selector: 'withdrawal-item',
              templateUrl: 'withdrawal-item.component.html',
-             styleUrls: [ '/withdrawal-item.component.scss' ]
+             // styleUrls:[ 'withdrawal-item.component.scss' ]
            })
 export class WithdrawalItemComponent {
   @Input()

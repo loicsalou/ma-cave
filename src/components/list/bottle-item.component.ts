@@ -2,14 +2,14 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {Bottle} from '../../model/bottle';
 import {ItemSliding, NavController} from 'ionic-angular';
-import {CellarPage} from '../../pages/cellar/cellar.page';
+import {CellarPage} from '../../_features/racks/cellar/cellar.page';
 import {NativeProvider} from '../../providers/native/native';
 import {SelectedEvent} from './selected-event';
 
 @Component({
              selector: 'bottle-item',
              templateUrl: 'bottle-item.component.html',
-             styleUrls: [ '/bottle-item.component.scss' ]
+             // styleUrls:[ 'bottle-item.component.scss' ]
            })
 export class BottleItemComponent {
   isFilterPanelShown = false;

@@ -3,7 +3,7 @@ import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output}
 @Component({
              selector: 'chart',
              templateUrl: './chart.component.html',
-             changeDetection: ChangeDetectionStrategy.OnPush
+             changeDetection: ChangeDetectionStrategy.Default
            })
 export class ChartComponent implements OnInit {
 

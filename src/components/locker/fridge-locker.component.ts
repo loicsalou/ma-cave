@@ -16,7 +16,7 @@ import {NativeProvider} from '../../providers/native/native';
 @Component({
              selector: 'fridge-locker',
              templateUrl: './fridge-locker.component.html',
-             styleUrls: [ '/fridge-locker.component.scss' ]
+             // styleUrls:[ 'fridge-locker.component.scss' ]
            })
 export class FridgeLockerComponent extends LockerComponent {
   protected static MAX_NB_COLUMNS: number = 8;

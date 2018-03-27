@@ -13,7 +13,7 @@ import {TranslateService} from '@ngx-translate/core';
 @Component({
              selector: 'distribution',
              templateUrl: 'distribution.html',
-             styleUrls: [ '/distribution.scss' ]
+             // styleUrls:[ 'distribution.scss' ]
            })
 export class DistributionComponent implements OnChanges, OnInit {
 //axes de distribution de la distribution courante
