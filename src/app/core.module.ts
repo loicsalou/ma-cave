@@ -12,23 +12,27 @@ import {BottleFactory} from '../model/bottle.factory';
 import '../../node_modules/chart.js/dist/Chart.bundle.min.js';
 import {ImagePersistenceService} from '../service/image-persistence.service';
 import {Bottles} from '../config/Bottles';
-import {AnonymousLoginService} from '../service/anonymous-login.service';
-import {EmailLoginService} from '../service/email-login.service';
+import {AnonymousLoginService} from '../service/login/anonymous-login.service';
+import {EmailLoginService} from '../service/login/email-login.service';
 import {Facebook} from '@ionic-native/facebook';
-import {LoginService} from '../service/login.service';
-import {FacebookLoginService} from '../service/facebook-login.service';
+import {LoginService} from '../service/login/login.service';
+import {FacebookLoginService} from '../service/login/facebook-login.service';
 import {NotificationService} from '../service/notification.service';
 import {LockerFactory} from '../model/locker.factory';
-import {FirebaseConnectionService} from '../service/firebase-connection.service';
+import {FirebaseAdminService} from '../service/firebase/firebase-admin.service';
 import {NativeStorageService} from '../service/native-storage.service';
 import {NativeStorage} from '@ionic-native/native-storage';
-import {LocalLoginService} from '../service/local-login.service';
+import {LocalLoginService} from '../service/login/local-login.service';
 import {AndroidPermissions} from '@ionic-native/android-permissions';
 import {HttpClient} from '@angular/common/http';
-import {GoogleLoginService} from '../service/google-login.service';
+import {GoogleLoginService} from '../service/login/google-login.service';
 import {GooglePlus} from '@ionic-native/google-plus';
 import {WithdrawalFactory} from '../model/withdrawal.factory';
 import {CommonModule} from '@angular/common';
+import {FirebaseLockersService} from '../service/firebase/firebase-lockers.service';
+import {FirebaseWithdrawalsService} from '../service/firebase/firebase-withdrawals.service';
+import {FirebaseBottlesService} from '../service/firebase/firebase-bottles.service';
+import {FirebaseImagesService} from '../service/firebase/firebase-images.service';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -59,7 +63,11 @@ export const fireConfig = {
               GooglePlus,
               HttpClient,
               ImagePersistenceService,
-              FirebaseConnectionService,
+              FirebaseAdminService,
+              FirebaseLockersService,
+              FirebaseImagesService,
+              FirebaseBottlesService,
+              FirebaseWithdrawalsService,
               LocalLoginService,
               GoogleLoginService,
               LockerFactory,

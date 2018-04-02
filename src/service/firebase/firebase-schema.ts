@@ -1,0 +1,9 @@
+export const USERS_FOLDER = 'users';
+export const CELLAR_FOLDER = 'cellar';
+export const LOCKER_CONTENT_FOLDER = 'content';
+export const ERROR_CONTENT_FOLDER = 'error';
+export const WITHDRAW_FOLDER = 'withdraw';
+export const BOTTLES_FOLDER = 'bottles';
+export const PROFILE_CONTENT_FOLDER = 'profile';
+export const XREF_FOLDER = 'xref';
+export const IMAGES_FOLDER = 'images';

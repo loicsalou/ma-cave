@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Loading, ModalController, NavController, Platform, PopoverController, VirtualScroll} from 'ionic-angular';
 import {BrowsePage} from '../browse/browse.page';
-import {LoginService} from '../../../service/login.service';
+import {LoginService} from '../../../service/login/login.service';
 import {BottlePersistenceService} from '../../../service/bottle-persistence.service';
 import {Bottle} from '../../../model/bottle';
 import {FilterSet} from '../../../components/distribution/distribution';
@@ -9,12 +9,12 @@ import {Subscription} from 'rxjs/Subscription';
 import {NativeProvider} from '../../../providers/native/native';
 import {NotificationService} from '../../../service/notification.service';
 import {TranslateService} from '@ngx-translate/core';
-import {SearchCriteria} from '../../../service/firebase-connection.service';
 import {PopoverPage} from '../popover/popover.page';
 import {Action} from '../../../model/action';
 import {BottleItemComponent} from '../../../components/list/bottle-item.component';
 import {Withdrawal} from '../../../model/withdrawal';
 import {RecordOutputPage} from '../record-output/record-output';
+import {SearchCriteria} from '../../../model/search-criteria';
 
 @Component({
              selector: 'page-dashboard',

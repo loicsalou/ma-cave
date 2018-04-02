@@ -6,7 +6,7 @@ import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
 import {FilterSet} from '../../../components/distribution/distribution';
 import {Subscription} from 'rxjs/Subscription';
 import * as _ from 'lodash';
-import {LoginService} from '../../../service/login.service';
+import {LoginService} from '../../../service/login/login.service';
 import {NotificationService} from '../../../service/notification.service';
 import {CellarPage} from '../../racks/cellar/cellar.page';
 import {BottleItemComponent} from '../../../components/list/bottle-item.component';

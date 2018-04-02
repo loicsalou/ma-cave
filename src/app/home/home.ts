@@ -1,12 +1,12 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {Modal, ModalController, NavController, Platform} from 'ionic-angular';
-import {LoginService} from '../../service/login.service';
+import {LoginService} from '../../service/login/login.service';
 import {EmailLoginPage} from '../../_features/admin/login/email-login.page';
 import {User} from '../../model/user';
 import {TabsPage} from '../tabs/tabs';
 import {Subscription} from 'rxjs/Subscription';
 import {LocalLoginPage} from '../../_features/admin/login/local-login.page';
-import {FirebaseConnectionService} from '../../service/firebase-connection.service';
+import {FirebaseAdminService} from '../../service/firebase/firebase-admin.service';
 import {NotificationService} from '../../service/notification.service';
 import {DeviceFeedback} from '@ionic-native/device-feedback';
 import {NativeProvider} from '../../providers/native/native';
@@ -30,7 +30,7 @@ export class HomePage implements OnInit, AfterViewInit {
 
   constructor(public navCtrl: NavController, public loginService: LoginService,
               private modalController: ModalController, private deviceFeedBack: DeviceFeedback,
-              private notificationService: NotificationService, private dataConnection: FirebaseConnectionService,
+              private notificationService: NotificationService, private dataConnection: FirebaseAdminService,
               private nativeProvider: NativeProvider, private platform: Platform) {
   }
 
@@ -104,19 +104,12 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   isConnectionAllowed(): boolean {
-    return this.dataConnection.isConnectionAllowed();
+    //return this.dataConnection.isConnectionAllowed();
+    return true;
   }
 
   isGoogleLoginEnabled(): boolean {
     return !this.platform.is('cordova');
-  }
-
-  connectionAllowed() {
-    this.dataConnection.setConnectionAllowed(true);
-  }
-
-  connectionDisallowed() {
-    this.dataConnection.setConnectionAllowed(false);
   }
 
   logout() {

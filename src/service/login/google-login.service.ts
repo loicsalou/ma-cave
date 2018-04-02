@@ -4,11 +4,11 @@
 import {Injectable} from '@angular/core';
 import * as firebase from 'firebase/app';
 import {AbstractLoginService} from './abstract-login.service';
-import {User} from '../model/user';
+import {User} from '../../model/user';
 import {Observable} from 'rxjs/Observable';
-import {NotificationService} from './notification.service';
+import {NotificationService} from '../notification.service';
 import {Platform} from 'ionic-angular';
-import {auth} from 'firebase';
+import {auth} from '../firebase';
 import {GooglePlus} from '@ionic-native/google-plus'; //needed for the GoogleAuthProvider
 
 /**

@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {User} from '../../../model/user';
-import {LoginService} from '../../../service/login.service';
+import {LoginService} from '../../../service/login/login.service';
 import {NotificationService} from '../../../service/notification.service';
 import {NativeStorageService} from '../../../service/native-storage.service';
 

@@ -8,7 +8,7 @@ import {NotificationService} from '../../../service/notification.service';
 import {NativeStorageService} from '../../../service/native-storage.service';
 import {User} from '../../../model/user';
 import {ImportProvider} from '../../../providers/import/import';
-import {LoginService} from '../../../service/login.service';
+import {LoginService} from '../../../service/login/login.service';
 
 /**
  * Generated class for the UploadBottles page.

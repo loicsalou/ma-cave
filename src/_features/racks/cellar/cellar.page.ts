@@ -11,7 +11,7 @@ import {BottlePersistenceService} from '../../../service/bottle-persistence.serv
 import {Cell} from '../../../components/locker/locker.component';
 import * as _ from 'lodash';
 import {NativeProvider} from '../../../providers/native/native';
-import {LoginService} from '../../../service/login.service';
+import {LoginService} from '../../../service/login/login.service';
 import {BottleDetailPage} from '../../browse/bottle-detail/page-bottle-detail';
 import {UpdateLockerPage} from '../update-locker/update-locker.page';
 import {CreateLockerPage} from '../create-locker/create-locker.page';
