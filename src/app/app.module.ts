@@ -11,7 +11,7 @@ import {BottleDetailPage} from '../_features/browse/bottle-detail/page-bottle-de
 import {UpdatePage} from '../_features/browse/update/update.page';
 import {BrowserModule} from '@angular/platform-browser';
 import {ChartsModule} from 'ng2-charts';
-import '../../node_modules/chart.js/dist/Chart.bundle.min.js';
+import 'chart.js/dist/Chart.bundle.min.js';
 import {EmailLoginPage} from '../_features/admin/login/email-login.page';
 import {DashboardPage} from '../_features/browse/dashboard/dashboard';
 import {AdminFeatureModule} from '../_features/admin/admin-feature.module';

@@ -1,15 +1,19 @@
 import {Bottle} from '../../../model/bottle';
-import {Component, Input, OnChanges, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {FilterSet, SortOption} from '../../../components/distribution/distribution';
 import {BottlePersistenceService} from '../../../service/bottle-persistence.service';
 import {MenuController} from 'ionic-angular';
 import {Subscription} from 'rxjs/Subscription';
+import {Observable} from 'rxjs/Observable';
 
 @Component({
              selector: 'page-filter',
-             templateUrl: 'filter.page.html'
+             templateUrl: 'filter.page.html',
+             changeDetection: ChangeDetectionStrategy.OnPush
            })
-export class FilterPage implements OnInit, OnChanges, OnDestroy {
+export class FilterPage implements OnInit
+  //, OnChanges
+  , OnDestroy {
 
   public sortAxis = [
     {id: 'qty', name: 'Quantité', col: 'quantite_courante'},
@@ -18,13 +22,14 @@ export class FilterPage implements OnInit, OnChanges, OnDestroy {
   ]
 
   @Input()
-  bottles: Bottle[];
+  bottles: Observable<Bottle[]>;
 
   nbOfBottles: number = 0;
   filterSet: FilterSet;
   sortOn: string = 'country_label';
   ascending: boolean = true;
   private filtersSub: Subscription;
+  private nbLots = 0;
 
   constructor(private bottlesService: BottlePersistenceService, private menuController: MenuController) {
   }
@@ -36,6 +41,15 @@ export class FilterPage implements OnInit, OnChanges, OnDestroy {
     this.filtersSub = this.bottlesService.filtersObservable.subscribe(
       filterSet => this.filterSet = filterSet
     );
+    this.bottles.subscribe(
+      (bottles: Bottle[]) => {
+        if (!bottles) {
+          bottles = [];
+        }
+        this.nbOfBottles = bottles.reduce((tot: number, btl: Bottle) => tot + +btl.quantite_courante, 0);
+        this.nbLots = bottles.length;
+      }
+    )
   }
 
   ngOnDestroy(): void {
@@ -54,11 +68,11 @@ export class FilterPage implements OnInit, OnChanges, OnDestroy {
     this.bottlesService.filterOn(this.filterSet)
   }
 
-  ngOnChanges() {
-    if (this.bottles) {
-      this.nbOfBottles = this.bottles.reduce((tot: number, btl: Bottle) => tot + +btl.quantite_courante, 0);
-    }
-  }
+  //ngOnChanges() {
+  //  if (this.bottles) {
+  //    this.nbOfBottles = this.bottles.reduce((tot: number, btl: Bottle) => tot + +btl.quantite_courante, 0);
+  //  }
+  //}
 
   switchFavorite(event) {
     this.filterSet.switchFavorite();
@@ -97,7 +111,8 @@ export class FilterPage implements OnInit, OnChanges, OnDestroy {
   }
 
   getNbOfLots(): number {
-    return this.bottles == undefined ? 0 : this.bottles.length;
+    //return this.bottles == undefined ? 0 : this.bottles.length;
+    return this.nbLots;
   }
 
   getNbOfBottles(): number {

@@ -23,10 +23,6 @@ export class HomePage implements OnInit, AfterViewInit {
 
   private authenticated = false;
   private loginSubscription: Subscription;
-  private fbidentifying: boolean = false;
-  private mailidentifying: boolean = false;
-  private locidentifying: boolean = false;
-  private anoidentifying: boolean = false;
 
   constructor(public navCtrl: NavController, public loginService: LoginService,
               private modalController: ModalController, private deviceFeedBack: DeviceFeedback,
@@ -43,23 +39,19 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   facebookLogin() {
-    this.fbidentifying = true;
     this.nativeProvider.feedBack();
     this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
       this.handleLoginEvent(user);
-      this.fbidentifying = false;
     });
     this.loginService.facebookLogin();
   }
 
   emailLogin() {
-    this.mailidentifying = true;
     this.nativeProvider.feedBack();
     this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
       this.handleLoginEvent(user);
       if (user) {
         this.loginPage.dismiss();
-        this.mailidentifying = false;
       }
     });
     this.loginPage = this.modalController.create(EmailLoginPage);
@@ -67,13 +59,11 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   localLogin() {
-    this.locidentifying = true;
     this.nativeProvider.feedBack();
     this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
       this.handleLoginEvent(user);
       if (user) {
         this.loginPage.dismiss();
-        this.locidentifying = false;
       }
     });
     this.loginPage = this.modalController.create(LocalLoginPage);
@@ -81,7 +71,6 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   googleLogin() {
-    this.locidentifying = true;
     this.nativeProvider.feedBack();
     this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
       this.handleLoginEvent(user);
@@ -90,11 +79,9 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   anonymousLogin() {
-    this.anoidentifying = true;
     this.nativeProvider.feedBack();
     this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
       this.handleLoginEvent(user);
-      this.anoidentifying = false;
     });
     this.loginService.anonymousLogin();
   }
@@ -119,12 +106,14 @@ export class HomePage implements OnInit, AfterViewInit {
   private handleLoginEvent(user: User) {
     this.authenticated = (user !== undefined);
     if (this.authenticated) {
+      // login ok ==> dashboard
       this.navCtrl.setRoot(TabsPage);
     }
     else {
+      // logout ==> retour à la page de login
       this.navCtrl.setRoot(HomePage);
-      // pas de onDestroy ici car après un logout on reste quand même sur le home ==> il faut faire l'unsubscribe à
-      // la main
+      // pas de onDestroy ici car après un logout on reste quand même sur le home
+      // ==> il faut faire l'unsubscribe à la main
       this.loginSubscription.unsubscribe();
     }
   }

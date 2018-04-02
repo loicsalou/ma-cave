@@ -149,7 +149,7 @@ export class BottlePersistenceService extends AbstractPersistenceService {
    * @param filters
    * @returns {any}
    */
-  public filterOn(filters: FilterSet): Bottle[] {
+  public filterOn(filters: FilterSet) {
 
     if (!filters) {
       return;

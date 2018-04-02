@@ -79,8 +79,6 @@ export class DashboardPage implements OnInit, OnDestroy {
         this.withdrawals = withdrawals;
         let height = 30 + Math.min(3, withdrawals.length) * 92;
         this.withdrawalCardStyle = {'min-height': '120px', 'height': height + 'px'};
-        //this.allWithdrawals = withdrawals;
-        //this.doInfinite(null);
       },
       (err) => {
         this.notificationService.error('messages.withdrawals-load-error');
@@ -93,23 +91,6 @@ export class DashboardPage implements OnInit, OnDestroy {
       (queries: SearchCriteria[]) => this.mostUsedQueries = queries
     )
   }
-
-  //
-  //doInfinite(infiniteScroll: InfiniteScroll) {
-  //  setTimeout(() => {
-  //    if (this.withdrawals.length < this.allWithdrawals.length) {
-  //      let size = this.withdrawals.length;
-  //      let added = this.allWithdrawals.slice(size, size + 4);
-  //      this.withdrawals = this.withdrawals.concat(added);
-  //      this.doInfinite(infiniteScroll);
-  //    } else {
-  //      if (infiniteScroll) {
-  //        infiniteScroll.complete();
-  //      }
-  //    }
-  //
-  //  }, 10);
-  //}
 
   ngOnDestroy(): void {
     this.bottleSub.unsubscribe();

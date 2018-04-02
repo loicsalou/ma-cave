@@ -31,10 +31,6 @@ export class ProfilePage implements OnInit {
     this.notificationService.debugAlert('photo user=' + JSON.stringify(this.loginService.user));
   }
 
-  properties() {
-    return this.loginService[ 'userrString' ];
-  }
-
   filterOnText(event: any) {
   }
 
