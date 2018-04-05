@@ -1,5 +1,4 @@
-import {ElementRef, EventEmitter, Input, OnChanges, Output, ViewChild} from '@angular/core';
-import {Configuration} from '../../config/Configuration';
+import {ElementRef, EventEmitter, Inject, Input, OnChanges, Output, ViewChild} from '@angular/core';
 import {Bottle, Position} from '../../model/bottle';
 import {Gesture} from 'ionic-angular';
 import {Dimension} from '../../model/locker';
@@ -206,7 +205,7 @@ export class Cell {
   selected = false;
   position: Position;
 
-  constructor(position: Position) {
+  constructor(position: Position, private config: any) {
     this.position = position;
   }
 
@@ -233,7 +232,7 @@ export class Cell {
     if (this.isEmpty()) {
       this.cellClass = 'empty';
     } else {
-      this.cellClass = Configuration.colorsText2Code[ bottle.label ? bottle.label.toLowerCase() : '' ];
+      this.cellClass = this.config.colorsText2Code[ bottle.label ? bottle.label.toLowerCase() : '' ];
     }
     if (highlight) {
       this.cellClass += ' highlighted'

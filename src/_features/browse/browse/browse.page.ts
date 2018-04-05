@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {InfiniteScroll, MenuController, NavController, NavParams, Platform, VirtualScroll} from 'ionic-angular';
 import {BottlePersistenceService} from '../../../service/bottle-persistence.service';
 import {Bottle} from '../../../model/bottle';

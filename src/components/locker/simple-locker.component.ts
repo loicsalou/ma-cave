@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
+import {AfterViewInit, Component, Inject, Input, OnInit} from '@angular/core';
 import {SimpleLocker} from '../../model/simple-locker';
 import {Dimension, LockerType} from '../../model/locker';
 import {Bottle, Position} from '../../model/bottle';
@@ -36,7 +36,8 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   rows: Row[];
   private bogusBottles = [];
 
-  constructor(private notificationService: NotificationService, nativeProvider: NativeProvider) {
+  constructor(private notificationService: NotificationService, nativeProvider: NativeProvider,
+              @Inject('GLOBAL_CONFIG') private config) {
     super(nativeProvider)
   }
 
@@ -293,7 +294,7 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
     //let rowId = this.locker.name + '-' + rowIndex;
     for (let i = 0; i < nbcells; i++) {
       let position = new Position(this.locker.id, i, rowIndex, this.rack);
-      cells[ i ] = new Cell(position);
+      cells[ i ] = new Cell(position, this.config);
     }
     //return new Row(cells, rowId, rowIndex);
     return new Row(cells, rowIndex);

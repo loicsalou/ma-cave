@@ -11,7 +11,6 @@ import {AngularFireDatabaseModule} from 'angularfire2/database';
 import {BottleFactory} from '../model/bottle.factory';
 import '../../node_modules/chart.js/dist/Chart.bundle.min.js';
 import {ImagePersistenceService} from '../service/image-persistence.service';
-import {Bottles} from '../config/Bottles';
 import {AnonymousLoginService} from '../service/login/anonymous-login.service';
 import {EmailLoginService} from '../service/login/email-login.service';
 import {Facebook} from '@ionic-native/facebook';
@@ -28,11 +27,11 @@ import {HttpClient} from '@angular/common/http';
 import {GoogleLoginService} from '../service/login/google-login.service';
 import {GooglePlus} from '@ionic-native/google-plus';
 import {WithdrawalFactory} from '../model/withdrawal.factory';
-import {CommonModule} from '@angular/common';
 import {FirebaseLockersService} from '../service/firebase/firebase-lockers.service';
 import {FirebaseWithdrawalsService} from '../service/firebase/firebase-withdrawals.service';
 import {FirebaseBottlesService} from '../service/firebase/firebase-bottles.service';
 import {FirebaseImagesService} from '../service/firebase/firebase-images.service';
+import {appConfig} from './app.conf';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -52,8 +51,8 @@ export const fireConfig = {
             providers: [
               AnonymousLoginService,
               BottleFactory,
+              {provide: 'GLOBAL_CONFIG', useValue: appConfig},
               WithdrawalFactory,
-              Bottles,
               BottlePersistenceService,
               AndroidPermissions,
               DistributeService,

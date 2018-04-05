@@ -14,6 +14,7 @@ import {Reference as FbStorageTypesReference} from '@firebase/storage-types';
 import * as schema from './firebase-schema';
 import {SearchCriteria} from '../../model/search-criteria';
 import Reference = firebase.database.Reference;
+import {AdminService} from '../admin.service';
 
 /**
  * Services related to the bottles in the cellar.
@@ -21,7 +22,7 @@ import Reference = firebase.database.Reference;
  * clicks on a region to filter bottles. Any change on either side must be propagated on the other side.
  */
 @Injectable()
-export class FirebaseAdminService {
+export class FirebaseAdminService implements AdminService {
   public USER_ROOT: string;
   public SHARED_ROOT: string;
   public XREF_ROOT: string;

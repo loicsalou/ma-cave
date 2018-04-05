@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, Inject, OnInit} from '@angular/core';
 import {Modal, ModalController, NavController, Platform} from 'ionic-angular';
 import {LoginService} from '../../service/login/login.service';
 import {EmailLoginPage} from '../../_features/admin/login/email-login.page';
@@ -27,7 +27,8 @@ export class HomePage implements OnInit, AfterViewInit {
   constructor(public navCtrl: NavController, public loginService: LoginService,
               private modalController: ModalController, private deviceFeedBack: DeviceFeedback,
               private notificationService: NotificationService, private dataConnection: FirebaseAdminService,
-              private nativeProvider: NativeProvider, private platform: Platform) {
+              private nativeProvider: NativeProvider, private platform: Platform,
+              @Inject('GLOBAL_CONFIG') private config) {
   }
 
   ngOnInit(): void {
