@@ -3,7 +3,7 @@
   <div>
     <div class="block" style="display:flex">
       <div class="icon">
-        <img src="{{ bottle.label | bottleIcon }}" class="profile-image" *ngIf="! bottle.profile_image_url">
+        <img src="{{ bottle | bottleIcon }}" class="profile-image" *ngIf="! bottle.profile_image_url">
         <img [src]="bottle.profile_image_url" [defaultImage]="bottle" class="profile-image"
              *ngIf="bottle.profile_image_url">
       </div>

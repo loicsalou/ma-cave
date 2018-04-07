@@ -1,11 +1,9 @@
 /**
  * Created by loicsalou on 25.05.17.
  */
-import {Injectable} from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {Bottle, Position} from './bottle';
 import {TranslateService} from '@ngx-translate/core';
-import {Statistics} from './statistics';
-import {BottleIconPipe} from '../components/list/bottle-icon.pipe';
 
 /**
  * Instanciation des bouteilles.
@@ -17,7 +15,12 @@ import {BottleIconPipe} from '../components/list/bottle-icon.pipe';
 export class BottleFactory {
   currentYear = new Date().getFullYear();
 
-  constructor(private i18n: TranslateService) {
+  constructor(private i18n: TranslateService, @Inject('GLOBAL_CONFIG') protected config) {
+  }
+
+  getImage(bottle: Bottle): string {
+    const color = bottle.label === undefined ? 'undefined' : this.config.colorsText2Code[ bottle.label.toLowerCase() ];
+    return 'assets/img/bottle-color/' + color + '.png';
   }
 
   public create(bottle: Bottle): Bottle {
@@ -50,7 +53,7 @@ export class BottleFactory {
   }
 
   private setDefaultImage(bottle: Bottle): BottleFactory {
-    bottle.defaultImage = BottleIconPipe.prototype.transform(bottle.label);
+    bottle.defaultImage = this.getImage(bottle);
     return this;
   }
 

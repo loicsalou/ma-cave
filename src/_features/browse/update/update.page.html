@@ -28,7 +28,7 @@
   <form #bottleForm="ngForm">
     <ion-row d-flex class="form-group">
       <ion-col style="text-align: center;">
-        <img src="{{ bottle.label | bottleIcon }}" *ngIf="! getProfileImage()">
+        <img src="{{ bottle | bottleIcon }}" *ngIf="! getProfileImage()">
         <img [src]="getProfileImage()" [defaultImage]="'/assets/img/missing-image.jpg'" *ngIf="getProfileImage()">
       </ion-col>
       <ion-col style="margin-top: auto; margin-bottom: auto">
