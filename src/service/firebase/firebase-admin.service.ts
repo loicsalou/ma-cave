@@ -9,12 +9,11 @@ import * as moment from 'moment';
 import {NotificationService} from '../notification.service';
 import {Subject} from 'rxjs/Subject';
 import {User} from '../../model/user';
-import {Reference as FbStorageTypesReference} from '@firebase/storage-types';
 
 import * as schema from './firebase-schema';
 import {SearchCriteria} from '../../model/search-criteria';
-import Reference = firebase.database.Reference;
 import {AdminService} from '../admin.service';
+import Reference = firebase.database.Reference;
 
 /**
  * Services related to the bottles in the cellar.
@@ -24,12 +23,9 @@ import {AdminService} from '../admin.service';
 @Injectable()
 export class FirebaseAdminService implements AdminService {
   public USER_ROOT: string;
-  public SHARED_ROOT: string;
   public XREF_ROOT: string;
   protected XREF_FOLDER = 'xref';
   private userRootRef: Reference;
-  private SHARED_FOLDER = 'shared';
-  private sharedDataRef: FbStorageTypesReference;
   private PROFILE_ROOT: string;
   private profileRootRef: Reference;
   private ERROR_ROOT: string;
@@ -43,7 +39,6 @@ export class FirebaseAdminService implements AdminService {
     let userRoot = user.user;
     this.USER_ROOT = schema.USERS_FOLDER + '/' + userRoot;
 
-    this.SHARED_ROOT = this.SHARED_FOLDER;
     this.XREF_ROOT = this.XREF_FOLDER;
     this.PROFILE_ROOT = schema.USERS_FOLDER + '/' + userRoot + '/' + schema.PROFILE_CONTENT_FOLDER;
     this.ERROR_ROOT = schema.USERS_FOLDER + '/' + userRoot + '/' + schema.ERROR_CONTENT_FOLDER;
@@ -51,7 +46,6 @@ export class FirebaseAdminService implements AdminService {
     this.userRootRef = this.angularFirebase.database.ref(this.USER_ROOT);
     this.profileRootRef = this.angularFirebase.database.ref(this.PROFILE_ROOT);
     this.errorRootRef = this.angularFirebase.database.ref(this.ERROR_ROOT);
-    this.sharedDataRef = this.angularFirebase.app.storage().ref(this.SHARED_ROOT);
 
     this.initLogging();
   }
@@ -99,14 +93,14 @@ export class FirebaseAdminService implements AdminService {
         }
       },
       onerror => console.error('firebase error: ' + onerror)
-    )
+    );
   }
 
   removeFromQueryStats(keywords: any) {
     let key = keywords.join('-');
     this.profileRootRef.child(key).remove(
       errorOrNull => console.info('removeFromQueryStats ended with ' + errorOrNull)
-    )
+    );
   }
 
   deleteAccount(): Observable<boolean> {
@@ -123,7 +117,7 @@ export class FirebaseAdminService implements AdminService {
   }
 
   deleteLogs() {
-    this.errorRootRef.remove()
+    this.errorRootRef.remove();
   }
 
   private initLogging() {
@@ -131,7 +125,7 @@ export class FirebaseAdminService implements AdminService {
       if (snap.numChildren() > 3) {
         this.errorRootRef.limitToFirst(1).ref.remove();
       }
-    })
+    });
   }
 }
 

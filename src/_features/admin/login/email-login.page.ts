@@ -1,6 +1,5 @@
 import {Component} from '@angular/core';
 import {LoginService} from '../../../service/login/login.service';
-import {NotificationService} from '../../../service/notification.service';
 
 @Component({
              selector: 'login-page',
@@ -12,7 +11,7 @@ export class EmailLoginPage {
   user: string;
   psw: string;
 
-  constructor(private loginService: LoginService, private notificationService: NotificationService) {
+  constructor(private loginService: LoginService) {
   }
 
   public signin() {

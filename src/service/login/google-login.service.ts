@@ -2,7 +2,6 @@
  * Created by loicsalou on 28.02.17.
  */
 import {Injectable} from '@angular/core';
-import * as firebase from 'firebase/app';
 import {AbstractLoginService} from './abstract-login.service';
 import {User} from '../../model/user';
 import {Observable} from 'rxjs/Observable';
@@ -10,6 +9,7 @@ import {NotificationService} from '../notification.service';
 import {Platform} from 'ionic-angular';
 import {auth} from 'firebase';
 import {GooglePlus} from '@ionic-native/google-plus'; //needed for the GoogleAuthProvider
+import * as firebase from 'firebase/app';
 
 /**
  * Services related to the bottles in the cellar.
@@ -58,25 +58,25 @@ export class GoogleLoginService extends AbstractLoginService {
     firebase.auth().useDeviceLanguage();
     let popup = this.notificationService.createLoadingPopup('app.checking-login');
     if (this.platform.is('cordova')) {
-      this.loginWithCordova().subscribe()
+      this.loginWithCordova().subscribe();
     } else {
       firebase.auth().signInWithPopup(provider).then(function (result) {
         // This gives you a Google Access Token. You can use it to access the Google API.
-        let token = result.credential.accessToken;
+        //let token = result.credential.accessToken;
         // The signed-in user info.
         let user = result.user;
         let googleUser = new GoogleUser(user.email, user.photoURL, user.displayName, user.uid, user.phoneNumber);
         // close popup
         popup.dismiss();
-        self.success(googleUser)
+        self.success(googleUser);
       }).catch(function (error) {
         // Handle Errors here.
-        let errorCode = error[ 'code' ];
-        let errorMessage = error[ 'message' ];
+        //let errorCode = error[ 'code' ];
+        //let errorMessage = error[ 'message' ];
         // The email of the user's account used.
-        let email = error[ 'email' ];
+        //let email = error[ 'email' ];
         // The firebase.auth.AuthCredential type that was used.
-        let credential = error[ 'credential' ];
+        //let credential = error[ 'credential' ];
         // close popup
         popup.dismiss();
         self.loginFailed();

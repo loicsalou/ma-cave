@@ -4,7 +4,6 @@ import {Bottle} from '../../model/bottle';
 import {ItemSliding, NavController} from 'ionic-angular';
 import {CellarPage} from '../../_features/racks/cellar/cellar.page';
 import {NativeProvider} from '../../providers/native/native';
-import {SelectedEvent} from './selected-event';
 
 @Component({
              selector: 'bottle-item',
@@ -64,9 +63,4 @@ export class BottleItemComponent {
     this.bottlesService.update([ bottle ]);
     slidingItem.close();
   }
-}
-
-interface SlidingBottle {
-  bottle: Bottle;
-  slidingItem: ItemSliding;
 }

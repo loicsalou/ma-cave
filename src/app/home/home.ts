@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Inject, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {Modal, ModalController, NavController, Platform} from 'ionic-angular';
 import {LoginService} from '../../service/login/login.service';
 import {EmailLoginPage} from '../../_features/admin/login/email-login.page';
@@ -6,9 +6,7 @@ import {User} from '../../model/user';
 import {TabsPage} from '../tabs/tabs';
 import {Subscription} from 'rxjs/Subscription';
 import {LocalLoginPage} from '../../_features/admin/login/local-login.page';
-import {FirebaseAdminService} from '../../service/firebase/firebase-admin.service';
 import {NotificationService} from '../../service/notification.service';
-import {DeviceFeedback} from '@ionic-native/device-feedback';
 import {NativeProvider} from '../../providers/native/native';
 
 @Component({
@@ -25,10 +23,9 @@ export class HomePage implements OnInit, AfterViewInit {
   private loginSubscription: Subscription;
 
   constructor(public navCtrl: NavController, public loginService: LoginService,
-              private modalController: ModalController, private deviceFeedBack: DeviceFeedback,
-              private notificationService: NotificationService, private dataConnection: FirebaseAdminService,
-              private nativeProvider: NativeProvider, private platform: Platform,
-              @Inject('GLOBAL_CONFIG') private config) {
+              private modalController: ModalController,
+              private notificationService: NotificationService,
+              private nativeProvider: NativeProvider, private platform: Platform) {
   }
 
   ngOnInit(): void {

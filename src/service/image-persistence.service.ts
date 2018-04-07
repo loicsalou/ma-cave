@@ -10,7 +10,6 @@ import {Observable} from 'rxjs/Observable';
 import {Image} from '../model/image';
 import {NotificationService} from './notification.service';
 import {Subject} from 'rxjs/Subject';
-import {FirebaseAdminService} from './firebase/firebase-admin.service';
 import {TranslateService} from '@ngx-translate/core';
 import {FirebaseImagesService} from './firebase/firebase-images.service';
 
@@ -22,6 +21,9 @@ import {FirebaseImagesService} from './firebase/firebase-images.service';
 @Injectable()
 export class ImagePersistenceService extends AbstractPersistenceService {
 
+  private _progressEvent: Subject<number> = new Subject<number>();
+  private progressEvent$: Observable<number> = this._progressEvent.asObservable();
+
   constructor(private firebaseImageService: FirebaseImagesService,
               notificationService: NotificationService, translateService: TranslateService, loginService: LoginService) {
     super(notificationService, loginService, translateService);
@@ -31,10 +33,6 @@ export class ImagePersistenceService extends AbstractPersistenceService {
       this.cleanup();
     }
   }
-
-  private _progressEvent: Subject<number> = new Subject<number>();
-
-  private progressEvent$: Observable<number> = this._progressEvent.asObservable();
 
   get progressEvent(): Observable<number> {
     return this.progressEvent$;
@@ -62,7 +60,7 @@ export class ImagePersistenceService extends AbstractPersistenceService {
     let self = this;
     this.firebaseImageService.deleteImage(file)
       .then(function () {
-              self.notificationService.information('Image supprimée !')
+              self.notificationService.information('Image supprimée !');
             }
       )
       .catch(function (error) {
@@ -79,7 +77,7 @@ export class ImagePersistenceService extends AbstractPersistenceService {
    */
   public uploadImage(image: File | any, meta: BottleMetadata): Promise<void | UploadMetadata> {
     if (image instanceof Blob || image instanceof File) {
-      return this.firebaseImageService.uploadFileOrBlob(image, meta)
+      return this.firebaseImageService.uploadFileOrBlob(image, meta);
     } else {
       this.notificationService.warning('impossible d\'uploader l\'image dont le type est ' + typeof image + ' !');
     }

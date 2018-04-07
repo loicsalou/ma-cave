@@ -37,7 +37,7 @@ export class BrowsePage implements OnInit, OnDestroy {
   private nbOfBottles: number = 0;
 
   constructor(public navCtrl: NavController, public platform: Platform, private bottlesService: BottlePersistenceService,
-              private loginService: LoginService, private notificationService: NotificationService, private menuController: MenuController,
+              private notificationService: NotificationService, private menuController: MenuController,
               private translateService: TranslateService, private nativeProvider: NativeProvider, params?: NavParams) {
     this.notificationService.traceDebug('BrowsePage.constructor');
     this.navParams = params;
@@ -204,29 +204,4 @@ export class BrowsePage implements OnInit, OnDestroy {
     this.bottles.forEach(bottle => bottle.selected = false);
     this.nbSelected = 0;
   }
-}
-
-function compare(a: Bottle, b: Bottle) {
-  if (a.country_label > b.country_label) {
-    return 1
-  } else if (b.country_label > a.country_label) {
-    return -1
-  } else if (a.subregion_label > b.subregion_label) {
-    return 1
-  } else if (b.subregion_label > a.subregion_label) {
-    return -1
-  } else if (a.area_label > b.area_label) {
-    return 1
-  } else if (b.area_label > a.area_label) {
-    return -1
-  } else if (a.nomCru > b.nomCru) {
-    return 1
-  } else if (b.nomCru > a.nomCru) {
-    return -1
-  } else if (a.millesime > b.millesime) {
-    return 1
-  } else if (b.millesime > a.millesime) {
-    return -1;
-  }
-  return 0;
 }

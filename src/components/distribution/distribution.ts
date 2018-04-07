@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import {DistributeService} from '../../service/distribute.service';
 import {Bottle} from '../../model/bottle';
 import {TranslateService} from '@ngx-translate/core';
+import {SimpleChanges} from '@angular/core/src/metadata/lifecycle_hooks';
 
 /*
  Generated class for the Distribution component.
@@ -44,7 +45,7 @@ export class DistributionComponent implements OnChanges, OnInit {
   constructor(private distributionService: DistributeService, private translateService: TranslateService) {
   }
 
-  ngOnChanges() {
+  ngOnChanges(changes: SimpleChanges) {
     this.refreshFilters();
     this.count = this.bottles ? this.bottles.length : 0;
   }

@@ -1,6 +1,4 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {BottlePersistenceService} from '../../service/bottle-persistence.service';
-import {SelectedEvent} from './selected-event';
 import {Withdrawal} from '../../model/withdrawal';
 
 @Component({
@@ -14,7 +12,7 @@ export class WithdrawalItemComponent {
   @Output()
   showDetail: EventEmitter<Withdrawal> = new EventEmitter();
 
-  constructor(private bottlesService: BottlePersistenceService) {
+  constructor() {
   }
 
   triggerDetail(withdrawal: Withdrawal) {

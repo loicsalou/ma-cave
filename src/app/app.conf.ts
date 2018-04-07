@@ -8,6 +8,26 @@ export const appConfig = {
     }
   },
 
+  statistics: {
+    standardColors: [
+      'blue', 'red', 'orange', 'aqua', 'aquamarine', 'blueviolet', 'green', 'cornsilk', 'fuchsia', 'grey', 'black'
+    ],
+    cssColorsByWineColor: {
+      'autres': 'grey',
+      'blanc': '#f7f7d4',
+      'blanc effervescent': '#b3e87d',
+      'blanc liquoreux': '#f99806',
+      'blanc moëlleux': '#ffffcc',
+      'cognac': '#c76605',
+      'rosé': '#e619e6',
+      'rosé effervescent': '#b946b9',
+      'rouge': '#e61919',
+      'vin blanc muté': '#9e662e',
+      'vin de paille': '#ffbf00',
+      'vin jaune': '#ffff00'
+    }
+  },
+
   colorsText2Code: {
     'rouge': 'red',
     'blanc': 'white',

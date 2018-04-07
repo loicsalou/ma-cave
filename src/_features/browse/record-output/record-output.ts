@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {IonicPage, NavController, NavParams, ViewController} from 'ionic-angular';
+import {NavController, NavParams, ViewController} from 'ionic-angular';
 import {Bottle} from '../../../model/bottle';
 import {BottleNoting} from '../../../components/bottle-noting/bottle-noting.component';
 import {BottlePersistenceService} from '../../../service/bottle-persistence.service';

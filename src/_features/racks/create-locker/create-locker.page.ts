@@ -1,5 +1,5 @@
 import {Component, ViewChild} from '@angular/core';
-import {IonicPage, NavController, NavParams} from 'ionic-angular';
+import {NavController, NavParams} from 'ionic-angular';
 import {BottleSize, Dimension, Locker, LockerType} from '../../../model/locker';
 import {NgForm} from '@angular/forms';
 import {FridgeLocker} from '../../../model/fridge-locker';
@@ -19,47 +19,40 @@ import {SimpleLocker} from '../../../model/simple-locker';
            })
 export class CreateLockerPage {
 
-  lockerTypes: LockerType[];
-  lockerFormats: BottleSize[];
-
-  @ViewChild('lockerForm') bottleForm: NgForm;
-
+  lockerTypes: LockerType[] = [
+    LockerType.shifted,
+    LockerType.diamond,
+    LockerType.fridge,
+    LockerType.simple
+  ];
+  lockerFormats: BottleSize[] = [
+    BottleSize.piccolo,
+    BottleSize.chopine,
+    BottleSize.fillette,
+    BottleSize.demie,
+    BottleSize.clavelin,
+    BottleSize.bouteille,
+    BottleSize.litre,
+    BottleSize.magnum,
+    BottleSize.jeroboham,
+    BottleSize.rehoboram,
+    BottleSize.mathusalem,
+    BottleSize.salmanazar,
+    BottleSize.balthazar,
+    BottleSize.nabuchodonozor,
+    BottleSize.melchior
+  ];
   name: string;
   comment: string;
   supportedFormats: BottleSize[];
   type: LockerType;
-  //locker normal
   lockerDimension: Dimension;
   fridgeDimension: Dimension;
   fridgeLockersDimensions: Dimension[] = [];
-  private locker: Locker;
-  //locker composite (ex. frigo)
-  private fridge: FridgeLocker;
+
+  @ViewChild('lockerForm') bottleForm: NgForm;
 
   constructor(private navController: NavController, params: NavParams, private cellarService: CellarPersistenceService) {
-    this.lockerTypes = [
-      LockerType.shifted,
-      LockerType.diamond,
-      LockerType.fridge,
-      LockerType.simple
-    ];
-    this.lockerFormats = [
-      BottleSize.piccolo,
-      BottleSize.chopine,
-      BottleSize.fillette,
-      BottleSize.demie,
-      BottleSize.clavelin,
-      BottleSize.bouteille,
-      BottleSize.litre,
-      BottleSize.magnum,
-      BottleSize.jeroboham,
-      BottleSize.rehoboram,
-      BottleSize.mathusalem,
-      BottleSize.salmanazar,
-      BottleSize.balthazar,
-      BottleSize.nabuchodonozor,
-      BottleSize.melchior
-    ];
     this.lockerDimension = CreateLockerPage.getDefaultLockerDimensions();
     this.fridgeDimension = CreateLockerPage.getDefaultLockerDimensions();
     this.changeFridgeDimension();
@@ -80,10 +73,6 @@ export class CreateLockerPage {
     let def = new Array(CreateLockerPage.getDefaultFridgeDimensions().y);
     def.fill(CreateLockerPage.getDefaultFridgeDimensions());
     return <Dimension[]>def;
-  }
-
-  test() {
-    console.info();
   }
 
   isFridge(): boolean {

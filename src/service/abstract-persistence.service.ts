@@ -4,13 +4,13 @@ import {NotificationService} from './notification.service';
 import {User} from '../model/user';
 import {Subscription} from 'rxjs/Subscription';
 import {TranslateService} from '@ngx-translate/core';
+import {OnDestroy} from '@angular/core';
 
 /**
  * Created by loicsalou on 16.06.17.
  */
 
-export abstract class AbstractPersistenceService {
-
+export abstract class AbstractPersistenceService implements OnDestroy {
   protected USERS_FOLDER = 'users';
   private loginSub: Subscription;
 
@@ -19,6 +19,10 @@ export abstract class AbstractPersistenceService {
     this.loginSub = this.loginService.authentifiedObservable.subscribe(
       user => this.handleLoginEvent(user)
     );
+  }
+
+  ngOnDestroy(): void {
+    this.loginSub.unsubscribe();
   }
 
   protected initialize(user: User) {

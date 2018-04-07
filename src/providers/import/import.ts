@@ -29,15 +29,14 @@ export class ImportProvider {
 
     let self = this;
     let reader = new FileReader();
-    let bottles: Bottle[] = [];
     reader.onload = function (evt) {
       let fileContent = evt.target[ 'result' ];
       if (isXls) {
-        bottles = self.parseContentXLS(fileContent);
+        self.parseContentXLS(fileContent);
       } else {
-        bottles = self.parseContentCSV(fileContent);
+        self.parseContentCSV(fileContent);
       }
-    }
+    };
     reader.onerror = function (evt) {
       self.bottleParsed.error('Le fichier ' + file.name + ' ne peut pas être lu. Veuillez vérifier les permissions' +
         ' accordées à l\'application');
@@ -116,7 +115,7 @@ function buildObjectFromCsv(row: any, keys: any) {
     } else {
       object[ key ] = '';
     }
-  })
+  });
   return object;
 }
 
@@ -133,6 +132,6 @@ function buildObjectFromXLS(row: any, keys: any) {
     } else {
       object[ key ] = '';
     }
-  })
+  });
   return object;
 }

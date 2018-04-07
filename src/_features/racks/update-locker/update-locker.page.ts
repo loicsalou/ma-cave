@@ -1,14 +1,12 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {IonicPage, NavController, NavParams} from 'ionic-angular';
+import {NavController, NavParams} from 'ionic-angular';
 import {BottleSize, Locker, LockerType} from '../../../model/locker';
-import {CellarPersistenceService} from '../../../service/cellar-persistence.service';
 import {Bottle} from '../../../model/bottle';
 import {NotificationService} from '../../../service/notification.service';
 import {LockerComponent} from '../../../components/locker/locker.component';
 import {BottlePersistenceService} from '../../../service/bottle-persistence.service';
 import {SimpleLockerComponent} from '../../../components/locker/simple-locker.component';
 import {FridgeLockerComponent} from '../../../components/locker/fridge-locker.component';
-import {DeviceFeedback} from '@ionic-native/device-feedback';
 
 /**
  * Generated class for the LockerEditorComponent component.
@@ -22,21 +20,20 @@ import {DeviceFeedback} from '@ionic-native/device-feedback';
              // styleUrls:[ 'update-locker.page.scss' ]
            })
 export class UpdateLockerPage implements OnInit {
-  lockerFormats: BottleSize[];
 
+  @ViewChild('lockerCmp') lockerComponent: LockerComponent;
+
+  lockerFormats: BottleSize[];
   name: string;
   comment: string;
   supportedFormats: BottleSize[];
   type: LockerType;
-  @ViewChild('lockerCmp') lockerComponent: LockerComponent;
-
-  //locker normal
   locker: Locker;
   lockerContent: Bottle[];
 
-  constructor(private params: NavParams, private cellarService: CellarPersistenceService,
+  constructor(private params: NavParams,
               private bottlesService: BottlePersistenceService, private notificationService: NotificationService,
-              private navCtrl: NavController, private deviceFeedback: DeviceFeedback) {
+              private navCtrl: NavController) {
   }
 
   ngOnInit(): void {
@@ -59,17 +56,11 @@ export class UpdateLockerPage implements OnInit {
   }
 
   cancel() {
-    //this.deviceFeedback.acoustic();
-    //this.deviceFeedback.haptic(2);
-
     this.notificationService.information('update.cancelled');
     this.navCtrl.pop();
   }
 
   saveLocker() {
-    //this.deviceFeedback.acoustic();
-    //this.deviceFeedback.haptic(1);
-
     this.bottlesService.updateLockerAndBottles(this.lockerContent, this.locker);
     this.navCtrl.pop();
   }

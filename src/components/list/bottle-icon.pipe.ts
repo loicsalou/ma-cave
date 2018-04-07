@@ -1,4 +1,4 @@
-import {Inject, Pipe, PipeTransform} from '@angular/core';
+import {Pipe, PipeTransform} from '@angular/core';
 import {BottleFactory} from '../../model/bottle.factory';
 import {Bottle} from '../../model/bottle';
 
@@ -15,7 +15,7 @@ export class BottleIconPipe implements PipeTransform {
   }
 
   transform(bottle: Bottle, ...args: any[]): any {
-    return this.bottleFactory.getImage(bottle)
+    return this.bottleFactory.getImage(bottle);
 
   }
 }

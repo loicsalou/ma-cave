@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {IonicPage, ModalController, NavController, NavParams, Slides} from 'ionic-angular';
+import {ModalController, NavController, NavParams, Slides} from 'ionic-angular';
 import {CellarPersistenceService} from '../../../service/cellar-persistence.service';
 import {Locker, LockerType} from '../../../model/locker';
 import {SimpleLockerComponent} from '../../../components/locker/simple-locker.component';
@@ -30,20 +30,21 @@ import {CreateLockerPage} from '../create-locker/create-locker.page';
 export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild(Slides) slides: Slides;
+  @ViewChild('zoomable') zoomable: ElementRef;
+  @ViewChild('placedLockerComponent')
+
   pendingCell: Cell;
   pendingBottleTipVisible: boolean = false;
   selectedCell: Cell;
-  @ViewChild('zoomable') zoomable: ElementRef;
+
+  private placedLockerComponent: SimpleLockerComponent;
   private otherLockers: Locker[];
   private paginatedLocker: Locker;
   private lockersSub: Subscription;
   private lockerContent: Bottle[];
-  @ViewChild('placedLockerComponent')
-  private placedLockerComponent: SimpleLockerComponent;
-  private bottlesToPlaceLocker: SimpleLocker;
+  private _bottlesToPlaceLocker: SimpleLocker;
   private bottlesToPlace: Bottle[];
   private bottlesToHighlight: Bottle[];
-  private scale: number = 1;
   private bottlesSubscription: Subscription;
 
   constructor(private navCtrl: NavController,
@@ -60,7 +61,7 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
     this.nativeProvider.feedBack();
     this.bottlesToPlace = this.params.data[ 'bottlesToPlace' ];
     if (this.bottlesToPlace && this.bottlesToPlace.length > 0) {
-      this.bottlesToPlaceLocker = new SimpleLocker(undefined, 'placedLocker', LockerType.simple, {
+      this._bottlesToPlaceLocker = new SimpleLocker(undefined, 'placedLocker', LockerType.simple, {
         x: this.bottlesToPlace.reduce((total, btl) => total + btl.numberToBePlaced(), 0),
         y: 1
       }, false)
@@ -80,11 +81,6 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
     this.getLockersContent();
   }
 
-  logout() {
-    this.loginService.logout();
-    this.navCtrl.popToRoot();
-  }
-
   ngAfterViewInit(): void {
     if (this.bottlesToPlace) {
       let ix = 0;
@@ -102,6 +98,15 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     this.lockersSub.unsubscribe();
     this.bottlesSubscription.unsubscribe();
+  }
+
+  get bottlesToPlaceLocker(): SimpleLocker {
+    return this._bottlesToPlaceLocker;
+  }
+
+  logout() {
+    this.loginService.logout();
+    this.navCtrl.popToRoot();
   }
 
   zoomOnBottle(pendingCell: Cell) {

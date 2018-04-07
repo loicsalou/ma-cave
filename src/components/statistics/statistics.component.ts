@@ -1,10 +1,9 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {DistributeService} from '../../service/distribute.service';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {Bottle} from '../../model/bottle';
 import * as _ from 'lodash';
 import {FilterSet} from '../distribution/distribution';
-import {NavController} from 'ionic-angular';
 import {ChartEvent} from '../chart/chart.component';
 import {Subscription} from 'rxjs/Subscription';
 import {TranslateService} from '@ngx-translate/core';
@@ -20,29 +19,12 @@ import {TranslateService} from '@ngx-translate/core';
              templateUrl: './statistics.component.html'
            })
 export class StatisticsComponent implements OnInit, OnDestroy {
-  static STANDARD_COLORS = [
-    'blue', 'red', 'orange', 'aqua', 'aquamarine', 'blueviolet', 'green', 'cornsilk', 'fuchsia', 'grey', 'black'
-  ];
-  static COLORS_BY_WINECOLOR = {
-    'autres': 'grey',
-    'blanc': '#f7f7d4',
-    'blanc effervescent': '#b3e87d',
-    'blanc liquoreux': '#f99806',
-    'blanc moëlleux': '#ffffcc',
-    'cognac': '#c76605',
-    'rosé': '#e619e6',
-    'rosé effervescent': '#b946b9',
-    'rouge': '#e61919',
-    'vin blanc muté': '#9e662e',
-    'vin de paille': '#ffbf00',
-    'vin jaune': '#ffff00'
-  };
-// axes de distribution de la distribution courante
+
   @Input()
   axis: string;
   @Input()
   legend: string = 'none';
-  public chartOptions = {
+  chartOptions = {
     scaleShowVerticalLines: false,
     responsive: true,
     legend: {
@@ -57,17 +39,18 @@ export class StatisticsComponent implements OnInit, OnDestroy {
   filterApplied: EventEmitter<FilterSet> = new EventEmitter<FilterSet>();
   ready = false;
   totalNumberOfBottles: number = 0;
-  // Doughnut
-  public chartLabels: string[];
-  public chartData: number[];
-  public chartType: string = 'doughnut';
-  public chartColors: string[] = [];
+
+  chartLabels: string[];
+  chartData: number[];
+  chartType: string = 'doughnut';
+  chartColors: string[] = [];
+
   private totalNumberOfLots: number;
   private others: KeyValue[];
   private bottlesSub: Subscription;
 
   constructor(private distributionService: DistributeService, private bottlesService: BottlePersistenceService,
-              private translateService: TranslateService, private nav: NavController) {
+              private translateService: TranslateService, @Inject('GLOBAL_CONFIG') private config) {
   }
 
   ngOnInit(): void {
@@ -94,7 +77,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
     //on extrait les indexes (couleur du vin par ex)
     this.chartLabels = significantData.map(kv => kv.key);
     //on affecte les couleurs des portions du chart
-    this.chartColors = this.chartLabels.map(colorname => StatisticsComponent.COLORS_BY_WINECOLOR[ colorname ]);
+    this.chartColors = this.chartLabels.map(colorname => this.config.statistics.cssColorsByWineColor[ colorname ]);
     //les borders sont gris
     let borderColors: string[] = new Array(this.chartLabels.length);
     borderColors = _.fill(borderColors, 'grey');
@@ -114,7 +97,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
     //on extrait les indexes (couleur du vin par ex)
     this.chartLabels = significantData.map(kv => kv.key);
     //on affecte les couleurs des portions du chart
-    this.chartColors = StatisticsComponent.STANDARD_COLORS;
+    this.chartColors = this.config.statistics.stadardColors;
     //les borders sont gris
     let borderColors: string[] = new Array(this.chartLabels.length);
     borderColors = _.fill(borderColors, 'grey');

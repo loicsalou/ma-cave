@@ -62,8 +62,8 @@ export class ChartComponent implements OnInit {
   }
 
   chartHovered(event: any) {
-    let active = event[ 'active' ];
-    let element: any = active !== undefined && active.length > 0 ? active[ 0 ] : undefined;
+    //let active = event[ 'active' ];
+    //let element: any = active !== undefined && active.length > 0 ? active[ 0 ] : undefined;
     this.trace('hover');
   }
 

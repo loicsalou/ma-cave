@@ -10,7 +10,6 @@ import {LoginService} from './login/login.service';
 import {AbstractPersistenceService} from './abstract-persistence.service';
 import {NotificationService} from './notification.service';
 import {Locker} from '../model/locker';
-import {Bottle} from '../model/bottle';
 import {BottlePersistenceService} from './bottle-persistence.service';
 import {TranslateService} from '@ngx-translate/core';
 import {Subscription} from 'rxjs/Subscription';
@@ -33,7 +32,7 @@ export class CellarPersistenceService extends AbstractPersistenceService {
   constructor(private firebaseLockersService: FirebaseLockersService,
               private lockerFactory: LockerFactory,
               notificationService: NotificationService,
-    // TODO supprimer bottleService quand NGRX fournira le bon sélecteur
+              // TODO supprimer bottleService quand NGRX fournira le bon sélecteur
               private bottleService: BottlePersistenceService,
               translateService: TranslateService,
               loginService: LoginService) {
@@ -53,7 +52,7 @@ export class CellarPersistenceService extends AbstractPersistenceService {
     try {
       this.firebaseLockersService.createLocker(locker);
     } catch (err) {
-      this.notificationService.error('La création du casier a échoué', err)
+      this.notificationService.error('La création du casier a échoué', err);
     }
   }
 
@@ -65,7 +64,7 @@ export class CellarPersistenceService extends AbstractPersistenceService {
   public deleteLocker(locker: Locker) {
     if (this.isEmpty(locker)) {
       this.firebaseLockersService.deleteLocker(locker);
-      this.notificationService.information('Le casier "' + locker.name + '" a bien été supprimé')
+      this.notificationService.information('Le casier "' + locker.name + '" a bien été supprimé');
     } else {
       this.notificationService.warning('Le casier "' + locker.name + '" n\'est pas vide et ne peut donc pas' +
         ' être supprimé');
@@ -103,9 +102,9 @@ export function sanitize(locker: Locker): Locker {
   if (locker[ 'dimensions' ]) {
     locker[ 'dimensions' ] = locker[ 'dimensions' ].map(
       dim => {
-        return {x: +dim.x, y: +dim.y}
+        return {x: +dim.x, y: +dim.y};
       }
-    )
+    );
   }
   return locker;
 }

@@ -4,7 +4,6 @@
 import {Inject, Injectable} from '@angular/core';
 import {Bottle} from './bottle';
 import {TranslateService} from '@ngx-translate/core';
-import {Statistics} from './statistics';
 import {BottleFactory} from './bottle.factory';
 import {Withdrawal} from './withdrawal';
 
