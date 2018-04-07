@@ -2,14 +2,14 @@ import {Component, Input} from '@angular/core';
 
 @Component({
              selector: 'progress-bar',
-             templateUrl: 'progress-bar.html',
+             templateUrl: 'progress-bar.html'
              // styleUrls:[ 'progress-bar.scss' ]
            })
 export class ProgressBarComponent {
 
-  @Input('progress') private progress;
-  @Input('thickness') private thickness: string;
-  @Input('showPercentage') private showPercentage: boolean = false;
+  @Input('progress') progress;
+  @Input('thickness') thickness: string;
+  @Input('showPercentage') showPercentage: boolean = false;
 
   constructor() {
   }

@@ -2,8 +2,6 @@
  * Created by loicsalou on 08.07.2017.
  */
 import {Injectable} from '@angular/core';
-import {TranslateService} from '@ngx-translate/core';
-import {Statistics} from './statistics';
 import {Dimension, Locker, LockerType} from './locker';
 import {FridgeLocker} from './fridge-locker';
 import {SimpleLocker} from './simple-locker';
@@ -16,7 +14,7 @@ import {SimpleLocker} from './simple-locker';
 @Injectable()
 export class LockerFactory {
 
-  constructor(private i18n: TranslateService) {
+  constructor() {
   }
 
   public create(json): Locker {

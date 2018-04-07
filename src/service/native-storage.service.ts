@@ -102,9 +102,9 @@ export class NativeStorageService {
           (reason) => {
             this.bottlesSubject.error(reason);
             this.notificationService.debugAlert('(catch) La récupération locale des données a échoué' +
-              ' depuis ' + this.BOTTLES_ROOT, reason)
+              ' depuis ' + this.BOTTLES_ROOT, reason);
           }
-        )
+        );
     } else {
       this.bottlesObservable = Observable.of(<Bottle[]>[]);
     }
@@ -120,8 +120,8 @@ export class NativeStorageService {
             this.notificationService.debugAlert('sauvegarde locale OK');
           },
           error => {
-            this.notificationService.debugAlert('sauvegarde locale En erreur ! ' + error)
-            this.bottlesSubject.error(error)
+            this.notificationService.debugAlert('sauvegarde locale En erreur ! ' + error);
+            this.bottlesSubject.error(error);
           }
         )
         .catch(
@@ -129,7 +129,7 @@ export class NativeStorageService {
             this.notificationService.debugAlert('sauvegarde locale en erreur ! ' + err);
             this.bottlesSubject.error(err);
           }
-        )
+        );
     }
   }
 
@@ -137,7 +137,7 @@ export class NativeStorageService {
     if (this.cordova) {
       return this.nativeStorage.getItem(key);
     } else {
-      return undefined
+      return undefined;
     }
   }
 

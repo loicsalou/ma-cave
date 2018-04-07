@@ -422,7 +422,6 @@ export class FridgeLockerComponent extends LockerComponent {
    * @returns {boolean}
    */
   protected canIncreaseWidth() {
-    let currentWidth = this.fridge.racks.reduce((max, rack) => max = Math.max(max, rack.dimension.x), 0);
     if (this.dimension.x + 1 >= FridgeLockerComponent.MAX_NB_COLUMNS) {
       this.notificationService.warning('locker-editor.maxi-col-reached');
       return false

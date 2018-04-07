@@ -20,17 +20,14 @@ export class LocalLoginPage implements OnInit {
   knownUsers: User[];
 
   constructor(private loginService: LoginService, private notificationService: NotificationService, private localStorage: NativeStorageService) {
-    //super(loginService, notificationService);
   }
 
   ngOnInit(): void {
     this.localStorage.getKnownUsers()
       .then(users => {
         this.knownUsers = users;
-        //this.notificationService.debugAlert('LoginPage: récupération utilisateurs OK: ', users);
       })
       .catch(err => {
-        //this.notificationService.debugAlert('LoginPage: La récupération des utilisateurs locaux a échoué: ', err);
         this.localStorage.deleteKnowUsers();
       });
   }

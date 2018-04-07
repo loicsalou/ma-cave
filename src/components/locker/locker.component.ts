@@ -1,4 +1,4 @@
-import {ElementRef, EventEmitter, Inject, Input, OnChanges, Output, ViewChild} from '@angular/core';
+import {ElementRef, EventEmitter, Input, OnChanges, Output, ViewChild} from '@angular/core';
 import {Bottle, Position} from '../../model/bottle';
 import {Gesture} from 'ionic-angular';
 import {Dimension} from '../../model/locker';
@@ -6,23 +6,22 @@ import {NativeProvider} from '../../providers/native/native';
 
 export abstract class LockerComponent implements OnChanges {
 
+  @ViewChild('zoomable') zoomable: ElementRef;
+
   @Input()
   content: Bottle[] = [];
-
   @Input()
   selectable: boolean = true;
-
   @Input()
   highlighted: Bottle[];
 
   @Output()
   onCellSelected: EventEmitter<Cell> = new EventEmitter<Cell>();
-  scale: number;
   currentGesture: any;
   currentStyle: any;
-  selected: boolean = false;
+  scale: number;
 
-  @ViewChild('zoomable') zoomable: ElementRef;
+  selected: boolean = false;
 
   constructor(private nativeProvider: NativeProvider) {
   }
@@ -129,7 +128,7 @@ export abstract class LockerComponent implements OnChanges {
       self.currentGesture = 'pinch';
       ev.preventDefault();
       // formula to append scale to new scale
-      self.scale = base + (ev.scale * self.scale - self.scale) / self.scale
+      self.scale = base + (ev.scale * self.scale - self.scale) / self.scale;
 
       setBounds();
       transform();
@@ -147,11 +146,6 @@ export abstract class LockerComponent implements OnChanges {
       base = self.scale;
       setBounds();
       transform();
-    }
-
-    function onSwipe(ev) {
-      ev.preventDefault();
-      self.currentGesture = 'swipe';
     }
 
     function setBounds() {
@@ -172,7 +166,7 @@ export abstract class LockerComponent implements OnChanges {
       min_y = 0 + scaled_y;
 
       setCoor(-scaled_x, scaled_y);
-      console.info(`x: ${x}, scaled_x: ${scaled_x}, y: ${y}, scaled_y: ${scaled_y}`)
+      console.info(`x: ${x}, scaled_x: ${scaled_x}, y: ${y}, scaled_y: ${scaled_y}`);
     }
 
     function setCoor(xx: number, yy: number) {
@@ -235,7 +229,7 @@ export class Cell {
       this.cellClass = this.config.colorsText2Code[ bottle.label ? bottle.label.toLowerCase() : '' ];
     }
     if (highlight) {
-      this.cellClass += ' highlighted'
+      this.cellClass += ' highlighted';
     }
   }
 

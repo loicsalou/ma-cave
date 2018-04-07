@@ -24,13 +24,9 @@ import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
  */
 @Injectable()
 export class FirebaseImagesService {
-  public USER_ROOT: string;
   public IMAGES_ROOT: string;
   public XREF_ROOT: string;
-  private userRootRef: Reference;
   private imageStorageRef: FbStorageTypesReference;
-  private PROFILE_ROOT: string;
-  private profileRootRef: Reference;
   private ERROR_ROOT: string;
   private errorRootRef: Reference;
   private _uploadProgressEvent: Subject<number> = new Subject<number>();
@@ -49,20 +45,16 @@ export class FirebaseImagesService {
       updated: snap.metadata.updated,
       timeCreated: snap.metadata.timeCreated,
       uploadState: snap.state
-    }
+    };
   }
 
   public initialize(user: User) {
     let userRoot = user.user;
-    this.USER_ROOT = schema.USERS_FOLDER + '/' + userRoot;
 
     this.IMAGES_ROOT = schema.IMAGES_FOLDER;
     this.XREF_ROOT = schema.XREF_FOLDER;
-    this.PROFILE_ROOT = schema.USERS_FOLDER + '/' + userRoot + '/' + schema.PROFILE_CONTENT_FOLDER;
     this.ERROR_ROOT = schema.USERS_FOLDER + '/' + userRoot + '/' + schema.ERROR_CONTENT_FOLDER;
 
-    this.userRootRef = this.angularFirebase.database.ref(this.USER_ROOT);
-    this.profileRootRef = this.angularFirebase.database.ref(this.PROFILE_ROOT);
     this.errorRootRef = this.angularFirebase.database.ref(this.ERROR_ROOT);
     this.imageStorageRef = this.angularFirebase.app.storage().ref(this.IMAGES_ROOT);
 
@@ -72,7 +64,6 @@ export class FirebaseImagesService {
   // ===================================================== ERRORS
 
   public cleanup() {
-    this.USER_ROOT = undefined;
     this.IMAGES_ROOT = undefined;
     this.imageStorageRef = undefined;
   }
@@ -111,7 +102,7 @@ export class FirebaseImagesService {
         .delete()
         .then(() => resolve(null))
         .catch(err => reject(err));
-    })
+    });
   }
 
   /**
@@ -167,7 +158,7 @@ export class FirebaseImagesService {
       if (snap.numChildren() > 3) {
         this.errorRootRef.limitToFirst(1).ref.remove();
       }
-    })
+    });
   }
 
   private uploadToStorage(imageBlob, name: string): Promise<UploadTaskSnapshot> {
@@ -207,7 +198,7 @@ export class FirebaseImagesService {
         'keywords': meta.keywords,
         'subregion_label': meta.subregion_label,
         'area_label': meta.area_label,
-        'nomCru': meta.nomCru,
+        'nomCru': meta.nomCru
       };
 
       ref.push(dataToSave, (response) => {

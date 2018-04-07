@@ -2,15 +2,15 @@ import {Injectable} from '@angular/core';
 import {Bottle, Position} from '../../model/bottle';
 import {Observable} from 'rxjs';
 import {AngularFireDatabase, SnapshotAction} from 'angularfire2/database';
-import * as firebase from 'firebase/app';
 import {NotificationService} from '../notification.service';
 import {WithdrawalFactory} from '../../model/withdrawal.factory';
 import {User} from '../../model/user';
 import {Withdrawal} from '../../model/withdrawal';
 import {BottleNoting} from '../../components/bottle-noting/bottle-noting.component';
 
-import * as tools from '../../utils/index';
+import * as firebase from 'firebase/app';
 import * as schema from './firebase-schema';
+import * as tools from '../../utils/index';
 import Reference = firebase.database.Reference;
 
 /**
@@ -59,11 +59,11 @@ export class FirebaseWithdrawalsService {
             this.createWithdrawal(withdrawal);
           } else {
             this.notificationService.debugAlert('mise à jour KO ' + err);
-            reject(err)
+            reject(err);
           }
         }
-      )
-    })
+      );
+    });
   }
 
   public fetchAllWithdrawals(): Observable<Withdrawal[]> {
@@ -76,19 +76,19 @@ export class FirebaseWithdrawalsService {
                                                     ...c.payload.val(), id: c.payload.key
                                                   })
              )
-      )
+      );
   }
 
   public createWithdrawal(withdrawal: Withdrawal): void {
     this.withdrawRootRef.push(tools.sanitizeBeforeSave(withdrawal), (
       err => {
         if (err !== null) {
-          throw err
+          throw err;
         } else {
-          this.notificationService.debugAlert('Withdrawal created ' + withdrawal.id)
+          this.notificationService.debugAlert('Withdrawal created ' + withdrawal.id);
         }
       }
-    ))
+    ));
   }
 
   recordNotation(withdrawal: Withdrawal, notes: BottleNoting) {
@@ -96,7 +96,7 @@ export class FirebaseWithdrawalsService {
       {notation: notes},
       err => {
         if (err) {
-          this.notificationService.error('Echec de mise mise à jour de la notation: ' + err)
+          this.notificationService.error('Echec de mise mise à jour de la notation: ' + err);
         }
       }
     );
@@ -114,13 +114,13 @@ export class FirebaseWithdrawalsService {
         err => {
           if (err == null) {
             this.notificationService.debugAlert('mise à jour OK');
-            resolve(null)
+            resolve(null);
           } else {
             this.notificationService.debugAlert('mise à jour KO ' + err);
-            reject(err)
+            reject(err);
           }
         }
       ));
-    })
+    });
   }
 }

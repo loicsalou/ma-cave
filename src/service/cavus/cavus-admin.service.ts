@@ -3,8 +3,6 @@
  */
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import * as firebase from 'firebase/app';
-import * as moment from 'moment';
 import {User} from '../../model/user';
 import {SearchCriteria} from '../../model/search-criteria';
 import {AdminService} from '../admin.service';
@@ -19,8 +17,6 @@ export class CavusAdminService implements AdminService {
   }
 
   public initialize(user: User) {
-    let userRoot = user.user;
-
     this.initLogging();
   }
 

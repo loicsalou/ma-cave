@@ -4,50 +4,42 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {AngularFireDatabase, SnapshotAction} from 'angularfire2/database';
-import * as firebase from 'firebase/app';
-import * as schema from './firebase-schema';
-import * as moment from 'moment';
 import {NotificationService} from '../notification.service';
-import {BottleFactory} from '../../model/bottle.factory';
 import {User} from '../../model/user';
 import {SimpleLocker} from '../../model/simple-locker';
 import {Locker} from '../../model/locker';
-import Reference = firebase.database.Reference;
 import {sanitizeBeforeSave} from '../../utils/index';
+
+import * as firebase from 'firebase/app';
+import * as schema from './firebase-schema';
+import * as moment from 'moment';
+import Reference = firebase.database.Reference;
 
 /**
  * Services related to the lockers in the cellar.
  */
 @Injectable()
 export class FirebaseLockersService {
-  public USER_ROOT: string;
-  private userRootRef: Reference;
   private CELLAR_ROOT: string;
   private cellarRootRef: Reference;
-  private LOCKER_CONTENT_ROOT: string;
   private ERROR_ROOT: string;
   private errorRootRef: Reference;
 
-  constructor(private bottleFactory: BottleFactory,
-              private angularFirebase: AngularFireDatabase,
+  constructor(private angularFirebase: AngularFireDatabase,
               private notificationService: NotificationService) {
   }
 
   public initialize(user: User) {
     let userRoot = user.user;
-    this.USER_ROOT = schema.USERS_FOLDER + '/' + userRoot;
 
     this.CELLAR_ROOT = schema.USERS_FOLDER + '/' + userRoot + '/' + schema.CELLAR_FOLDER;
-    this.LOCKER_CONTENT_ROOT = schema.USERS_FOLDER + '/' + userRoot + '/' + schema.LOCKER_CONTENT_FOLDER;
     this.ERROR_ROOT = schema.USERS_FOLDER + '/' + userRoot + '/' + schema.ERROR_CONTENT_FOLDER;
 
-    this.userRootRef = this.angularFirebase.database.ref(this.USER_ROOT);
     this.cellarRootRef = this.angularFirebase.database.ref(this.CELLAR_ROOT);
     this.errorRootRef = this.angularFirebase.database.ref(this.ERROR_ROOT);
   }
 
   public cleanup() {
-    this.USER_ROOT = undefined;
     this.CELLAR_ROOT = undefined;
     this.ERROR_ROOT = undefined;
   }
@@ -74,19 +66,19 @@ export class FirebaseLockersService {
       .list<Locker>(this.CELLAR_ROOT).snapshotChanges()
       .map(
         (changes: SnapshotAction[]) => {
-          return changes.map(c => ({id: c.payload.key, ...c.payload.val()}))
+          return changes.map(c => ({id: c.payload.key, ...c.payload.val()}));
         }
-      )
+      );
   }
 
   public createLocker(locker: Locker): void {
     this.cellarRootRef.push(sanitizeBeforeSave(locker), (
       err => {
         if (err !== null) {
-          throw err
+          throw err;
         }
       }
-    ))
+    ));
   }
 
   public replaceLocker(locker: SimpleLocker) {
@@ -103,9 +95,9 @@ export class FirebaseLockersService {
     this.cellarRootRef.child(locker.id).remove(
       error => {
         if (error !== null) {
-          this.notificationService.failed('La suppression des casiers a échoué', error)
+          this.notificationService.failed('La suppression des casiers a échoué', error);
         }
       }
-    )
+    );
   }
 }

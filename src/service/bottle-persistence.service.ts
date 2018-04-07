@@ -6,7 +6,6 @@ import {Bottle, Position} from '../model/bottle';
 import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {FilterSet} from '../components/distribution/distribution';
-import {Platform} from 'ionic-angular';
 import * as _ from 'lodash';
 import {LoginService} from './login/login.service';
 import {AbstractPersistenceService} from './abstract-persistence.service';
@@ -33,26 +32,14 @@ import {SearchCriteria} from '../model/search-criteria';
  */
 @Injectable()
 export class BottlePersistenceService extends AbstractPersistenceService {
-  private BOTTLES_ROOT: string;
-
   private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
   private _allBottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
-
-  get allBottlesObservable(): Observable<Bottle[]> {
-    return this._allBottlesObservable;
-  }
-
   private _filteredBottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
-
   private _filteredBottlesObservable: Observable<Bottle[]> = this._filteredBottles.asObservable();
-
-  get filteredBottlesObservable(): Observable<Bottle[]> {
-    return this._filteredBottlesObservable;
-  }
-
   private filters: FilterSet = new FilterSet(this.translateService);
   private allBottlesArray: Bottle[];
   private bottlesSub: Subscription;
+  private _filtersObservable: BehaviorSubject<FilterSet>;
 
   constructor(private dataConnection: FirebaseAdminService,
               private bottlesService: FirebaseBottlesService,
@@ -61,8 +48,7 @@ export class BottlePersistenceService extends AbstractPersistenceService {
               private withdrawalService: FirebaseWithdrawalsService,
               notificationService: NotificationService,
               loginService: LoginService, private bottleFactory: BottleFactory,
-              translateService: TranslateService,
-              private platform: Platform) {
+              translateService: TranslateService) {
     super(notificationService, loginService, translateService);
     this._filtersObservable = new BehaviorSubject<FilterSet>(new FilterSet(this.translateService));
     if (loginService.user) {
@@ -70,7 +56,13 @@ export class BottlePersistenceService extends AbstractPersistenceService {
     }
   }
 
-  private _filtersObservable: BehaviorSubject<FilterSet>;
+  get allBottlesObservable(): Observable<Bottle[]> {
+    return this._allBottlesObservable;
+  }
+
+  get filteredBottlesObservable(): Observable<Bottle[]> {
+    return this._filteredBottlesObservable;
+  }
 
   get filtersObservable(): Observable<FilterSet> {
     return this._filtersObservable.asObservable();
@@ -84,10 +76,10 @@ export class BottlePersistenceService extends AbstractPersistenceService {
       return btl;
     })).then(
       () => {
-        () => this.notificationService.information('update.saved')
-        err => this.notificationService.failed('update.failed', err)
-      },
-    )
+        () => this.notificationService.information('update.saved');
+        err => this.notificationService.failed('update.failed', err);
+      }
+    );
   }
 
   public updateLockerAndBottles(bottles: Bottle[], locker: Locker) {
@@ -95,7 +87,7 @@ export class BottlePersistenceService extends AbstractPersistenceService {
       .then(
         () => this.notificationService.information('update.saved'),
         err => this.notificationService.failed('update.failed', err)
-      )
+      );
   }
 
   public save(bottles: Bottle[]): Promise<any> {
@@ -106,7 +98,7 @@ export class BottlePersistenceService extends AbstractPersistenceService {
     this.bottlesService.deleteBottles().then(
       () => this.notificationService.information('Suppression effectuée'),
       error => this.notificationService.failed('La suppression des bouteilles a échoué', error)
-    )
+    );
   }
 
   public getBottle(id: string): Bottle {
@@ -116,7 +108,7 @@ export class BottlePersistenceService extends AbstractPersistenceService {
   public getBottlesInLocker(locker: Locker): Bottle[] {
     return this.allBottlesArray.filter(
       bottle => bottle.positions.filter(pos => pos.lockerId === locker.id).length > 0
-    )
+    );
   }
 
   /**
@@ -125,7 +117,7 @@ export class BottlePersistenceService extends AbstractPersistenceService {
    * @returns {Bottle}
    */
   public createBottle(btl: Bottle): Bottle {
-    return this.bottleFactory.create(btl)
+    return this.bottleFactory.create(btl);
   }
 
   /**
@@ -179,13 +171,13 @@ export class BottlePersistenceService extends AbstractPersistenceService {
       // don't show placed bottles
       if (!filters.placed) {
         //on ne garde que les bouteilles non totalement placées
-        filtered = filtered.filter(btl => btl.positions.length !== +btl.quantite_courante)
+        filtered = filtered.filter(btl => btl.positions.length !== +btl.quantite_courante);
       }
 
       // show not placed bottles
       if (!filters.toBePlaced) {
         //on ne garde que les bouteilles totalement placées
-        filtered = filtered.filter(btl => btl.positions.length === +btl.quantite_courante)
+        filtered = filtered.filter(btl => btl.positions.length === +btl.quantite_courante);
       }
 
       // on hierarchical axis like regions and ages, use most precise filter if available
@@ -235,7 +227,7 @@ export class BottlePersistenceService extends AbstractPersistenceService {
         if (resp) {
           this.dataConnection.deleteAccount().take(1).subscribe(
             result => sub.next(result)
-          )
+          );
         }
       }
     );
@@ -260,7 +252,7 @@ export class BottlePersistenceService extends AbstractPersistenceService {
   }
 
   deleteLogs() {
-    this.dataConnection.deleteLogs()
+    this.dataConnection.deleteLogs();
   }
 
   protected initialize(user: User) {
@@ -272,10 +264,10 @@ export class BottlePersistenceService extends AbstractPersistenceService {
     this.withdrawalService.initialize(user);
     let items = this.bottlesService.allBottlesObservable;
     this.bottlesSub = items.subscribe((bottles: Bottle[]) => {
-                                               this.setAllBottlesArray(bottles);
-                                               this.filterOn(this.filters);
-                                             },
-                                             error => this.notificationService.error('L\'accès à la liste des bouteilles a échoué !', error));
+                                        this.setAllBottlesArray(bottles);
+                                        this.filterOn(this.filters);
+                                      },
+                                      error => this.notificationService.error('L\'accès à la liste des bouteilles a échoué !', error));
     this.bottlesService.fetchAllBottles();
   }
 
@@ -283,7 +275,6 @@ export class BottlePersistenceService extends AbstractPersistenceService {
     super.cleanup();
     this.bottlesSub.unsubscribe();
     this.dataConnection.cleanup();
-    this.BOTTLES_ROOT = undefined;
     this.allBottlesArray = undefined;
     this.filters = undefined;
   }
@@ -305,7 +296,7 @@ export class BottlePersistenceService extends AbstractPersistenceService {
     }
     keywords = keywords.map(
       kw => {
-        return kw.trim().toLowerCase()
+        return kw.trim().toLowerCase();
       }
     );
     keywords = keywords.sort();
@@ -341,11 +332,9 @@ export class BottlePersistenceService extends AbstractPersistenceService {
 
   private filterByAttribute(fromList: Bottle[ ], attribute: string, admissibleValues: string[ ]) {
     return fromList.filter(bottle => {
-      let ret = true;
-      let attrValue = bottle[ attribute ] ? bottle[ attribute ].toString() : '';
-      //admissibleValues.forEach(admissibleValue => ret = ret && attrValue.indexOf(admissibleValue) !== -1);
+      const attrValue = bottle[ attribute ] ? bottle[ attribute ].toString() : '';
       return admissibleValues.indexOf(attrValue) !== -1;
-    })
+    });
   }
 
   private setFilters(filters: FilterSet) {

@@ -11,9 +11,7 @@ import {Observable} from 'rxjs/Observable';
              templateUrl: 'filter.page.html',
              changeDetection: ChangeDetectionStrategy.OnPush
            })
-export class FilterPage implements OnInit
-  //, OnChanges
-  , OnDestroy {
+export class FilterPage implements OnInit, OnDestroy {
 
   public sortAxis = [
     {id: 'qty', name: 'Quantité', col: 'quantite_courante'},
@@ -34,9 +32,6 @@ export class FilterPage implements OnInit
   constructor(private bottlesService: BottlePersistenceService, private menuController: MenuController) {
   }
 
-  //ionViewWillLeave() {
-  //  console.log("leaving FilterPage");
-  //}
   ngOnInit(): void {
     this.filtersSub = this.bottlesService.filtersObservable.subscribe(
       filterSet => this.filterSet = filterSet

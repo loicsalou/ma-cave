@@ -41,14 +41,24 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
     super(nativeProvider)
   }
 
-  get dimension(): Dimension {
-    return this.locker.dimension
-  }
-
   ngOnInit(): void {
     if (this.locker.dimension && !this.rows) {
       this.resetComponent();
     }
+  }
+
+  ngAfterViewInit(): void {
+    if (this.selectable) {
+      if (this.zoomable && !this.locker.inFridge) {
+        this.setupPinchZoom(this.zoomable.nativeElement);
+      } else if (this.zoomable && this.locker.inFridge) {
+        this.setupPressGesture(this.zoomable.nativeElement);
+      }
+    }
+  }
+
+  get dimension(): Dimension {
+    return this.locker.dimension
   }
 
   isShifted(): boolean {
@@ -123,16 +133,6 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
       this.notificationService.debugAlert('highlighted: ' + bottle.nomCru);
     }
     return ret;
-  }
-
-  ngAfterViewInit(): void {
-    if (this.selectable) {
-      if (this.zoomable && !this.locker.inFridge) {
-        this.setupPinchZoom(this.zoomable.nativeElement);
-      } else if (this.zoomable && this.locker.inFridge) {
-        this.setupPressGesture(this.zoomable.nativeElement);
-      }
-    }
   }
 
   addTopRow() {

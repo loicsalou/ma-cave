@@ -33,9 +33,8 @@ export class DashboardPage implements OnInit, OnDestroy {
   private queriesSub: Subscription;
   private mostUsedQueries: SearchCriteria[];
   private popup: Loading;
-  private allWithdrawals: Withdrawal[];
   private withdrawalsSub: Subscription;
-  private withdrawalCardStyle: { 'min-height': string; 'height': string };
+  private _withdrawalCardStyle: { 'min-height': string; 'height': string };
 
   constructor(public navCtrl: NavController, public loginService: LoginService, private notificationService: NotificationService,
               private bottleService: BottlePersistenceService, private nativeProvider: NativeProvider,
@@ -50,6 +49,10 @@ export class DashboardPage implements OnInit, OnDestroy {
         }
       });
     });
+  }
+
+  get withdrawalCardStyle() {
+    return this._withdrawalCardStyle;
   }
 
   ngOnInit(): void {
@@ -78,7 +81,7 @@ export class DashboardPage implements OnInit, OnDestroy {
       (withdrawals: Withdrawal[]) => {
         this.withdrawals = withdrawals;
         let height = 30 + Math.min(3, withdrawals.length) * 92;
-        this.withdrawalCardStyle = {'min-height': '120px', 'height': height + 'px'};
+        this._withdrawalCardStyle = {'min-height': '120px', 'height': height + 'px'};
       },
       (err) => {
         this.notificationService.error('messages.withdrawals-load-error');
@@ -94,6 +97,8 @@ export class DashboardPage implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.bottleSub.unsubscribe();
+    this.withdrawalsSub.unsubscribe();
+    this.queriesSub.unsubscribe();
   }
 
   triggerNotation(bottle) {

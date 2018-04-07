@@ -1,12 +1,10 @@
 import {Component} from '@angular/core';
-import {IonicPage, Loading, LoadingController, NavController, Platform} from 'ionic-angular';
+import {Loading, LoadingController, NavController, Platform} from 'ionic-angular';
 import {FileChooser} from '@ionic-native/file-chooser';
 import {FilePath} from '@ionic-native/file-path';
-import * as _ from 'lodash';
 import {BottlePersistenceService} from '../../../service/bottle-persistence.service';
 import {NotificationService} from '../../../service/notification.service';
 import {NativeStorageService} from '../../../service/native-storage.service';
-import {User} from '../../../model/user';
 import {ImportProvider} from '../../../providers/import/import';
 import {LoginService} from '../../../service/login/login.service';
 
@@ -122,14 +120,6 @@ export class UploadBottlesPage {
 
   showLocalStorage() {
     this.listLocalStorageData();
-    let u1: User = <User> {
-      user: 'u1',
-      email: 'mail1',
-      photoURL: '',
-      displayName: '',
-      phoneNumber: '',
-      uid: ''
-    };
   }
 
   loadTempValueFor(key) {
@@ -162,9 +152,7 @@ export class UploadBottlesPage {
   }
 
   private processParsing(loading: Loading, file: File) {
-    let nbBottles = 0;
     let parsedBottles = [];
-    let saved = 0;
     let startTimestamp = new Date().getTime();
     this.importProvider.parseFile(file)
       .subscribe(bottle => {
@@ -192,7 +180,6 @@ export class UploadBottlesPage {
                                                                 {time: (endTimestamp - startTimestamp)})
                              .subscribe(
                                () => {
-                                 //this.forceLogout(loading);
                                  this.bottleService.reconnectListeners();
                                }
                              );
@@ -214,43 +201,4 @@ export class UploadBottlesPage {
       loading.dismiss();
     }
   }
-
-  private forceLogout(loading: Loading) {
-    this.notificationService.askNoChoice('app.must-logout-title', 'app.must-logout').subscribe(
-      () => this.logout()
-    )
-  }
-}
-
-function buildObject(row: any, keys: any) {
-  let object = {};
-  let values = row.split(';');
-  if (values.length == 1) {
-    return null;
-  }
-  _.each(keys, function (key, i) {
-    if (i < values.length) {
-      object[ key ] = values[ i ];
-    } else {
-      object[ key ] = '';
-    }
-  })
-  return object;
-}
-
-function buildObjectFromXLS(row: any, keys: any) {
-  let object = {};
-  let rowString = row.replace(/['"]+/g, '');
-  let values = rowString.split(/\t/);
-  if (values.length == 1) {
-    return null;
-  }
-  _.each(keys, function (key, i) {
-    if (i < values.length) {
-      object[ key ] = values[ i ];
-    } else {
-      object[ key ] = '';
-    }
-  })
-  return object;
 }

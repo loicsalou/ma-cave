@@ -291,24 +291,4 @@ export class FirebaseBottlesService {
       () => this._bottles.complete()
     );
   }
-
-  /**
-   * query the db and loads all bottles updated after the most recent one in the cache
-   * return the corresponding observable.
-   * @param fromLastUpdated most recent known bottle in cache
-   */
-  //private queryOrderByLastUpdate(fromLastUpdated: number): FirebaseListObservable<any[ ]> {
-  private queryOrderByLastUpdate(fromLastUpdated: number): Observable<Bottle[ ]> {
-    if (isNaN(fromLastUpdated)
-    ) {
-      fromLastUpdated = 0;
-    }
-    let query = {
-      orderByChild: 'lastUpdated',
-      startAt: fromLastUpdated
-    };
-
-    return this.angularFirebase.list<Bottle>(this.BOTTLES_ROOT).valueChanges();
-    //, {query});
-  }
 }

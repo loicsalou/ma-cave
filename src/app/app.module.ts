@@ -17,7 +17,6 @@ import {DashboardPage} from '../_features/browse/dashboard/dashboard';
 import {AdminFeatureModule} from '../_features/admin/admin-feature.module';
 import {SharedModule} from '../components/shared.module';
 import {BrowseFeatureModule} from '../_features/browse/browse-feature.module';
-import {BottleDetailModule} from '../_features/browse/bottle-detail/bottle-detail.module';
 import {CellarPage} from '../_features/racks/cellar/cellar.page';
 import {CellarFeatureModule} from '../_features/racks/cellar-feature.module';
 import {LocalLoginPage} from '../_features/admin/login/local-login.page';

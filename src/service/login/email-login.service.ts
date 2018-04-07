@@ -3,7 +3,6 @@
  */
 import {Injectable} from '@angular/core';
 import * as firebase from 'firebase/app';
-import {AngularFireDatabase} from 'angularfire2/database';
 import {AbstractLoginService} from './abstract-login.service';
 import {User} from '../../model/user';
 import {Observable} from 'rxjs/Observable';
@@ -12,15 +11,12 @@ import {NotificationService} from '../notification.service';
 @Injectable()
 export class EmailLoginService extends AbstractLoginService {
 
-  private firebaseRef: firebase.database.Reference;
-
-  constructor(notificationService: NotificationService,
-              private firebase: AngularFireDatabase) {
-    super(notificationService);
-    this.firebaseRef = this.firebase.database.ref('users/');
-  }
-
   private _username: string;
+  private _psw: string;
+
+  constructor(notificationService: NotificationService) {
+    super(notificationService);
+  }
 
   get username(): string {
     return this._username;
@@ -29,8 +25,6 @@ export class EmailLoginService extends AbstractLoginService {
   set username(value: string) {
     this._username = value;
   }
-
-  private _psw: string;
 
   get psw(): string {
     return this._psw;
@@ -92,8 +86,8 @@ export class EmailLoginService extends AbstractLoginService {
         }
       )
       .catch(function (error) {
-        self.loginFailed()
-        self.logout()
+        self.loginFailed();
+        self.logout();
         popup.dismiss();
       });
 
