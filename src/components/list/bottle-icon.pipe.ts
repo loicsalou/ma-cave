@@ -1,20 +1,21 @@
-import {Pipe, PipeTransform} from '@angular/core';
-import {Configuration} from '../../config/Configuration';
+import {Inject, Pipe, PipeTransform} from '@angular/core';
+import {BottleFactory} from '../../model/bottle.factory';
+import {Bottle} from '../../model/bottle';
 
 /*
  * get the icon matching the wine
  */
 @Pipe({
-        name: 'bottleIcon'
+        name: 'bottleIcon',
+        pure: false
       })
 export class BottleIconPipe implements PipeTransform {
 
-  transform(value: any, ...args: any[]): any {
-    let color = this.getColor(value);
-    return 'assets/img/bottle-color/' + color + '.png';
+  constructor(private bottleFactory: BottleFactory) {
   }
 
-  getColor(label: string): string {
-    return label===undefined ? 'undefined' : Configuration.colorsText2Code[ label.toLowerCase() ];
+  transform(bottle: Bottle, ...args: any[]): any {
+    return this.bottleFactory.getImage(bottle)
+
   }
 }

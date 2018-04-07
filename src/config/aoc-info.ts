@@ -1,0 +1,13 @@
+
+export interface AocInfo {
+  //ex: Libournais, Basse-Bourgogne...
+  subdivision;
+  // ex: chablis, chablis grand cru...
+  appellation;
+  //appellation en minuscules et dont on a retiré les caractères spéciaux
+  appellationSearched;
+  //ex: rouge, blanc...
+  types;
+  //ex: Liquoreux, moëlleux...
+  dryness;
+}

@@ -1,7 +1,7 @@
 /**
  * Created by loicsalou on 25.05.17.
  */
-import {Injectable} from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {Bottle} from './bottle';
 import {TranslateService} from '@ngx-translate/core';
 import {Statistics} from './statistics';
@@ -17,8 +17,8 @@ import {Withdrawal} from './withdrawal';
 @Injectable()
 export class WithdrawalFactory extends BottleFactory {
 
-  constructor(i18n: TranslateService) {
-    super(i18n)
+  constructor(i18n: TranslateService, @Inject('GLOBAL_CONFIG') config) {
+    super(i18n, config);
   }
 
   public create(withdrawal: Withdrawal): Withdrawal {

@@ -12,7 +12,7 @@ import {NativeProvider} from '../providers/native/native';
 import {Network} from '@ionic-native/network';
 import {Camera} from '@ionic-native/camera';
 import {CaveErrorHandler} from '../service/cave-error.handler';
-import {FirebaseConnectionService} from '../service/firebase-connection.service';
+import {FirebaseAdminService} from '../service/firebase/firebase-admin.service';
 import {RatingComponent} from './rating/rating';
 import {FormsModule} from '@angular/forms';
 import {TranslateModule} from '@ngx-translate/core';
@@ -70,7 +70,7 @@ import {CommonModule} from '@angular/common';
               NativeProvider,
               Network,
               ImportProvider,
-              {provide: ErrorHandler, deps: [ FirebaseConnectionService ], useClass: CaveErrorHandler}
+              {provide: ErrorHandler, deps: [ FirebaseAdminService ], useClass: CaveErrorHandler}
             ]
           })
 export class SharedModule {

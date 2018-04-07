@@ -5,7 +5,7 @@ import {Injectable} from '@angular/core';
 import {Bottle, BottleMetadata} from '../model/bottle';
 import {Observable} from 'rxjs';
 import {Image} from '../model/image';
-import {FileItem} from './file-item';
+import {FileItem} from '../model/file-item';
 import {UploadMetadata} from './image-persistence.service';
 import {NotificationService} from './notification.service';
 import {NativeStorage} from '@ionic-native/native-storage';
@@ -14,6 +14,8 @@ import {Platform} from 'ionic-angular';
 import {BottleFactory} from '../model/bottle.factory';
 import {Subject} from 'rxjs/Subject';
 
+import * as schema from './firebase/firebase-schema';
+
 /**
  * Services related to the bottles in the cellar.
  * The subregion_label below are duplicated in the code of france.component.html as they are emitted when end-user
@@ -21,15 +23,9 @@ import {Subject} from 'rxjs/Subject';
  */
 @Injectable()
 export class NativeStorageService {
-  private static BOTTLES_FOLDER = 'bottles';
-  public IMAGES_ROOT: string;
-  public XREF_ROOT: string;
-  protected USERS_ROOT = 'users';
-  protected XREF_FOLDER = 'xref';
-  private IMAGES_FOLDER = 'images';
   private USER_ROOT: string;
   private SEP = '/';
-  protected KNOWN_USERS = this.USERS_ROOT + this.SEP + 'list';
+  protected KNOWN_USERS = schema.USERS_FOLDER + this.SEP + 'list';
   private BOTTLES_ROOT: string;
   private bottlesSubject: Subject<Bottle[]>;
   private bottlesObservable: Observable<Bottle[]>;
@@ -48,10 +44,8 @@ export class NativeStorageService {
   }
 
   public initialize(user: User) {
-    this.IMAGES_ROOT = this.IMAGES_FOLDER;
-    this.XREF_ROOT = this.XREF_FOLDER;
-    this.USER_ROOT = this.USERS_ROOT + this.SEP + (user ? user.user : '');
-    this.BOTTLES_ROOT = this.USER_ROOT + this.SEP + NativeStorageService.BOTTLES_FOLDER;
+    this.USER_ROOT = schema.USERS_FOLDER + this.SEP + (user ? user.user : '');
+    this.BOTTLES_ROOT = this.USER_ROOT + this.SEP + schema.BOTTLES_FOLDER;
     this.bottlesSubject = new Subject();
     this.bottlesObservable = this.bottlesSubject.asObservable();
     this.saveUser(user);
@@ -59,7 +53,6 @@ export class NativeStorageService {
 
   public cleanup() {
     this.BOTTLES_ROOT = undefined;
-    this.IMAGES_ROOT = undefined;
   }
 
   public deleteImage(file: File): Promise<any> {

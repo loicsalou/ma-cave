@@ -11,7 +11,7 @@
 
 <ion-content>
   
-  <distribution [opened]="true" [bottles]="bottles" (filterSetChanged)="refineFilter($event)"></distribution>
+  <distribution [opened]="true" [bottles]="bottles | async" (filterSetChanged)="refineFilter($event)"></distribution>
   
   <ion-item>
     <ion-label>{{'filter.history' | translate}}</ion-label>

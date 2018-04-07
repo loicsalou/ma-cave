@@ -3,10 +3,10 @@
  */
 import {Injectable} from '@angular/core';
 import {AbstractLoginService} from './abstract-login.service';
-import {User} from '../model/user';
+import {User} from '../../model/user';
 import {Observable} from 'rxjs/Observable';
-import {NotificationService} from './notification.service';
-import {NativeStorageService} from './native-storage.service';
+import {NotificationService} from '../notification.service';
+import {NativeStorageService} from '../native-storage.service';
 
 /**
  * Services related to the bottles in the cellar.

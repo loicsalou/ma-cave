@@ -1,13 +1,12 @@
-import {Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {Component, Inject, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {Bottle, BottleMetadata} from '../../../model/bottle';
 import {NavController, NavParams} from 'ionic-angular';
 import {BottlePersistenceService} from '../../../service/bottle-persistence.service';
 import {ImagePersistenceService} from '../../../service/image-persistence.service';
-import {AocInfo, Bottles} from '../../../config/Bottles';
 import {NotificationService} from '../../../service/notification.service';
 import * as _ from 'lodash';
-import {Configuration} from '../../../config/Configuration';
 import {NgForm} from '@angular/forms';
+import {AocInfo} from '../../../config/aoc-info';
 
 /*
  Generated class for the Update component.
@@ -23,11 +22,16 @@ import {NgForm} from '@angular/forms';
              encapsulation: ViewEncapsulation.Emulated
            })
 export class UpdatePage implements OnInit {
+  private static SEARCH_STRING_REMOVED_CHARS = new RegExp(/[\ |\-|\.|\d|\n|\r|,|!|?|@]/g);
+  private static SPECIAL_CHARS_REMOVED = new RegExp(/[\.|\d|\n|\r|,|!|?|@]/g);
 
   bottle: Bottle;
   images: Array<{ src: String }> = [];
   progress: number = 0;
   @ViewChild('bottleForm') bottleForm: NgForm;
+  aocData: any[];
+  colorsData: any[];
+
   private aoc: AocInfo[];
   private missingImages: string[] = [];
   private forceLeave: boolean = true;
@@ -35,10 +39,61 @@ export class UpdatePage implements OnInit {
 
   constructor(private navCtrl: NavController, navParams: NavParams, private bottleService: BottlePersistenceService,
               private notificationService: NotificationService, private imageService: ImagePersistenceService,
-              private bottles: Bottles) {
+              @Inject('GLOBAL_CONFIG') public config) {
     //don't clone to keep firebase '$key' which is necessary to update
+    this.aocData = this.initAoc(this.config.bottles.aocData);
+    this.colorsData = Object.keys(this.config.bottles.colorsData).map(
+      (key: string) => {
+        return {key: key, value: this.config.bottles.colorsData[ key ]}
+      }
+    );
     this.bottle = navParams.data[ 'bottle' ];
-    this.metadata = Configuration.getMetadata(this.bottle);
+    this.metadata = UpdatePage.getMetadata(this.bottle);
+  }
+
+  /**
+   * get the search string corresponding to the given text.
+   * Basically this means the same string, as lowercase, from which all special chars have been removed.
+   * @param text
+   */
+  public static getSearchStringFor(text: string): string {
+    if (text) {
+      return text.toLowerCase().replace(UpdatePage.SEARCH_STRING_REMOVED_CHARS, '');
+    }
+    return text;
+  }
+
+  public static getMetadata(bottle: any): BottleMetadata {
+    let keywords = [];
+    keywords.push(UpdatePage.extractKeywords(bottle.area_label));
+    keywords.push(UpdatePage.extractKeywords(bottle.label));
+    keywords.push(UpdatePage.extractKeywords(bottle.subregion_label));
+    keywords = _.uniq(_.flatten(keywords));
+
+    let secondaryKeywords = [];
+    secondaryKeywords.push(UpdatePage.extractKeywords(bottle.comment));
+    secondaryKeywords.push(UpdatePage.extractKeywords(bottle.suggestion));
+
+    return {
+      area_label: bottle.area_label,
+      area_label_search: UpdatePage.getSearchStringFor(bottle.area_label),
+      nomCru: bottle.nomCru,
+      subregion_label: bottle.subregion_label,
+      keywords: keywords,
+      secondaryKeywords: secondaryKeywords
+    }
+  }
+
+  private static extractKeywords(text: string): string[] {
+    if (text) {
+      let ret = text.replace(UpdatePage.SPECIAL_CHARS_REMOVED, ' ');
+      return ret
+        .split(' ')
+        .filter(keyword => keyword.length > 2)
+        .map(keyword => keyword.toLowerCase());
+    } else {
+      return []
+    }
   }
 
   ngOnInit(): void {
@@ -71,7 +126,7 @@ export class UpdatePage implements OnInit {
 
   loadRegionAreas() {
     this.aoc = undefined;
-    let aocs = this.bottles.aocByArea.filter(area => area.key === this.bottle.subregion_label);
+    let aocs = this.config.bottles.aocData[ this.bottle.subregion_label ];
     if (aocs && aocs.length > 0) {
       this.aoc = aocs[ 0 ].value;
     }
@@ -92,6 +147,8 @@ export class UpdatePage implements OnInit {
     }
   }
 
+  // =============================
+
   save() {
     this.bottleService.update([ this.bottle ]);
     this.notificationService.information('update.saved');
@@ -103,7 +160,8 @@ export class UpdatePage implements OnInit {
     this.navCtrl.pop();
   }
 
-  // =============================
+  // =============
+
   // IMAGE AVAILABILITY MANAGEMENT
   imageIsAvailable(url: string): boolean {
     return _.indexOf(this.missingImages, url) === -1;
@@ -114,7 +172,6 @@ export class UpdatePage implements OnInit {
     this.missingImages.push(event.currentTarget.src);
   }
 
-  // =============
   // PROFILE IMAGE
   setProfileImage(downloadURL: string) {
     this.bottle.profile_image_url = downloadURL ? downloadURL : '';
@@ -124,6 +181,8 @@ export class UpdatePage implements OnInit {
     this.bottle.image_urls.push(downloadURL);
   }
 
+  // private
+
   getProfileImage() {
     return this.bottle.profile_image_url;
   }
@@ -131,4 +190,27 @@ export class UpdatePage implements OnInit {
   error(error) {
     this.notificationService.error('Erreur lors de l\'upload !', error);
   }
+
+  private initAoc(aocData: any) {
+    let aocByArea = [];
+    for (let key in aocData) {
+      aocByArea.push({key: key, value: this.extractAocInfo(aocData[ key ])});
+    }
+    aocByArea.sort((a, b) => a.key > b.key ? 1 : -1);
+    return aocByArea;
+  }
+
+  private extractAocInfo(data: any): AocInfo[] {
+    return data.map(aoc => {
+      return {
+        'subdivision': aoc.Subdivisions,
+        'appellation': aoc.Appellations,
+        'appellationSearched': UpdatePage.getSearchStringFor(aoc.Appellations),
+        'types': aoc[ 'Type de vins produit' ],
+        'dryness': aoc[ 'Teneur en sucre' ]
+      }
+    })
+      .sort((a: AocInfo, b: AocInfo) => a.appellation > b.appellation ? 1 : -1);
+  }
+
 }

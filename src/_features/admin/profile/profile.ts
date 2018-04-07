@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {LoginService} from '../../../service/login.service';
+import {LoginService} from '../../../service/login/login.service';
 import {User} from '../../../model/user';
 import {NotificationService} from '../../../service/notification.service';
 
@@ -29,10 +29,6 @@ export class ProfilePage implements OnInit {
       this.userDataValues.push(this.loginService.user[ key ])
     });
     this.notificationService.debugAlert('photo user=' + JSON.stringify(this.loginService.user));
-  }
-
-  properties() {
-    return this.loginService[ 'userrString' ];
   }
 
   filterOnText(event: any) {

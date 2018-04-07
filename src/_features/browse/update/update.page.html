@@ -28,7 +28,7 @@
   <form #bottleForm="ngForm">
     <ion-row d-flex class="form-group">
       <ion-col style="text-align: center;">
-        <img src="{{ bottle.label | bottleIcon }}" *ngIf="! getProfileImage()">
+        <img src="{{ bottle | bottleIcon }}" *ngIf="! getProfileImage()">
         <img [src]="getProfileImage()" [defaultImage]="'/assets/img/missing-image.jpg'" *ngIf="getProfileImage()">
       </ion-col>
       <ion-col style="margin-top: auto; margin-bottom: auto">
@@ -53,7 +53,7 @@
       <ion-item>
         <ion-label float-left>{{'bottle.label' | translate}}</ion-label>
         <ion-select [(ngModel)]="bottle.label" name="label" interface="popover">
-          <ion-option *ngFor="let colorPair of bottles.colors" [value]="colorPair.value"
+          <ion-option *ngFor="let colorPair of colorsData" [value]="colorPair.value"
                       required>
             {{colorPair.value}}
           </ion-option>
@@ -81,7 +81,7 @@
         <ion-label>{{'bottle.subregion_label' | translate}}</ion-label>
         <ion-select [(ngModel)]="bottle.subregion_label" name="subregion_label" required
                     (ionChange)="loadRegionAreas()" interface="popover">
-          <ion-option *ngFor="let regionData of bottles.aocByArea" [value]="regionData.key" class="form-control">
+          <ion-option *ngFor="let regionData of aocData" [value]="regionData.key" class="form-control">
             {{regionData.key}}
           </ion-option>
         </ion-select>

@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
-import {SearchCriteria} from '../../../service/firebase-connection.service';
 import {ViewController} from 'ionic-angular';
+import {SearchCriteria} from '../../../model/search-criteria';
 
 @Component({
              selector: 'items-page',

@@ -8,10 +8,10 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {FilterSet} from '../components/distribution/distribution';
 import {Platform} from 'ionic-angular';
 import * as _ from 'lodash';
-import {LoginService} from './login.service';
-import {PersistenceService} from './persistence.service';
+import {LoginService} from './login/login.service';
+import {AbstractPersistenceService} from './abstract-persistence.service';
 import {NotificationService} from './notification.service';
-import {FirebaseConnectionService, SearchCriteria} from './firebase-connection.service';
+import {FirebaseAdminService} from './firebase/firebase-admin.service';
 import {User} from '../model/user';
 import {Subscription} from 'rxjs/Subscription';
 import {Locker} from '../model/locker';
@@ -20,6 +20,11 @@ import {BottleFactory} from '../model/bottle.factory';
 import {Subject} from 'rxjs/Subject';
 import {BottleNoting} from '../components/bottle-noting/bottle-noting.component';
 import {Withdrawal} from '../model/withdrawal';
+import {FirebaseWithdrawalsService} from './firebase/firebase-withdrawals.service';
+import {FirebaseBottlesService} from './firebase/firebase-bottles.service';
+import {FirebaseLockersService} from './firebase/firebase-lockers.service';
+import {FirebaseImagesService} from './firebase/firebase-images.service';
+import {SearchCriteria} from '../model/search-criteria';
 
 /**
  * Services related to the bottles in the cellar.
@@ -27,7 +32,7 @@ import {Withdrawal} from '../model/withdrawal';
  * clicks on a region to filter bottles. Any change on either side must be propagated on the other side.
  */
 @Injectable()
-export class BottlePersistenceService extends PersistenceService {
+export class BottlePersistenceService extends AbstractPersistenceService {
   private BOTTLES_ROOT: string;
 
   private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
@@ -47,9 +52,13 @@ export class BottlePersistenceService extends PersistenceService {
 
   private filters: FilterSet = new FilterSet(this.translateService);
   private allBottlesArray: Bottle[];
-  private dataConnectionSub: Subscription;
+  private bottlesSub: Subscription;
 
-  constructor(private dataConnection: FirebaseConnectionService,
+  constructor(private dataConnection: FirebaseAdminService,
+              private bottlesService: FirebaseBottlesService,
+              private imagesService: FirebaseImagesService,
+              private lockersService: FirebaseLockersService,
+              private withdrawalService: FirebaseWithdrawalsService,
               notificationService: NotificationService,
               loginService: LoginService, private bottleFactory: BottleFactory,
               translateService: TranslateService,
@@ -68,7 +77,7 @@ export class BottlePersistenceService extends PersistenceService {
   }
 
   public update(bottles: Bottle[]) {
-    this.dataConnection.update(bottles.map((btl: Bottle) => {
+    this.bottlesService.update(bottles.map((btl: Bottle) => {
       btl.lastUpdated = new Date().getTime();
       btl.positions = btl.positions.filter(pos => pos.lockerId !== undefined);
       delete btl.selected;
@@ -82,7 +91,7 @@ export class BottlePersistenceService extends PersistenceService {
   }
 
   public updateLockerAndBottles(bottles: Bottle[], locker: Locker) {
-    this.dataConnection.updateLockerAndBottles(bottles, locker)
+    this.bottlesService.updateLockerAndBottles(bottles, locker)
       .then(
         () => this.notificationService.information('update.saved'),
         err => this.notificationService.failed('update.failed', err)
@@ -90,11 +99,11 @@ export class BottlePersistenceService extends PersistenceService {
   }
 
   public save(bottles: Bottle[]): Promise<any> {
-    return this.dataConnection.saveBottles(bottles);
+    return this.bottlesService.saveBottles(bottles);
   }
 
   public deleteBottles() {
-    this.dataConnection.deleteBottles().then(
+    this.bottlesService.deleteBottles().then(
       () => this.notificationService.information('Suppression effectuée'),
       error => this.notificationService.failed('La suppression des bouteilles a échoué', error)
     )
@@ -119,12 +128,18 @@ export class BottlePersistenceService extends PersistenceService {
     return this.bottleFactory.create(btl)
   }
 
+  /**
+   * durant un import on coupe la souscription pour éviter les cascades d'événements
+   */
   public disconnectListeners() {
-    this.dataConnection.disconnectListeners();
+    this.bottlesService.disconnectListeners();
   }
 
+  /**
+   * après un import on rebranche la souscription pour éviter les cascades d'événements
+   */
   public reconnectListeners() {
-    this.dataConnection.reconnectListeners();
+    this.bottlesService.reconnectListeners();
   }
 
   /**
@@ -134,7 +149,7 @@ export class BottlePersistenceService extends PersistenceService {
    * @param filters
    * @returns {any}
    */
-  public filterOn(filters: FilterSet): Bottle[] {
+  public filterOn(filters: FilterSet) {
 
     if (!filters) {
       return;
@@ -228,7 +243,7 @@ export class BottlePersistenceService extends PersistenceService {
   }
 
   withdraw(bottle: Bottle, position: Position) {
-    this.dataConnection.withdraw(bottle, position);
+    this.withdrawalService.withdraw(bottle, position);
   }
 
   recordBottleNotation(bottle: Bottle, notes: BottleNoting) {
@@ -237,15 +252,11 @@ export class BottlePersistenceService extends PersistenceService {
   }
 
   recordWidthdrawNotation(withdrawal: Withdrawal, notes: BottleNoting) {
-    this.dataConnection.recordNotation(withdrawal, notes);
+    this.withdrawalService.recordNotation(withdrawal, notes);
   }
 
   fetchAllWithdrawals(): Observable<Withdrawal[]> {
-    return this.dataConnection.fetchAllWithdrawals();
-    //.flatMap(
-    //  // wd.notation==null seulement == au lieu de === pour que ça matche aussi avec undefined
-    //  (wds: Withdrawal[]) => Observable.of(wds.filter(wd => wd.notation==null))
-    //);
+    return this.withdrawalService.fetchAllWithdrawals();
   }
 
   deleteLogs() {
@@ -254,19 +265,23 @@ export class BottlePersistenceService extends PersistenceService {
 
   protected initialize(user: User) {
     super.initialize(user);
+    this.bottlesService.initialize(user);
     this.dataConnection.initialize(user);
-    let items = this.dataConnection.allBottlesObservable;
-    this.dataConnectionSub = items.subscribe((bottles: Bottle[]) => {
+    this.lockersService.initialize(user);
+    this.imagesService.initialize(user);
+    this.withdrawalService.initialize(user);
+    let items = this.bottlesService.allBottlesObservable;
+    this.bottlesSub = items.subscribe((bottles: Bottle[]) => {
                                                this.setAllBottlesArray(bottles);
                                                this.filterOn(this.filters);
                                              },
                                              error => this.notificationService.error('L\'accès à la liste des bouteilles a échoué !', error));
-    this.dataConnection.fetchAllBottles();
+    this.bottlesService.fetchAllBottles();
   }
 
   protected cleanup() {
     super.cleanup();
-    this.dataConnectionSub.unsubscribe();
+    this.bottlesSub.unsubscribe();
     this.dataConnection.cleanup();
     this.BOTTLES_ROOT = undefined;
     this.allBottlesArray = undefined;

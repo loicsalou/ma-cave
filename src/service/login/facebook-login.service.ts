@@ -5,15 +5,10 @@ import {Injectable} from '@angular/core';
 import * as firebase from 'firebase/app';
 import {AbstractLoginService} from './abstract-login.service';
 import {Facebook} from '@ionic-native/facebook';
-import {User} from '../model/user';
+import {User} from '../../model/user';
 import {Observable} from 'rxjs/Observable';
-import {NotificationService} from './notification.service';
+import {NotificationService} from '../notification.service';
 
-/**
- * Services related to the bottles in the cellar.
- * The subregion_label below are duplicated in the code of france.component.html as they are emitted when end-user
- * clicks on a region to filter bottles. Any change on either side must be propagated on the other side.
- */
 @Injectable()
 export class FacebookLoginService extends AbstractLoginService {
   userString: string;

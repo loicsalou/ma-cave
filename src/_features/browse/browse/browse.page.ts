@@ -6,26 +6,30 @@ import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
 import {FilterSet} from '../../../components/distribution/distribution';
 import {Subscription} from 'rxjs/Subscription';
 import * as _ from 'lodash';
-import {LoginService} from '../../../service/login.service';
+import {LoginService} from '../../../service/login/login.service';
 import {NotificationService} from '../../../service/notification.service';
 import {CellarPage} from '../../racks/cellar/cellar.page';
 import {BottleItemComponent} from '../../../components/list/bottle-item.component';
 import {TranslateService} from '@ngx-translate/core';
 import {NativeProvider} from '../../../providers/native/native';
+import {Observable} from 'rxjs/Observable';
 
 @Component({
              selector: 'page-browse',
              templateUrl: 'browse.page.html',
+             //changeDetection: ChangeDetectionStrategy.OnPush
              // styleUrls:[ 'browse.page.scss' ]
            })
 export class BrowsePage implements OnInit, OnDestroy {
   allBottles: Bottle[];
   bottles: Bottle[];
+  bottles$: Observable<Bottle[]>;
   nbSelected = 0;
   filterSet: FilterSet = new FilterSet(this.translateService);
-  @ViewChild('bottleList')
-  listComponent: BottleItemComponent;
+
+  @ViewChild('bottleList') listComponent: BottleItemComponent;
   @ViewChild(VirtualScroll) vs: VirtualScroll;
+
   private bottleSubscription: Subscription;
   private filterSubscription: Subscription;
   private searchBarVisible: boolean = false;
@@ -49,7 +53,8 @@ export class BrowsePage implements OnInit, OnDestroy {
         this.setFilterSet(filterSet);
       });
 
-    this.bottleSubscription = this.bottlesService.filteredBottlesObservable.subscribe(
+    this.bottles$ = this.bottlesService.filteredBottlesObservable;
+    this.bottleSubscription = this.bottles$.subscribe(
       (received: Bottle[]) => {
         this.notificationService.debugAlert('received:' + (received ? received.length : 0) + ' bottles');
         this.allBottles = received;
@@ -179,10 +184,10 @@ export class BrowsePage implements OnInit, OnDestroy {
 
 // in case user navigated to here from the home page then we have search param ==> filter on this text
   private initFilterFromNavParams() {
-    this.notificationService.debugAlert('BrowsPage.initFilterFromNavParams()');
+    this.notificationService.debugAlert('BrowsePage.initFilterFromNavParams()');
     if (this.navParams != undefined) {
       if (this.navParams.data[ 'text' ] != null) {
-        this.notificationService.debugAlert('BrowsPage.initFilterFromNavParams(' + this.navParams.data[ 'text' ] + ')');
+        this.notificationService.debugAlert('BrowsePage.initFilterFromNavParams(' + this.navParams.data[ 'text' ] + ')');
         this.filterSet.text = this.navParams.data[ 'text' ].split(' ');
       } else if (this.navParams.data[ 'filterSet' ] != null) {
         this.filterSet = this.navParams.data[ 'filterSet' ];

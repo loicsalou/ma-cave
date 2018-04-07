@@ -3,15 +3,16 @@
  */
 import {Injectable} from '@angular/core';
 import 'firebase/storage';
-import {LoginService} from './login.service';
+import {LoginService} from './login/login.service';
 import {Bottle, BottleMetadata} from '../model/bottle';
-import {PersistenceService} from './persistence.service';
+import {AbstractPersistenceService} from './abstract-persistence.service';
 import {Observable} from 'rxjs/Observable';
 import {Image} from '../model/image';
 import {NotificationService} from './notification.service';
 import {Subject} from 'rxjs/Subject';
-import {FirebaseConnectionService} from './firebase-connection.service';
+import {FirebaseAdminService} from './firebase/firebase-admin.service';
 import {TranslateService} from '@ngx-translate/core';
+import {FirebaseImagesService} from './firebase/firebase-images.service';
 
 /**
  * Services related to the bottles in the cellar.
@@ -19,9 +20,9 @@ import {TranslateService} from '@ngx-translate/core';
  * clicks on a region to filter bottles. Any change on either side must be propagated on the other side.
  */
 @Injectable()
-export class ImagePersistenceService extends PersistenceService {
+export class ImagePersistenceService extends AbstractPersistenceService {
 
-  constructor(private dataConnection: FirebaseConnectionService,
+  constructor(private firebaseImageService: FirebaseImagesService,
               notificationService: NotificationService, translateService: TranslateService, loginService: LoginService) {
     super(notificationService, loginService, translateService);
     if (loginService.user !== undefined) {
@@ -48,7 +49,7 @@ export class ImagePersistenceService extends PersistenceService {
     if (!bottle) {
       return items;
     }
-    items = this.dataConnection.listBottleImages(bottle);
+    items = this.firebaseImageService.listBottleImages(bottle);
     items.subscribe(
       (images: Image[]) => this.notificationService.traceInfo(images.length + ' images reçues'),
       error => this.handleError('liste des images disponibles', error)
@@ -59,7 +60,7 @@ export class ImagePersistenceService extends PersistenceService {
 
   public deleteImage(file: File) {
     let self = this;
-    this.dataConnection.deleteImage(file)
+    this.firebaseImageService.deleteImage(file)
       .then(function () {
               self.notificationService.information('Image supprimée !')
             }
@@ -78,7 +79,7 @@ export class ImagePersistenceService extends PersistenceService {
    */
   public uploadImage(image: File | any, meta: BottleMetadata): Promise<void | UploadMetadata> {
     if (image instanceof Blob || image instanceof File) {
-      return this.dataConnection.uploadFileOrBlob(image, meta)
+      return this.firebaseImageService.uploadFileOrBlob(image, meta)
     } else {
       this.notificationService.warning('impossible d\'uploader l\'image dont le type est ' + typeof image + ' !');
     }
