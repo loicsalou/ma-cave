@@ -97,7 +97,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
     //on extrait les indexes (couleur du vin par ex)
     this.chartLabels = significantData.map(kv => kv.key);
     //on affecte les couleurs des portions du chart
-    this.chartColors = this.config.statistics.stadardColors;
+    this.chartColors = this.config.statistics.standardColors;
     //les borders sont gris
     let borderColors: string[] = new Array(this.chartLabels.length);
     borderColors = _.fill(borderColors, 'grey');

@@ -13,7 +13,7 @@ import {SimpleChanges} from '@angular/core/src/metadata/lifecycle_hooks';
  */
 @Component({
              selector: 'distribution',
-             templateUrl: 'distribution.html',
+             templateUrl: 'distribution.html'
              // styleUrls:[ 'distribution.scss' ]
            })
 export class DistributionComponent implements OnChanges, OnInit {
@@ -46,8 +46,10 @@ export class DistributionComponent implements OnChanges, OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.refreshFilters();
-    this.count = this.bottles ? this.bottles.length : 0;
+    if (changes.bottles && changes.bottles.previousValue!==changes.bottles.currentValue) {
+      this.refreshFilters();
+      this.count = this.bottles ? this.bottles.length : 0;
+    }
   }
 
   ngOnInit(): void {
@@ -79,7 +81,7 @@ export class DistributionComponent implements OnChanges, OnInit {
       this.filterSet[ axis ] = [];
     }
     this.filterSet[ axis ] = _.xor(this.filterSet[ axis ], [ filterValue ]);
-    this.checkSubFilters()
+    this.checkSubFilters();
     this.filterSetChanged.emit(this.filterSet);
   }
 
@@ -101,7 +103,7 @@ export class DistributionComponent implements OnChanges, OnInit {
 
     if (this.isFilteringOn('classe_age')) {
       //if at least one region selected show appellation
-      this.currentDistributionAxis.push('millesime')
+      this.currentDistributionAxis.push('millesime');
       this.currentDistributionAxis = _.uniq(this.currentDistributionAxis);
     }
 
@@ -147,11 +149,14 @@ export class FilterSet {
   classe_age?: string[];
   millesime?: string[];
   history = false;
+  private _favoriteOnly = false;
+  private _overdueOnly = false;
+  private _placed = true;
+  private _toBePlaced = true;
+  private _sortOption: SortOption;
 
   constructor(private translateService: TranslateService) {
   }
-
-  private _favoriteOnly = false;
 
   get favoriteOnly(): boolean {
     return this._favoriteOnly;
@@ -161,8 +166,6 @@ export class FilterSet {
     this._favoriteOnly = value;
   }
 
-  private _overdueOnly = false;
-
   get overdueOnly(): boolean {
     return this._overdueOnly;
   }
@@ -170,8 +173,6 @@ export class FilterSet {
   set overdueOnly(value: boolean) {
     this._overdueOnly = value;
   }
-
-  private _placed = true;
 
   get placed(): boolean {
     return this._placed;
@@ -181,8 +182,6 @@ export class FilterSet {
     this._placed = value;
   }
 
-  private _toBePlaced = true;
-
   get toBePlaced(): boolean {
     return this._toBePlaced;
   }
@@ -190,8 +189,6 @@ export class FilterSet {
   set toBePlaced(value: boolean) {
     this._toBePlaced = value;
   }
-
-  private _sortOption: SortOption;
 
   get sortOption(): SortOption {
     return this._sortOption;
@@ -230,11 +227,11 @@ export class FilterSet {
   }
 
   switchFavorite() {
-    this._favoriteOnly = !this._favoriteOnly
+    this._favoriteOnly = !this._favoriteOnly;
   }
 
   switchOverdue() {
-    this._overdueOnly = !this._overdueOnly
+    this._overdueOnly = !this._overdueOnly;
   }
 
   /**
@@ -265,9 +262,9 @@ export class FilterSet {
   toString() {
     return JSON.stringify(this, (prop, value) => {
       if (prop === 'translateService') {
-        return ''
+        return '';
       } else {
-        return value
+        return value;
       }
     });
   }
@@ -297,9 +294,9 @@ export class FilterSet {
     } else if (this.hasAges()) {
       strings.push(this.classe_age);
     } else if (!this._placed) {
-      strings.push(this.translateService.instant('filter.to-be-placed-only'))
+      strings.push(this.translateService.instant('filter.to-be-placed-only'));
     } else if (!this._toBePlaced) {
-      strings.push(this.translateService.instant('filter.placed-only'))
+      strings.push(this.translateService.instant('filter.placed-only'));
     }
     if (strings.length == 0) {
       return '';

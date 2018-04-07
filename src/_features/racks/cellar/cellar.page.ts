@@ -31,9 +31,8 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild(Slides) slides: Slides;
   @ViewChild('zoomable') zoomable: ElementRef;
-  @ViewChild('placedLockerComponent')
+  @ViewChild('placedLockerComponent') private
 
-  pendingCell: Cell;
   pendingBottleTipVisible: boolean = false;
   selectedCell: Cell;
 
@@ -46,6 +45,7 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
   private bottlesToPlace: Bottle[];
   private bottlesToHighlight: Bottle[];
   private bottlesSubscription: Subscription;
+  private _pendingCell: Cell;
 
   constructor(private navCtrl: NavController,
               private cellarService: CellarPersistenceService,
@@ -100,6 +100,14 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
     this.bottlesSubscription.unsubscribe();
   }
 
+  get pendingCell(): Cell {
+    return this._pendingCell;
+  }
+
+  set pendingCell(value: Cell) {
+    this._pendingCell = value;
+  }
+
   get bottlesToPlaceLocker(): SimpleLocker {
     return this._bottlesToPlaceLocker;
   }
@@ -110,17 +118,17 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   zoomOnBottle(pendingCell: Cell) {
-    let bottle = this.pendingCell.bottle;
-    let zoomedBottles = this.getBottlesInRowOf(this.pendingCell);
+    let bottle = this._pendingCell.bottle;
+    let zoomedBottles = this.getBottlesInRowOf(this._pendingCell);
     this.navCtrl.push(BottleDetailPage, {bottleEvent: {bottles: zoomedBottles, bottle: bottle}});
   }
 
   withdraw(pendingCell: Cell) {
-    let bottle = this.pendingCell.bottle;
+    let bottle = this._pendingCell.bottle;
     if (bottle) {
       this.bottleService.withdraw(bottle, pendingCell.position);
-      this.pendingCell.setSelected(false);
-      this.pendingCell = undefined;
+      this._pendingCell.setSelected(false);
+      this._pendingCell = undefined;
       this.notificationService.information('messages.withdraw-complete');
     }
   }
@@ -169,12 +177,12 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
     this.nativeProvider.feedBack();
 
     if (cell) {
-      if (this.pendingCell) {
-        if (cell.bottle && cell.bottle.id === this.pendingCell.bottle.id) {
+      if (this._pendingCell) {
+        if (cell.bottle && cell.bottle.id === this._pendingCell.bottle.id) {
           //déplacer une bouteille vers un casier qui contient la même n'a pas de sens et fout la grouille...
-          if (cell.position.equals(this.pendingCell.position)) {
+          if (cell.position.equals(this._pendingCell.position)) {
             //retour à la case départ
-            this.pendingCell = undefined;
+            this._pendingCell = undefined;
             this.selectedCell.setSelected(false);
             this.selectedCell = undefined;
             return;
@@ -190,11 +198,11 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
         // nouvelle cellule, sinon on déplace la bouteille et on déselectionne les 2 cellules
         let targetCell = _.clone(cell);
         //on déplace la bouteille pré-enregistrée dans la cellule choisie
-        this.moveCellContentTo(this.pendingCell, cell);
+        this.moveCellContentTo(this._pendingCell, cell);
         //plus de cellule sélectionnée
-        this.pendingCell = undefined;
+        this._pendingCell = undefined;
         if (!targetCell.isEmpty()) {
-          this.pendingCell = targetCell;
+          this._pendingCell = targetCell;
         } else {
           this.selectedCell.setSelected(false);
         }
@@ -207,7 +215,7 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
           //nouvelle bouteille en transit ==> on marque la cellule comme en transit et on stocke localement
           this.selectedCell = cell;
           this.selectedCell.setSelected(true);
-          this.pendingCell = cell;
+          this._pendingCell = cell;
         }
       }
     }
