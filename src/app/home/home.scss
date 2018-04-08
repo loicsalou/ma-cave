@@ -31,7 +31,7 @@ ion-content.home {
     transition: transform 1s, scale .5s;
 
     &.clicked {
-      transform: rotate(360deg) scale(1.8, 1.8);
+      transform: rotate(360deg) scale(1.2, 1.2);
     }
   }
 

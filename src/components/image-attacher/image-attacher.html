@@ -1,6 +1,6 @@
 <ion-row *ngIf="loadingInProgress">
   <progress-bar *ngIf="loadingInProgress" [progress]="progress" [thickness]="'1px'"
-                [showPercentage]="false" style="flex-grow: 1"></progress-bar>
+                [showPercentage]="false" class="flex-grow"></progress-bar>
 </ion-row>
 
 <ion-row *ngIf="!loadingInProgress">

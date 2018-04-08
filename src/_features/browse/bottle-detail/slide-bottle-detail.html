@@ -1,43 +1,42 @@
 <div class="slide-bottle-detail">
   
-  <div>
-    <div class="block" style="display:flex">
+  <section class="head">
       <div class="icon">
-        <img src="{{ bottle | bottleIcon }}" class="profile-image" *ngIf="! bottle.profile_image_url">
-        <img [src]="bottle.profile_image_url" [defaultImage]="bottle" class="profile-image"
-             *ngIf="bottle.profile_image_url">
+        <img *ngIf="!bottle.profile_image_url" src="{{ bottle | bottleIcon }}" class="profile-image">
+        <img *ngIf="bottle.profile_image_url" [src]="bottle.profile_image_url" [defaultImage]="bottle"
+             class="profile-image">
       </div>
-    </div>
-    <div class="description">
-      <ul class="circle">
-        <li>{{bottle.label}}</li>
-        <li>{{bottle.country_label}}, {{bottle.subregion_label}}, {{bottle.area_label}}</li>
-        <li>{{bottle.classe_age }} ({{bottle.millesime}})</li>
-        <li>{{ "bottle.quantite_courante" | translate }}: {{ bottle.quantite_courante }} sur {{bottle
-          .quantite_achat}}
+      <div class="description">
+        <ul>
+          <li>{{bottle.label}}</li>
+          <li>{{bottle.country_label}}, {{bottle.subregion_label}}, {{bottle.area_label}}</li>
+          <li>{{bottle.classe_age }} ({{bottle.millesime}})</li>
+          <li>{{ "bottle.quantite_courante" | translate }}: {{ bottle.quantite_courante }} sur {{bottle.quantite_achat}}
+          </li>
+        </ul>
+      </div>
+  </section>
+  
+  <section class="detail">
+    <h4>{{"bottle-detail" | translate}}</h4>
+    <div>
+      <ul>
+        <li>{{ "bottle.date_achat" | translate }} {{ bottle.date_achat }}, {{ bottle.lieu_achat }}</li>
+        <li>{{ "bottle.prix" | translate }} {{ bottle.prix }} € / {{ bottle.cote }} €</li>
+        <li>{{ "bottle.garde" | translate }} {{ bottle.garde_min }} {{ "ans" | translate }} / {{ bottle.garde_max }} {{
+          "ans" | translate }}
         </li>
+        <li>{{ "bottle.garde_optimum" | translate }} {{ bottle.garde_min }} {{ "ans" | translate }}</li>
       </ul>
     </div>
-  </div>
+  </section>
   
-  <h4>{{"bottle-detail" | translate}}</h4>
-  <div class="block">
-    <ul class="circle">
-      <li>{{ "bottle.date_achat" | translate }} {{ bottle.date_achat }}, {{ bottle.lieu_achat }}</li>
-      <li>{{ "bottle.prix" | translate }} {{ bottle.prix }} € / {{ bottle.cote }} €</li>
-      <li>{{ "bottle.garde" | translate }} {{ bottle.garde_min }} {{ "ans" | translate }} / {{ bottle.garde_max }} {{
-        "ans"
-        | translate }}
-      </li>
-      <li>{{ "bottle.garde_optimum" | translate }} {{ bottle.garde_min }} {{ "ans" | translate }}</li>
-    </ul>
-  </div>
-  
-  <h4>{{"infos" | translate}}</h4>
-  <div>
-    <p *ngIf="!bottle.suggestion && ! bottle.comment">Aucune information complémentaire</p>
-    <p *ngIf="bottle.suggestion">{{ "bottle.suggestion" | translate }}: {{bottle.suggestion}}</p>
-    <p *ngIf="bottle.comment">{{ "bottle.comment" | translate }}: {{bottle.comment}}</p>
-  </div>
-
+  <section class="infos">
+    <h4>{{"infos" | translate}}</h4>
+    <div>
+      <p *ngIf="!bottle.suggestion && ! bottle.comment">Aucune information complémentaire</p>
+      <p *ngIf="bottle.suggestion">{{ "bottle.suggestion" | translate }}: {{bottle.suggestion}}</p>
+      <p *ngIf="bottle.comment">{{ "bottle.comment" | translate }}: {{bottle.comment}}</p>
+    </div>
+  </section>
 </div>

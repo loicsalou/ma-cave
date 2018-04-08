@@ -7,11 +7,11 @@ import {Subject} from 'rxjs/Subject';
  * Created by loicsalou on 13.06.17.
  */
 export class NotificationService {
+  private _debugMode: boolean = false;
+
   constructor(private alertController: AlertController, private toastController: ToastController,
               private translateService: TranslateService, private loadingCtrl: LoadingController) {
   }
-
-  private _debugMode: boolean = false;
 
   set debugMode(value: boolean) {
     this._debugMode = value;
@@ -25,7 +25,7 @@ export class NotificationService {
                                   position: position ? position : 'top',
                                   showCloseButton: showCloseButton ? showCloseButton : false
                                 })
-      .present()
+      .present();
   }
 
   error(message: string, error?: any) {
@@ -135,5 +135,9 @@ export class NotificationService {
 
   receiving(s: string) {
 // voir si on peut afficher un signal visuel discret
+  }
+
+  notImplementedInMock(func: string) {
+    this.warning(`Fonction non disponible en mode mock: ${func}`);
   }
 }

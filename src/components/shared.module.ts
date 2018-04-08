@@ -24,6 +24,7 @@ import {DistributionComponent} from './distribution/distribution';
 import {SimpleLockerComponent} from './locker/simple-locker.component';
 import {FridgeLockerComponent} from './locker/fridge-locker.component';
 import {CommonModule} from '@angular/common';
+import {BottleClassPipe} from './list/bottle-color-class.pipe';
 
 @NgModule({
             imports: [
@@ -35,6 +36,7 @@ import {CommonModule} from '@angular/common';
             ],
             declarations: [
               BottleIconPipe,
+              BottleClassPipe,
               BottleItemComponent,
               BottleNotingComponent,
               ChartComponent,
@@ -50,6 +52,7 @@ import {CommonModule} from '@angular/common';
             ],
             exports: [
               BottleIconPipe,
+              BottleClassPipe,
               BottleItemComponent,
               BottleNotingComponent,
               ChartComponent,

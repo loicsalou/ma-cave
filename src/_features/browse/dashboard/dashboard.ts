@@ -22,19 +22,20 @@ import {SearchCriteria} from '../../../model/search-criteria';
              // styleUrls:[ 'dashboard.scss' ]
            })
 export class DashboardPage implements OnInit, OnDestroy {
-  version: any;
   bottles: Bottle[];
   totalNumberOfBottles: number = 0;
+  version: any;
   withdrawals: Withdrawal[] = [];
-  @ViewChild('withdrawals')
-  listComponent: BottleItemComponent;
+
+  @ViewChild('withdrawals') listComponent: BottleItemComponent;
   @ViewChild(VirtualScroll) vs: VirtualScroll;
+
+  private _withdrawalCardStyle: { 'min-height': string; 'height': string };
   private bottleSub: Subscription;
-  private queriesSub: Subscription;
   private mostUsedQueries: SearchCriteria[];
   private popup: Loading;
+  private queriesSub: Subscription;
   private withdrawalsSub: Subscription;
-  private _withdrawalCardStyle: { 'min-height': string; 'height': string };
 
   constructor(public navCtrl: NavController, public loginService: LoginService, private notificationService: NotificationService,
               private bottleService: BottlePersistenceService, private nativeProvider: NativeProvider,
@@ -65,7 +66,7 @@ export class DashboardPage implements OnInit, OnDestroy {
           this.bottles = bottles;
           this.totalNumberOfBottles = bottles.reduce((tot: number, btl: Bottle) => tot + +btl.quantite_courante, 0);
           setTimeout(() => {
-            this.popup.dismiss(), 300
+            this.popup.dismiss(), 10
           });
         }
       },

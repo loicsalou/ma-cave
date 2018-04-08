@@ -1,11 +1,11 @@
-<ion-header style="display: flex" class="page-dashboard header">
+<ion-header class="flex-container header">
   <ion-searchbar [placeholder]="Chercher" [autocomplete]="on" [autocorrect]="on" [animated]="true"
                  (search)="filterOnText($event)">
   </ion-searchbar>
-  <img src="assets/icon/primary-logout.png" icon-only (click)="logout()"/>
+  <div class="icon logout" (click)="logout()"></div>
 </ion-header>
 
-<ion-content align-items-center class="page-dashboard card-background-page page">
+<ion-content align-items-center class="page">
   
   <ion-card class="card-background" *ngIf="bottles">
     <button ion-button outline small round icon-left (click)="showAll()">

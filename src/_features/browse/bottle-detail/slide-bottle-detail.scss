@@ -1,21 +1,14 @@
 .slide-bottle-detail {
   position: relative;
 
-  img.profile-image {
-    height: 100%;
-    width: 100%;
-  }
+  section.head {
+    display: flex;
 
-  div.block {
-    margin-bottom: 10px;
-  }
-
-  h4, p {
-    padding: 3px 3px 3px 15px;
-  }
-
-  h4 {
-    margin: 15px 0 0 0;
+    div.icon {
+      min-width: 40vw;
+      max-width: 45vw;
+      max-height: 100%;
+    }
   }
 
   p, li {
@@ -23,27 +16,9 @@
     text-align: left;
   }
 
-  ul.circle {
-    list-style: circle;
-    margin: 0;
-  }
-
   h4 {
     background: #3d39ff;
     color: #FFF;
     border: thin solid #fff;
-  }
-
-  div.bottle {
-    display: flex;
-    flex-direction: row;
-    padding: 5px 5px;
-  }
-
-  div.icon {
-    max-width: 45vw;
-    max-height: 100%;
-    margin-left: auto;
-    margin-right: auto;
   }
 }
