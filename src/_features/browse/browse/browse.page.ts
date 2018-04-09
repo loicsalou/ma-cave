@@ -6,7 +6,6 @@ import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
 import {FilterSet} from '../../../components/distribution/distribution';
 import {Subscription} from 'rxjs/Subscription';
 import * as _ from 'lodash';
-import {LoginService} from '../../../service/login/login.service';
 import {NotificationService} from '../../../service/notification.service';
 import {CellarPage} from '../../racks/cellar/cellar.page';
 import {BottleItemComponent} from '../../../components/list/bottle-item.component';
@@ -16,7 +15,7 @@ import {Observable} from 'rxjs/Observable';
 
 @Component({
              selector: 'page-browse',
-             templateUrl: 'browse.page.html',
+             templateUrl: 'browse.page.html'
              //changeDetection: ChangeDetectionStrategy.OnPush
              // styleUrls:[ 'browse.page.scss' ]
            })
@@ -25,7 +24,7 @@ export class BrowsePage implements OnInit, OnDestroy {
   bottles: Bottle[];
   bottles$: Observable<Bottle[]>;
   nbSelected = 0;
-  filterSet: FilterSet = new FilterSet(this.translateService);
+  filterSet: FilterSet = new FilterSet();
 
   @ViewChild('bottleList') listComponent: BottleItemComponent;
   @ViewChild(VirtualScroll) vs: VirtualScroll;
@@ -92,9 +91,10 @@ export class BrowsePage implements OnInit, OnDestroy {
   doInfinite(infiniteScroll: InfiniteScroll) {
     setTimeout(() => {
       if (this.bottles.length < this.allBottles.length) {
-        let size = this.bottles.length;
-        let added = this.allBottles.slice(size, size + 50);
-        this.bottles = this.bottles.concat(added);
+        //let size = this.bottles.length;
+        //let added = this.allBottles.slice(size, size + 50);
+        //this.bottles = this.bottles.concat(added);
+        this.bottles = this.allBottles;
         this.doInfinite(infiniteScroll);
       } else {
         if (infiniteScroll) {
@@ -146,7 +146,7 @@ export class BrowsePage implements OnInit, OnDestroy {
   }
 
   ionViewWillLeave() {
-    this.menuController.close()
+    this.menuController.close();
   }
 
   public isSearchVisible(): boolean {
@@ -166,7 +166,7 @@ export class BrowsePage implements OnInit, OnDestroy {
   }
 
   public isFiltering() {
-    return !this.filterSet.isEmpty()
+    return !this.filterSet.isEmpty();
   }
 
   filterOnText(event: any) {

@@ -1,7 +1,7 @@
 <div class="slide-bottle-detail">
   
   <section class="head">
-      <div class="icon">
+      <div>
         <img *ngIf="!bottle.profile_image_url" src="{{ bottle | bottleIcon }}" class="profile-image">
         <img *ngIf="bottle.profile_image_url" [src]="bottle.profile_image_url" [defaultImage]="bottle"
              class="profile-image">

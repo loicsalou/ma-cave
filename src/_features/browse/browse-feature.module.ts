@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {CUSTOM_ELEMENTS_SCHEMA, NgModule} from '@angular/core';
 import {IonicModule, IonicPageModule} from 'ionic-angular';
 import {BrowsePage} from './browse/browse.page';
 import {BrowserModule} from '@angular/platform-browser';
@@ -39,7 +39,8 @@ const pages = [
             ],
             exports: [
               BrowsePage
-            ]
+            ],
+            schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
           })
 export class BrowseFeatureModule {
 }

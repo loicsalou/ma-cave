@@ -133,7 +133,7 @@ export class DashboardPage implements OnInit, OnDestroy {
   }
 
   showOverdue() {
-    let fs: FilterSet = new FilterSet(this.translateService);
+    let fs: FilterSet = new FilterSet();
     fs.overdueOnly = true;
     this.navCtrl.push(BrowsePage, {filterSet: fs});
   }
@@ -152,13 +152,13 @@ export class DashboardPage implements OnInit, OnDestroy {
   }
 
   showFavorites() {
-    let fs: FilterSet = new FilterSet(this.translateService);
+    let fs: FilterSet = new FilterSet();
     fs.favoriteOnly = true;
     this.navCtrl.push(BrowsePage, {filterSet: fs});
   }
 
   private filterOnTextAndNavigate(texts: string[]) {
-    let fs: FilterSet = new FilterSet(this.translateService);
+    let fs: FilterSet = new FilterSet();
     if (texts != undefined && texts.length != 0) {
       this.notificationService.debugAlert('recherche de: ' + texts);
       fs.text = texts;
