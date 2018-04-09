@@ -1,4 +1,4 @@
-import {ErrorHandler, NgModule} from '@angular/core';
+import {ErrorHandler, NgModule, NO_ERRORS_SCHEMA} from '@angular/core';
 import {IonicModule} from 'ionic-angular';
 import {DefaultImageDirective} from '../directives/default-image/default-image';
 import {BottleIconPipe} from './list/bottle-icon.pipe';
@@ -25,6 +25,7 @@ import {SimpleLockerComponent} from './locker/simple-locker.component';
 import {FridgeLockerComponent} from './locker/fridge-locker.component';
 import {CommonModule} from '@angular/common';
 import {BottleClassPipe} from './list/bottle-color-class.pipe';
+import {CurrentFiltersComponent} from './current-filters/current-filters';
 
 @NgModule({
             imports: [
@@ -40,6 +41,7 @@ import {BottleClassPipe} from './list/bottle-color-class.pipe';
               BottleItemComponent,
               BottleNotingComponent,
               ChartComponent,
+              CurrentFiltersComponent,
               DefaultImageDirective,
               DistributionComponent,
               FridgeLockerComponent,
@@ -57,6 +59,7 @@ import {BottleClassPipe} from './list/bottle-color-class.pipe';
               BottleNotingComponent,
               ChartComponent,
               CommonModule,
+              CurrentFiltersComponent,
               DefaultImageDirective,
               DistributionComponent,
               FridgeLockerComponent,
@@ -74,6 +77,9 @@ import {BottleClassPipe} from './list/bottle-color-class.pipe';
               Network,
               ImportProvider,
               {provide: ErrorHandler, deps: [ FirebaseAdminService ], useClass: CaveErrorHandler}
+            ],
+            schemas: [
+              NO_ERRORS_SCHEMA
             ]
           })
 export class SharedModule {

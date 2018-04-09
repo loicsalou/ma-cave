@@ -17,7 +17,7 @@ export class FilterPage implements OnInit, OnDestroy {
     {id: 'qty', name: 'Quantité', col: 'quantite_courante'},
     {id: 'vintage', name: 'Millésime', col: 'millesime'},
     {id: 'area', name: 'Région', col: 'area_label'}
-  ]
+  ];
 
   @Input()
   bottles: Observable<Bottle[]>;
@@ -44,7 +44,7 @@ export class FilterPage implements OnInit, OnDestroy {
         this.nbOfBottles = bottles.reduce((tot: number, btl: Bottle) => tot + +btl.quantite_courante, 0);
         this.nbLots = bottles.length;
       }
-    )
+    );
   }
 
   ngOnDestroy(): void {
@@ -53,14 +53,14 @@ export class FilterPage implements OnInit, OnDestroy {
 
   sort(axis: any) {
     if (axis !== undefined) {
-      this.sortOn = axis.col ? axis.col : this.sortOn
+      this.sortOn = axis.col ? axis.col : this.sortOn;
     }
     let sortOption: SortOption = {
       sortOn: axis == undefined ? this.sortOn : axis.col,
       sortOrder: (this.ascending ? 'asc' : 'desc')
     };
     this.filterSet.setSortOption(sortOption);
-    this.bottlesService.filterOn(this.filterSet)
+    this.bottlesService.filterOn(this.filterSet);
   }
 
   //ngOnChanges() {
@@ -70,32 +70,38 @@ export class FilterPage implements OnInit, OnDestroy {
   //}
 
   switchFavorite(event) {
+    this.filterSet = Object.assign(new FilterSet(), this.filterSet);
     this.filterSet.switchFavorite();
     this.bottlesService.filterOn(this.filterSet);
   }
 
   switchOverdue(event) {
+    this.filterSet = Object.assign(new FilterSet(), this.filterSet);
     this.filterSet.switchOverdue();
     this.bottlesService.filterOn(this.filterSet);
   }
 
   switchedPlaced(event) {
+    this.filterSet = Object.assign(new FilterSet(), this.filterSet);
     this.filterSet.placed = event.checked;
     this.bottlesService.filterOn(this.filterSet);
   }
 
   switchedToBePlaced(event) {
+    this.filterSet = Object.assign(new FilterSet(), this.filterSet);
     this.filterSet.toBePlaced = event.checked;
     this.bottlesService.filterOn(this.filterSet);
   }
 
   switchHistory(event) {
+    this.filterSet = Object.assign(new FilterSet(), this.filterSet);
     this.filterSet.switchHistory();
     this.bottlesService.filterOn(this.filterSet);
   }
 
   //appelé depuis la page des filtres dnas le but d'enrichir le filtre textuel existant déjà si c'est le cas
   refineFilter(filters: FilterSet) {
+    this.filterSet = Object.assign(new FilterSet(), this.filterSet);
     filters.text = this.filterSet.text;
     filters.history = this.filterSet.history;
     filters.placed = this.filterSet.placed;
