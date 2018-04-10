@@ -32,7 +32,7 @@ import {FirebaseWithdrawalsService} from '../service/firebase/firebase-withdrawa
 import {FirebaseBottlesService} from '../service/firebase/firebase-bottles.service';
 import {FirebaseImagesService} from '../service/firebase/firebase-images.service';
 import {appConfig} from './app.conf';
-import {MockBottlesService} from '../service/mock/mock-bottles.service';
+//import {MockBottlesService} from '../service/mock/mock-bottles.service';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -66,7 +66,8 @@ export const fireConfig = {
               FirebaseAdminService,
               FirebaseLockersService,
               FirebaseImagesService,
-              {provide: FirebaseBottlesService, useClass:MockBottlesService},
+              FirebaseBottlesService,
+              //{provide: FirebaseBottlesService, useClass:MockBottlesService},
               FirebaseWithdrawalsService,
               LocalLoginService,
               GoogleLoginService,
