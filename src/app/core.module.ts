@@ -32,6 +32,7 @@ import {FirebaseWithdrawalsService} from '../service/firebase/firebase-withdrawa
 import {FirebaseBottlesService} from '../service/firebase/firebase-bottles.service';
 import {FirebaseImagesService} from '../service/firebase/firebase-images.service';
 import {appConfig} from './app.conf';
+import {SettingsService} from '../service/settings.service';
 //import {MockBottlesService} from '../service/mock/mock-bottles.service';
 
 export const fireConfig = {
@@ -85,6 +86,7 @@ export const fireConfig = {
                 useFactory: (createNotificationFactory),
                 deps: [ AlertController, ToastController, TranslateService, LoadingController ]
               },
+              SettingsService,
               SplashScreen,
               StatusBar,
               TranslateService

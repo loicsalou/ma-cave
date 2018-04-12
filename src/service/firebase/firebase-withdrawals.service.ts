@@ -20,6 +20,7 @@ import Reference = firebase.database.Reference;
 export class FirebaseWithdrawalsService {
 
   private USER_ROOT: string;
+  private BOTTLES_ROOT: string;
   private userRootRef: Reference;
   private bottlesRootRef: Reference;
 
@@ -34,10 +35,11 @@ export class FirebaseWithdrawalsService {
   public initialize(user: User) {
     let userRoot = user.user;
     this.USER_ROOT = schema.USERS_FOLDER + '/' + userRoot;
-
+    this.BOTTLES_ROOT = schema.USERS_FOLDER + '/' + userRoot + '/' + schema.BOTTLES_FOLDER;
     this.WITHDRAW_ROOT = schema.USERS_FOLDER + '/' + userRoot + '/' + schema.WITHDRAW_FOLDER;
 
     this.userRootRef = this.angularFirebase.database.ref(this.USER_ROOT);
+    this.bottlesRootRef = this.angularFirebase.database.ref(this.BOTTLES_ROOT);
     this.withdrawRootRef = this.angularFirebase.database.ref(this.WITHDRAW_ROOT);
   }
 

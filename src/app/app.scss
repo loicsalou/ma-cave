@@ -1,6 +1,11 @@
 // http://ionicframework.com/docs/v2/theming/
-@import "../theme/variables.scss";
+//@import "../theme/variables.scss";
 @import "../../node_modules/ionicons/dist/scss/ionicons.scss";
+@import "scss/base";
+@import "scss/layout";
+@import "scss/module";
+@import "scss/state";
+@import "scss/themes/index";
 
 // App Global Sass
 // --------------------------------------------------
@@ -15,6 +20,16 @@
 // To declare rules for a specific mode, create a child rule
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
+
+$colors: (
+  primary: #387ef5,
+  secondary: #32db64,
+  danger: #f53d3d,
+  light: #f4f4f4,
+  dark: #222,
+  brown: darken(brown, 30%)
+);
+
 $pad-size: 5px;
 $gray: #808080;
 $odd-row: #ebeced;
@@ -24,10 +39,11 @@ $header-color2: rgba(51, 51, 51, .8);
 $favorite-color: #ff0;
 $even-rows-background-color: lighten(#ebebeb, 4%);
 $odd-rows-background-color: #fff;
+$background-page-image: url('../assets/img/background/background2.jpeg');
 
 // mise en forme
 .page {
-  background: url('../assets/img/background/background2.jpeg');
+  background: $background-page-image;
 }
 
 .header {
@@ -85,8 +101,8 @@ $action-icon-width: 40px;
 $action-icon-height: 40px;
 
 // l'icône représentant une bouteille dans une liste a pour taille
-$bottle-icon-width: 45px;
-$bottle-icon-height: 45px;
+$list-avatar-icon-width: 45px;
+$list-avatar-icon-height: 45px;
 
 div.icon {
   height: $action-icon-height;

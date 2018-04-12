@@ -27,6 +27,13 @@
       <h4 id="tel">{{user.phoneNumber}}</h4>
     </ion-item>
   </ion-card>
+  
+  <ion-card class="card-background">
+    <h2>Thème</h2>
+    <ion-select [(ngModel)]="currentTheme" name="type" required interface="popover">
+      <ion-option *ngFor="let theme of themes" [value]="theme.class">{{theme.name}}</ion-option>
+    </ion-select>
+  </ion-card>
 
 </ion-content>
 
