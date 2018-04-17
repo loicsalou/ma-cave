@@ -1,78 +1,20 @@
-.page-browse {
-  ion-col > button {
-    margin-top: 10px;
+.browse-page {
+
+  span.search-container {
+    flex-grow: 1;
   }
 
-  button[menutoggle], .back-button {
-    margin-left: 0;
+  button[menutoggle] {
+    margin-left: 10px;
     margin-right: 0;
+    order: 0;
   }
 
-  .ion-page .page-browse > div.scroll-content {
-    color: black;
-    margin-top: 108px;
+  .back-button {
+    margin-left: 0px;
+    margin-right: 0;
+    order: 1;
   }
 
-  ion-title {
-    color: black;
-    margin-bottom: 5px;
-    width: 220px;
-  }
-
-  .filter {
-    color: black;
-  }
-
-  .search-reminder-container {
-    position: relative;
-    height: 40px;
-
-    button[mini] {
-      position: absolute;
-      right: 0;
-      top: 0;
-
-      & > ion-icon {
-        font-size: 2.8em;
-        height: 40px;
-        padding-top: 10px;
-      }
-    }
-  }
-
-  .search {
-    display: flex;
-    height: 100%;
-    left: -250px;
-    //right: -40px;
-    position: absolute;
-    top: 0;
-    opacity: 0;
-    width: 0;
-    transition: width .3s ease-in-out, .3s transform ease-in-out, .3s opacity ease-in-out;
-
-    &.active {
-      opacity: 1;
-      transform: translateX(260px);
-      //transform: translateX(-80px);
-      width: 81%;
-    }
-  }
-
-  .reminder {
-    display: block;
-    position: absolute;
-    left: -250px;
-    top: 0;
-    opacity: 0;
-    height: 0;
-    width: 86%;
-    transition: width .3s ease-in-out, .3s transform .19s ease-in-out, .3s opacity ease-in-out;
-
-    &.active {
-      opacity: 1;
-      transform: translateX(260px);
-    }
-  }
 }
 

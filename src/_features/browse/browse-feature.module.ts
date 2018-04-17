@@ -11,6 +11,7 @@ import {BottleDetailPage} from './bottle-detail/page-bottle-detail';
 import {UpdatePage} from './update/update.page';
 import {BottleDetailSlide} from './bottle-detail/slide-bottle-detail';
 import {PopoverPage} from './popover/popover.page';
+import {ComponentsModule} from '../../components/components.module';
 
 const pages = [
   BottleDetailPage,

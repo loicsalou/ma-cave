@@ -149,10 +149,6 @@ export class BrowsePage implements OnInit, OnDestroy {
     this.menuController.close();
   }
 
-  public isSearchVisible(): boolean {
-    return this.filterSet.isEmpty() || this.searchBarVisible;
-  }
-
   public showSearchBar() {
     this.searchBarVisible = !this.searchBarVisible;
   }

@@ -18,11 +18,7 @@ export const appConfig = {
       {
         name: 'default',
         class: 'default-theme'
-      },
-      {
-        name: 'ionic',
-        class: 'ionic-theme'
-      },
+      }
     ]
   },
 

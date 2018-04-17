@@ -1,11 +1,11 @@
-<ion-header class="cellar-page">
+<ion-header class="mod-header cellar-page">
   <ion-navbar>
     <ion-title>{{'lockers' | translate}} - {{scale}}</ion-title>
   </ion-navbar>
   <img src="assets/icon/primary-logout.png" icon-only (click)="logout()"/>
 </ion-header>
 
-<ion-content padding class="cellar-page">
+<ion-content padding class="cellar-page page">
   
   <ion-row>
     <ion-slides [pager]="false" (ionSlideDidChange)="slideChanged()" [spaceBetween]="5" [slidesPerView]="1">

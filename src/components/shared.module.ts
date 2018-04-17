@@ -26,6 +26,8 @@ import {FridgeLockerComponent} from './locker/fridge-locker.component';
 import {CommonModule} from '@angular/common';
 import {BottleClassPipe} from './list/bottle-color-class.pipe';
 import {CurrentFiltersComponent} from './current-filters/current-filters';
+import {SearchBarComponent} from './search-bar/search-bar';
+import {PageHeaderComponent} from './page-header/page-header';
 
 @NgModule({
             imports: [
@@ -46,8 +48,10 @@ import {CurrentFiltersComponent} from './current-filters/current-filters';
               DistributionComponent,
               FridgeLockerComponent,
               ImageAttacherComponent,
+              PageHeaderComponent,
               ProgressBarComponent,
               RatingComponent,
+              SearchBarComponent,
               SimpleLockerComponent,
               StatisticsComponent,
               WithdrawalItemComponent
@@ -58,14 +62,15 @@ import {CurrentFiltersComponent} from './current-filters/current-filters';
               BottleItemComponent,
               BottleNotingComponent,
               ChartComponent,
-              CommonModule,
               CurrentFiltersComponent,
               DefaultImageDirective,
               DistributionComponent,
               FridgeLockerComponent,
               ImageAttacherComponent,
+              PageHeaderComponent,
               ProgressBarComponent,
               RatingComponent,
+              SearchBarComponent,
               SimpleLockerComponent,
               StatisticsComponent,
               WithdrawalItemComponent

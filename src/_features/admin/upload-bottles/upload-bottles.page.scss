@@ -1,5 +1,9 @@
 page-upload-bottles {
 
+  ion-card {
+    padding: 10px;
+  }
+
   img {
     height: 30vh;
     opacity: 1;
@@ -13,4 +17,9 @@ page-upload-bottles {
     }
   }
 
+  ion-card.actions {
+    button.ion-button {
+      border-radius: 7px;
+    }
+  }
 }
