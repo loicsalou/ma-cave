@@ -15,10 +15,11 @@ import {BottleItemComponent} from '../../../components/list/bottle-item.componen
 import {Withdrawal} from '../../../model/withdrawal';
 import {RecordOutputPage} from '../record-output/record-output';
 import {SearchCriteria} from '../../../model/search-criteria';
+import {VERSION} from '../../admin/version';
 
 @Component({
              selector: 'page-dashboard',
-             templateUrl: 'dashboard.html',
+             templateUrl: 'dashboard.html'
              // styleUrls:[ 'dashboard.scss' ]
            })
 export class DashboardPage implements OnInit, OnDestroy {
@@ -59,22 +60,23 @@ export class DashboardPage implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.nativeProvider.feedBack();
     this.popup = this.notificationService.createLoadingPopup('app.loading');
-    this.version = require('../../../../package.json').version;
+    //this.version = require('../../../../package.json').version;
+    this.version = VERSION;
     this.bottleSub = this.bottleService.allBottlesObservable.subscribe(
       (bottles: Bottle[]) => {
         if (bottles && bottles.length > 0) {
           this.bottles = bottles;
           this.totalNumberOfBottles = bottles.reduce((tot: number, btl: Bottle) => tot + +btl.quantite_courante, 0);
           setTimeout(() => {
-            this.popup.dismiss(), 10
+            this.popup.dismiss(), 10;
           });
         }
       },
       () => {
-        this.popup.dismiss()
+        this.popup.dismiss();
       },
       () => {
-        this.popup.dismiss()
+        this.popup.dismiss();
       }
     );
 
@@ -93,7 +95,7 @@ export class DashboardPage implements OnInit, OnDestroy {
     let obs = this.bottleService.getMostUsedQueries();
     this.queriesSub = obs.subscribe(
       (queries: SearchCriteria[]) => this.mostUsedQueries = queries
-    )
+    );
   }
 
   ngOnDestroy(): void {
@@ -164,7 +166,7 @@ export class DashboardPage implements OnInit, OnDestroy {
       fs.text = texts;
       this.navCtrl.push(BrowsePage, {
         filterSet: fs
-      })
+      });
     }
   }
 }

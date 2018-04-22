@@ -8,6 +8,7 @@ import {Subscription} from 'rxjs/Subscription';
 import {LocalLoginPage} from '../../_features/admin/login/local-login.page';
 import {NotificationService} from '../../service/notification.service';
 import {NativeProvider} from '../../providers/native/native';
+import {VERSION} from '../../_features/admin/version';
 
 @Component({
              selector: 'page-home',
@@ -29,7 +30,8 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.version = require('../../../package.json').version;
+    //this.version = require('../../../package.json').version;
+    this.version = VERSION;
   }
 
   ngAfterViewInit(): void {
