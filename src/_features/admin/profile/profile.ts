@@ -4,6 +4,7 @@ import {User} from '../../../model/user';
 import {NotificationService} from '../../../service/notification.service';
 import {SettingsService} from '../../../service/settings.service';
 import {Subscription} from 'rxjs/Subscription';
+import VERSION from '../version';
 
 @Component({
              selector: 'page-profile',
@@ -45,7 +46,8 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.version = require('../../../../package.json').version;
+    //this.version = require('../../../../package.json').version;
+    this.version = VERSION;
     this.userDataKeys = Object.keys(this.loginService.user);
     this.userDataValues = [];
     this.userDataKeys.forEach(key => {
