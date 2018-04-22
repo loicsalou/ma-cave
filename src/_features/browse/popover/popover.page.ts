@@ -11,8 +11,8 @@ import {SearchCriteria} from '../../../model/search-criteria';
                      <ion-title>{{'dashboard.usual-queries' | translate}}</ion-title>
                    </ion-list-header>
                    <div *ngFor="let item of items" style="display: flex; align-items: center;">
-                     <button ion-item (click)="choose(item)" style="flex-grow: 1;">
-                       <span style="flex-grow: 1;">{{present(item.keywords)}}</span>
+                     <button ion-item (click)="choose(item)" class="flex-grow">
+                       <span class="flex-grow">{{present(item.keywords)}}</span>
                      </button>
                      <ion-icon name="trash" (click)="removeSearch($event, item)" style="padding:5px"></ion-icon>
                    </div>

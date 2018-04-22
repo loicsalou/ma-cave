@@ -1,11 +1,9 @@
-import {Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {DistributeService} from '../../service/distribute.service';
-import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {Bottle} from '../../model/bottle';
 import * as _ from 'lodash';
 import {FilterSet} from '../distribution/distribution';
 import {ChartEvent} from '../chart/chart.component';
-import {Subscription} from 'rxjs/Subscription';
 import {TranslateService} from '@ngx-translate/core';
 
 /**
@@ -18,7 +16,7 @@ import {TranslateService} from '@ngx-translate/core';
              selector: 'statistics',
              templateUrl: './statistics.component.html'
            })
-export class StatisticsComponent implements OnInit, OnDestroy {
+export class StatisticsComponent implements OnInit {
 
   @Input()
   axis: string;
@@ -35,6 +33,8 @@ export class StatisticsComponent implements OnInit, OnDestroy {
   topMost: number = 6;
   @Input()
   type: string = 'bar';
+  @Input()
+  bottles: Bottle[];
   @Output()
   filterApplied: EventEmitter<FilterSet> = new EventEmitter<FilterSet>();
   ready = false;
@@ -47,22 +47,13 @@ export class StatisticsComponent implements OnInit, OnDestroy {
 
   private totalNumberOfLots: number;
   private others: KeyValue[];
-  private bottlesSub: Subscription;
 
-  constructor(private distributionService: DistributeService, private bottlesService: BottlePersistenceService,
+  constructor(private distributionService: DistributeService,
               private translateService: TranslateService, @Inject('GLOBAL_CONFIG') private config) {
   }
 
   ngOnInit(): void {
-    this.bottlesSub = this.bottlesService.allBottlesObservable.subscribe((bottles: Bottle[]) => {
-      this.createChart(bottles.filter(btl => +btl.quantite_courante > 0));
-    });
-  }
-
-  ngOnDestroy(): void {
-    if (this.bottlesSub) {
-      this.bottlesSub.unsubscribe();
-    }
+    this.createChart(this.bottles.filter(btl => +btl.quantite_courante > 0));
   }
 
   createLabelColorChart(distribution: Distribution) {
@@ -110,7 +101,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
     if (chartEvent) {
       let axis = chartEvent.axis;
       let axisValue = chartEvent.axisValue;
-      let fs: FilterSet = new FilterSet(this.translateService);
+      let fs: FilterSet = new FilterSet();
       if (axisValue === 'autres') {
         fs[ axis ] = this.others.map(keyValue => keyValue.key);
       } else {
@@ -141,14 +132,14 @@ export class StatisticsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * returns a shortened distribution so every portion of the graph is visible and significant.
+   * returns a shortened filterSet so every portion of the graph is visible and significant.
    * @param distribution the Distribution object
    * @param minPercent minimum percentage below which a value becomes non significant
    * @param onlyTop number of highest values to be in the chart
    * @returns {KeyValue[]}
    */
   private splitData(distribution: Distribution, minPercent: number, onlyTop: number): TopBelow {
-    let nonSignificantNumber = 0
+    let nonSignificantNumber = 0;
     if (onlyTop < 1 || minPercent > 1 || minPercent < 0) {
       throw new RangeError('onlyTop must be > 0, minPercent must be >= 0 and <=1');
     }
@@ -156,7 +147,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
     let significantData = distribution.values.filter((value: KeyValue) => {
       let keep = value.value / this.totalNumberOfBottles > minPercent;
       if (!keep) {
-        nonSignificantNumber += value.value
+        nonSignificantNumber += value.value;
       }
       return keep;
     });

@@ -1,14 +1,12 @@
 <ion-item-sliding (click)="triggerDetail(bottle)" class="bottle-item" #item>
   <ion-item>
     <ion-row>
-      <ion-col col-2 style="padding-right:10px;">
-        <ion-avatar item-start (click)="switchSelected($event, bottle)" style="text-align: center">
-          <img src="assets/icon/checked.png" *ngIf="isSelected(bottle)">
-          <img src="{{ bottle | bottleIcon }}" class="overridable logo" *ngIf="!isSelected(bottle)">
-          <img src="assets/icon/starred.png" *ngIf="isBottleFavorite(bottle) && !isSelected(bottle)"
-               class="overridable logo">
-          <img src="assets/icon/alert-status.png" *ngIf="bottle.overdue && !isSelected(bottle)"
-               class="overridable logo">
+      <ion-col col-2 class="icons" style="padding-right:7px;">
+        <ion-avatar item-start (click)="switchSelected($event, bottle)">
+          <div class="icon" [ngClass]="isSelected(bottle) ? 'checked' : (bottle | bottleClass)">
+            <img src="assets/icon/starred.png" *ngIf="isBottleFavorite(bottle) && !isSelected(bottle)">
+            <img src="assets/icon/alert-status.png" *ngIf="bottle.overdue && !isSelected(bottle)">
+          </div>
         </ion-avatar>
       </ion-col>
       <ion-col col-9 text-wrap>

@@ -36,7 +36,7 @@ export class BottlePersistenceService extends AbstractPersistenceService {
   private _allBottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
   private _filteredBottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
   private _filteredBottlesObservable: Observable<Bottle[]> = this._filteredBottles.asObservable();
-  private filters: FilterSet = new FilterSet(this.translateService);
+  private filters: FilterSet = new FilterSet();
   private allBottlesArray: Bottle[];
   private bottlesSub: Subscription;
   private _filtersObservable: BehaviorSubject<FilterSet>;
@@ -50,7 +50,7 @@ export class BottlePersistenceService extends AbstractPersistenceService {
               loginService: LoginService, private bottleFactory: BottleFactory,
               translateService: TranslateService) {
     super(notificationService, loginService, translateService);
-    this._filtersObservable = new BehaviorSubject<FilterSet>(new FilterSet(this.translateService));
+    this._filtersObservable = new BehaviorSubject<FilterSet>(new FilterSet());
     if (loginService.user) {
       this.initialize(loginService.user);
     }

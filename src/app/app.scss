@@ -1,5 +1,11 @@
 // http://ionicframework.com/docs/v2/theming/
+//@import "../theme/variables.scss";
 @import "../../node_modules/ionicons/dist/scss/ionicons.scss";
+@import "scss/base";
+@import "scss/layout";
+@import "scss/module";
+@import "scss/state";
+@import "scss/themes/index";
 
 // App Global Sass
 // --------------------------------------------------
@@ -14,32 +20,27 @@
 // To declare rules for a specific mode, create a child rule
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
+
 $pad-size: 5px;
-$gray: gray;
+$gray: #808080;
 $odd-row: #ebeced;
-$black: black;
+$black: #000;
 $header-color: rgba(76, 158, 217, .8);
 $header-color2: rgba(51, 51, 51, .8);
+$favorite-color: #ff0;
+$even-rows-background-color: lighten(#ebebeb, 4%);
+$odd-rows-background-color: #fff;
+$background-page-image: url('../assets/img/background/background2.jpeg');
 
-.information-message .toast-wrapper {
-  background-color: #387ef5;
-  color: white;
-}
-
-.action-image {
-  width: 35px;
-  height: 35px;
-  margin: 4px 4px 4px 0;
-  background-color: transparent;
-  align-self: center;
+// mise en forme
+.page {
+  background: $background-page-image;
 }
 
 .header {
+  align-items: center;
   opacity: .97;
-}
-
-.page {
-  background: url('../assets/img/background/background2.jpeg');
+  padding-right: 10px;
 }
 
 ion-content.home {
@@ -47,6 +48,27 @@ ion-content.home {
   background-size: cover;
 }
 
+ion-sliding > ion-item {
+  background: transparent !important;
+}
+
+.app-root ion-list > *:nth-child(2n) ion-item-sliding ion-item {
+  background-color: lighten(#ebebeb, 4%);
+
+  ion-item {
+    background-color: inherit;
+  }
+}
+
+.app-root ion-list > *:nth-child(2n+1) ion-item-sliding ion-item {
+  background-color: white;
+}
+
+.card-background {
+  background-color: rgba(255, 255, 255, .8);
+}
+
+// helpers pour layout
 .flex-container {
   display: flex;
   flex-direction: row;
@@ -64,38 +86,181 @@ ion-content.home {
   text-align: center;
 }
 
-div.stretchy-wrapper {
-  width: 100%;
-  padding-bottom: 100%; /* 16:9 */
-  position: relative;
-  background: lightgrey;
+// bouteilles
+//toute icône  déclencheur d'une action a pour taille
+$action-icon-width: 40px;
+$action-icon-height: 40px;
 
-  > div {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    color: white;
+// l'icône représentant une bouteille dans une liste a pour taille
+$list-avatar-icon-width: 45px;
+$list-avatar-icon-height: 45px;
+
+div.icon {
+  height: $action-icon-height;
+  width: $action-icon-width;
+}
+
+// Toutes les bouteilles représentées sous forme d'icône sont positionnées comme suit
+.icon-image {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+// action de logout
+.logout {
+  @extend .icon-image;
+
+  background-image: url('../assets/icon/primary-logout.png');
+}
+
+// Si la bouteille est "checked" (sélectionnée par ex. pour la ranger)
+.checked {
+  @extend .icon-image;
+
+  background-image: url('../assets/icon/checked.png');
+}
+
+// Selon le vin de la bouteille on a les couleurs (classe color) ou l'icône (classe icon)
+.wine-bubbles {
+  @extend .icon-image;
+
+  &.color {
+    color: beige;
+  }
+  &.icon {
+    background-image: url('../assets/img/bottle-color/bubbles.png');
   }
 }
 
-// ICONS
-.ion-ios-planete:before,
-.ion-ios-planete-circle:before,
-.ion-ios-planete-circle-outline:before,
-.ion-ios-planete-outline:before,
-.ion-md-planete:before,
-.ion-md-planete-circle:before,
-.ion-md-planete-circle-outline:before,
-.ion-md-planete-outline:before {
-  @extend .ion;
+.wine-bubbles-rose {
+  @extend .icon-image;
+
+  &.color {
+    color: pink;
+  }
+  &.icon {
+    background-image: url('../assets/img/bottle-color/bubbles-rose.png');
+  }
 }
 
-.ion-ios-planete:before,
-.ion-ios-planete-outline:before,
-.ion-md-planete:before,
-.ion-md-planete-outline:before {
-  content: '../assets/icon/planete-512.png';
+.wine-cognac {
+  @extend .icon-image;
+
+  &.color {
+    color: brown;
+  }
+  &.icon {
+    background-image: url('../assets/img/bottle-color/cognac.png');
+  }
 }
 
+.wine-liquorous {
+  @extend .icon-image;
+
+  &.color {
+    color: goldenrod;
+  }
+  &.icon {
+    background-image: url('../assets/img/bottle-color/liquorous.png');
+  }
+}
+
+.wine-red {
+  @extend .icon-image;
+
+  &.color {
+    color: brown;
+  }
+  &.icon {
+    background-image: url('../assets/img/bottle-color/red.png');
+  }
+}
+
+.wine-red-mutated {
+  @extend .icon-image;
+
+  &.color {
+    color: brown;
+  }
+  &.icon {
+    background-image: url('../assets/img/bottle-color/red-mutated.png');
+  }
+}
+
+.wine-rose {
+  @extend .icon-image;
+
+  &.color {
+    color: deeppink;
+  }
+  &.icon {
+    background-image: url('../assets/img/bottle-color/rose.png');
+  }
+}
+
+.wine-straw {
+  @extend .icon-image;
+
+  &.color {
+    color: orange;
+  }
+  &.icon {
+    background-image: url('../assets/img/bottle-color/straw.png');
+  }
+}
+
+.wine-undefined {
+  @extend .icon-image;
+
+  &.color {
+    color: #ebebeb;
+  }
+  &.icon {
+    background-image: url('../assets/img/bottle-color/undefined.png');
+  }
+}
+
+.wine-white {
+  @extend .icon-image;
+
+  &.color {
+    color: cornsilk;
+  }
+  &.icon {
+    background-image: url('../assets/img/bottle-color/white.png');
+  }
+}
+
+.wine-white-halfdry {
+  @extend .icon-image;
+
+  &.color {
+    color: cornsilk;
+  }
+  &.icon {
+    background-image: url('../assets/img/bottle-color/white-halfdry.png');
+  }
+}
+
+.wine-white-mutated {
+  @extend .icon-image;
+
+  &.color {
+    color: burlywood;
+  }
+  &.icon {
+    background-image: url('../assets/img/bottle-color/white-mutated.png');
+  }
+}
+
+.wine-yellow {
+  @extend .icon-image;
+
+  &.color {
+    color: gold;
+  }
+  &.icon {
+    background-image: url('../assets/img/bottle-color/yellow.png');
+  }
+}

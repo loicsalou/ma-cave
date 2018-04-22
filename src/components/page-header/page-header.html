@@ -1,0 +1,6 @@
+<ion-header class="mod-header dashboard-page">
+  <ion-searchbar [placeholder]="Chercher" [autocomplete]="on" [autocorrect]="on" [animated]="true"
+                 (search)="filterOnText($event)">
+  </ion-searchbar>
+  <div class="icon logout" (click)="logout()"></div>
+</ion-header>

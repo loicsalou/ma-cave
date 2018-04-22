@@ -4,7 +4,7 @@
   See http://ionicframework.com/docs/components/#navigation for more info on
   Ionic pages and navigation.
 -->
-<ion-header style="display: flex" class="page-upload-bottles">
+<ion-header class="mod-header page-upload-bottles">
   <ion-navbar>
     <ion-title>Administration</ion-title>
   </ion-navbar>
@@ -12,7 +12,7 @@
 </ion-header>
 
 
-<ion-content padding class="page-upload-bottles">
+<ion-content padding class="page-upload-bottles page">
   
   <div>
     <ion-card class="card-background">
@@ -100,43 +100,48 @@
       </ion-row>
     </ion-card>
     
-    <label>Vidage de la base avant importation</label>
-    <ion-checkbox id="deleteBefore" [(ngModel)]="deleteBefore"></ion-checkbox>
-    
-    <div *ngIf="platformIsCordova()">
-      <button ion-button align-items-start round icon-only block (click)="chooseFile()">
-        <ion-icon name="cloud-upload"></ion-icon>
-        Importer...
-      </button>
-    </div>
-    
-    <div *ngIf="! platformIsCordova()">
-      <input type="file" id="input" (change)="readBrowserFile($event)">
-    </div>
-    <p *ngIf="bottleService.loginService.user">{{bottleService.loginService.user.user}}</p>
+    <ion-card>
+      <label>Vidage de la base avant importation</label>
+      <ion-checkbox id="deleteBefore" [(ngModel)]="deleteBefore"></ion-checkbox>
+      
+      <div *ngIf="platformIsCordova()">
+        <button ion-button align-items-start round icon-only block (click)="chooseFile()">
+          <ion-icon name="cloud-upload"></ion-icon>
+          Importer...
+        </button>
+      </div>
+      
+      <div *ngIf="! platformIsCordova()">
+        <input type="file" id="input" (change)="readBrowserFile($event)">
+      </div>
+      <p *ngIf="bottleService.loginService.user">{{bottleService.loginService.user.user}}</p>
+    </ion-card>
   </div>
   
-  <div>
-    <button ion-button align-items-start round icon-only block (click)="emptyLockers()">
+  <ion-card class="actions">
+    <button ion-button align-items-start icon-only block (click)="emptyLockers()">
       <ion-icon name="trash"></ion-icon>
       Vider les casiers
     </button>
-    <button ion-button align-items-start round icon-only block (click)="emptyLogs()">
+    <button ion-button align-items-start icon-only block (click)="emptyLogs()">
       <ion-icon name="trash"></ion-icon>
       Vider les logs
     </button>
-    <button ion-button align-items-start round icon-only block (click)="deleteAccount()">
+    <button ion-button align-items-start icon-only block (click)="deleteAccount()">
       <ion-icon name="trash"></ion-icon>
       Supprimer l'utilisateur
     </button>
-  </div>
+    <button ion-button align-items-start icon-only block (click)="showLocalStorage()">
+      <ion-icon name="search"></ion-icon>
+      Voir local storage
+    </button>
+  </ion-card>
   
-  <button ion-button (click)="showLocalStorage()">Voir local storage</button>
-  <div *ngIf="localStorageKeys">
+  <ion-card *ngIf="localStorageKeys">
     <ion-item *ngFor="let key of localStorageKeys">
       <label (click)="loadTempValueFor(key)">{{key}}</label>
     </ion-item>
     <textarea [value]="tempValue" style="height:50vh; width:95vw"></textarea>
-  </div>
+  </ion-card>
 
 </ion-content>

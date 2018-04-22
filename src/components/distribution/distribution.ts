@@ -37,7 +37,8 @@ export class DistributionComponent implements OnChanges, OnInit {
   open = {};
 
   //filtres courant et valeurs sélectionnées
-  filterSet: FilterSet = new FilterSet(this.translateService);
+  filterSet: FilterSet = new FilterSet();
+  //filterSet: FilterSet = new FilterSet(this.translateService);
 
   //nombre de bouteilles affichées à un instant t
   count: number;
@@ -77,6 +78,7 @@ export class DistributionComponent implements OnChanges, OnInit {
     let filterValue = $event.currentTarget.textContent.split(':')[ 0 ];
     filterValue = filterValue ? filterValue.trim() : '';
     //update filterSet
+    this.filterSet=Object.assign(new FilterSet(), this.filterSet);
     if (!this.filterSet[ axis ]) {
       this.filterSet[ axis ] = [];
     }
@@ -155,7 +157,7 @@ export class FilterSet {
   private _toBePlaced = true;
   private _sortOption: SortOption;
 
-  constructor(private translateService: TranslateService) {
+  constructor() {
   }
 
   get favoriteOnly(): boolean {
@@ -260,49 +262,7 @@ export class FilterSet {
   }
 
   toString() {
-    return JSON.stringify(this, (prop, value) => {
-      if (prop === 'translateService') {
-        return '';
-      } else {
-        return value;
-      }
-    });
-  }
-
-  toMessage() {
-    let strings = [];
-
-    if (this.favoriteOnly) {
-      strings.push(this.translateService.instant('filter.favorite-only'));
-    }
-    if (this.overdueOnly) {
-      strings.push(this.translateService.instant('filter.overdue-only'));
-    }
-    if (this.hasText()) {
-      strings.push(this.text);
-    }
-    if (this.hasAppellations()) {
-      strings.push(this.area_label);
-    } else if (this.hasRegions()) {
-      strings.push(this.subregion_label);
-    }
-    if (this.hasCouleurs()) {
-      strings.push(this.label);
-    }
-    if (this.hasMillesimes()) {
-      strings.push(this.millesime);
-    } else if (this.hasAges()) {
-      strings.push(this.classe_age);
-    } else if (!this._placed) {
-      strings.push(this.translateService.instant('filter.to-be-placed-only'));
-    } else if (!this._toBePlaced) {
-      strings.push(this.translateService.instant('filter.placed-only'));
-    }
-    if (strings.length == 0) {
-      return '';
-    } else {
-      return strings.join('&');
-    }
+    return JSON.stringify(this);
   }
 
   setSortOption(sortOption: SortOption) {

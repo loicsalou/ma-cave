@@ -2,12 +2,12 @@ page-dashboard {
 
   .by-label canvas {
     height: 25vh !important;
-    width: 100% !important;
+    //width: 100% !important;
   }
 
   .by-region canvas {
     height: 35vh !important;
-    width: 100% !important;
+    //width: 100% !important;
   }
 
   button[badge] {
@@ -20,36 +20,4 @@ page-dashboard {
     display: flex;
     justify-content: space-around;
   }
-
-  img {
-    height: 30vh;
-    opacity: 1;
-    padding-botton: 5px;
-
-    &[icon-only] {
-      width: 35px;
-      height: 35px;
-      margin: 8px 8px 8px 0;
-      align-self: center;
-    }
-  }
-
-  .card-background {
-    background-color: rgba(255, 255, 255, .8);
-  }
-
-  .recent-withdrawal {
-    withdrawal-item:nth-child(2n) > ion-item-sliding > ion-item {
-      background-color: lighten(#ebebeb, 4%);
-
-      ion-item {
-        background-color: inherit;
-      }
-    }
-
-    withdrawal-item:nth-child(2n+1) > ion-item-sliding > ion-item {
-      background-color: white;
-    }
-  }
-
 }

@@ -1,7 +1,11 @@
 .bottle-item {
 
-  ion-badge.not-placed {
-    background-color: lightgray;
+  ion-col > ion-badge[item-right] {
+    margin: 3px 0;
+
+    &.not-placed {
+      background-color: lightgray;
+    }
   }
 
   ion-label {
@@ -13,8 +17,8 @@
     img, ion-icon {
       border-radius: 50%;
       background-color: map-get($colors, primary);
-      width: 45px;
-      height: 45px;
+      height: $action-icon-height;
+      width: $action-icon-width;
     }
     ion-icon {
       color: white;
@@ -22,7 +26,7 @@
       padding-top: 10px;
     }
     ion-icon.favorite {
-      color: yellow;
+      color: $favorite-color;
     }
   }
 
@@ -37,10 +41,10 @@
   }
 
   ion-item-sliding:nth-child(2n) {
-    background-color: lighten(#ebebeb, 4%);
+    background-color: $even-rows-background-color;
 
     button {
-      background-color: lighten(#ebebeb, 4%);
+      background-color: $even-rows-background-color;
     }
 
     ion-item {
@@ -49,15 +53,10 @@
   }
 
   ion-item-sliding:nth-child(2n+1) {
-    background-color: white;
+    background-color: $odd-rows-background-color;
 
     button {
-      background-color: white;
+      background-color: $odd-rows-background-color;
     }
-  }
-
-  .selected-logo {
-    border: thin solid green;
-    border-radius: 40% 40%;
   }
 }

@@ -8,6 +8,20 @@ export const appConfig = {
     }
   },
 
+  settings: {
+    defaultTheme: 'default-theme',
+    themes: [
+      {
+        name: 'cavus',
+        class: 'cavus-theme'
+      },
+      {
+        name: 'default',
+        class: 'default-theme'
+      }
+    ]
+  },
+
   statistics: {
     standardColors: [
       'blue', 'red', 'orange', 'aqua', 'aquamarine', 'blueviolet', 'green', 'cornsilk', 'fuchsia', 'grey', 'black'

@@ -1,4 +1,4 @@
-import {ErrorHandler, NgModule} from '@angular/core';
+import {ErrorHandler, NgModule, NO_ERRORS_SCHEMA} from '@angular/core';
 import {IonicModule} from 'ionic-angular';
 import {DefaultImageDirective} from '../directives/default-image/default-image';
 import {BottleIconPipe} from './list/bottle-icon.pipe';
@@ -24,6 +24,10 @@ import {DistributionComponent} from './distribution/distribution';
 import {SimpleLockerComponent} from './locker/simple-locker.component';
 import {FridgeLockerComponent} from './locker/fridge-locker.component';
 import {CommonModule} from '@angular/common';
+import {BottleClassPipe} from './list/bottle-color-class.pipe';
+import {CurrentFiltersComponent} from './current-filters/current-filters';
+import {SearchBarComponent} from './search-bar/search-bar';
+import {PageHeaderComponent} from './page-header/page-header';
 
 @NgModule({
             imports: [
@@ -35,31 +39,38 @@ import {CommonModule} from '@angular/common';
             ],
             declarations: [
               BottleIconPipe,
+              BottleClassPipe,
               BottleItemComponent,
               BottleNotingComponent,
               ChartComponent,
+              CurrentFiltersComponent,
               DefaultImageDirective,
               DistributionComponent,
               FridgeLockerComponent,
               ImageAttacherComponent,
+              PageHeaderComponent,
               ProgressBarComponent,
               RatingComponent,
+              SearchBarComponent,
               SimpleLockerComponent,
               StatisticsComponent,
               WithdrawalItemComponent
             ],
             exports: [
               BottleIconPipe,
+              BottleClassPipe,
               BottleItemComponent,
               BottleNotingComponent,
               ChartComponent,
-              CommonModule,
+              CurrentFiltersComponent,
               DefaultImageDirective,
               DistributionComponent,
               FridgeLockerComponent,
               ImageAttacherComponent,
+              PageHeaderComponent,
               ProgressBarComponent,
               RatingComponent,
+              SearchBarComponent,
               SimpleLockerComponent,
               StatisticsComponent,
               WithdrawalItemComponent
@@ -71,6 +82,9 @@ import {CommonModule} from '@angular/common';
               Network,
               ImportProvider,
               {provide: ErrorHandler, deps: [ FirebaseAdminService ], useClass: CaveErrorHandler}
+            ],
+            schemas: [
+              NO_ERRORS_SCHEMA
             ]
           })
 export class SharedModule {

@@ -11,7 +11,7 @@ import {NativeProvider} from '../../providers/native/native';
 
 @Component({
              selector: 'page-home',
-             templateUrl: 'home.html',
+             templateUrl: 'home.html'
              // styleUrls:[ 'home.scss' ]
            })
 export class HomePage implements OnInit, AfterViewInit {
