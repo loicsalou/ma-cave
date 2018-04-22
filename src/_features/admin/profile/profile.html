@@ -7,9 +7,16 @@
 </ion-header>
 
 <ion-content align-items-center *ngIf="user">
-  <div style="display: flex; justify-content: center;" *ngIf="user.photoURL">
+  <div style="display: flex; justify-content: center;padding:15px;" *ngIf="user.photoURL">
     <img [src]="user.photoURL" [defaultImage]="'/assets/icon/anonymous.png'" style="width: 100%; height: 100%;">
   </div>
+  
+  <ion-card class="">
+    <h2>Thème</h2>
+    <ion-select [(ngModel)]="currentTheme" name="type" required interface="popover">
+      <ion-option *ngFor="let theme of themes" [value]="theme.class">{{theme.name}}</ion-option>
+    </ion-select>
+  </ion-card>
   
   <ion-card class="">
     <h2>Bienvenue <ion-badge>{{user.displayName}}</ion-badge></h2>
@@ -25,13 +32,6 @@
       <label for="tel">tél</label>
       <h4 id="tel">{{user.phoneNumber}}</h4>
     </ion-item>
-  </ion-card>
-  
-  <ion-card class="">
-    <h2>Thème</h2>
-    <ion-select [(ngModel)]="currentTheme" name="type" required interface="popover">
-      <ion-option *ngFor="let theme of themes" [value]="theme.class">{{theme.name}}</ion-option>
-    </ion-select>
   </ion-card>
 
 </ion-content>
