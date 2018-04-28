@@ -17,7 +17,7 @@
     "-------": "IOS",
     "apk": "ionic cordova build android",
     "apk:prod": "ionic cordova build android --prod --release",
-    "ios": "ionic cordova build ios"
+    "ios": "ionic cordova build ios --prod"
   },
   "dependencies": {
     "@angular/common": "5.0.2",
@@ -50,6 +50,7 @@
     "@ngx-translate/http-loader": "2.0.1",
     "angular2-uuid": "1.1.1",
     "angularfire2": "5.0.0-rc.6",
+    "bootstrap": "4.1.0",
     "chart.js": "2.7.2",
     "com.megster.cordova.FileChooser": "https://github.com/loicsalou/cordova-filechooser.git",
     "cordova-android": "7.1.0",

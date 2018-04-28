@@ -4,7 +4,7 @@
   </button>
   <span class="search-container">
     <search-bar right [filterSet]="filterSet" [nbBottles]="numberOfBottles()" [nbCrus]="numberOfLots()"
-                    (change)="filterOnText($event)">
+                (change)="filterOnText($event)">
     </search-bar>
   </span>
 </ion-header>
@@ -14,32 +14,34 @@
 </ion-menu>
 
 <ion-content class="browse-page page mod-content">
-  <ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>
-  <ion-list sliding="true" class="bottle-page" [virtualScroll]="bottles" #bottleList>
-    <div *virtualItem="let bottle" style="width: 100%">
-      <bottle-item [bottle]="bottle" (showDetail)="triggerDetail($event)"
-                   (selected)="switchSelected($event)"></bottle-item>
-    </div>
-  </ion-list>
-  <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
-    <ion-infinite-scroll-content></ion-infinite-scroll-content>
-  </ion-infinite-scroll>
-  
-  <ion-fab bottom right *ngIf="anyBottleSelected()">
-    <button ion-fab>
-      <ion-icon name="menu"></ion-icon>
-    </button>
-    <ion-fab-list side="top">
-      <button ion-fab (click)="placeSelection()" style="background-color: #ebeced">
-        <ion-icon name="apps"></ion-icon>
+  <responsive-wrapper>
+    <ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>
+    <ion-list sliding="true" class="bottle-page" [virtualScroll]="bottles" #bottleList>
+      <div *virtualItem="let bottle" style="width: 100%">
+        <bottle-item [bottle]="bottle" (showDetail)="triggerDetail($event)"
+                     (selected)="switchSelected($event)"></bottle-item>
+      </div>
+    </ion-list>
+    <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+      <ion-infinite-scroll-content></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+    
+    <ion-fab bottom right *ngIf="anyBottleSelected()">
+      <button ion-fab>
+        <ion-icon name="menu"></ion-icon>
       </button>
-      <button ion-fab (click)="locateSelection()" style="background-color: #ebeced">
-        <ion-icon name="pin"></ion-icon>
-      </button>
-      <button ion-fab (click)="registerSelectionAsFavorite()" style="background-color: #ebeced">
-        <ion-icon name="star" style="color: yellow"></ion-icon>
-      </button>
-    </ion-fab-list>
-  </ion-fab>
-
+      <ion-fab-list side="top">
+        <button ion-fab (click)="placeSelection()" style="background-color: #ebeced">
+          <ion-icon name="apps"></ion-icon>
+        </button>
+        <button ion-fab (click)="locateSelection()" style="background-color: #ebeced">
+          <ion-icon name="pin"></ion-icon>
+        </button>
+        <button ion-fab (click)="registerSelectionAsFavorite()" style="background-color: #ebeced">
+          <ion-icon name="star" style="color: yellow"></ion-icon>
+        </button>
+      </ion-fab-list>
+    </ion-fab>
+  </responsive-wrapper>
+  ¬
 </ion-content>

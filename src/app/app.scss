@@ -6,6 +6,8 @@
 @import "scss/module";
 @import "scss/state";
 @import "scss/themes/index";
+// mes icônes
+@import "scss/icons/css/cavus.css";
 
 // App Global Sass
 // --------------------------------------------------
@@ -114,11 +116,13 @@ div.icon {
   background-image: url('../assets/icon/primary-logout.png');
 }
 
-// Si la bouteille est "checked" (sélectionnée par ex. pour la ranger)
-.checked {
-  @extend .icon-image;
+.checkbox-checked {
+  border-color: map-get($colors, primary);
+  background-color: map-get($colors, primary);
+}
 
-  background-image: url('../assets/icon/checked.png');
+ion-icon {
+  color: map-get($colors, primary);
 }
 
 // Selon le vin de la bouteille on a les couleurs (classe color) ou l'icône (classe icon)
