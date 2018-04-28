@@ -39,6 +39,10 @@ $background-page-image: url('../assets/img/background/background2.jpeg');
   background: $background-page-image;
 }
 
+ion-navbar button.back-button {
+  z-index: 300; // pour éviter que le search result ne gêne le clic
+}
+
 .header {
   align-items: center;
   opacity: .97;
@@ -121,7 +125,7 @@ div.icon {
   background-color: map-get($colors, primary);
 }
 
-ion-icon {
+ion-avatar ion-icon {
   color: map-get($colors, primary);
 }
 

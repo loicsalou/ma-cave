@@ -10,20 +10,18 @@
     background-color: map-get($colors-cavus, buttonBackground);
   }
 
-  ion-icon {
+  ion-avatar ion-icon {
     color: map-get($colors-cavus, primary);
   }
 
   button[ion-fab],
   button[menuToggle],
-  ion-item-sliding button[ion-button] ion-icon
-  {
+  ion-item-sliding button[ion-button] ion-icon {
     background-color: map-get($colors-cavus, buttonBackground);
     color: map-get($colors-cavus, light);
   }
 
-  ion-item-sliding button[ion-button]
-  {
+  ion-item-sliding button[ion-button] {
     background-color: transparent;
     color: map-get($colors-cavus, light);
   }
