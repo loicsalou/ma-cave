@@ -15,6 +15,9 @@ import {LoginService} from '../../../service/login/login.service';
 import {BottleDetailPage} from '../../browse/bottle-detail/page-bottle-detail';
 import {UpdateLockerPage} from '../update-locker/update-locker.page';
 import {CreateLockerPage} from '../create-locker/create-locker.page';
+import {ApplicationState} from '../../../app/state/app.state';
+import {Store} from '@ngrx/store';
+import {BottlesQuery} from '../../../app/state/bottles.state';
 
 /**
  * Generated class for the CellarPage page.
@@ -54,7 +57,8 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
               private nativeProvider: NativeProvider,
               private modalCtrl: ModalController,
               private loginService: LoginService,
-              private params: NavParams) {
+              private params: NavParams,
+              private store: Store<ApplicationState>) {
   }
 
   ngOnInit(): void {
@@ -222,7 +226,8 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private getLockersContent() {
-    this.bottlesSubscription = this.bottleService.allBottlesObservable.subscribe(
+    //this.bottlesSubscription = this.bottleService.allBottlesObservable.subscribe(
+    this.bottlesSubscription = this.store.select(BottlesQuery.getBottles).subscribe(
       (bottles: Bottle[]) => {
         this.lockerContent = bottles
       }

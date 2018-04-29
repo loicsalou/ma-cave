@@ -9,6 +9,9 @@ import {LocalLoginPage} from '../../_features/admin/login/local-login.page';
 import {NotificationService} from '../../service/notification.service';
 import {NativeProvider} from '../../providers/native/native';
 import {VERSION} from '../../_features/admin/version';
+import {ApplicationState} from '../state/app.state';
+import {Store} from '@ngrx/store';
+import {LoadBottlesAction} from '../state/bottles.action';
 
 @Component({
              selector: 'page-home',
@@ -26,7 +29,8 @@ export class HomePage implements OnInit, AfterViewInit {
   constructor(public navCtrl: NavController, public loginService: LoginService,
               private modalController: ModalController,
               private notificationService: NotificationService,
-              private nativeProvider: NativeProvider, private platform: Platform) {
+              private nativeProvider: NativeProvider, private platform: Platform,
+              private store: Store<ApplicationState>) {
   }
 
   ngOnInit(): void {
@@ -107,6 +111,7 @@ export class HomePage implements OnInit, AfterViewInit {
     this.authenticated = (user !== undefined);
     if (this.authenticated) {
       // login ok ==> dashboard
+      this.store.dispatch(new LoadBottlesAction());
       this.navCtrl.setRoot(TabsPage);
     }
     else {

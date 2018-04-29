@@ -1,7 +1,7 @@
 /**
  * Created by loicsalou on 28.02.17.
  */
-import {Injectable} from '@angular/core';
+import {Injectable, OnDestroy} from '@angular/core';
 import {Bottle, Position} from '../model/bottle';
 import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
@@ -24,6 +24,9 @@ import {FirebaseBottlesService} from './firebase/firebase-bottles.service';
 import {FirebaseLockersService} from './firebase/firebase-lockers.service';
 import {FirebaseImagesService} from './firebase/firebase-images.service';
 import {SearchCriteria} from '../model/search-criteria';
+import {ApplicationState} from '../app/state/app.state';
+import {Store} from '@ngrx/store';
+import {LoadBottlesSuccessAction} from '../app/state/bottles.action';
 
 /**
  * Services related to the bottles in the cellar.
@@ -31,7 +34,7 @@ import {SearchCriteria} from '../model/search-criteria';
  * clicks on a region to filter bottles. Any change on either side must be propagated on the other side.
  */
 @Injectable()
-export class BottlePersistenceService extends AbstractPersistenceService {
+export class BottlePersistenceService extends AbstractPersistenceService implements OnDestroy {
   private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
   private _allBottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
   private _filteredBottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
@@ -48,7 +51,8 @@ export class BottlePersistenceService extends AbstractPersistenceService {
               private withdrawalService: FirebaseWithdrawalsService,
               notificationService: NotificationService,
               loginService: LoginService, private bottleFactory: BottleFactory,
-              translateService: TranslateService) {
+              translateService: TranslateService,
+              private store: Store<ApplicationState>) {
     super(notificationService, loginService, translateService);
     this._filtersObservable = new BehaviorSubject<FilterSet>(new FilterSet());
     if (loginService.user) {
@@ -66,6 +70,15 @@ export class BottlePersistenceService extends AbstractPersistenceService {
 
   get filtersObservable(): Observable<FilterSet> {
     return this._filtersObservable.asObservable();
+  }
+
+  ngOnDestroy() {
+    if (this.bottlesSub) {
+      this.bottlesSub.unsubscribe();
+    }
+    if (this.dataConnection) {
+      this.dataConnection.cleanup();
+    }
   }
 
   public update(bottles: Bottle[]) {
@@ -255,6 +268,18 @@ export class BottlePersistenceService extends AbstractPersistenceService {
     this.dataConnection.deleteLogs();
   }
 
+  loadAllBottles(): Observable<Bottle[]> {
+    return this.bottlesService.allBottlesObservable;
+    //if (!this.bottlesSub) {
+    //  let items = this.bottlesService.allBottlesObservable;
+    //  this.bottlesSub = items.subscribe((bottles: Bottle[]) => {
+    //                                      this.setAllBottlesArray(bottles);
+    //                                      this.filterOn(this.filters);
+    //                                    },
+    //                                    error => this.notificationService.error('L\'accès à la liste des bouteilles a
+    // échoué !', error)); }
+  }
+
   protected initialize(user: User) {
     super.initialize(user);
     this.bottlesService.initialize(user);
@@ -262,25 +287,17 @@ export class BottlePersistenceService extends AbstractPersistenceService {
     this.lockersService.initialize(user);
     this.imagesService.initialize(user);
     this.withdrawalService.initialize(user);
-    let items = this.bottlesService.allBottlesObservable;
-    this.bottlesSub = items.subscribe((bottles: Bottle[]) => {
-                                        this.setAllBottlesArray(bottles);
-                                        this.filterOn(this.filters);
-                                      },
-                                      error => this.notificationService.error('L\'accès à la liste des bouteilles a échoué !', error));
-    this.bottlesService.fetchAllBottles();
   }
 
   protected cleanup() {
     super.cleanup();
-    this.bottlesSub.unsubscribe();
-    this.dataConnection.cleanup();
     this.allBottlesArray = undefined;
     this.filters = undefined;
   }
 
   private setAllBottlesArray(bottles: Bottle[]) {
-    this.allBottlesArray = bottles;
+    this.store.dispatch(new LoadBottlesSuccessAction(bottles));
+    //this.allBottlesArray = bottles;
     this._bottles.next(bottles);
   }
 

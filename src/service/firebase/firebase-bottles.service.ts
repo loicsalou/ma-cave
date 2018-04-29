@@ -48,6 +48,7 @@ export class FirebaseBottlesService {
   get allBottlesObservable(): Observable<Bottle[ ]> {
     this._bottles = new BehaviorSubject<Bottle[]>([]);
     this._allBottlesObservable = this._bottles.asObservable();
+    this.fetchAllBottles();
     return this._allBottlesObservable;
   }
 

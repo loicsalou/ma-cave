@@ -7,6 +7,9 @@ import {NotificationService} from '../../../service/notification.service';
 import {NativeStorageService} from '../../../service/native-storage.service';
 import {ImportProvider} from '../../../providers/import/import';
 import {LoginService} from '../../../service/login/login.service';
+import {ApplicationState} from '../../../app/state/app.state';
+import {Store} from '@ngrx/store';
+import {BottlesQuery} from '../../../app/state/bottles.state';
 
 /**
  * Generated class for the UploadBottles page.
@@ -36,7 +39,8 @@ export class UploadBottlesPage {
               private platform: Platform,
               private localStorage: NativeStorageService,
               private loadingController: LoadingController,
-              private importProvider: ImportProvider) {
+              private importProvider: ImportProvider,
+              private store: Store<ApplicationState>) {
   }
 
   deleteAccount() {
@@ -84,8 +88,8 @@ export class UploadBottlesPage {
           (<any>window).resolveLocalFileSystemURL(nativepath, (res) => {
             res.file((resFile) => {
               this.setupUpload(resFile);
-            })
-          })
+            });
+          });
         })
           .catch(error => this.notificationService.error('uri incorrecte ' + uri + ' error:' + error));
       })
@@ -101,7 +105,8 @@ export class UploadBottlesPage {
   }
 
   public emptyLockers() {
-    this.bottleService.allBottlesObservable.take(1).subscribe(
+    //this.bottleService.allBottlesObservable.take(1).subscribe(
+    this.store.select(BottlesQuery.getBottles).take(1).subscribe(
       bottles => {
         let updatedBottles = bottles.map(
           bottle => {
@@ -111,11 +116,11 @@ export class UploadBottlesPage {
         );
         this.bottleService.update(updatedBottles);
       }
-    )
+    );
   }
 
   public emptyLogs() {
-    this.bottleService.deleteLogs()
+    this.bottleService.deleteLogs();
   }
 
   showLocalStorage() {
@@ -148,7 +153,7 @@ export class UploadBottlesPage {
         this.notificationService.error('Erreur durant le process d\'importation !' + err);
         this.dismissLoading(loading);
       }
-    )
+    );
   }
 
   private processParsing(loading: Loading, file: File) {
@@ -184,14 +189,14 @@ export class UploadBottlesPage {
                                }
                              );
                          }
-                       )
+                       );
                      }
                    ).catch(
                      err => {
                        this.notificationService.error('Erreur durant le process d\'importation !' + err);
                        this.dismissLoading(loading);
                      }
-                   )
+                   );
                  }
       );
   }

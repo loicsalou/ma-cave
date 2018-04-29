@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {MenuController, NavController, NavParams, Platform, VirtualScroll} from 'ionic-angular';
+import {MenuController, NavController, NavParams, Platform} from 'ionic-angular';
 import {BottlePersistenceService} from '../../../service/bottle-persistence.service';
 import {Bottle} from '../../../model/bottle';
 import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
@@ -12,6 +12,10 @@ import {BottleItemComponent} from '../../../components/list/bottle-item.componen
 import {TranslateService} from '@ngx-translate/core';
 import {NativeProvider} from '../../../providers/native/native';
 import {Observable} from 'rxjs/Observable';
+import {ApplicationState} from '../../../app/state/app.state';
+import {Store} from '@ngrx/store';
+import {BottlesQuery} from '../../../app/state/bottles.state';
+import {ResetFilterAction, UpdateFilterAction} from '../../../app/state/filters.action';
 
 @Component({
              selector: 'page-browse',
@@ -33,13 +37,15 @@ export class BrowsePage implements OnInit, OnDestroy {
 
   constructor(public navCtrl: NavController, public platform: Platform, private bottlesService: BottlePersistenceService,
               private notificationService: NotificationService, private menuController: MenuController,
-              private translateService: TranslateService, private nativeProvider: NativeProvider, private navParams?: NavParams) {
+              private translateService: TranslateService, private nativeProvider: NativeProvider,
+              private store: Store<ApplicationState>, private navParams?: NavParams) {
     this.notificationService.traceDebug('BrowsePage.constructor');
   }
 
   ngOnInit() {
     this.nativeProvider.feedBack();
     this.initFilterFromNavParams();
+
     this.bottlesService.filterOn(this.filterSet);
     this.filterSubscription = this.bottlesService.filtersObservable.subscribe(
       filterSet => {
@@ -47,7 +53,8 @@ export class BrowsePage implements OnInit, OnDestroy {
         this.setFilterSet(filterSet);
       });
 
-    this.bottles$ = this.bottlesService.filteredBottlesObservable;
+    //this.bottles$ = this.bottlesService.filteredBottlesObservable;
+    this.bottles$ = this.store.select(BottlesQuery.getSelectedBottles);
     this.bottleSubscription = this.bottles$.subscribe(
       (received: Bottle[]) => {
         this.processList(received);
@@ -124,11 +131,11 @@ export class BrowsePage implements OnInit, OnDestroy {
 
   filterOnText(event: any) {
     let filter = event.target.value;
-    this.filterSet.reset();
-    if (filter) {
-      this.filterSet.text = filter.split(' ');
-    }
-    this.bottlesService.filterOn(this.filterSet);
+    this.store.dispatch(
+      filter
+        ? new UpdateFilterAction(new FilterSet(filter.split(' ')))
+        : new ResetFilterAction()
+    );
   }
 
   triggerDetail(bottle: Bottle) {

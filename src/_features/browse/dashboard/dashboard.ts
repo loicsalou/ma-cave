@@ -16,6 +16,10 @@ import {Withdrawal} from '../../../model/withdrawal';
 import {RecordOutputPage} from '../record-output/record-output';
 import {SearchCriteria} from '../../../model/search-criteria';
 import {VERSION} from '../../admin/version';
+import {ApplicationState} from '../../../app/state/app.state';
+import {Store} from '@ngrx/store';
+import {BottlesQuery} from '../../../app/state/bottles.state';
+import {UpdateFilterAction} from '../../../app/state/filters.action';
 
 @Component({
              selector: 'page-dashboard',
@@ -41,7 +45,8 @@ export class DashboardPage implements OnInit, OnDestroy {
   constructor(public navCtrl: NavController, public loginService: LoginService, private notificationService: NotificationService,
               private bottleService: BottlePersistenceService, private nativeProvider: NativeProvider,
               private platform: Platform, private translateService: TranslateService,
-              private popoverCtrl: PopoverController, private modalCtrl: ModalController) {
+              private popoverCtrl: PopoverController, private modalCtrl: ModalController,
+              private store: Store<ApplicationState>) {
     platform.ready().then(() => {
       platform.registerBackButtonAction(() => {
         if (navCtrl.canGoBack()) {
@@ -62,7 +67,8 @@ export class DashboardPage implements OnInit, OnDestroy {
     this.popup = this.notificationService.createLoadingPopup('app.loading');
     //this.version = require('../../../../package.json').version;
     this.version = VERSION;
-    this.bottleSub = this.bottleService.allBottlesObservable.subscribe(
+    //this.bottleSub = this.bottleService.allBottlesObservable.subscribe(
+    this.bottleSub = this.store.select(BottlesQuery.getBottles).subscribe(
       (bottles: Bottle[]) => {
         setTimeout(() => {
           this.popup.dismiss(), 10;
@@ -137,10 +143,12 @@ export class DashboardPage implements OnInit, OnDestroy {
   showOverdue() {
     let fs: FilterSet = new FilterSet();
     fs.overdueOnly = true;
+    this.store.dispatch(new UpdateFilterAction(fs))
     this.navCtrl.push(BrowsePage, {filterSet: fs});
   }
 
   showFiltered(chosenFilter: FilterSet) {
+    this.store.dispatch(new UpdateFilterAction(chosenFilter))
     this.navCtrl.push(BrowsePage, {filterSet: chosenFilter});
   }
 

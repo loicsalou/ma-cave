@@ -14,7 +14,6 @@ import {SimpleChanges} from '@angular/core/src/metadata/lifecycle_hooks';
 @Component({
              selector: 'distribution',
              templateUrl: 'distribution.html'
-             // styleUrls:[ 'distribution.scss' ]
            })
 export class DistributionComponent implements OnChanges, OnInit {
 //axes de distribution de la distribution courante
@@ -47,7 +46,7 @@ export class DistributionComponent implements OnChanges, OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.bottles && changes.bottles.previousValue!==changes.bottles.currentValue) {
+    if (changes.bottles && changes.bottles.previousValue !== changes.bottles.currentValue) {
       this.refreshFilters();
       this.count = this.bottles ? this.bottles.length : 0;
     }
@@ -78,7 +77,7 @@ export class DistributionComponent implements OnChanges, OnInit {
     let filterValue = $event.currentTarget.textContent.split(':')[ 0 ];
     filterValue = filterValue ? filterValue.trim() : '';
     //update filterSet
-    this.filterSet=Object.assign(new FilterSet(), this.filterSet);
+    this.filterSet = Object.assign(new FilterSet(), this.filterSet);
     if (!this.filterSet[ axis ]) {
       this.filterSet[ axis ] = [];
     }
@@ -157,7 +156,8 @@ export class FilterSet {
   private _toBePlaced = true;
   private _sortOption: SortOption;
 
-  constructor() {
+  constructor(text?: string[]) {
+    this.text = text;
   }
 
   get favoriteOnly(): boolean {
@@ -267,6 +267,119 @@ export class FilterSet {
 
   setSortOption(sortOption: SortOption) {
     this._sortOption = sortOption;
+  }
+
+  /**
+   * Returns bottles that match ALL filters.
+   * <li>all filters must be satisfied: filtered list is refined for each new filter</li>
+   * <li>for each value in filter, applies a "OR" between accepted values</li>
+   * @param filters
+   * @returns {any}
+   */
+  public matches(btl: Bottle): boolean {
+
+    if (!btl) {
+      return false;
+    }
+
+    if (!this.history && +btl.quantite_courante === 0) {
+      return false;
+    }
+
+    if (this.overdueOnly && !btl.overdue) {
+      return false;
+    }
+    if (this.favoriteOnly && !btl.favorite) {
+      return false;
+    }
+    if (this.hasText() && !this.checkKeywords(btl, this.text)) {
+      return false;
+    }
+
+    // ne pas montrer les bouteilles qui sont placées: si toutes les bouteilles du lot sont placées on ne garde pas
+    if (!this.placed && btl.positions.length === +btl.quantite_courante) {
+      return false;
+    }
+
+    // ne pas montrer les bouteilles non placées
+    // si le lot de ce cru est totalement placé on ne le garde pas
+    if (!this.toBePlaced && btl.positions.length !== +btl.quantite_courante) {
+      return false;
+    }
+
+    // sur les axes de filtrage hiérarchiques comme les régions, les âges, on filtre sur l'axe le plus fin disponible
+    if (this.hasMillesimes()) {
+      const attrValue = btl.millesime ? btl.millesime.toString() : '';
+      if (!this.checkAttributeIn(btl, 'millesime', this.millesime)) {
+        return false;
+      }
+    } else {
+      // if filtering on millesime no need to filter on ages (matching millesime implies matching ages slice)
+      if (this.hasAges()) {
+        if (!this.checkAttributeIn(btl, 'classe_age', this.classe_age)) {
+          return false;
+        }
+      }
+    }
+
+    // on hierarchical axis like regions and ages, use most precise filter if available
+    if (this.hasAppellations()) {
+      if (!this.checkAttributeIn(btl, 'area_label', this.area_label)) {
+        return false;
+      }
+    } else {
+      // if filtering on area_label no need to filter on region (matching area_label implies matching subregion_label)
+      if (this.hasRegions()) {
+        if (!this.checkAttributeIn(btl, 'subregion_label', this.subregion_label)) {
+          return false;
+        }
+      }
+    }
+
+    if (this.hasCouleurs()) {
+      if (!this.checkAttributeIn(btl, 'label', this.label)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * searches through the given bottles all that match all of the filters passed in
+   * @param fromList array of bottles
+   * @param keywords an array of searched keywords
+   * @returns array of matching bottles
+   */
+  private checkKeywords(bottle: Bottle, keywords: string[]): boolean {
+    if (!keywords || keywords.length == 0) {
+      return true;
+    }
+    //TODO veiller à stocker les filtres en lowercase pour ne pas refaire ce toLowerCase autant de fois qu'on a de
+    // bouteilles
+    keywords = keywords.map(
+      kw => {
+        return kw.trim().toLowerCase();
+      }
+    );
+
+    let found = false;
+    let i = 0;
+    while (i < keywords.length && !found) {
+      found = this.checkKeyword(bottle, keywords[ i++ ]);
+    }
+
+    return found;
+  }
+
+  private checkKeyword(bottle: Bottle, keyword: string) {
+    const values = Object.keys(bottle).map(k => bottle[ k ]);
+    return values.findIndex(att => att === keyword) != -1;
+  }
+
+  private checkAttributeIn(bottle: Bottle, attribute: string, admissibleValues: string[ ]) {
+    const attrValue = bottle[ attribute ] ? bottle[ attribute ].toString() : '';
+    return admissibleValues.indexOf(attrValue) !== -1;
   }
 }
 

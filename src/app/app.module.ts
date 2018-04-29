@@ -22,6 +22,12 @@ import {CellarFeatureModule} from '../_features/racks/cellar-feature.module';
 import {LocalLoginPage} from '../_features/admin/login/local-login.page';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {CoreModule} from './core.module';
+import {StoreModule} from '@ngrx/store';
+import {META_REDUCERS, ROOT_REDUCERS} from './state/app.state';
+import {EffectsModule} from '@ngrx/effects';
+import {BottlesEffectsService} from './state/bottle.effects';
+import {environment} from '../environments/environment';
+import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -30,7 +36,7 @@ export const fireConfig = {
   projectId: 'ma-cave-15a66',
   storageBucket: 'ma-cave-15a66.appspot.com',
   messagingSenderId: '58435015061'
-}
+};
 
 @NgModule({
             imports: [
@@ -49,7 +55,12 @@ export const fireConfig = {
                                           useFactory: (createTranslateLoader),
                                           deps: [ HttpClient ]
                                         }
-                                      })
+                                      }),
+              StoreModule.forRoot(ROOT_REDUCERS, {
+                metaReducers: META_REDUCERS
+              }),
+              EffectsModule.forRoot([ BottlesEffectsService ]),
+              !environment.production ? StoreDevtoolsModule.instrument({maxAge: 5}) : []
             ],
             declarations: [
               MyCaveApp,
@@ -72,7 +83,10 @@ export const fireConfig = {
               TabsPage,
               UpdatePage
             ],
-            bootstrap: [ IonicApp ],
+            providers: [
+              BottlesEffectsService
+            ],
+            bootstrap: [ IonicApp ]
           })
 export class AppModule {
 }
