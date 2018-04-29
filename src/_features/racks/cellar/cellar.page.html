@@ -21,9 +21,12 @@
     </ion-slides>
     </ion-col>
     <ion-col col-md-12>
-          <div style="width: 100%" #zoomable>
-            <p>lkjnlkjnlkjn</p>
-          </div>
+      <div #zoomable *ngFor="let locker of otherLockers">
+        <locker [locker]="locker" [content]="lockerContent" *ngIf="!locker.isFridge()"
+                [highlighted]="bottlesToHighlight" (onCellSelected)="cellSelected($event)"></locker>
+        <fridge-locker [fridge]="locker" [content]="lockerContent" *ngIf="locker.isFridge()"
+                       [highlighted]="bottlesToHighlight" (onCellSelected)="cellSelected($event)"></fridge-locker>
+      </div>
     </ion-col>
   </ion-row>
   

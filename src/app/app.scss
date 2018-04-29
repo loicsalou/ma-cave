@@ -6,8 +6,6 @@
 @import "scss/module";
 @import "scss/state";
 @import "scss/themes/index";
-// mes icônes
-@import "scss/icons/css/cavus.css";
 
 // App Global Sass
 // --------------------------------------------------
@@ -36,7 +34,9 @@ $background-page-image: url('../assets/img/background/background2.jpeg');
 
 // mise en forme
 .page {
+//ion-content.page {
   background: $background-page-image;
+  //min-width: 500px;
 }
 
 ion-navbar button.back-button {
@@ -47,11 +47,6 @@ ion-navbar button.back-button {
   align-items: center;
   opacity: .97;
   padding-right: 10px;
-}
-
-ion-content.home {
-  background-image: url('../assets/img/background/splash-background.png');
-  background-size: cover;
 }
 
 ion-sliding > ion-item {

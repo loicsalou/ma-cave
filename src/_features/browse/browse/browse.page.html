@@ -16,15 +16,12 @@
 <ion-content class="browse-page page mod-content">
   <responsive-wrapper>
     <ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>
-    <ion-list sliding="true" class="bottle-page" [virtualScroll]="bottles" #bottleList>
-      <div *virtualItem="let bottle" style="width: 100%">
+    <ion-list sliding="true" class="bottle-page" #bottleList>
+      <div *ngFor="let bottle of bottles" style="width: 100%">
         <bottle-item [bottle]="bottle" (showDetail)="triggerDetail($event)"
                      (selected)="switchSelected($event)"></bottle-item>
       </div>
     </ion-list>
-    <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
-      <ion-infinite-scroll-content></ion-infinite-scroll-content>
-    </ion-infinite-scroll>
     
     <ion-fab bottom right *ngIf="anyBottleSelected()">
       <button ion-fab>
@@ -43,5 +40,4 @@
       </ion-fab-list>
     </ion-fab>
   </responsive-wrapper>
-  ¬
 </ion-content>

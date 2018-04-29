@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {InfiniteScroll, MenuController, NavController, NavParams, Platform, VirtualScroll} from 'ionic-angular';
+import {MenuController, NavController, NavParams, Platform, VirtualScroll} from 'ionic-angular';
 import {BottlePersistenceService} from '../../../service/bottle-persistence.service';
 import {Bottle} from '../../../model/bottle';
 import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
@@ -16,8 +16,6 @@ import {Observable} from 'rxjs/Observable';
 @Component({
              selector: 'page-browse',
              templateUrl: 'browse.page.html'
-             //changeDetection: ChangeDetectionStrategy.OnPush
-             // styleUrls:[ 'browse.page.scss' ]
            })
 export class BrowsePage implements OnInit, OnDestroy {
   allBottles: Bottle[];
@@ -27,19 +25,16 @@ export class BrowsePage implements OnInit, OnDestroy {
   filterSet: FilterSet = new FilterSet();
 
   @ViewChild('bottleList') listComponent: BottleItemComponent;
-  @ViewChild(VirtualScroll) vs: VirtualScroll;
 
   private bottleSubscription: Subscription;
   private filterSubscription: Subscription;
   private searchBarVisible: boolean = false;
-  private navParams: NavParams;
   private nbOfBottles: number = 0;
 
   constructor(public navCtrl: NavController, public platform: Platform, private bottlesService: BottlePersistenceService,
               private notificationService: NotificationService, private menuController: MenuController,
-              private translateService: TranslateService, private nativeProvider: NativeProvider, params?: NavParams) {
+              private translateService: TranslateService, private nativeProvider: NativeProvider, private navParams?: NavParams) {
     this.notificationService.traceDebug('BrowsePage.constructor');
-    this.navParams = params;
   }
 
   ngOnInit() {
@@ -55,28 +50,7 @@ export class BrowsePage implements OnInit, OnDestroy {
     this.bottles$ = this.bottlesService.filteredBottlesObservable;
     this.bottleSubscription = this.bottles$.subscribe(
       (received: Bottle[]) => {
-        this.notificationService.debugAlert('received:' + (received ? received.length : 0) + ' bottles');
-        this.allBottles = received;
-        this.bottles = [];
-        this.nbOfBottles = 0;
-        if (received) {
-          this.nbOfBottles = received.reduce(
-            (tot: number, btl: Bottle) => tot + +btl.quantite_courante,
-            0
-          );
-        }
-        if (this.filterSet && this.filterSet.sortOption) {
-          this.allBottles = _.orderBy(this.allBottles,
-                                      [ this.filterSet.sortOption.sortOn, 'country_label', 'subregion_label', 'area_label', 'nomCru', 'millesime' ],
-                                      [ this.filterSet.sortOption.sortOrder == undefined ? 'asc' : this.filterSet.sortOption.sortOrder,
-                                        'asc', 'asc', 'asc', 'asc', 'asc' ]
-          );
-        } else {
-          this.allBottles = _.orderBy(this.allBottles, [ 'quantite_courante', 'country_label', 'subregion_label',
-            'area_label', 'nomCru', 'millesime' ], [ 'desc', 'asc', 'asc', 'asc', 'asc', 'asc' ]
-          );
-        }
-        this.doInfinite(null);
+        this.processList(received);
       },
       error => this.notificationService.error('BrowsePage: Erreur lors de l\'accès à la base de données' + error),
       () => this.notificationService.traceInfo('BrowsePage: ngOnInit, récupération de ' + this.nbOfBottles + ' bouteilles terminée')
@@ -86,23 +60,6 @@ export class BrowsePage implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.bottleSubscription.unsubscribe();
     this.filterSubscription.unsubscribe();
-  }
-
-  doInfinite(infiniteScroll: InfiniteScroll) {
-    setTimeout(() => {
-      if (this.bottles.length < this.allBottles.length) {
-        //let size = this.bottles.length;
-        //let added = this.allBottles.slice(size, size + 50);
-        //this.bottles = this.bottles.concat(added);
-        this.bottles = this.allBottles;
-        this.doInfinite(infiniteScroll);
-      } else {
-        if (infiniteScroll) {
-          infiniteScroll.complete();
-        }
-      }
-
-    }, 10);
   }
 
   anyBottleSelected(): boolean {
@@ -199,5 +156,30 @@ export class BrowsePage implements OnInit, OnDestroy {
   private resetSelection() {
     this.bottles.forEach(bottle => bottle.selected = false);
     this.nbSelected = 0;
+  }
+
+  private processList(received: Bottle[]) {
+    this.notificationService.debugAlert('received:' + (received ? received.length : 0) + ' bottles');
+    this.allBottles = received;
+    this.bottles = [];
+    this.nbOfBottles = 0;
+    if (received) {
+      this.nbOfBottles = received.reduce(
+        (tot: number, btl: Bottle) => tot + +btl.quantite_courante,
+        0
+      );
+    }
+    if (this.filterSet && this.filterSet.sortOption) {
+      this.allBottles = _.orderBy(this.allBottles,
+                                  [ this.filterSet.sortOption.sortOn, 'country_label', 'subregion_label', 'area_label', 'nomCru', 'millesime' ],
+                                  [ this.filterSet.sortOption.sortOrder == undefined ? 'asc' : this.filterSet.sortOption.sortOrder,
+                                    'asc', 'asc', 'asc', 'asc', 'asc' ]
+      );
+    } else {
+      this.allBottles = _.orderBy(this.allBottles, [ 'quantite_courante', 'country_label', 'subregion_label',
+        'area_label', 'nomCru', 'millesime' ], [ 'desc', 'asc', 'asc', 'asc', 'asc', 'asc' ]
+      );
+    }
+    this.bottles = this.allBottles;
   }
 }

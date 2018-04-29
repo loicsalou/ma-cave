@@ -36,6 +36,7 @@ export class LoginService {
   }
 
   createAccount(user: string, psw: string) {
+    this.currentLoginService = this.mailLogin;
     this.currentLoginService.createAccount(user, psw);
   }
 
@@ -45,10 +46,6 @@ export class LoginService {
 
   resetEmailPassword(user: string) {
     this.currentLoginService = this.mailLogin;
-    this.resetPassword(user);
-  }
-
-  resetPassword(user: string) {
     this.currentLoginService.resetPassword(user);
   }
 

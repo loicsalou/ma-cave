@@ -6,34 +6,39 @@
   8px 8px 8px 0; align-self: center;"/>
 </ion-header>
 
-<ion-content align-items-center *ngIf="user" class="page">
-  <div style="display: flex; justify-content: center;padding:15px;" *ngIf="user.photoURL">
-    <img [src]="user.photoURL" [defaultImage]="'/assets/icon/anonymous.png'" style="width: 100%; height: 100%;">
-  </div>
-  
-  <ion-card class="">
-    <h2>Thème</h2>
-    <ion-select [(ngModel)]="currentTheme" name="type" required interface="popover">
-      <ion-option *ngFor="let theme of themes" [value]="theme.class">{{theme.name}}</ion-option>
-    </ion-select>
-  </ion-card>
-  
-  <ion-card class="">
-    <h2>Bienvenue <ion-badge>{{user.displayName}}</ion-badge></h2>
-    <ion-item>
-      <label for="user">Votre nom d'utilisateur:</label>
-      <h3 id="user">{{user.user}}</h3>
-    </ion-item>
-    <ion-item>
-      <label for="email">e-mail</label>
-      <h4 id="email">{{user.email}}</h4>
-    </ion-item>
-    <ion-item>
-      <label for="tel">tél</label>
-      <h4 id="tel">{{user.phoneNumber}}</h4>
-    </ion-item>
-  </ion-card>
-
+<ion-content align-items-center *ngIf="user" class="page profile-page">
+  <responsive-wrapper>
+    <ion-card *ngIf="user.photoURL" class="profile-box">
+      <div class="profile-image">
+        <img [src]="user.photoURL" [defaultImage]="'/assets/icon/anonymous.png'">
+      </div>
+      <div class="profile-info">
+        <h2>Bienvenue
+          <ion-badge>{{user.displayName}}</ion-badge>
+        </h2>
+        <ion-item>
+          <label for="user">Votre nom d'utilisateur:</label>
+          <h3 id="user">{{user.user}}</h3>
+        </ion-item>
+        <ion-item>
+          <label for="email">e-mail</label>
+          <h4 id="email">{{user.email}}</h4>
+        </ion-item>
+        <ion-item>
+          <label for="tel">tél</label>
+          <h4 id="tel">{{user.phoneNumber}}</h4>
+        </ion-item>
+      </div>
+    </ion-card>
+    
+    <ion-card>
+      <h2>Thème</h2>
+      <ion-select [(ngModel)]="currentTheme" name="type" required interface="popover">
+        <ion-option *ngFor="let theme of themes" [value]="theme.class">{{theme.name}}</ion-option>
+      </ion-select>
+    </ion-card>
+    
+  </responsive-wrapper>
 </ion-content>
 
 <ion-footer text-right padding-horizontal>version {{version}}</ion-footer>
