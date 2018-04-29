@@ -7,7 +7,7 @@ import {NativeProvider} from '../../providers/native/native';
 
 @Component({
              selector: 'bottle-item',
-             templateUrl: 'bottle-item.component.html',
+             templateUrl: 'bottle-item.component.html'
              // styleUrls:[ 'bottle-item.component.scss' ]
            })
 export class BottleItemComponent {
@@ -52,7 +52,9 @@ export class BottleItemComponent {
   locateBottles(event: Event, slidingItem: ItemSliding, bottles: Bottle[]) {
     this.nativeProvider.feedBack();
     event.stopPropagation();
-    slidingItem.close();
+    if (slidingItem) {
+      slidingItem.close();
+    }
     this.navCtrl.push(CellarPage, {bottlesToHighlight: bottles});
   }
 

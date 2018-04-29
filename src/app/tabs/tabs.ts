@@ -13,6 +13,7 @@ export class TabsPage {
   cellarRoot: any = CellarPage;
   dashboardRoot: any = DashboardPage;
   adminRoot: any = UploadBottlesPage;
+  selectedTheme = 'cavus-theme';
 
   constructor(platform: Platform, navCtrl: NavController) {
     platform.ready().then(() => {

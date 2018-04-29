@@ -34,18 +34,19 @@ $background-page-image: url('../assets/img/background/background2.jpeg');
 
 // mise en forme
 .page {
+//ion-content.page {
   background: $background-page-image;
+  //min-width: 500px;
+}
+
+ion-navbar button.back-button {
+  z-index: 300; // pour éviter que le search result ne gêne le clic
 }
 
 .header {
   align-items: center;
   opacity: .97;
   padding-right: 10px;
-}
-
-ion-content.home {
-  background-image: url('../assets/img/background/splash-background.png');
-  background-size: cover;
 }
 
 ion-sliding > ion-item {
@@ -114,11 +115,13 @@ div.icon {
   background-image: url('../assets/icon/primary-logout.png');
 }
 
-// Si la bouteille est "checked" (sélectionnée par ex. pour la ranger)
-.checked {
-  @extend .icon-image;
+.checkbox-checked {
+  border-color: map-get($colors, primary);
+  background-color: map-get($colors, primary);
+}
 
-  background-image: url('../assets/icon/checked.png');
+ion-avatar ion-icon {
+  color: map-get($colors, primary);
 }
 
 // Selon le vin de la bouteille on a les couleurs (classe color) ou l'icône (classe icon)

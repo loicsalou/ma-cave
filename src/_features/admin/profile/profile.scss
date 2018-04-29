@@ -1,0 +1,13 @@
+.profile-page {
+  .profile-box {
+    display: flex;
+  }
+
+  div.profile-image > img {
+    align-self: center;
+    display: flex;
+    justify-content: center;
+    max-width: 30vw;
+    padding: 15px;
+  }
+}

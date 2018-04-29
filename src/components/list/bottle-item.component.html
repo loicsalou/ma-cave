@@ -3,7 +3,8 @@
     <ion-row>
       <ion-col col-2 class="icons" style="padding-right:7px;">
         <ion-avatar item-start (click)="switchSelected($event, bottle)">
-          <div class="icon" [ngClass]="isSelected(bottle) ? 'checked' : (bottle | bottleClass)">
+          <ion-icon *ngIf="isSelected(bottle)" name="checkmark-circle-outline" style="font-size: 2.4em;"></ion-icon>
+          <div class="icon" *ngIf="!isSelected(bottle)" [ngClass]="(bottle | bottleClass)">
             <img src="assets/icon/starred.png" *ngIf="isBottleFavorite(bottle) && !isSelected(bottle)">
             <img src="assets/icon/alert-status.png" *ngIf="bottle.overdue && !isSelected(bottle)">
           </div>
@@ -25,14 +26,9 @@
   </ion-item>
   
   <ion-item-options side="right">
-    <button ion-button (click)="locateBottles($event, item, [bottle])"
-            *ngIf="bottle.positions.length > 0">
-      <ion-icon name="pin"></ion-icon>
-    </button>
-    
-    <button ion-button (click)="addToFavorite($event, item, bottle)">
-      <ion-icon name="star" [ngClass]="bottle.favorite ? 'favorite':''"></ion-icon>
-    </button>
+    <bottle-action [bottle]="bottle" (locate)="locateBottles($event, item, [bottle])"
+                   (favorite)="locateBottles($event, item, bottle)">
+    </bottle-action>
   </ion-item-options>
 
 </ion-item-sliding>

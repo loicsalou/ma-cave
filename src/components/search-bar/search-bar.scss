@@ -6,7 +6,7 @@ search-bar {
     display: flex;
     flex-grow: 1;
     height: 100%;
-    left: -250px;
+    left: -350px;
     position: absolute;
     top: 0;
     opacity: 0;
@@ -14,7 +14,7 @@ search-bar {
 
     &.active {
       opacity: 1;
-      transform: translateX(290px);
+      transform: translateX(390px);
       width: 76%;
     }
   }
@@ -23,7 +23,7 @@ search-bar {
     display: block;
     flex-grow: 1;
     height: 100%;
-    left: -250px;
+    left: -350px;
     opacity: 0;
     padding-top: 10px;
     position: absolute;
@@ -38,7 +38,7 @@ search-bar {
 
     &.active {
       opacity: 1;
-      transform: translateX(290px);
+      transform: translateX(390px);
     }
   }
 

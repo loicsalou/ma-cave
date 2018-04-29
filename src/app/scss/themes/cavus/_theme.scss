@@ -2,6 +2,29 @@
 
 .cavus-theme {
   @import "./variables";
+  @import "./ios";
+  @import "./md";
+
+  .checkbox-checked {
+    border-color: map-get($colors-cavus, buttonBackground);
+    background-color: map-get($colors-cavus, buttonBackground);
+  }
+
+  ion-avatar ion-icon {
+    color: map-get($colors-cavus, primary);
+  }
+
+  button[ion-fab],
+  button[menuToggle],
+  ion-item-sliding button[ion-button] ion-icon {
+    background-color: map-get($colors-cavus, buttonBackground);
+    color: map-get($colors-cavus, light);
+  }
+
+  ion-item-sliding button[ion-button] {
+    background-color: transparent;
+    color: map-get($colors-cavus, light);
+  }
 
   .mod-navbar {
     .reminder > ion-note {

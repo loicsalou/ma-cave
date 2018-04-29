@@ -64,12 +64,12 @@ export class DashboardPage implements OnInit, OnDestroy {
     this.version = VERSION;
     this.bottleSub = this.bottleService.allBottlesObservable.subscribe(
       (bottles: Bottle[]) => {
+        setTimeout(() => {
+          this.popup.dismiss(), 10;
+        });
         if (bottles && bottles.length > 0) {
           this.bottles = bottles;
           this.totalNumberOfBottles = bottles.reduce((tot: number, btl: Bottle) => tot + +btl.quantite_courante, 0);
-          setTimeout(() => {
-            this.popup.dismiss(), 10;
-          });
         }
       },
       () => {

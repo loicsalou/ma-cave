@@ -69,6 +69,10 @@ export class GoogleLoginService extends AbstractLoginService {
         // close popup
         popup.dismiss();
         self.success(googleUser);
+      }, (rejectReason: any) => {
+        popup.dismiss();
+        this.notificationService.error('login failed: ' + rejectReason);
+        self.loginFailed();
       }).catch(function (error) {
         // Handle Errors here.
         //let errorCode = error[ 'code' ];

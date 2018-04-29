@@ -8,6 +8,7 @@
 <ion-content padding class="cellar-page page">
   
   <ion-row>
+    <ion-col col-xs-12 class="hidden-md">
     <ion-slides [pager]="false" (ionSlideDidChange)="slideChanged()" [spaceBetween]="5" [slidesPerView]="1">
       <ion-slide *ngFor="let locker of otherLockers" style="max-width: 90vw">
         <div style="width: 100%" #zoomable>
@@ -18,6 +19,15 @@
         </div>
       </ion-slide>
     </ion-slides>
+    </ion-col>
+    <ion-col col-md-12>
+      <div #zoomable *ngFor="let locker of otherLockers">
+        <locker [locker]="locker" [content]="lockerContent" *ngIf="!locker.isFridge()"
+                [highlighted]="bottlesToHighlight" (onCellSelected)="cellSelected($event)"></locker>
+        <fridge-locker [fridge]="locker" [content]="lockerContent" *ngIf="locker.isFridge()"
+                       [highlighted]="bottlesToHighlight" (onCellSelected)="cellSelected($event)"></fridge-locker>
+      </div>
+    </ion-col>
   </ion-row>
   
   <div *ngIf="bottlesToPlace" bottom left>
@@ -51,7 +61,8 @@
     </ion-badge>
     <ion-fab-list side="left">
       <button ion-fab style="border: thin solid black" (click)="withdraw(pendingCell)">
-        <img src="assets/icon/tire-bouchon.png">
+        <!--<img src="assets/icon/tire-bouchon.png">-->
+        <span class="cavus-corkscrew"></span>
       </button>
       <button ion-fab style="border: thin solid black" (click)="zoomOnBottle(pendingCell)">
         <ion-icon name="search"></ion-icon>

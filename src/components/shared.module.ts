@@ -28,6 +28,8 @@ import {BottleClassPipe} from './list/bottle-color-class.pipe';
 import {CurrentFiltersComponent} from './current-filters/current-filters';
 import {SearchBarComponent} from './search-bar/search-bar';
 import {PageHeaderComponent} from './page-header/page-header';
+import {BottleActionComponent} from './bottle-action/bottle-action';
+import {ResponsiveWrapperComponent} from './responsive-wrapper/responsive-wrapper';
 
 @NgModule({
             imports: [
@@ -38,6 +40,7 @@ import {PageHeaderComponent} from './page-header/page-header';
               TranslateModule
             ],
             declarations: [
+              BottleActionComponent,
               BottleIconPipe,
               BottleClassPipe,
               BottleItemComponent,
@@ -51,12 +54,14 @@ import {PageHeaderComponent} from './page-header/page-header';
               PageHeaderComponent,
               ProgressBarComponent,
               RatingComponent,
+              ResponsiveWrapperComponent,
               SearchBarComponent,
               SimpleLockerComponent,
               StatisticsComponent,
               WithdrawalItemComponent
             ],
             exports: [
+              BottleActionComponent,
               BottleIconPipe,
               BottleClassPipe,
               BottleItemComponent,
@@ -70,6 +75,7 @@ import {PageHeaderComponent} from './page-header/page-header';
               PageHeaderComponent,
               ProgressBarComponent,
               RatingComponent,
+              ResponsiveWrapperComponent,
               SearchBarComponent,
               SimpleLockerComponent,
               StatisticsComponent,

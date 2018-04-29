@@ -1,0 +1,8 @@
+<button ion-button (click)="locateBottle($event)"
+        *ngIf="bottle.positions.length > 0">
+  <ion-icon name="pin"></ion-icon>
+</button>
+
+<button ion-button (click)="favoriteBottle($event)">
+  <ion-icon name="star" [ngClass]="bottle.favorite ? 'favorite':''"></ion-icon>
+</button>
