@@ -1,5 +1,5 @@
 import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {FilterSet} from '../distribution/distribution';
+import {FilterSet} from '../distribution/filterset';
 
 /**
  * Generated class for the CurrentDistributionComponent component.

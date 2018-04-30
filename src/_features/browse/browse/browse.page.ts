@@ -3,7 +3,7 @@ import {MenuController, NavController, NavParams, Platform} from 'ionic-angular'
 import {BottlePersistenceService} from '../../../service/bottle-persistence.service';
 import {Bottle} from '../../../model/bottle';
 import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
-import {FilterSet} from '../../../components/distribution/distribution';
+import {FilterSet} from '../../../components/distribution/filterset';
 import {Subscription} from 'rxjs/Subscription';
 import * as _ from 'lodash';
 import {NotificationService} from '../../../service/notification.service';

@@ -2,7 +2,7 @@ import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/c
 import {DistributeService} from '../../service/distribute.service';
 import {Bottle} from '../../model/bottle';
 import * as _ from 'lodash';
-import {FilterSet} from '../distribution/distribution';
+import {FilterSet} from '../distribution/filterset';
 import {ChartEvent} from '../chart/chart.component';
 import {TranslateService} from '@ngx-translate/core';
 

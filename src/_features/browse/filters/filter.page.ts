@@ -1,6 +1,6 @@
 import {Bottle} from '../../../model/bottle';
 import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {FilterSet, SortOption} from '../../../components/distribution/distribution';
+import {SortOption} from '../../../components/distribution/distribution';
 import {BottlePersistenceService} from '../../../service/bottle-persistence.service';
 import {MenuController} from 'ionic-angular';
 import {Subscription} from 'rxjs/Subscription';
@@ -10,6 +10,7 @@ import {ApplicationState} from '../../../app/state/app.state';
 import {ResetFilterAction, UpdateFilterAction} from '../../../app/state/filters.action';
 import {FilterState} from '../../../app/state/filters.state';
 import {BottlesQuery, BottlesState} from '../../../app/state/bottles.state';
+import {FilterSet} from '../../../components/distribution/filterset';
 
 @Component({
              selector: 'page-filter',
@@ -39,7 +40,7 @@ export class FilterPage implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.filtersSub = this.store.select(BottlesQuery.getFilter).subscribe(
-      filterSet => this.filterSet = filterSet
+      filterSet => this.filterSet = Object.assign(new FilterSet(),filterSet)
     );
     this.bottles.subscribe(
       (bottles: Bottle[]) => {
@@ -75,31 +76,26 @@ export class FilterPage implements OnInit, OnDestroy {
   //}
 
   switchFavorite(event) {
-    this.filterSet = Object.assign(new FilterSet(), this.filterSet);
     this.filterSet.switchFavorite();
     this.store.dispatch(new UpdateFilterAction(this.filterSet));
   }
 
   switchOverdue(event) {
-    this.filterSet = Object.assign(new FilterSet(), this.filterSet);
     this.filterSet.switchOverdue();
     this.store.dispatch(new UpdateFilterAction(this.filterSet));
   }
 
   switchedPlaced(event) {
-    this.filterSet = Object.assign(new FilterSet(), this.filterSet);
     this.filterSet.placed = event.checked;
     this.store.dispatch(new UpdateFilterAction(this.filterSet));
   }
 
   switchedToBePlaced(event) {
-    this.filterSet = Object.assign(new FilterSet(), this.filterSet);
     this.filterSet.toBePlaced = event.checked;
     this.store.dispatch(new UpdateFilterAction(this.filterSet));
   }
 
   switchHistory(event) {
-    this.filterSet = Object.assign(new FilterSet(), this.filterSet);
     this.filterSet.switchHistory();
     this.store.dispatch(new UpdateFilterAction(this.filterSet));
   }
@@ -133,7 +129,6 @@ export class FilterPage implements OnInit, OnDestroy {
 
   reset() {
     this.store.dispatch(new ResetFilterAction());
-    this.filterSet.reset();
     this.menuController.close();
   }
 }

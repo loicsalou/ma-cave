@@ -1,6 +1,5 @@
 import {contactsReducer, ContactsState} from './contacts/contact.reducer';
-import {environment} from '../../environments/environment';
-import {FilterSet} from '../../components/distribution/distribution';
+import {FilterSet} from '../../components/distribution/filterset';
 import {FiltersActions, FiltersActionTypes} from './filters.action';
 
 export interface FilterState {

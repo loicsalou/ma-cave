@@ -2,8 +2,9 @@ import {contactsReducer, ContactsState} from './contacts/contact.reducer';
 import {Bottle} from '../../model/bottle';
 import {BottlesActions, BottlesActionTypes} from './bottles.action';
 import {ApplicationState} from './app.state';
-import {FilterSet} from '../../components/distribution/distribution';
+import {FilterSet} from '../../components/distribution/filterset';
 import {createSelector} from '@ngrx/store';
+import {match} from '../../components/distribution/filter-matcher';
 
 export interface BottlesState {
   allBottles: {
@@ -30,9 +31,9 @@ export namespace BottlesQuery {
   export const getBottlesLoading = (state: ApplicationState) => state.bottles.allBottles.loading;
   export const getSelectedBottles = createSelector(
     getBottles, getFilter, (bottles: Bottle[], filter: FilterSet) => filter
-      ? bottles.filter((bottle: Bottle) => filter.matches(bottle))
+      ? bottles.filter((bottle: Bottle) => match(filter, bottle))
       : bottles
-    );
+  );
 }
 
 export function bottlesReducer(state: BottlesState = INITIAL_STATE, action: BottlesActions) {

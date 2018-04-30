@@ -1,5 +1,5 @@
 import {Action} from '@ngrx/store';
-import {FilterSet} from '../../components/distribution/distribution';
+import {FilterSet} from '../../components/distribution/filterset';
 
 export enum FiltersActionTypes {
   UpdateFilterActionType = '[filter] - changed',

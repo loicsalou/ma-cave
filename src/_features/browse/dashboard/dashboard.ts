@@ -4,7 +4,7 @@ import {BrowsePage} from '../browse/browse.page';
 import {LoginService} from '../../../service/login/login.service';
 import {BottlePersistenceService} from '../../../service/bottle-persistence.service';
 import {Bottle} from '../../../model/bottle';
-import {FilterSet} from '../../../components/distribution/distribution';
+import {FilterSet} from '../../../components/distribution/filterset';
 import {Subscription} from 'rxjs/Subscription';
 import {NativeProvider} from '../../../providers/native/native';
 import {NotificationService} from '../../../service/notification.service';
@@ -19,7 +19,7 @@ import {VERSION} from '../../admin/version';
 import {ApplicationState} from '../../../app/state/app.state';
 import {Store} from '@ngrx/store';
 import {BottlesQuery} from '../../../app/state/bottles.state';
-import {UpdateFilterAction} from '../../../app/state/filters.action';
+import {ResetFilterAction, UpdateFilterAction} from '../../../app/state/filters.action';
 
 @Component({
              selector: 'page-dashboard',
@@ -144,15 +144,16 @@ export class DashboardPage implements OnInit, OnDestroy {
     let fs: FilterSet = new FilterSet();
     fs.overdueOnly = true;
     this.store.dispatch(new UpdateFilterAction(fs))
-    this.navCtrl.push(BrowsePage, {filterSet: fs});
+    this.navCtrl.push(BrowsePage);
   }
 
   showFiltered(chosenFilter: FilterSet) {
     this.store.dispatch(new UpdateFilterAction(chosenFilter))
-    this.navCtrl.push(BrowsePage, {filterSet: chosenFilter});
+    this.navCtrl.push(BrowsePage);
   }
 
   showAll() {
+    this.store.dispatch(new ResetFilterAction());
     this.navCtrl.push(BrowsePage);
   }
 
@@ -164,7 +165,8 @@ export class DashboardPage implements OnInit, OnDestroy {
   showFavorites() {
     let fs: FilterSet = new FilterSet();
     fs.favoriteOnly = true;
-    this.navCtrl.push(BrowsePage, {filterSet: fs});
+    this.store.dispatch(new UpdateFilterAction(fs));
+    this.navCtrl.push(BrowsePage);
   }
 
   private filterOnTextAndNavigate(texts: string[]) {
@@ -172,9 +174,8 @@ export class DashboardPage implements OnInit, OnDestroy {
     if (texts != undefined && texts.length != 0) {
       this.notificationService.debugAlert('recherche de: ' + texts);
       fs.text = texts;
-      this.navCtrl.push(BrowsePage, {
-        filterSet: fs
-      });
+      this.store.dispatch(new UpdateFilterAction(fs));
+      this.navCtrl.push(BrowsePage);
     }
   }
 }

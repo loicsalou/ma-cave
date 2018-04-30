@@ -5,7 +5,7 @@ import {Injectable, OnDestroy} from '@angular/core';
 import {Bottle, Position} from '../model/bottle';
 import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {FilterSet} from '../components/distribution/distribution';
+import {FilterSet} from '../components/distribution/filterset';
 import * as _ from 'lodash';
 import {LoginService} from './login/login.service';
 import {AbstractPersistenceService} from './abstract-persistence.service';
