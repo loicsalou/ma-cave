@@ -43,9 +43,9 @@ export class BrowsePage implements OnInit, OnDestroy {
   private selectionSub: Subscription;
   private sortOption: SortOption;
 
-  constructor(public navCtrl: NavController, public platform: Platform, private bottlesService: BottlePersistenceService,
-              private notificationService: NotificationService, private menuController: MenuController,
-              private translateService: TranslateService, private nativeProvider: NativeProvider,
+  constructor(public navCtrl: NavController,
+              private menuController: MenuController,
+              private nativeProvider: NativeProvider,
               private store: Store<ApplicationState>) {
   }
 
@@ -133,7 +133,6 @@ export class BrowsePage implements OnInit, OnDestroy {
   }
 
   private getPreparedList(received: Bottle[]): Bottle[] {
-    this.notificationService.debugAlert('preparing list of ' + (received ? received.length : 0) + ' selectedBottles');
     this.nbOfLots = received.length;
     this.nbOfBottles = 0;
     if (received) {
