@@ -44,10 +44,11 @@ export class UpdatePage implements OnInit {
     this.aocData = this.initAoc(this.config.bottles.aocData);
     this.colorsData = Object.keys(this.config.bottles.colorsData).map(
       (key: string) => {
-        return {key: key, value: this.config.bottles.colorsData[ key ]}
+        return {key: key, value: this.config.bottles.colorsData[ key ]};
       }
     );
-    this.bottle = navParams.data[ 'bottle' ];
+    // input bottle is immutable ==> clone
+    this.bottle = new Bottle(navParams.data[ 'bottle' ]);
     this.metadata = UpdatePage.getMetadata(this.bottle);
   }
 
@@ -81,7 +82,7 @@ export class UpdatePage implements OnInit {
       subregion_label: bottle.subregion_label,
       keywords: keywords,
       secondaryKeywords: secondaryKeywords
-    }
+    };
   }
 
   private static extractKeywords(text: string): string[] {
@@ -92,7 +93,7 @@ export class UpdatePage implements OnInit {
         .filter(keyword => keyword.length > 2)
         .map(keyword => keyword.toLowerCase());
     } else {
-      return []
+      return [];
     }
   }
 
@@ -102,7 +103,7 @@ export class UpdatePage implements OnInit {
       images => {
         this.images = images.map(
           image => {
-            return {src: image.image}
+            return {src: image.image};
           }
         );
       }
@@ -176,7 +177,7 @@ export class UpdatePage implements OnInit {
   setProfileImage(downloadURL: string) {
     this.bottle.profile_image_url = downloadURL ? downloadURL : '';
     if (!this.bottle.image_urls) {
-      this.bottle.image_urls = []
+      this.bottle.image_urls = [];
     }
     this.bottle.image_urls.push(downloadURL);
   }
@@ -208,7 +209,7 @@ export class UpdatePage implements OnInit {
         'appellationSearched': UpdatePage.getSearchStringFor(aoc.Appellations),
         'types': aoc[ 'Type de vins produit' ],
         'dryness': aoc[ 'Teneur en sucre' ]
-      }
+      };
     })
       .sort((a: AocInfo, b: AocInfo) => a.appellation > b.appellation ? 1 : -1);
   }

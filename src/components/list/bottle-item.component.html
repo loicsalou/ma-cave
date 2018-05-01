@@ -27,7 +27,7 @@
   
   <ion-item-options side="right">
     <bottle-action [bottle]="bottle" (locate)="locateBottles($event, item, [bottle])"
-                   (favorite)="locateBottles($event, item, bottle)">
+                   (favorite)="addToFavorite($event, item, bottle)">
     </bottle-action>
   </ion-item-options>
 

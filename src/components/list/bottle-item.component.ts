@@ -1,9 +1,11 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {Bottle} from '../../model/bottle';
 import {ItemSliding, NavController} from 'ionic-angular';
 import {CellarPage} from '../../_features/racks/cellar/cellar.page';
 import {NativeProvider} from '../../providers/native/native';
+import {ApplicationState} from '../../app/state/app.state';
+import {Store} from '@ngrx/store';
+import {UpdateBottlesAction} from '../../app/state/bottles.action';
 
 @Component({
              selector: 'bottle-item',
@@ -15,11 +17,13 @@ export class BottleItemComponent {
   @Input()
   bottle: Bottle;
   @Output()
-  showDetail: EventEmitter<Bottle> = new EventEmitter();
+  onShowDetail: EventEmitter<Bottle> = new EventEmitter();
   @Output()
-  selected: EventEmitter<Bottle> = new EventEmitter();
+  onSelected: EventEmitter<{ bottle: Bottle, selected: boolean }> = new EventEmitter();
 
-  constructor(private bottlesService: BottlePersistenceService,
+  selected = false;
+
+  constructor(private store: Store<ApplicationState>,
               private navCtrl: NavController, private nativeProvider: NativeProvider) {
   }
 
@@ -28,21 +32,21 @@ export class BottleItemComponent {
   }
 
   triggerDetail(bottle: Bottle) {
-    this.showDetail.emit(bottle);
+    this.onShowDetail.emit(bottle);
   }
 
-  switchSelected(event: Event, bottle: Bottle) {
+  switchSelected() {
     event.stopPropagation();
-    bottle.selected = !bottle.selected;
-    this.selected.emit(bottle);
+    this.selected = !this.selected;
+    this.onSelected.emit({bottle: this.bottle, selected: this.selected});
   }
 
   numberNotPlaced(bottle: Bottle): number {
     return bottle.numberToBePlaced();
   }
 
-  isSelected(bottle) {
-    return bottle.selected;
+  isSelected() {
+    return this.selected;
   }
 
   isBottleFavorite(bottle: Bottle): boolean {
@@ -61,8 +65,9 @@ export class BottleItemComponent {
   addToFavorite(event: Event, slidingItem: ItemSliding, bottle: Bottle) {
     this.nativeProvider.feedBack();
     event.stopPropagation();
-    bottle.favorite = bottle.favorite ? !bottle.favorite : true;
-    this.bottlesService.update([ bottle ]);
+    let updatedBottle = new Bottle(bottle);
+    updatedBottle.favorite = !bottle.favorite;
+    this.store.dispatch(new UpdateBottlesAction([updatedBottle]));
     slidingItem.close();
   }
 }

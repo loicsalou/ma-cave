@@ -27,6 +27,7 @@ import {SearchCriteria} from '../model/search-criteria';
 import {ApplicationState} from '../app/state/app.state';
 import {Store} from '@ngrx/store';
 import {LoadBottlesSuccessAction} from '../app/state/bottles.action';
+import {tap} from 'rxjs/operators';
 
 /**
  * Services related to the bottles in the cellar.
@@ -81,37 +82,29 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
     }
   }
 
-  public update(bottles: Bottle[]) {
-    this.bottlesService.update(bottles.map((btl: Bottle) => {
-      btl.lastUpdated = new Date().getTime();
-      btl.positions = btl.positions.filter(pos => pos.lockerId !== undefined);
-      delete btl.selected;
-      return btl;
-    })).then(
-      () => {
-        () => this.notificationService.information('update.saved');
-        err => this.notificationService.failed('update.failed', err);
-      }
+  public update(bottles: Bottle[]): Observable<Bottle[]> {
+    return this.bottlesService.update(bottles.map((btl: Bottle) => {
+      let updatedBottle = new Bottle(btl);
+      updatedBottle.lastUpdated = new Date().getTime();
+      updatedBottle.positions = updatedBottle.positions.filter(pos => pos.lockerId !== undefined);
+      delete updatedBottle.selected;
+      return updatedBottle;
+    })).pipe(
+      tap((bottles: Bottle[]) =>
+            this.notificationService.information('update.saved'))
     );
   }
 
   public updateLockerAndBottles(bottles: Bottle[], locker: Locker) {
-    this.bottlesService.updateLockerAndBottles(bottles, locker)
-      .then(
-        () => this.notificationService.information('update.saved'),
-        err => this.notificationService.failed('update.failed', err)
-      );
+    this.bottlesService.updateLockerAndBottles(bottles, locker);
   }
 
-  public save(bottles: Bottle[]): Promise<any> {
+  public save(bottles: Bottle[]): Observable<Bottle[]> {
     return this.bottlesService.saveBottles(bottles);
   }
 
-  public deleteBottles() {
-    this.bottlesService.deleteBottles().then(
-      () => this.notificationService.information('Suppression effectuée'),
-      error => this.notificationService.failed('La suppression des bouteilles a échoué', error)
-    );
+  public deleteBottles(): Observable<boolean> {
+    return this.bottlesService.deleteBottles();
   }
 
   public getBottle(id: string): Bottle {

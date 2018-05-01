@@ -19,7 +19,7 @@ import {VERSION} from '../../admin/version';
 import {ApplicationState} from '../../../app/state/app.state';
 import {Store} from '@ngrx/store';
 import {BottlesQuery} from '../../../app/state/bottles.state';
-import {ResetFilterAction, UpdateFilterAction} from '../../../app/state/filters.action';
+import {ResetFilterAction, UpdateFilterAction} from '../../../app/state/bottles.action';
 
 @Component({
              selector: 'page-dashboard',

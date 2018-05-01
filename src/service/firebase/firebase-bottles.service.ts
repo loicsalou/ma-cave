@@ -17,6 +17,9 @@ import {User} from '../../model/user';
 import {Subscription} from 'rxjs/Subscription';
 import {Locker} from '../../model/locker';
 import {sanitizeBeforeSave} from '../../utils/index';
+import {fromPromise} from 'rxjs/observable/fromPromise';
+import {_throw} from 'rxjs/observable/throw';
+import {of} from 'rxjs/observable/of';
 import Reference = firebase.database.Reference;
 
 /**
@@ -36,16 +39,14 @@ export class FirebaseBottlesService {
   private _bottles: BehaviorSubject<Bottle[]>;
   private firebaseBottlesSub: Subscription;
   private errorRootRef: Reference;
-  private connectionAllowed: boolean = true;
+  private _allBottlesObservable: Observable<Bottle[]>;
 
   constructor(private bottleFactory: BottleFactory,
               private angularFirebase: AngularFireDatabase,
               private notificationService: NotificationService) {
   }
 
-  private _allBottlesObservable: Observable<Bottle[]>;
-
-  get allBottlesObservable(): Observable<Bottle[ ]> {
+  get allBottlesObservable(): Observable<Bottle[]> {
     this._bottles = new BehaviorSubject<Bottle[]>([]);
     this._allBottlesObservable = this._bottles.asObservable();
     this.fetchAllBottles();
@@ -97,7 +98,7 @@ export class FirebaseBottlesService {
    * prendre la date de mise à jour la plus récente dans le cache et aller chercher en DB les màj plus récentes que
    * cette date. Remettre à jour le cache et ré-émettre les données pour l'affichage.
    *
-   * @returns {undefined}
+   * @returns {void}
    */
   public fetchAllBottles() {
     this.notificationService.debugAlert('fetchAllBottles()');
@@ -110,13 +111,7 @@ export class FirebaseBottlesService {
    * @param {Bottle} bottle
    * @returns {Observable<Image[]>}
    */
-  public listBottleImages(bottle: Bottle): Observable<Image[ ]> {
-    if (!
-        this.connectionAllowed
-    ) {
-      this.notificationService.failed('app.unavailable-function');
-      return undefined;
-    }
+  public listBottleImages(bottle: Bottle): Observable<Image[]> {
     return this.angularFirebase.list<Image>(this.XREF_ROOT).valueChanges();
   }
 
@@ -127,139 +122,81 @@ export class FirebaseBottlesService {
    * @param {Bottle[]} bottles
    * @returns {Promise<any>}
    */
-  public update(bottles: Bottle[ ]): Promise<any> {
-    if (!this.connectionAllowed) {
-      this.notificationService.failed('update.failed');
-      return undefined;
-    }
-
-    return new Promise((resolve, reject) => {
-      let updates = {};
-      bottles.forEach(bottle => {
-        bottle[ 'lastUpdated' ] = new Date().getTime();
-        updates[ '/' + bottle.id ] = sanitizeBeforeSave(bottle);
-      });
-      this.notificationService.debugAlert('sur le point de this.bottlesRootRef.update(' + JSON.stringify(updates) + ')');
-      this.bottlesRootRef.update(updates, (
-        err => {
-          if (err == null) {
-            this.notificationService.debugAlert('mise à jour OK');
-            resolve(null)
-          } else {
-            this.notificationService.debugAlert('mise à jour KO ' + err);
-            reject(err)
-          }
-        }
-      ));
-    })
+  public update(bottles: Bottle[]): Observable<Bottle[]> {
+    let updates = {};
+    bottles.forEach(bottle => {
+      bottle[ 'lastUpdated' ] = new Date().getTime();
+      updates[ '/' + bottle.id ] = sanitizeBeforeSave(bottle);
+    });
+    this.notificationService.debugAlert('sur le point de this.bottlesRootRef.update(' + JSON.stringify(updates) + ')');
+    return fromPromise(this.bottlesRootRef.update(updates)
+                         .then(() => bottles)
+                         .catch(err => err)
+    );
   }
 
   /**
-   * Transaction de mise à jour d'un casier et de son contenu. Soit toute la mise é jour est faite soit rien n'est
+   * Transaction de mise à jour d'un casier et de son contenu. Soit toute la mise à jour est faite soit rien n'est
    * mis à jour, ce afin de préserver la cohérence des données.
    * @param {Bottle[]} bottles bouteilles du casier
    * @param {Locker} locker casier contenant les bouteilles
    * @returns {Promise<any>}
    */
-  public updateLockerAndBottles(bottles: Bottle[ ], locker: Locker): Promise<any> {
-    if (!
-        this.connectionAllowed
-    ) {
-      this.notificationService.failed('update.failed');
-      return undefined;
-    }
+  public updateLockerAndBottles(bottles: Bottle[], locker: Locker): Observable<Bottle[]> {
+    let updates = {};
+    bottles.forEach(bottle => {
+      bottle[ 'lastUpdated' ] = new Date().getTime();
+      updates[ '/' + schema.BOTTLES_FOLDER + '/' + bottle.id ] = bottle;
+    });
+    locker[ 'lastUpdated' ] = new Date().getTime();
+    locker = sanitizeBeforeSave(locker);
+    updates[ '/' + schema.CELLAR_FOLDER + '/' + locker.id ] = locker;
+    return fromPromise(
+      this.userRootRef.update(updates)
+        .then(() => bottles)
+        .catch(err => err)
+    );
+  }
 
-    return new Promise((resolve, reject) => {
-      let updates = {};
-      bottles.forEach(bottle => {
-        bottle[ 'lastUpdated' ] = new Date().getTime();
-        updates[ '/' + schema.BOTTLES_FOLDER + '/' + bottle.id ] = bottle;
-      });
-      locker[ 'lastUpdated' ] = new Date().getTime();
-      locker = sanitizeBeforeSave(locker);
-      updates[ '/' + schema.CELLAR_FOLDER + '/' + locker.id ] = locker;
-      this.userRootRef.update(updates, (
+  public saveBottles(bottles: Bottle[]): Observable<Bottle[]> {
+    bottles.forEach(bottle => {
+      bottle[ 'lastUpdated' ] = new Date().getTime();
+      this.bottlesRootRef.push(sanitizeBeforeSave(bottle), (
         err => {
-          if (err == null) {
-            resolve(null)
-          } else {
-            reject(err)
+          if (err !== null) {
+            this.notificationService.error('La sauvegarde a échoué pour ' + bottle.nomCru + ' : ' + err);
+            _throw(err);
           }
         }
       ));
-    })
+    });
+
+    return of(bottles);
   }
 
-  public saveBottles(bottles: Bottle[ ]): Promise<any> {
-    if (!
-        this.connectionAllowed
-    ) {
-      this.notificationService.failed('Sauvegarde indisponible en offline');
-      return undefined;
-    }
-    return new Promise((resolve, reject) => {
-      bottles.forEach(bottle => {
-        bottle[ 'lastUpdated' ] = new Date().getTime();
-        this.bottlesRootRef.push(sanitizeBeforeSave(bottle), (
-          err => {
-            if (err == null) {
-              resolve(null)
-            } else {
-              reject(err)
-            }
-          }
-        ))
-      })
-    })
+  public replaceBottle(bottle: Bottle): Observable<Bottle> {
+    bottle[ 'lastUpdated' ] = new Date().getTime();
+    return fromPromise(
+      this.bottlesRootRef.child(bottle.id).set(sanitizeBeforeSave(bottle))
+        .then(() => bottle)
+        .catch(err => err)
+    );
   }
 
-  public replaceBottle(bottle: Bottle) {
-    if (!this.connectionAllowed) {
-      this.notificationService.failed('Replace indisponible en offline');
-      return undefined;
-    }
-    return new Promise((resolve, reject) => {
-                         bottle[ 'lastUpdated' ] = new Date().getTime();
-                         this.bottlesRootRef.child(bottle.id).set(sanitizeBeforeSave(bottle), err => {
-                                                                    if (err == null) {
-                                                                      resolve(null)
-                                                                    } else {
-                                                                      reject(err)
-                                                                    }
-                                                                  }
-                         )
-                       }
-    )
-  }
-
-  public deleteBottles() {
-    if (!this.connectionAllowed) {
-      this.notificationService.failed('Suppression indisponible en offline');
-      return undefined;
-    }
-    return new Promise((resolve, reject) => {
-                         this.bottlesRootRef.remove(err => {
-                                                      if (err == null) {
-                                                        resolve(null)
-                                                      } else {
-                                                        reject(err)
-                                                      }
-                                                    }
-                         )
-                       }
-    )
-  }
-
-  isConnectionAllowed(): boolean {
-    return this.connectionAllowed;
-  }
-
-  setConnectionAllowed(b: boolean) {
-    this.connectionAllowed = b;
+  public deleteBottles(): Observable<boolean> {
+    return fromPromise(
+      this.bottlesRootRef.remove()
+        .then(() => true)
+        .catch(err => {
+                 this.notificationService.error('les bouteilles n\'ont pu être supprimées: ' + err);
+                 return false;
+               }
+        )
+    );
   }
 
   disconnectListeners() {
-    this.firebaseBottlesSub.unsubscribe()
+    this.firebaseBottlesSub.unsubscribe();
   }
 
   reconnectListeners() {
@@ -271,7 +208,7 @@ export class FirebaseBottlesService {
       if (snap.numChildren() > 3) {
         this.errorRootRef.limitToFirst(1).ref.remove();
       }
-    })
+    });
   }
 
   //============== NO CACHE AVAILABLE

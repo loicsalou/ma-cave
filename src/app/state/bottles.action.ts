@@ -1,21 +1,49 @@
 import {Action} from '@ngrx/store';
 import {Bottle} from '../../model/bottle';
+import {FilterSet} from '../../components/distribution/filterset';
 
 export enum BottlesActionTypes {
   LoadBottlesActionType = '[bottles] - loading',
   LoadBottlesSuccessActionType = '[bottles] - loading success',
   LoadBottlesFailedActionType = '[bottles] - loading failed',
   CreateBottleActionType = '[bottles] - create bottle',
-  UpdateBottlesActionType = '[bottles] - change bottle',
-  DrawBottlesActionType = '[bottles] - draw bottles'
+  UpdateBottlesActionType = '[bottles] - update bottles',
+  UpdateBottlesSuccessActionType = '[bottles] - update bottles success',
+  DrawBottlesActionType = '[bottles] - draw bottles',
+  UpdateFilterActionType = '[filter] - changed',
+  ResetFilterActionType = '[filter] - reset',
+  ResetBottleSelectionActionType = '[bottles] - reset selection',
+  SelectBottleActionType = '[bottles] - reset'
 }
 
 export type BottlesActions = LoadBottlesAction
   | LoadBottlesSuccessAction
   | LoadBottlesFailedAction
   | CreateBottleAction
-  | UpdateBottleAction
-  | DrawBottlesAction;
+  | UpdateBottlesAction
+  | UpdateBottleSuccessAction
+  | DrawBottlesAction
+  | UpdateFilterAction
+  | ResetFilterAction
+  | ResetBottleSelectionAction
+  | SelectBottleAction;
+
+/**
+ * Mise à jour du filtre
+ */
+export class UpdateFilterAction implements Action {
+  readonly type = BottlesActionTypes.UpdateFilterActionType;
+
+  constructor(public newFilter: FilterSet) {
+  }
+}
+
+/**
+ * Reset du filtre
+ */
+export class ResetFilterAction implements Action {
+  readonly type = BottlesActionTypes.ResetFilterActionType;
+}
 
 /**
  * Chargement des bouteilles
@@ -51,10 +79,38 @@ export class CreateBottleAction implements Action {
 /**
  * Mise à jour d'une bouteille
  */
-export class UpdateBottleAction implements Action {
+export class UpdateBottlesAction implements Action {
   readonly type = BottlesActionTypes.UpdateBottlesActionType;
 
-  constructor(public bottle: Bottle) {
+  constructor(public bottle: Bottle[]) {
+  }
+}
+
+/**
+ * Mise à jour d'une bouteille
+ */
+export class UpdateBottleSuccessAction implements Action {
+  readonly type = BottlesActionTypes.UpdateBottlesSuccessActionType;
+
+  constructor(public bottles: Bottle[]) {}
+}
+
+/**
+ * Sélection d'une bouteille pour travailler dessus (ex. pour les sorties, les rangements, les suppressions...)
+ * Cette action est en général déclenchée depuis la liste de bouteilles.
+ */
+export class ResetBottleSelectionAction implements Action {
+  readonly type = BottlesActionTypes.ResetBottleSelectionActionType;
+}
+
+/**
+ * Sélection d'une bouteille pour travailler dessus (ex. pour les sorties, les rangements, les suppressions...)
+ * Cette action est en général déclenchée depuis la liste de bouteilles.
+ */
+export class SelectBottleAction implements Action {
+  readonly type = BottlesActionTypes.SelectBottleActionType;
+
+  constructor(public bottle: Bottle, public selected: boolean) {
   }
 }
 

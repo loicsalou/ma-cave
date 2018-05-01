@@ -3,21 +3,18 @@ import {ActionReducerMap, MetaReducer} from '@ngrx/store';
 import {environment} from '../../environments/environment';
 import {storeFreeze} from 'ngrx-store-freeze';
 import {bottlesReducer, BottlesState} from './bottles.state';
-import {filterReducer, FilterState} from './filters.state';
 
 export interface ApplicationState {
   bottles: BottlesState;
-  filters: FilterState;
 }
 
 export const ROOT_REDUCERS: ActionReducerMap<ApplicationState> = {
-  bottles: bottlesReducer,
-  filters: filterReducer
+  bottles: bottlesReducer
 };
 
 export const META_REDUCERS: MetaReducer<any>[] = environment.production
   ? []
-  : [storeFreeze, logReducer];
+  : [ storeFreeze, logReducer ];
 
 function logReducer(reducer) {
   return (state, action) => {

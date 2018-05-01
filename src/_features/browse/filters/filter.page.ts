@@ -1,15 +1,13 @@
 import {Bottle} from '../../../model/bottle';
 import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {SortOption} from '../../../components/distribution/distribution';
-import {BottlePersistenceService} from '../../../service/bottle-persistence.service';
 import {MenuController} from 'ionic-angular';
 import {Subscription} from 'rxjs/Subscription';
 import {Observable} from 'rxjs/Observable';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../../../app/state/app.state';
-import {ResetFilterAction, UpdateFilterAction} from '../../../app/state/filters.action';
-import {FilterState} from '../../../app/state/filters.state';
-import {BottlesQuery, BottlesState} from '../../../app/state/bottles.state';
+import {ResetFilterAction, UpdateFilterAction} from '../../../app/state/bottles.action';
+import {BottlesQuery} from '../../../app/state/bottles.state';
 import {FilterSet} from '../../../components/distribution/filterset';
 
 @Component({
@@ -40,7 +38,7 @@ export class FilterPage implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.filtersSub = this.store.select(BottlesQuery.getFilter).subscribe(
-      filterSet => this.filterSet = Object.assign(new FilterSet(),filterSet)
+      filterSet => this.filterSet = Object.assign(new FilterSet(), filterSet)
     );
     this.bottles.subscribe(
       (bottles: Bottle[]) => {
