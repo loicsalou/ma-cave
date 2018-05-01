@@ -214,6 +214,10 @@ export class FirebaseBottlesService {
   //============== NO CACHE AVAILABLE
   private fetchAllBottlesFromDB(): Subscription {
     this.notificationService.debugAlert('fetchAllBottlesFromDB()');
+    let popup = this.notificationService.createLoadingPopup('app.loading');
+    popup.onDidDismiss(() =>
+                         popup = undefined
+    );
     let items = this.angularFirebase.list<Bottle>(this.BOTTLES_ROOT).snapshotChanges();
 
     return items.subscribe(
@@ -221,12 +225,24 @@ export class FirebaseBottlesService {
         const bottles = changes.map(
           c => this.bottleFactory.create({id: c.payload.key, ...c.payload.val()})
         );
+        if (popup) {
+          popup.dismiss();
+        }
         this._bottles.next(bottles);
       },
       error => {
+        if (popup) {
+          popup.dismiss();
+        }
         this._bottles.error(error);
       },
-      () => this._bottles.complete()
+      () => {
+        if (popup) {
+          popup.dismiss();
+        }
+        this._bottles.complete();
+
+      }
     );
   }
 }

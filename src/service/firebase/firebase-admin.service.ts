@@ -14,6 +14,7 @@ import * as schema from './firebase-schema';
 import {SearchCriteria} from '../../model/search-criteria';
 import {AdminService} from '../admin.service';
 import Reference = firebase.database.Reference;
+import {UserPreferences} from '../../model/user-preferences';
 
 /**
  * Services related to the bottles in the cellar.
@@ -27,6 +28,7 @@ export class FirebaseAdminService implements AdminService {
   protected XREF_FOLDER = 'xref';
   private userRootRef: Reference;
   private PROFILE_ROOT: string;
+  private PREFERENCES_ROOT: string;
   private profileRootRef: Reference;
   private ERROR_ROOT: string;
   private errorRootRef: Reference;
@@ -41,6 +43,7 @@ export class FirebaseAdminService implements AdminService {
 
     this.XREF_ROOT = this.XREF_FOLDER;
     this.PROFILE_ROOT = schema.USERS_FOLDER + '/' + userRoot + '/' + schema.PROFILE_CONTENT_FOLDER;
+    this.PREFERENCES_ROOT = this.PROFILE_ROOT + '/' + schema.PREFERENCES_CONTENT_FOLDER;
     this.ERROR_ROOT = schema.USERS_FOLDER + '/' + userRoot + '/' + schema.ERROR_CONTENT_FOLDER;
 
     this.userRootRef = this.angularFirebase.database.ref(this.USER_ROOT);
@@ -79,6 +82,10 @@ export class FirebaseAdminService implements AdminService {
           return Observable.of([]);
         }
       });
+  }
+
+  getPreferences(): Observable<UserPreferences> {
+    return this.angularFirebase.object(this.PREFERENCES_ROOT).valueChanges();
   }
 
   updateQueryStats(keywords: string[]) {

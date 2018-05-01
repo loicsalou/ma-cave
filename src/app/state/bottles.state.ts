@@ -1,6 +1,6 @@
 import {contactsReducer, ContactsState} from './contacts/contact.reducer';
 import {Bottle} from '../../model/bottle';
-import {BottlesActions, BottlesActionTypes} from './bottles.action';
+import {BottlesActions, BottlesActionTypes} from './bottles.actions';
 import {ApplicationState} from './app.state';
 import {FilterSet} from '../../components/distribution/filterset';
 import {createSelector} from '@ngrx/store';
@@ -46,7 +46,7 @@ export namespace BottlesQuery {
   );
 }
 
-export function bottlesReducer(state: BottlesState = INITIAL_STATE, action: BottlesActions): BottlesState {
+export function bottlesStateReducer(state: BottlesState = INITIAL_STATE, action: BottlesActions): BottlesState {
   switch (action.type) {
 
     case BottlesActionTypes.CreateBottleActionType: {

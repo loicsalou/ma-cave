@@ -1,10 +1,13 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {DistributeService} from '../../service/distribute.service';
 import {Bottle} from '../../model/bottle';
 import * as _ from 'lodash';
 import {FilterSet} from '../distribution/filterset';
 import {ChartEvent} from '../chart/chart.component';
 import {TranslateService} from '@ngx-translate/core';
+import {Observable} from 'rxjs/Observable';
+import {switchMap, tap} from 'rxjs/operators';
+import {of} from 'rxjs/observable/of';
 
 /**
  * Generated class for the StatisticsComponent component.
@@ -14,7 +17,8 @@ import {TranslateService} from '@ngx-translate/core';
  */
 @Component({
              selector: 'statistics',
-             templateUrl: './statistics.component.html'
+             templateUrl: './statistics.component.html',
+             changeDetection: ChangeDetectionStrategy.OnPush
            })
 export class StatisticsComponent implements OnInit {
 
@@ -22,6 +26,20 @@ export class StatisticsComponent implements OnInit {
   axis: string;
   @Input()
   legend: string = 'none';
+  @Input()
+  topMost: number = 6;
+  @Input()
+  type: string = 'bar';
+  @Input()
+  bottles$: Observable<Bottle[]>;
+  @Output()
+  filterApplied: EventEmitter<FilterSet> = new EventEmitter<FilterSet>();
+
+  totalNumberOfBottles: number = 0;
+
+  chartColors: string[] = [];
+  chartData: number[];
+  chartLabels: string[];
   chartOptions = {
     scaleShowVerticalLines: false,
     responsive: true,
@@ -29,31 +47,24 @@ export class StatisticsComponent implements OnInit {
       position: this.legend ? this.legend : 'none'
     }
   };
-  @Input()
-  topMost: number = 6;
-  @Input()
-  type: string = 'bar';
-  @Input()
-  bottles: Bottle[];
-  @Output()
-  filterApplied: EventEmitter<FilterSet> = new EventEmitter<FilterSet>();
-  ready = false;
-  totalNumberOfBottles: number = 0;
-
-  chartLabels: string[];
-  chartData: number[];
   chartType: string = 'doughnut';
-  chartColors: string[] = [];
 
   private totalNumberOfLots: number;
   private others: KeyValue[];
+  private actualBottles$: Observable<Bottle[]>;
 
   constructor(private distributionService: DistributeService,
               private translateService: TranslateService, @Inject('GLOBAL_CONFIG') private config) {
   }
 
   ngOnInit(): void {
-    this.createChart(this.bottles.filter(btl => +btl.quantite_courante > 0));
+    this.actualBottles$ = this.bottles$.pipe(
+      switchMap((bottles: Bottle[]) => of(
+        bottles.filter(btl => btl.quantite_courante > 0)
+      )),
+      tap((bottles: Bottle[]) =>
+            this.createChart(bottles))
+    );
   }
 
   createLabelColorChart(distribution: Distribution) {
@@ -122,11 +133,9 @@ export class StatisticsComponent implements OnInit {
       this.totalNumberOfBottles = bottles.reduce((tot: number, btl: Bottle) => tot + +btl.quantite_courante, 0);
       if (this.axis == 'label') {
         this.createLabelColorChart(distribution[ 0 ]);
-        this.ready = true;
       }
       else if (this.axis == 'subregion_label') {
         this.createRegionColorChart(distribution[ 0 ]);
-        this.ready = true;
       }
     }
   }

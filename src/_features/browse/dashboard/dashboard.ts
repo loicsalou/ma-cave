@@ -1,11 +1,10 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Loading, ModalController, NavController, Platform, PopoverController, VirtualScroll} from 'ionic-angular';
+import {ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ModalController, NavController, Platform, PopoverController, VirtualScroll} from 'ionic-angular';
 import {BrowsePage} from '../browse/browse.page';
 import {LoginService} from '../../../service/login/login.service';
 import {BottlePersistenceService} from '../../../service/bottle-persistence.service';
 import {Bottle} from '../../../model/bottle';
 import {FilterSet} from '../../../components/distribution/filterset';
-import {Subscription} from 'rxjs/Subscription';
 import {NativeProvider} from '../../../providers/native/native';
 import {NotificationService} from '../../../service/notification.service';
 import {TranslateService} from '@ngx-translate/core';
@@ -19,28 +18,36 @@ import {VERSION} from '../../admin/version';
 import {ApplicationState} from '../../../app/state/app.state';
 import {Store} from '@ngrx/store';
 import {BottlesQuery} from '../../../app/state/bottles.state';
-import {ResetFilterAction, UpdateFilterAction} from '../../../app/state/bottles.action';
+import {ResetFilterAction, UpdateFilterAction} from '../../../app/state/bottles.actions';
+import {Observable} from 'rxjs/Observable';
+import {catchError, map, switchMap, tap} from 'rxjs/operators';
+import {of} from 'rxjs/observable/of';
+import {WithdrawalsQuery} from '../../../app/state/withdrawals.state';
+import {LoadWithdrawalsAction} from '../../../app/state/withdrawals.actions';
+import {SharedQuery, SharedState} from '../../../app/state/shared.state';
+import {LoadSharedAction} from '../../../app/state/shared.actions';
+import {Subscription} from 'rxjs/Subscription';
 
 @Component({
              selector: 'page-dashboard',
-             templateUrl: 'dashboard.html'
+             templateUrl: 'dashboard.html',
+             changeDetection: ChangeDetectionStrategy.OnPush
              // styleUrls:[ 'dashboard.scss' ]
            })
 export class DashboardPage implements OnInit, OnDestroy {
-  bottles: Bottle[];
+  bottles$: Observable<Bottle[]>;
+  withdrawals$: Observable<Withdrawal[]>;
+  mostUsedQueries$: Observable<SearchCriteria[]>;
+  popOverVisible$: Observable<boolean>;
+
   totalNumberOfBottles: number = 0;
   version: any;
-  withdrawals: Withdrawal[] = [];
 
   @ViewChild('withdrawals') listComponent: BottleItemComponent;
   @ViewChild(VirtualScroll) vs: VirtualScroll;
 
   private _withdrawalCardStyle: { 'min-height': string; 'height': string };
-  private bottleSub: Subscription;
-  private mostUsedQueries: SearchCriteria[];
-  private popup: Loading;
-  private queriesSub: Subscription;
-  private withdrawalsSub: Subscription;
+  private mostUsedQueriesSub: Subscription;
 
   constructor(public navCtrl: NavController, public loginService: LoginService, private notificationService: NotificationService,
               private bottleService: BottlePersistenceService, private nativeProvider: NativeProvider,
@@ -64,60 +71,62 @@ export class DashboardPage implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.nativeProvider.feedBack();
-    this.popup = this.notificationService.createLoadingPopup('app.loading');
-    //this.version = require('../../../../package.json').version;
     this.version = VERSION;
-    //this.bottleSub = this.bottleService.allBottlesObservable.subscribe(
-    this.bottleSub = this.store.select(BottlesQuery.getBottles).subscribe(
-      (bottles: Bottle[]) => {
-        setTimeout(() => {
-          this.popup.dismiss(), 10;
-        });
-        if (bottles && bottles.length > 0) {
-          this.bottles = bottles;
-          this.totalNumberOfBottles = bottles.reduce((tot: number, btl: Bottle) => tot + +btl.quantite_courante, 0);
-        }
-      },
-      () => {
-        this.popup.dismiss();
-      },
-      () => {
-        this.popup.dismiss();
-      }
+    this.bottles$ = this.store.select(BottlesQuery.getBottles).pipe(
+      tap((bottles: Bottle[]) => {
+            if (bottles && bottles.length > 0) {
+              this.totalNumberOfBottles = bottles.reduce((tot: number, btl: Bottle) => tot + +btl.quantite_courante, 0);
+            }
+          }
+      ),
+      catchError(err => {
+        this.notificationService.error('Erreur lors de la récupération de la liste de bouteilles: ' + err);
+        this.totalNumberOfBottles = 0;
+        return of([]);
+      })
     );
 
-    this.withdrawalsSub = this.bottleService.fetchAllWithdrawals().subscribe(
-      (withdrawals: Withdrawal[]) => {
-        this.withdrawals = withdrawals;
+    this.withdrawals$ = this.store.select(WithdrawalsQuery.getWithdrawals).pipe(
+      tap((withdrawals: Withdrawal[]) => {
         let height = 30 + Math.min(3, withdrawals.length) * 92;
         this._withdrawalCardStyle = {'min-height': '120px', 'height': height + 'px'};
-      },
-      (err) => {
+      }),
+      catchError((err) => {
         this.notificationService.error('messages.withdrawals-load-error');
         console.error('DashboardPage.ngOnInit: ' + err);
-      }
+        return of([]);
+      })
     );
+    this.store.dispatch(new LoadWithdrawalsAction());
 
-    let obs = this.bottleService.getMostUsedQueries();
-    this.queriesSub = obs.subscribe(
-      (queries: SearchCriteria[]) => this.mostUsedQueries = queries
+    this.mostUsedQueries$ = this.store.select(SharedQuery.getSharedState).pipe(
+      map((state: SharedState) =>
+            state.mostUsedQueries),
+      catchError((err) => {
+        this.notificationService.error('messages.most-used-queries-failed');
+        console.error('DashboardPage.ngOnInit: ' + err);
+        return of([]);
+      })
     );
+    this.popOverVisible$ = this.mostUsedQueries$.pipe(
+      switchMap(
+        (queries: SearchCriteria[]) => of(queries.length > 0)
+      )
+    );
+    this.store.dispatch(new LoadSharedAction());
   }
 
-  ngOnDestroy(): void {
-    this.bottleSub.unsubscribe();
-    this.withdrawalsSub.unsubscribe();
-    this.queriesSub.unsubscribe();
+  ngOnDestroy() {
+    this.mostUsedQueriesSub.unsubscribe();
   }
 
   triggerNotation(bottle) {
     let modal = this.modalCtrl.create(RecordOutputPage, {bottle: bottle});
     modal.present();
-
   }
 
   showPopover(myEvent) {
-    let popover = this.popoverCtrl.create(PopoverPage, this.mostUsedQueries, {cssClass: 'shadowed-grey'});
+    let popover = this.popoverCtrl.create(PopoverPage, this.mostUsedQueries$, {cssClass: 'shadowed-grey'});
     popover.onDidDismiss((action: Action) => {
       if (action != null) {
         let keywords = action.param;
@@ -143,12 +152,12 @@ export class DashboardPage implements OnInit, OnDestroy {
   showOverdue() {
     let fs: FilterSet = new FilterSet();
     fs.overdueOnly = true;
-    this.store.dispatch(new UpdateFilterAction(fs))
+    this.store.dispatch(new UpdateFilterAction(fs));
     this.navCtrl.push(BrowsePage);
   }
 
   showFiltered(chosenFilter: FilterSet) {
-    this.store.dispatch(new UpdateFilterAction(chosenFilter))
+    this.store.dispatch(new UpdateFilterAction(chosenFilter));
     this.navCtrl.push(BrowsePage);
   }
 

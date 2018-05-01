@@ -177,7 +177,7 @@ export class UploadBottlesPage {
                                                            });
                    loading.present().then(
                      () => {
-                       this.bottleService.save(parsedBottles).then(
+                       this.bottleService.save(parsedBottles).take(1).subscribe(
                          () => {
                            this.dismissLoading(loading);
                            let endTimestamp = new Date().getTime();

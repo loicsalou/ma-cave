@@ -146,6 +146,7 @@
   },
   "messages": {
     "withdraw-complete": "La bouteille a été sortie du stock - bonne dégustation !",
+    "most-used-queries-failed": "Les requêtes fréquentes n'ont pas pu être rechargées",
     "withdrawals-load-error": "Un problème technique empêche l'affichage des sorties récentes"
   },
   "ratings": {

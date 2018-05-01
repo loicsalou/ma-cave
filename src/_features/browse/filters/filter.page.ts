@@ -6,7 +6,7 @@ import {Subscription} from 'rxjs/Subscription';
 import {Observable} from 'rxjs/Observable';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../../../app/state/app.state';
-import {ResetFilterAction, UpdateFilterAction} from '../../../app/state/bottles.action';
+import {ResetFilterAction, UpdateFilterAction} from '../../../app/state/bottles.actions';
 import {BottlesQuery} from '../../../app/state/bottles.state';
 import {FilterSet} from '../../../components/distribution/filterset';
 

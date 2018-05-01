@@ -5,5 +5,6 @@ export const ERROR_CONTENT_FOLDER = 'error';
 export const WITHDRAW_FOLDER = 'withdraw';
 export const BOTTLES_FOLDER = 'bottles';
 export const PROFILE_CONTENT_FOLDER = 'profile';
+export const PREFERENCES_CONTENT_FOLDER = 'preferences';
 export const XREF_FOLDER = 'xref';
 export const IMAGES_FOLDER = 'images';

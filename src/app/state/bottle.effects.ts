@@ -5,7 +5,7 @@ import {
   LoadBottlesSuccessAction,
   UpdateBottlesAction,
   UpdateBottleSuccessAction
-} from './bottles.action';
+} from './bottles.actions';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {map, switchMap} from 'rxjs/operators';
 import {Bottle} from '../../model/bottle';

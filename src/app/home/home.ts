@@ -11,7 +11,7 @@ import {NativeProvider} from '../../providers/native/native';
 import {VERSION} from '../../_features/admin/version';
 import {ApplicationState} from '../state/app.state';
 import {Store} from '@ngrx/store';
-import {LoadBottlesAction} from '../state/bottles.action';
+import {LoadBottlesAction} from '../state/bottles.actions';
 
 @Component({
              selector: 'page-home',

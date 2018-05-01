@@ -5,7 +5,7 @@ import {CellarPage} from '../../_features/racks/cellar/cellar.page';
 import {NativeProvider} from '../../providers/native/native';
 import {ApplicationState} from '../../app/state/app.state';
 import {Store} from '@ngrx/store';
-import {UpdateBottlesAction} from '../../app/state/bottles.action';
+import {UpdateBottlesAction} from '../../app/state/bottles.actions';
 
 @Component({
              selector: 'bottle-item',

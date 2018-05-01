@@ -1,12 +1,11 @@
 /**
  * Created by loicsalou on 28.02.17.
  */
-import {Injectable, OnDestroy} from '@angular/core';
+import {Injectable, OnDestroy, OnInit} from '@angular/core';
 import {Bottle, Position} from '../model/bottle';
 import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {FilterSet} from '../components/distribution/filterset';
-import * as _ from 'lodash';
 import {LoginService} from './login/login.service';
 import {AbstractPersistenceService} from './abstract-persistence.service';
 import {NotificationService} from './notification.service';
@@ -23,10 +22,6 @@ import {FirebaseWithdrawalsService} from './firebase/firebase-withdrawals.servic
 import {FirebaseBottlesService} from './firebase/firebase-bottles.service';
 import {FirebaseLockersService} from './firebase/firebase-lockers.service';
 import {FirebaseImagesService} from './firebase/firebase-images.service';
-import {SearchCriteria} from '../model/search-criteria';
-import {ApplicationState} from '../app/state/app.state';
-import {Store} from '@ngrx/store';
-import {LoadBottlesSuccessAction} from '../app/state/bottles.action';
 import {tap} from 'rxjs/operators';
 
 /**
@@ -35,7 +30,7 @@ import {tap} from 'rxjs/operators';
  * clicks on a region to filter bottles. Any change on either side must be propagated on the other side.
  */
 @Injectable()
-export class BottlePersistenceService extends AbstractPersistenceService implements OnDestroy {
+export class BottlePersistenceService extends AbstractPersistenceService implements OnInit, OnDestroy {
   private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
   private _allBottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
   private _filteredBottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
@@ -52,8 +47,7 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
               private withdrawalService: FirebaseWithdrawalsService,
               notificationService: NotificationService,
               loginService: LoginService, private bottleFactory: BottleFactory,
-              translateService: TranslateService,
-              private store: Store<ApplicationState>) {
+              translateService: TranslateService) {
     super(notificationService, loginService, translateService);
     this._filtersObservable = new BehaviorSubject<FilterSet>(new FilterSet());
     if (loginService.user) {
@@ -71,6 +65,9 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
 
   get filtersObservable(): Observable<FilterSet> {
     return this._filtersObservable.asObservable();
+  }
+
+  ngOnInit() {
   }
 
   ngOnDestroy() {
@@ -140,88 +137,6 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
     this.bottlesService.reconnectListeners();
   }
 
-  /**
-   * Returns bottles that match ALL filters.
-   * <li>all filters must be satisfied: filtered list is refined for each new filter</li>
-   * <li>for each value in filter, applies a "OR" between accepted values</li>
-   * @param filters
-   * @returns {any}
-   */
-  public filterOn(filters: FilterSet) {
-
-    if (!filters) {
-      return;
-    }
-    if (this.allBottlesArray == undefined) {
-      return;
-    }
-
-    let filtered = this.allBottlesArray;
-    if (!filters.isEmpty()) {
-      if (!filters.history) {
-        filtered = filtered.filter(btl => +btl.quantite_courante > 0);
-      }
-      //ne garder que les bouteilles favorites, sinon toutes
-      if (filters.overdueOnly) {
-        filtered = filtered.filter(btl => btl.overdue);
-      }
-      //ne garder que les bouteilles favorites, sinon toutes
-      if (filters.favoriteOnly) {
-        filtered = filtered.filter(btl => btl.favorite);
-      }
-      // always start filtering using textual search
-      if (filters.hasText()) {
-        filtered = this.getBottlesByKeywords(filtered, filters.text);
-      }
-
-      // don't show placed bottles
-      if (!filters.placed) {
-        //on ne garde que les bouteilles non totalement placées
-        filtered = filtered.filter(btl => btl.positions.length !== +btl.quantite_courante);
-      }
-
-      // show not placed bottles
-      if (!filters.toBePlaced) {
-        //on ne garde que les bouteilles totalement placées
-        filtered = filtered.filter(btl => btl.positions.length === +btl.quantite_courante);
-      }
-
-      // on hierarchical axis like regions and ages, use most precise filter if available
-      if (filters.hasMillesimes()) {
-        filtered = this.filterByAttribute(filtered, 'millesime', filters.millesime);
-      } else {
-        // if filtering on millesime no need to filter on ages (matching millesime implies matching ages slice)
-        if (filters.hasAges()) {
-          filtered = this.filterByAttribute(filtered, 'classe_age', filters.classe_age);
-        }
-      }
-
-      // on hierarchical axis like regions and ages, use most precise filter if available
-      if (filters.hasAppellations()) {
-        filtered = this.filterByAttribute(filtered, 'area_label', filters.area_label);
-      } else {
-        // if filtering on area_label no need to filter on region (matching area_label implies matching subregion_label)
-        if (filters.hasRegions()) {
-          filtered = this.filterByAttribute(filtered, 'subregion_label', filters.subregion_label);
-        }
-      }
-
-      if (filters.hasCouleurs()) {
-        filtered = this.filterByAttribute(filtered, 'label', filters.label);
-      }
-    }
-    if (filters.sortOption) {
-      filtered = _.orderBy(filtered, [ filters.sortOption.sortOn ], [ filters.sortOption.sortOrder == undefined ? 'asc' : filters.sortOption.sortOrder ]);
-    }
-    this.setFilters(filters);
-
-    this._filteredBottles.next(filtered);
-  }
-
-  getMostUsedQueries(nb: number = 5): Observable<SearchCriteria[]> {
-    return this.dataConnection.getMostUsedQueries(nb);
-  }
-
   removeFromQueryStats(keywords: any) {
     this.dataConnection.removeFromQueryStats(keywords);
   }
@@ -263,14 +178,6 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
 
   loadAllBottles(): Observable<Bottle[]> {
     return this.bottlesService.allBottlesObservable;
-    //if (!this.bottlesSub) {
-    //  let items = this.bottlesService.allBottlesObservable;
-    //  this.bottlesSub = items.subscribe((bottles: Bottle[]) => {
-    //                                      this.setAllBottlesArray(bottles);
-    //                                      this.filterOn(this.filters);
-    //                                    },
-    //                                    error => this.notificationService.error('L\'accès à la liste des bouteilles a
-    // échoué !', error)); }
   }
 
   protected initialize(user: User) {
@@ -286,70 +193,6 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
     super.cleanup();
     this.allBottlesArray = undefined;
     this.filters = undefined;
-  }
-
-  private setAllBottlesArray(bottles: Bottle[]) {
-    this.store.dispatch(new LoadBottlesSuccessAction(bottles));
-    //this.allBottlesArray = bottles;
-    this._bottles.next(bottles);
-  }
-
-  /**
-   * searches through the given bottles all that match all of the filters passed in
-   * @param fromList array of bottles
-   * @param keywords an array of searched keywords
-   * @returns array of matching bottles
-   */
-  private getBottlesByKeywords(fromList: Bottle[], keywords: string[]): any {
-    if (!keywords || keywords.length == 0) {
-      return fromList;
-    }
-    keywords = keywords.map(
-      kw => {
-        return kw.trim().toLowerCase();
-      }
-    );
-    keywords = keywords.sort();
-    this.dataConnection.updateQueryStats(keywords);
-    let filtered = fromList;
-    keywords.forEach(keyword => {
-      filtered = this.filterOnKeyword(filtered, keyword);
-    });
-
-    return filtered;
-  }
-
-  /**
-   * get the bottles which match one keyword
-   * @param list
-   * @param keyword
-   * @returns {any[]}
-   */
-  private filterOnKeyword(list: any[], keyword: string) {
-    let keywordLower = keyword.toLocaleLowerCase();
-    return list.filter(bottle => {
-                         let matching = false;
-                         for (let key in bottle) {
-                           let value = bottle[ key ] ? bottle[ key ].toString() : '';
-                           if (value.toLocaleLowerCase().indexOf(keywordLower) !== -1) {
-                             matching = true;
-                           }
-                         }
-                         return matching;
-                       }
-    );
-  }
-
-  private filterByAttribute(fromList: Bottle[ ], attribute: string, admissibleValues: string[ ]) {
-    return fromList.filter(bottle => {
-      const attrValue = bottle[ attribute ] ? bottle[ attribute ].toString() : '';
-      return admissibleValues.indexOf(attrValue) !== -1;
-    });
-  }
-
-  private setFilters(filters: FilterSet) {
-    this.filters = filters;
-    this._filtersObservable.next(filters);
   }
 }
 

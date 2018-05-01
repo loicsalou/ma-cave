@@ -28,6 +28,12 @@ import {EffectsModule} from '@ngrx/effects';
 import {BottlesEffectsService} from './state/bottle.effects';
 import {environment} from '../environments/environment';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
+import {WithdrawalsEffectsService} from './state/withdrawals.effects';
+import {SharedEffectsService} from './state/shared.effects';
+import {RecordOutputPage} from '../_features/browse/record-output/record-output';
+import {BottleDetailSlide} from '../_features/browse/bottle-detail/slide-bottle-detail';
+import {FilterPage} from '../_features/browse/filters/filter.page';
+import {PopoverPage} from '../_features/browse/popover/popover.page';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -59,7 +65,7 @@ export const fireConfig = {
               StoreModule.forRoot(ROOT_REDUCERS, {
                 metaReducers: META_REDUCERS
               }),
-              EffectsModule.forRoot([ BottlesEffectsService ]),
+              EffectsModule.forRoot([ BottlesEffectsService, WithdrawalsEffectsService, SharedEffectsService ]),
               !environment.production ? StoreDevtoolsModule.instrument({maxAge: 5}) : []
             ],
             declarations: [
@@ -71,17 +77,13 @@ export const fireConfig = {
               TabsPage
             ],
             entryComponents: [
-              BottleDetailPage,
-              BrowsePage,
               CellarPage,
               ContactPage,
-              DashboardPage,
               EmailLoginPage,
               HomePage,
               LocalLoginPage,
               MyCaveApp,
-              TabsPage,
-              UpdatePage
+              TabsPage
             ],
             providers: [
               BottlesEffectsService

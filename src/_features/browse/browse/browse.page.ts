@@ -20,7 +20,7 @@ import {
   SelectBottleAction,
   UpdateBottlesAction,
   UpdateFilterAction
-} from '../../../app/state/bottles.action';
+} from '../../../app/state/bottles.actions';
 import {map, tap} from 'rxjs/operators';
 import {SortOption} from '../../../components/distribution/distribution';
 import {Subscription} from 'rxjs/Subscription';

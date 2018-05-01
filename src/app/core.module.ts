@@ -33,6 +33,7 @@ import {FirebaseBottlesService} from '../service/firebase/firebase-bottles.servi
 import {FirebaseImagesService} from '../service/firebase/firebase-images.service';
 import {appConfig} from './app.conf';
 import {SettingsService} from '../service/settings.service';
+import {SharedPersistenceService} from '../service/shared-persistence.service';
 //import {MockBottlesService} from '../service/mock/mock-bottles.service';
 
 export const fireConfig = {
@@ -87,6 +88,7 @@ export const fireConfig = {
                 deps: [ AlertController, ToastController, TranslateService, LoadingController ]
               },
               SettingsService,
+              SharedPersistenceService,
               SplashScreen,
               StatusBar,
               TranslateService
