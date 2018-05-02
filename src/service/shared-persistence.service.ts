@@ -1,34 +1,17 @@
 /**
  * Created by loicsalou on 28.02.17.
  */
-import {Injectable, OnDestroy, OnInit} from '@angular/core';
-import {Bottle, Position} from '../model/bottle';
+import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {FilterSet} from '../components/distribution/filterset';
-import * as _ from 'lodash';
 import {LoginService} from './login/login.service';
 import {AbstractPersistenceService} from './abstract-persistence.service';
 import {NotificationService} from './notification.service';
 import {FirebaseAdminService} from './firebase/firebase-admin.service';
-import {User} from '../model/user';
-import {Subscription} from 'rxjs/Subscription';
-import {Locker} from '../model/locker';
 import {TranslateService} from '@ngx-translate/core';
-import {BottleFactory} from '../model/bottle.factory';
-import {Subject} from 'rxjs/Subject';
-import {BottleNoting} from '../components/bottle-noting/bottle-noting.component';
-import {Withdrawal} from '../model/withdrawal';
-import {FirebaseWithdrawalsService} from './firebase/firebase-withdrawals.service';
-import {FirebaseBottlesService} from './firebase/firebase-bottles.service';
-import {FirebaseLockersService} from './firebase/firebase-lockers.service';
-import {FirebaseImagesService} from './firebase/firebase-images.service';
 import {SearchCriteria} from '../model/search-criteria';
-import {ApplicationState} from '../app/state/app.state';
-import {Store} from '@ngrx/store';
-import {LoadBottlesSuccessAction} from '../app/state/bottles.actions';
-import {tap} from 'rxjs/operators';
 import {UserPreferences} from '../model/user-preferences';
+import {FilterSet} from '../components/distribution/filterset';
+import {map, tap} from 'rxjs/operators';
 
 /**
  * Services related to the bottles in the cellar.
@@ -37,14 +20,6 @@ import {UserPreferences} from '../model/user-preferences';
  */
 @Injectable()
 export class SharedPersistenceService extends AbstractPersistenceService {
-  private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
-  private _allBottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
-  private _filteredBottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
-  private _filteredBottlesObservable: Observable<Bottle[]> = this._filteredBottles.asObservable();
-  private filters: FilterSet = new FilterSet();
-  private allBottlesArray: Bottle[];
-  private bottlesSub: Subscription;
-  private _filtersObservable: BehaviorSubject<FilterSet>;
 
   constructor(private dataConnection: FirebaseAdminService,
               notificationService: NotificationService,
@@ -57,11 +32,48 @@ export class SharedPersistenceService extends AbstractPersistenceService {
   }
 
   getMostUsedQueries(nb: number = 5): Observable<SearchCriteria[]> {
-    return this.dataConnection.getMostUsedQueries(nb);
+    return this.dataConnection.getSharedState().pipe(
+      map((prefs: UserPreferences) => prefs.mostUsedQueries)
+    );
   }
 
   getUserPreferences(): Observable<UserPreferences> {
-    return this.dataConnection.getPreferences();
+    return this.dataConnection.getSharedState().pipe(
+      tap(state => console.info(JSON.stringify(state)))
+    );
+  }
+
+  /**
+   * Enregistre
+   * @param fromList array of bottles
+   * @param keywords an array of searched keywords
+   * @returns array of matching bottles
+   */
+  updateQueryStats(keywords: string[]) {
+    if (!keywords || keywords.length == 0) {
+      return;
+    }
+    keywords = keywords.map(
+      kw => {
+        return kw.trim().toLowerCase();
+      }
+    );
+    keywords = keywords.sort();
+    this.dataConnection.updateQueryStats(keywords);
+  }
+
+  updateTheme(theme: string) {
+    this.dataConnection.updateTheme(theme);
+  }
+
+  /**
+   * Analyse le filtre pour éventuellement stocker les plus fréquents
+   * @param {FilterSet} filterset
+   */
+  updateFilterStats(filterset: FilterSet) {
+    if (filterset.text && filterset.text.length > 0) {
+      this.updateQueryStats(filterset.text);
+    }
   }
 }
 

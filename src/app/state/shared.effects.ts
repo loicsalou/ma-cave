@@ -1,23 +1,38 @@
 import {Injectable} from '@angular/core';
 import {Actions, Effect} from '@ngrx/effects';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
-import {map, switchMap} from 'rxjs/operators';
-import {LoadSharedSuccessAction, SharedActionTypes} from './shared.actions';
+import {map, switchMap, tap} from 'rxjs/operators';
+import {
+  LoadSharedSuccessAction,
+  SharedActionTypes,
+  UpdateMostUsedQueriesAction,
+  UpdateThemeAction
+} from './shared.actions';
 import {SharedPersistenceService} from '../../service/shared-persistence.service';
-import {SearchCriteria} from '../../model/search-criteria';
+import {of} from 'rxjs/observable/of';
+import {UserPreferences} from '../../model/user-preferences';
 
 @Injectable()
 export class SharedEffectsService {
 
   @Effect() getShared$ = this.actions$
     .ofType(SharedActionTypes.LoadSharedActionType).pipe(
-      switchMap(() => {
-        return this.sharedServices.getMostUsedQueries();
-        //const obs1=this.withdrawalsService.fetchAllWithdrawals();
-        //const obs2=this.withdrawalsService.fetchAllWithdrawals();
-      }),
-      map((queries: SearchCriteria[]) =>
-            new LoadSharedSuccessAction(queries))
+      switchMap(() =>
+                  this.sharedServices.getUserPreferences()),
+      map((prefs: UserPreferences) =>
+            new LoadSharedSuccessAction(prefs))
+    );
+
+  @Effect() updateTheme$ = this.actions$
+    .ofType(SharedActionTypes.UpdateThemeActionType).pipe(
+      tap((action: UpdateThemeAction) => this.sharedServices.updateTheme(action.theme)),
+      map(() => of(null))
+    );
+
+  @Effect() updateQueries$ = this.actions$
+    .ofType(SharedActionTypes.UpdateMostUsedQueriesActionType).pipe(
+      tap((action:UpdateMostUsedQueriesAction) => this.sharedServices.updateQueryStats(action.keywords)),
+      map(() => of(null))
     );
 
   constructor(private actions$: Actions, private withdrawalsService: BottlePersistenceService,

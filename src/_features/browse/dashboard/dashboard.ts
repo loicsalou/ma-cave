@@ -26,7 +26,6 @@ import {WithdrawalsQuery} from '../../../app/state/withdrawals.state';
 import {LoadWithdrawalsAction} from '../../../app/state/withdrawals.actions';
 import {SharedQuery, SharedState} from '../../../app/state/shared.state';
 import {LoadSharedAction} from '../../../app/state/shared.actions';
-import {Subscription} from 'rxjs/Subscription';
 
 @Component({
              selector: 'page-dashboard',
@@ -47,7 +46,6 @@ export class DashboardPage implements OnInit, OnDestroy {
   @ViewChild(VirtualScroll) vs: VirtualScroll;
 
   private _withdrawalCardStyle: { 'min-height': string; 'height': string };
-  private mostUsedQueriesSub: Subscription;
 
   constructor(public navCtrl: NavController, public loginService: LoginService, private notificationService: NotificationService,
               private bottleService: BottlePersistenceService, private nativeProvider: NativeProvider,
@@ -100,24 +98,26 @@ export class DashboardPage implements OnInit, OnDestroy {
     this.store.dispatch(new LoadWithdrawalsAction());
 
     this.mostUsedQueries$ = this.store.select(SharedQuery.getSharedState).pipe(
-      map((state: SharedState) =>
-            state.mostUsedQueries),
+      map((state: SharedState) => state.mostUsedQueries),
+      tap(mostused => {
+        console.info('=== ' + JSON.stringify(mostused));
+      }),
       catchError((err) => {
-        this.notificationService.error('messages.most-used-queries-failed');
-        console.error('DashboardPage.ngOnInit: ' + err);
-        return of([]);
-      })
+                   this.notificationService.error('messages.most-used-queries-failed');
+                   console.error('DashboardPage.ngOnInit: ' + err);
+                   return of([]);
+                 }
+      )
     );
     this.popOverVisible$ = this.mostUsedQueries$.pipe(
       switchMap(
-        (queries: SearchCriteria[]) => of(queries.length > 0)
+        (queries: SearchCriteria[]) => of(queries && queries.length > 0)
       )
     );
     this.store.dispatch(new LoadSharedAction());
   }
 
   ngOnDestroy() {
-    this.mostUsedQueriesSub.unsubscribe();
   }
 
   triggerNotation(bottle) {

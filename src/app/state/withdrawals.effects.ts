@@ -1,15 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Actions, Effect} from '@ngrx/effects';
-import {
-  BottlesActionTypes,
-  LoadBottlesSuccessAction,
-  UpdateBottlesAction,
-  UpdateBottleSuccessAction
-} from './bottles.actions';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {map, switchMap} from 'rxjs/operators';
-import {Bottle} from '../../model/bottle';
-import {LoadWithdrawalsSuccessAction, WithdrawalsActions, WithdrawalsActionTypes} from './withdrawals.actions';
+import {LoadWithdrawalsSuccessAction, WithdrawalsActionTypes} from './withdrawals.actions';
 import {Withdrawal} from '../../model/withdrawal';
 
 @Injectable()

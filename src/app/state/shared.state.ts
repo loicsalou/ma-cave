@@ -22,11 +22,17 @@ export namespace SharedQuery {
 
 export function sharedStateReducer(state: SharedState = INITIAL_STATE, action: SharedActions): SharedState {
   switch (action.type) {
-    case SharedActionTypes.LoadSharedSuccessActionType:
-      return {
-        ...state,
-        mostUsedQueries: action.queries
+    case SharedActionTypes.LoadSharedSuccessActionType: {
+      if (action.prefs) {
+        return {
+          ...state,
+          mostUsedQueries: action.prefs.mostUsedQueries,
+          theme: action.prefs.theme
+        };
+      } else {
+        return state;
       }
+    }
 
     default:
       return state;

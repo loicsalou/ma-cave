@@ -11,10 +11,11 @@ import {Subject} from 'rxjs/Subject';
 import {User} from '../../model/user';
 
 import * as schema from './firebase-schema';
-import {SearchCriteria} from '../../model/search-criteria';
+import {MOSTUSED_ROOT_FOLDER} from './firebase-schema';
 import {AdminService} from '../admin.service';
-import Reference = firebase.database.Reference;
 import {UserPreferences} from '../../model/user-preferences';
+import {map, tap} from 'rxjs/operators';
+import Reference = firebase.database.Reference;
 
 /**
  * Services related to the bottles in the cellar.
@@ -28,7 +29,7 @@ export class FirebaseAdminService implements AdminService {
   protected XREF_FOLDER = 'xref';
   private userRootRef: Reference;
   private PROFILE_ROOT: string;
-  private PREFERENCES_ROOT: string;
+  private MOSTUSED_ROOT: string;
   private profileRootRef: Reference;
   private ERROR_ROOT: string;
   private errorRootRef: Reference;
@@ -43,7 +44,7 @@ export class FirebaseAdminService implements AdminService {
 
     this.XREF_ROOT = this.XREF_FOLDER;
     this.PROFILE_ROOT = schema.USERS_FOLDER + '/' + userRoot + '/' + schema.PROFILE_CONTENT_FOLDER;
-    this.PREFERENCES_ROOT = this.PROFILE_ROOT + '/' + schema.PREFERENCES_CONTENT_FOLDER;
+    this.MOSTUSED_ROOT = this.PROFILE_ROOT + '/' + schema.MOSTUSED_ROOT_FOLDER;
     this.ERROR_ROOT = schema.USERS_FOLDER + '/' + userRoot + '/' + schema.ERROR_CONTENT_FOLDER;
 
     this.userRootRef = this.angularFirebase.database.ref(this.USER_ROOT);
@@ -73,30 +74,44 @@ export class FirebaseAdminService implements AdminService {
     }
   }
 
-  getMostUsedQueries(nb: number): Observable<SearchCriteria[]> {
-    return this.angularFirebase.list<SearchCriteria>(this.PROFILE_ROOT).valueChanges()
-      .flatMap(arr => {
-        if (arr) {
-          return Observable.of(arr.reverse());
-        } else {
-          return Observable.of([]);
+  getSharedState(): Observable<UserPreferences> {
+    return this.angularFirebase.object(this.PROFILE_ROOT).valueChanges().pipe(
+      map(
+        (data: UserPreferences) => {
+          return {
+            ...data,
+            mostUsedQueries: Object.keys(data.mostUsedQueries)
+              .map(key => data.mostUsedQueries[ key ])
+          };
         }
-      });
+      ),
+      tap(data => {
+        console.info(JSON.stringify(data));
+      })
+    );
   }
 
-  getPreferences(): Observable<UserPreferences> {
-    return this.angularFirebase.object(this.PREFERENCES_ROOT).valueChanges();
+  updateTheme(theme: string) {
+    this.profileRootRef.child('theme').once('value').then(
+      snapshot => {
+        if (snapshot.val()) {
+          this.profileRootRef.child('theme').update(theme);
+        } else {
+          this.profileRootRef.child('theme').set(theme);
+        }
+      }
+    );
   }
 
   updateQueryStats(keywords: string[]) {
     let key = keywords.join('-');
-    this.profileRootRef.child(key).once('value').then(
+    this.profileRootRef.child(MOSTUSED_ROOT_FOLDER).child(key).once('value').then(
       snapshot => {
         if (snapshot.val()) {
           let count = snapshot.val().count + 1;
-          this.profileRootRef.child(key).update({keywords: keywords, count: count});
+          this.profileRootRef.child(MOSTUSED_ROOT_FOLDER).child(key).update({keywords: keywords, count: count});
         } else {
-          this.profileRootRef.child(key).set({keywords: keywords, count: 1});
+          this.profileRootRef.child(MOSTUSED_ROOT_FOLDER).child(key).set({keywords: keywords, count: 1});
         }
       },
       onerror => console.error('firebase error: ' + onerror)
@@ -105,7 +120,7 @@ export class FirebaseAdminService implements AdminService {
 
   removeFromQueryStats(keywords: any) {
     let key = keywords.join('-');
-    this.profileRootRef.child(key).remove(
+    this.profileRootRef.child(MOSTUSED_ROOT_FOLDER).child(key).remove(
       errorOrNull => console.info('removeFromQueryStats ended with ' + errorOrNull)
     );
   }

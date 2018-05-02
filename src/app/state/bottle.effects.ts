@@ -4,11 +4,14 @@ import {
   BottlesActionTypes,
   LoadBottlesSuccessAction,
   UpdateBottlesAction,
-  UpdateBottleSuccessAction
+  UpdateBottleSuccessAction,
+  UpdateFilterAction
 } from './bottles.actions';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
-import {map, switchMap} from 'rxjs/operators';
+import {map, switchMap, tap} from 'rxjs/operators';
 import {Bottle} from '../../model/bottle';
+import {SharedPersistenceService} from '../../service/shared-persistence.service';
+import {of} from 'rxjs/observable/of';
 
 @Injectable()
 export class BottlesEffectsService {
@@ -28,7 +31,16 @@ export class BottlesEffectsService {
             new UpdateBottleSuccessAction(bottles))
     );
 
-  constructor(private actions$: Actions, private bottlesService: BottlePersistenceService) {
+  @Effect() updateFilter$ = this.actions$
+    .ofType(BottlesActionTypes.UpdateFilterActionType).pipe(
+      tap((action: UpdateFilterAction) =>
+            this.sharedServices.updateFilterStats(action.newFilter)
+      ),
+      map(() =>
+            of(null))
+    );
+
+  constructor(private actions$: Actions, private bottlesService: BottlePersistenceService, private sharedServices: SharedPersistenceService) {
   }
 
 }
