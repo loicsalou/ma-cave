@@ -5,6 +5,11 @@ export enum SharedActionTypes {
   LoadSharedActionType = '[shared] - load',
   LoadSharedFailedType = '[shared] - load failed',
   LoadSharedSuccessActionType = '[shared] - load success',
+  LoginActionType = '[shared] - login',
+  LoginActionFailType = '[shared] - login fail',
+  LoginActionSuccessType = '[shared] - login success',
+  LogoutActionType = '[shared] - logout',
+  DeleteAccountActionType = '[shared] - logout',
   UpdateThemeActionType = '[shared] - update theme',
   UpdateMostUsedQueriesActionType = '[shared] - update most used queries',
 }
@@ -12,6 +17,11 @@ export enum SharedActionTypes {
 export type SharedActions = LoadSharedAction
   | LoadSharedFailedAction
   | LoadSharedSuccessAction
+  | LoginAction
+  | LoginSuccessAction
+  | LoginFailAction
+  | LogoutAction
+  | DeleteAccountAction
   | UpdateThemeAction
   | UpdateMostUsedQueriesAction;
 
@@ -49,3 +59,25 @@ export class UpdateMostUsedQueriesAction implements Action {
   constructor(public keywords: string[]) {
   }
 }
+
+/* LOGIN actions */
+export class LoginAction implements Action {
+  readonly type = SharedActionTypes.LoginActionType;
+}
+
+export class LoginFailAction implements Action {
+  readonly type = SharedActionTypes.LoginActionFailType;
+}
+
+export class LoginSuccessAction implements Action {
+  readonly type = SharedActionTypes.LoginActionSuccessType;
+}
+
+export class LogoutAction implements Action {
+  readonly type = SharedActionTypes.LogoutActionType;
+}
+
+export class DeleteAccountAction implements Action {
+  readonly type = SharedActionTypes.DeleteAccountActionType;
+}
+

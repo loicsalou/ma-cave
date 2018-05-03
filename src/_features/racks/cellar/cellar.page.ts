@@ -18,6 +18,7 @@ import {CreateLockerPage} from '../create-locker/create-locker.page';
 import {ApplicationState} from '../../../app/state/app.state';
 import {Store} from '@ngrx/store';
 import {BottlesQuery} from '../../../app/state/bottles.state';
+import {LogoutAction} from '../../../app/state/shared.actions';
 
 /**
  * Generated class for the CellarPage page.
@@ -56,7 +57,6 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
               private notificationService: NotificationService,
               private nativeProvider: NativeProvider,
               private modalCtrl: ModalController,
-              private loginService: LoginService,
               private params: NavParams,
               private store: Store<ApplicationState>) {
   }
@@ -117,7 +117,7 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   logout() {
-    this.loginService.logout();
+    this.store.dispatch(new LogoutAction());
     this.navCtrl.popToRoot();
   }
 

@@ -11,6 +11,7 @@ export enum BottlesActionTypes {
   UpdateBottlesSuccessActionType = '[bottles] - update bottles success',
   DrawBottlesActionType = '[bottles] - draw bottles',
   UpdateFilterActionType = '[filter] - changed',
+  RemoveFilterActionType = '[filter] - remove',
   ResetFilterActionType = '[filter] - reset',
   ResetBottleSelectionActionType = '[bottles] - reset selection',
   SelectBottleActionType = '[bottles] - reset'
@@ -24,6 +25,7 @@ export type BottlesActions = LoadBottlesAction
   | UpdateBottleSuccessAction
   | DrawBottlesAction
   | UpdateFilterAction
+  | RemoveFilterAction
   | ResetFilterAction
   | ResetBottleSelectionAction
   | SelectBottleAction;
@@ -35,6 +37,13 @@ export class UpdateFilterAction implements Action {
   readonly type = BottlesActionTypes.UpdateFilterActionType;
 
   constructor(public newFilter: FilterSet) {
+  }
+}
+
+export class RemoveFilterAction implements Action {
+  readonly type = BottlesActionTypes.RemoveFilterActionType;
+
+  constructor(public keywords: string[]) {
   }
 }
 

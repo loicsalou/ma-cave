@@ -18,14 +18,14 @@ import {VERSION} from '../../admin/version';
 import {ApplicationState} from '../../../app/state/app.state';
 import {Store} from '@ngrx/store';
 import {BottlesQuery} from '../../../app/state/bottles.state';
-import {ResetFilterAction, UpdateFilterAction} from '../../../app/state/bottles.actions';
+import {RemoveFilterAction, ResetFilterAction, UpdateFilterAction} from '../../../app/state/bottles.actions';
 import {Observable} from 'rxjs/Observable';
 import {catchError, map, switchMap, tap} from 'rxjs/operators';
 import {of} from 'rxjs/observable/of';
 import {WithdrawalsQuery} from '../../../app/state/withdrawals.state';
 import {LoadWithdrawalsAction} from '../../../app/state/withdrawals.actions';
 import {SharedQuery, SharedState} from '../../../app/state/shared.state';
-import {LoadSharedAction} from '../../../app/state/shared.actions';
+import {LoadSharedAction, LogoutAction} from '../../../app/state/shared.actions';
 
 @Component({
              selector: 'page-dashboard',
@@ -47,9 +47,9 @@ export class DashboardPage implements OnInit, OnDestroy {
 
   private _withdrawalCardStyle: { 'min-height': string; 'height': string };
 
-  constructor(public navCtrl: NavController, public loginService: LoginService, private notificationService: NotificationService,
-              private bottleService: BottlePersistenceService, private nativeProvider: NativeProvider,
-              private platform: Platform, private translateService: TranslateService,
+  constructor(public navCtrl: NavController, private notificationService: NotificationService,
+              private nativeProvider: NativeProvider,
+              private platform: Platform,
               private popoverCtrl: PopoverController, private modalCtrl: ModalController,
               private store: Store<ApplicationState>) {
     platform.ready().then(() => {
@@ -131,7 +131,7 @@ export class DashboardPage implements OnInit, OnDestroy {
       if (action != null) {
         let keywords = action.param;
         if (action.name === 'remove') {
-          this.bottleService.removeFromQueryStats(keywords);
+          this.store.dispatch(new RemoveFilterAction(keywords));
         } else {
           if (keywords) {
             this.filterOnTextAndNavigate(keywords);
@@ -167,7 +167,7 @@ export class DashboardPage implements OnInit, OnDestroy {
   }
 
   logout() {
-    this.loginService.logout();
+    this.store.dispatch(new LogoutAction());
     this.navCtrl.popToRoot();
   }
 
@@ -181,7 +181,6 @@ export class DashboardPage implements OnInit, OnDestroy {
   private filterOnTextAndNavigate(texts: string[]) {
     let fs: FilterSet = new FilterSet();
     if (texts != undefined && texts.length != 0) {
-      this.notificationService.debugAlert('recherche de: ' + texts);
       fs.text = texts;
       this.store.dispatch(new UpdateFilterAction(fs));
       this.navCtrl.push(BrowsePage);

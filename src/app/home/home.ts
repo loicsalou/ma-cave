@@ -12,6 +12,7 @@ import {VERSION} from '../../_features/admin/version';
 import {ApplicationState} from '../state/app.state';
 import {Store} from '@ngrx/store';
 import {LoadBottlesAction} from '../state/bottles.actions';
+import {LogoutAction} from '../state/shared.actions';
 
 @Component({
              selector: 'page-home',
@@ -95,7 +96,6 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   isConnectionAllowed(): boolean {
-    //return this.dataConnection.isConnectionAllowed();
     return true;
   }
 
@@ -104,7 +104,7 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   logout() {
-    this.loginService.logout();
+    this.store.dispatch(new LogoutAction());
   }
 
   private handleLoginEvent(user: User) {

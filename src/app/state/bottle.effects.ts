@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Actions, Effect} from '@ngrx/effects';
 import {
   BottlesActionTypes,
-  LoadBottlesSuccessAction,
+  LoadBottlesSuccessAction, RemoveFilterAction,
   UpdateBottlesAction,
   UpdateBottleSuccessAction,
   UpdateFilterAction
@@ -35,6 +35,13 @@ export class BottlesEffectsService {
     .ofType(BottlesActionTypes.UpdateFilterActionType).pipe(
       tap((action: UpdateFilterAction) =>
             this.sharedServices.updateFilterStats(action.newFilter)
+      )
+    );
+
+  @Effect({dispatch: false}) removeFilter$ = this.actions$
+    .ofType(BottlesActionTypes.RemoveFilterActionType).pipe(
+      tap((action: RemoveFilterAction) =>
+            this.bottlesService.removeFromQueryStats(action.keywords)
       )
     );
 

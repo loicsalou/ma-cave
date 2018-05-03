@@ -6,7 +6,7 @@ import VERSION from '../version';
 import {SharedPersistenceService} from '../../../service/shared-persistence.service';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../../../app/state/app.state';
-import {UpdateThemeAction} from '../../../app/state/shared.actions';
+import {LogoutAction, UpdateThemeAction} from '../../../app/state/shared.actions';
 import {SharedQuery} from '../../../app/state/shared.state';
 import {Subscription} from 'rxjs/Subscription';
 
@@ -69,6 +69,6 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   logout() {
-    this.loginService.logout();
+    this.store.dispatch(new LogoutAction());
   }
 }

@@ -10,6 +10,7 @@ import {LoginService} from '../../../service/login/login.service';
 import {ApplicationState} from '../../../app/state/app.state';
 import {Store} from '@ngrx/store';
 import {BottlesQuery} from '../../../app/state/bottles.state';
+import {DeleteAccountAction, LogoutAction} from '../../../app/state/shared.actions';
 
 /**
  * Generated class for the UploadBottles page.
@@ -35,7 +36,6 @@ export class UploadBottlesPage {
               private fileChooser: FileChooser,
               private notificationService: NotificationService,
               private bottleService: BottlePersistenceService,
-              private loginService: LoginService,
               private platform: Platform,
               private localStorage: NativeStorageService,
               private loadingController: LoadingController,
@@ -47,16 +47,14 @@ export class UploadBottlesPage {
     this.notificationService.ask('question', 'app.confirm').take(1).subscribe(
       result => {
         if (result) {
-          this.bottleService.deleteAccountData().subscribe(
-            result => this.loginService.deleteAccount()
-          );
+          this.store.dispatch(new DeleteAccountAction())
         }
       }
     );
   }
 
   logout() {
-    this.loginService.logout();
+    this.store.dispatch(new LogoutAction());
     this.navCtrl.popToRoot();
   }
 
