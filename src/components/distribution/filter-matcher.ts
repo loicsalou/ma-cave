@@ -98,16 +98,17 @@ function checkKeywords(bottle: Bottle, keywords: string[]): boolean {
     }
   );
 
-  let found = false;
+  let found = true;
   let i = 0;
-  while (i < keywords.length && !found) {
+
+  while (i < keywords.length && found) {
     found = checkKeyword(bottle, keywords[ i++ ]);
   }
 
   return found;
 }
 
-function checkKeyword(bottle: Bottle, keyword: string) {
+function checkKeyword(bottle: Bottle, keyword: string): boolean {
   const values = Object.keys(bottle)
     .map(k => bottle[ k ])
     .filter(v => v && typeof(v) === 'string')

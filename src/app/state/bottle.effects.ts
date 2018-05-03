@@ -31,13 +31,11 @@ export class BottlesEffectsService {
             new UpdateBottleSuccessAction(bottles))
     );
 
-  @Effect() updateFilter$ = this.actions$
+  @Effect({dispatch: false}) updateFilter$ = this.actions$
     .ofType(BottlesActionTypes.UpdateFilterActionType).pipe(
       tap((action: UpdateFilterAction) =>
             this.sharedServices.updateFilterStats(action.newFilter)
-      ),
-      map(() =>
-            of(null))
+      )
     );
 
   constructor(private actions$: Actions, private bottlesService: BottlePersistenceService, private sharedServices: SharedPersistenceService) {
