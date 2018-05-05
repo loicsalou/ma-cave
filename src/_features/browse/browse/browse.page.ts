@@ -22,6 +22,13 @@ import {map, tap} from 'rxjs/operators';
 import {SortOption} from '../../../components/distribution/distribution';
 import {Subscription} from 'rxjs/Subscription';
 
+function sliceAround(currentBottles: Bottle[], bottle: Bottle, slice: number) {
+  const ix = currentBottles.findIndex(btl => btl.id === bottle.id);
+  const from = ix - slice;
+  const to = ix + slice + 1;
+  return currentBottles.slice(from < 0 ? 0 : from, to > currentBottles.length ? currentBottles.length : to);
+}
+
 @Component({
              selector: 'page-browse',
              templateUrl: 'browse.page.html',
@@ -39,6 +46,7 @@ export class BrowsePage implements OnInit, OnDestroy {
   private searchBarVisible: boolean = false;
   private selectionSub: Subscription;
   private sortOption: SortOption;
+  private currentBottles: Bottle[];
 
   constructor(public navCtrl: NavController,
               private menuController: MenuController,
@@ -56,7 +64,7 @@ export class BrowsePage implements OnInit, OnDestroy {
       tap((filterSet: FilterSet) => this.sortOption = filterSet.sortOption)
     );
     this.bottles$ = this.store.select(BottlesQuery.getFilteredBottles).pipe(
-      map((bottles: Bottle[]) => this.getPreparedList(bottles))
+      map((bottles: Bottle[]) => this.getPrepareDisplayedList(bottles))
     );
     this.selectionSub = this.store.select(BottlesQuery.getSelectedBottles).subscribe(
       (bottles: Bottle[]) => this.selectedBottles = bottles
@@ -122,14 +130,20 @@ export class BrowsePage implements OnInit, OnDestroy {
   }
 
   triggerDetail(bottle: Bottle) {
-    this.navCtrl.push(BottleDetailPage, {bottleEvent: {bottles: [ bottle ], bottle: bottle}});
+    this.navCtrl.push(BottleDetailPage,
+                      {
+                        bottleEvent: {
+                          bottles: sliceAround(this.currentBottles, bottle, 10),
+                          bottle: bottle
+                        }
+                      });
   }
 
   private resetSelection() {
     this.store.dispatch(new ResetBottleSelectionAction());
   }
 
-  private getPreparedList(received: Bottle[]): Bottle[] {
+  private getPrepareDisplayedList(received: Bottle[]): Bottle[] {
     this.nbOfLots = received.length;
     this.nbOfBottles = 0;
     if (received) {
@@ -148,6 +162,7 @@ export class BrowsePage implements OnInit, OnDestroy {
         'area_label', 'nomCru', 'millesime' ], [ 'desc', 'asc', 'asc', 'asc', 'asc', 'asc' ]
       );
     }
+    this.currentBottles = received;
 
     return received;
   }

@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {Modal, ModalController, NavController, Platform} from 'ionic-angular';
 import {LoginService} from '../../service/login/login.service';
 import {EmailLoginPage} from '../../_features/admin/login/email-login.page';
@@ -18,7 +18,8 @@ import {Observable} from 'rxjs/Observable';
 
 @Component({
              selector: 'page-home',
-             templateUrl: 'home.html'
+             templateUrl: 'home.html',
+             changeDetection: ChangeDetectionStrategy.OnPush
              // styleUrls:[ 'home.scss' ]
            })
 export class HomePage implements OnInit, AfterViewInit {

@@ -39,12 +39,12 @@ export class BottlesEffectsService {
             new WithdrawBottleSuccessAction(action.bottle))
     );
 
-  //@Effect({dispatch: false}) updateFilter$ = this.actions$
-  //  .ofType(BottlesActionTypes.UpdateFilterActionType).pipe(
-  //    tap((action: UpdateFilterAction) =>
-  //          this.sharedServices.updateFilterStats(action.newFilter)
-  //    )
-  //  );
+  @Effect({dispatch: false}) updateFilter$ = this.actions$
+    .ofType(BottlesActionTypes.UpdateFilterActionType).pipe(
+      tap((action: UpdateFilterAction) =>
+            this.sharedServices.updateFilterStats(action.newFilter)
+      )
+    );
 
   @Effect({dispatch: false}) removeFilter$ = this.actions$
     .ofType(BottlesActionTypes.RemoveFilterActionType).pipe(

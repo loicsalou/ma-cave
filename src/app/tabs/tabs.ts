@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {UploadBottlesPage} from '../../_features/admin/upload-bottles/upload-bottles.page';
 import {DashboardPage} from '../../_features/browse/dashboard/dashboard';
 import {ProfilePage} from '../../_features/admin/profile/profile';
@@ -11,7 +11,8 @@ import {map} from 'rxjs/operators';
 import {Observable} from 'rxjs/Observable';
 
 @Component({
-             templateUrl: 'tabs.html'
+             templateUrl: 'tabs.html',
+             changeDetection: ChangeDetectionStrategy.OnPush
            })
 export class TabsPage {
   userRoot: any = ProfilePage;
