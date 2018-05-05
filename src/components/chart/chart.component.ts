@@ -62,9 +62,6 @@ export class ChartComponent implements OnInit {
   }
 
   chartHovered(event: any) {
-    //let active = event[ 'active' ];
-    //let element: any = active !== undefined && active.length > 0 ? active[ 0 ] : undefined;
-    this.trace('hover');
   }
 
   chartClicked(event: any) {
@@ -73,10 +70,6 @@ export class ChartComponent implements OnInit {
     if (index !== undefined) {
       this.portionSelected.emit(this.getChartEvent(index));
     }
-  }
-
-  trace(msg: string) {
-    // console.info(msg);
   }
 
   private getOptions(): any {

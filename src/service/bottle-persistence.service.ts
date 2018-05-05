@@ -6,7 +6,6 @@ import {Bottle, Position} from '../model/bottle';
 import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {FilterSet} from '../components/distribution/filterset';
-import {LoginService} from './login/login.service';
 import {AbstractPersistenceService} from './abstract-persistence.service';
 import {NotificationService} from './notification.service';
 import {FirebaseAdminService} from './firebase/firebase-admin.service';
@@ -47,11 +46,10 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
               private lockersService: FirebaseLockersService,
               private withdrawalService: FirebaseWithdrawalsService,
               notificationService: NotificationService,
-              loginService: LoginService,
               private bottleFactory: BottleFactory,
               translateService: TranslateService,
               store: Store<ApplicationState>) {
-    super(notificationService, loginService, translateService, store);
+    super(notificationService, translateService, store);
     this.subscribeLogin();
   }
 
@@ -161,6 +159,14 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
     return this.bottlesService.fetchAllBottlesFromDB();
   }
 
+  disconnectListeners() {
+    this.notificationService.error('Déconnection de la DB à réimplémenter');
+  }
+
+  reconnectListeners() {
+    this.notificationService.error('Reconnection de la DB à réimplémenter');
+  }
+
   protected initialize(user: User) {
     super.initialize(user);
     this.bottlesService.initialize(user);
@@ -174,14 +180,6 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
     super.cleanup();
     this.allBottlesArray = undefined;
     this.filters = undefined;
-  }
-
-  disconnectListeners() {
-    this.notificationService.error('Déconnection de la DB à réimplémenter')
-  }
-
-  reconnectListeners() {
-    this.notificationService.error('Reconnection de la DB à réimplémenter')
   }
 }
 

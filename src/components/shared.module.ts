@@ -27,7 +27,6 @@ import {CommonModule} from '@angular/common';
 import {BottleClassPipe} from './list/bottle-color-class.pipe';
 import {CurrentFiltersComponent} from './current-filters/current-filters';
 import {SearchBarComponent} from './search-bar/search-bar';
-import {PageHeaderComponent} from './page-header/page-header';
 import {BottleActionComponent} from './bottle-action/bottle-action';
 import {ResponsiveWrapperComponent} from './responsive-wrapper/responsive-wrapper';
 
@@ -51,7 +50,6 @@ import {ResponsiveWrapperComponent} from './responsive-wrapper/responsive-wrappe
               DistributionComponent,
               FridgeLockerComponent,
               ImageAttacherComponent,
-              PageHeaderComponent,
               ProgressBarComponent,
               RatingComponent,
               ResponsiveWrapperComponent,
@@ -72,7 +70,6 @@ import {ResponsiveWrapperComponent} from './responsive-wrapper/responsive-wrappe
               DistributionComponent,
               FridgeLockerComponent,
               ImageAttacherComponent,
-              PageHeaderComponent,
               ProgressBarComponent,
               RatingComponent,
               ResponsiveWrapperComponent,

@@ -30,7 +30,6 @@ export class FirebaseImagesService {
   private ERROR_ROOT: string;
   private errorRootRef: Reference;
   private _uploadProgressEvent: Subject<number> = new Subject<number>();
-  private connectionAllowed: boolean = true;
 
   constructor(private angularFirebase: AngularFireDatabase,
               private notificationService: NotificationService) {
@@ -84,17 +83,18 @@ export class FirebaseImagesService {
 
   //============================= Image management
   /**
+   * suivi de la progression des uploads.
+   * @returns {Observable<number>}
+   */
+  progress(): Observable<number> {
+    return this._uploadProgressEvent.asObservable();
+  }
+  /**
    * Delete an image in Firebase storage
    * @param {File} file
    * @returns {Promise<any>}
    */
   public deleteImage(file: File): Promise<any> {
-    if (!
-        this.connectionAllowed
-    ) {
-      this.notificationService.failed('app.unavailable-function');
-      return;
-    }
     let item: FileItem = new FileItem(file);
     item.isUploading = true;
     return new Promise((resolve, reject) => {
@@ -111,12 +111,6 @@ export class FirebaseImagesService {
    * @returns {Observable<Image[]>}
    */
   public listBottleImages(bottle: Bottle): Observable<Image[ ]> {
-    if (!
-        this.connectionAllowed
-    ) {
-      this.notificationService.failed('app.unavailable-function');
-      return undefined;
-    }
     return this.angularFirebase.list<Image>(this.XREF_ROOT).valueChanges();
   }
 
@@ -127,12 +121,6 @@ export class FirebaseImagesService {
    * @returns {Promise<void | UploadMetadata>}
    */
   public uploadFileOrBlob(fileOrBlob, meta: BottleMetadata): Promise<void | UploadMetadata> {
-    if (!
-        this.connectionAllowed
-    ) {
-      this.notificationService.failed('app.unavailable-function');
-      return undefined;
-    }
     return this.uploadToStorage(fileOrBlob, meta.nomCru)
       .then(
         (uploadSnapshot: any) => {
@@ -143,14 +131,6 @@ export class FirebaseImagesService {
           this.notificationService.error('Une erreur s\'est produite en tentant d\'enregistrer l\'image dans la base' +
             ' de données', error);
         });
-  }
-
-  isConnectionAllowed(): boolean {
-    return this.connectionAllowed;
-  }
-
-  setConnectionAllowed(b: boolean) {
-    this.connectionAllowed = b;
   }
 
   private initLogging() {

@@ -40,13 +40,9 @@ export class GoogleLoginService extends AbstractLoginService {
           let ggUser = new GoogleUser(fbUser.email, fbUser.photoURL, fbUser.displayName, fbUser.uid, fbUser.phoneNumber);
           observer.next(ggUser);
         }).catch(error => {
-          //console.log(error);
-          //alert('firebase signin with credential a planté ! '+error);
           observer.error(error);
         });
       }).catch(error => {
-        //console.log(error);
-        //alert('Googleplus login a planté ! '+error);
         observer.error(error);
       });
     });

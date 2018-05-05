@@ -2,6 +2,7 @@ import {AlertController, Loading, LoadingController, ToastController} from 'ioni
 import {TranslateService} from '@ngx-translate/core';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
+import {logDebug, logInfo, logWarn} from '../utils';
 
 /**
  * Created by loicsalou on 13.06.17.
@@ -120,17 +121,17 @@ export class NotificationService {
 
   traceInfo(trace: string) {
     // à remplacer par un log si nécessaire
-    console.info(new Date().getTime() + ' ' + trace);
+    logInfo(new Date().getTime() + ' ' + trace);
   }
 
   traceDebug(trace: string) {
     // à remplacer par un log si nécessaire
-    console.debug(new Date().getTime() + ' ' + trace);
+    logDebug(new Date().getTime() + ' ' + trace);
   }
 
   traceWarn(trace: string) {
     // à remplacer par un log si nécessaire
-    console.warn(new Date().getTime() + ' ' + trace);
+    logWarn(new Date().getTime() + ' ' + trace);
   }
 
   receiving(s: string) {

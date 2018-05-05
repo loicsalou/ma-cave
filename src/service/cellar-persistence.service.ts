@@ -6,7 +6,6 @@ import {SimpleLocker} from '../model/simple-locker';
 import {Observable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {LockerFactory} from '../model/locker.factory';
-import {LoginService} from './login/login.service';
 import {AbstractPersistenceService} from './abstract-persistence.service';
 import {NotificationService} from './notification.service';
 import {Locker} from '../model/locker';
@@ -37,8 +36,8 @@ export class CellarPersistenceService extends AbstractPersistenceService {
               notificationService: NotificationService,
               private bottleService: BottlePersistenceService,
               translateService: TranslateService,
-              loginService: LoginService, store: Store<ApplicationState>) {
-    super(notificationService, loginService, translateService, store);
+              store: Store<ApplicationState>) {
+    super(notificationService, translateService, store);
     this.subscribeLogin();
   }
 

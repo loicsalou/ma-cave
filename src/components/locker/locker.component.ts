@@ -166,7 +166,6 @@ export abstract class LockerComponent implements OnChanges {
       min_y = 0 + scaled_y;
 
       setCoor(-scaled_x, scaled_y);
-      console.info(`x: ${x}, scaled_x: ${scaled_x}, y: ${y}, scaled_y: ${scaled_y}`);
     }
 
     function setCoor(xx: number, yy: number) {

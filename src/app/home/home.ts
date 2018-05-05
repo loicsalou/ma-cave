@@ -14,6 +14,7 @@ import {LoadBottlesAction} from '../state/bottles.actions';
 import {LogoutAction} from '../state/shared.actions';
 import {SharedQuery} from '../state/shared.state';
 import {map, tap} from 'rxjs/operators';
+import {Observable} from 'rxjs/Observable';
 
 @Component({
              selector: 'page-home',
@@ -23,6 +24,8 @@ import {map, tap} from 'rxjs/operators';
 export class HomePage implements OnInit, AfterViewInit {
 
   version: any;
+  currentTheme$: Observable<string>;
+
   private loginPage: Modal;
 
   private loginSubscription: Subscription;
@@ -41,6 +44,10 @@ export class HomePage implements OnInit, AfterViewInit {
       })
     ).subscribe((user: User) =>
                   this.handleLoginEvent(user)
+    );
+    this.currentTheme$ = this.store.select(SharedQuery.getSharedState).pipe(
+      map(state =>
+            state.theme ? state.theme : 'cavus-theme')
     );
   }
 
@@ -75,10 +82,6 @@ export class HomePage implements OnInit, AfterViewInit {
 
   setDebugMode(b: boolean) {
     this.notificationService.debugMode = b;
-  }
-
-  isConnectionAllowed(): boolean {
-    return true;
   }
 
   isGoogleLoginEnabled(): boolean {

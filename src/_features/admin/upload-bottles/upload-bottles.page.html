@@ -114,7 +114,9 @@
         <div *ngIf="! platformIsCordova()">
           <input type="file" id="input" (change)="readBrowserFile($event)">
         </div>
-        <p *ngIf="bottleService.loginService.user">{{bottleService.loginService.user.user}}</p>
+        <ng-container *ngIf="user$ | async as user">
+          <p *ngIf="user">{{user.user}}</p>
+        </ng-container>
       </ion-card>
     </div>
     

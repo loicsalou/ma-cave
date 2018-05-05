@@ -88,7 +88,6 @@ export class DashboardPage implements OnInit, OnDestroy {
       }),
       catchError((err) => {
         this.notificationService.error('messages.withdrawals-load-error');
-        console.error('DashboardPage.ngOnInit: ' + err);
         return of([]);
       })
     );
@@ -101,7 +100,6 @@ export class DashboardPage implements OnInit, OnDestroy {
       }),
       catchError((err) => {
                    this.notificationService.error('messages.most-used-queries-failed');
-                   console.error('DashboardPage.ngOnInit: ' + err);
                    return of([]);
                  }
       )

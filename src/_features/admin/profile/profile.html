@@ -6,7 +6,7 @@
   8px 8px 8px 0; align-self: center;"/>
 </ion-header>
 
-<ion-content align-items-center *ngIf="user" class="page profile-page">
+<ion-content align-items-center *ngIf="user$ | async as user" class="page profile-page">
   <responsive-wrapper>
     <ion-card *ngIf="user.photoURL" class="profile-box">
       <div class="profile-image">

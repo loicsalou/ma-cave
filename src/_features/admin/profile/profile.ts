@@ -1,5 +1,4 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
-import {LoginService} from '../../../service/login/login.service';
 import {User} from '../../../model/user';
 import {NotificationService} from '../../../service/notification.service';
 import VERSION from '../version';
@@ -9,6 +8,8 @@ import {ApplicationState} from '../../../app/state/app.state';
 import {LogoutAction, UpdateThemeAction} from '../../../app/state/shared.actions';
 import {SharedQuery} from '../../../app/state/shared.state';
 import {Subscription} from 'rxjs/Subscription';
+import {Observable} from 'rxjs/Observable';
+import {tap} from 'rxjs/operators';
 
 @Component({
              selector: 'page-profile',
@@ -19,10 +20,12 @@ export class ProfilePage implements OnInit, OnDestroy {
   userData: any;
   _currentTheme: string;
   prefsSub: Subscription;
+  user$: Observable<User>;
+
   private userDataKeys: string[];
   private userDataValues: any[];
 
-  constructor(public loginService: LoginService, private notificationService: NotificationService,
+  constructor(private notificationService: NotificationService,
               private sharedServices: SharedPersistenceService, @Inject('GLOBAL_CONFIG') private config,
               private store: Store<ApplicationState>) {
     this.prefsSub = store.select(SharedQuery.getSharedState).subscribe(
@@ -43,18 +46,18 @@ export class ProfilePage implements OnInit, OnDestroy {
     this.store.dispatch(new UpdateThemeAction(value));
   }
 
-  get user(): User {
-    return this.loginService.user;
-  }
-
   ngOnInit(): void {
     this.version = VERSION;
-    this.userDataKeys = Object.keys(this.loginService.user);
-    this.userDataValues = [];
-    this.userDataKeys.forEach(key => {
-      this.userDataValues.push(this.loginService.user[ key ]);
-    });
-    this.notificationService.debugAlert('photo user=' + JSON.stringify(this.loginService.user));
+    this.user$ = this.store.select(SharedQuery.getLoginUser).pipe(
+      tap(user => {
+        this.userDataKeys = Object.keys(user);
+        this.userDataValues = [];
+        this.userDataKeys.forEach(key => {
+          this.userDataValues.push(user[ key ]);
+        });
+        this.notificationService.debugAlert('photo user=' + JSON.stringify(user));
+      })
+    );
   }
 
   ngOnDestroy(): void {

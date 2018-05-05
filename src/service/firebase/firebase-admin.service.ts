@@ -14,7 +14,7 @@ import * as schema from './firebase-schema';
 import {MOSTUSED_ROOT_FOLDER} from './firebase-schema';
 import {AdminService} from '../admin.service';
 import {UserPreferences} from '../../model/user-preferences';
-import {map, tap} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import Reference = firebase.database.Reference;
 
 /**
@@ -84,10 +84,7 @@ export class FirebaseAdminService implements AdminService {
               .map(key => data.mostUsedQueries[ key ])
           };
         }
-      ),
-      tap(data => {
-        console.info(JSON.stringify(data));
-      })
+      )
     );
   }
 
@@ -114,14 +111,18 @@ export class FirebaseAdminService implements AdminService {
           this.profileRootRef.child(MOSTUSED_ROOT_FOLDER).child(key).set({keywords: keywords, count: 1});
         }
       },
-      onerror => console.error('firebase error: ' + onerror)
+      onerror => this.notificationService.error(onerror)
     );
   }
 
   removeFromQueryStats(keywords: any) {
     let key = keywords.join('-');
     this.profileRootRef.child(MOSTUSED_ROOT_FOLDER).child(key).remove(
-      errorOrNull => console.info('removeFromQueryStats ended with ' + errorOrNull)
+      (errorOrNull: Error | null) => {
+        if (errorOrNull) {
+          this.notificationService.error(errorOrNull.message);
+        }
+      }
     );
   }
 

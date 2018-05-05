@@ -1,5 +1,4 @@
 import {Observable} from 'rxjs/Observable';
-import {LoginService} from './login/login.service';
 import {NotificationService} from './notification.service';
 import {User} from '../model/user';
 import {Subscription} from 'rxjs/Subscription';
@@ -17,7 +16,7 @@ export abstract class AbstractPersistenceService implements OnDestroy {
   protected USERS_FOLDER = 'users';
   private loginSub: Subscription;
 
-  constructor(protected notificationService: NotificationService, protected loginService: LoginService,
+  constructor(protected notificationService: NotificationService,
               protected translateService: TranslateService,
               private store: Store<ApplicationState>) {
   }
@@ -41,9 +40,6 @@ export abstract class AbstractPersistenceService implements OnDestroy {
       .subscribe(
         state => this.handleLoginEvent(state.user)
       );
-    //this.loginSub = this.loginService.authentifiedObservable.subscribe(
-    //  user => this.handleLoginEvent(user)
-    //);
   }
 
   private handleLoginEvent(user: User) {

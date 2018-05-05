@@ -3,7 +3,6 @@
  */
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {LoginService} from './login/login.service';
 import {AbstractPersistenceService} from './abstract-persistence.service';
 import {NotificationService} from './notification.service';
 import {FirebaseAdminService} from './firebase/firebase-admin.service';
@@ -11,7 +10,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {SearchCriteria} from '../model/search-criteria';
 import {UserPreferences} from '../model/user-preferences';
 import {FilterSet} from '../components/distribution/filterset';
-import {map, tap} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../app/state/app.state';
 
@@ -25,10 +24,9 @@ export class SharedPersistenceService extends AbstractPersistenceService {
 
   constructor(private dataConnection: FirebaseAdminService,
               notificationService: NotificationService,
-              loginService: LoginService,
               translateService: TranslateService,
               store: Store<ApplicationState>) {
-    super(notificationService, loginService, translateService, store);
+    super(notificationService, translateService, store);
     this.subscribeLogin();
   }
 
@@ -39,9 +37,7 @@ export class SharedPersistenceService extends AbstractPersistenceService {
   }
 
   getUserPreferences(): Observable<UserPreferences> {
-    return this.dataConnection.getSharedState().pipe(
-      tap(state => console.info(JSON.stringify(state)))
-    );
+    return this.dataConnection.getSharedState();
   }
 
   /**

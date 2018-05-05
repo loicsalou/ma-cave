@@ -9,6 +9,9 @@ import {ApplicationState} from '../../../app/state/app.state';
 import {Store} from '@ngrx/store';
 import {BottlesQuery} from '../../../app/state/bottles.state';
 import {DeleteAccountAction, LogoutAction} from '../../../app/state/shared.actions';
+import {SharedQuery, SharedState} from '../../../app/state/shared.state';
+import {Observable} from 'rxjs/Observable';
+import {User} from '../../../model/user';
 
 /**
  * Generated class for the UploadBottles page.
@@ -28,6 +31,7 @@ export class UploadBottlesPage {
   deleteBefore: boolean = true;
   localStorageKeys: any;
   tempValue: any;
+  private user$: Observable<User>;
 
   constructor(private navCtrl: NavController,
               private filepath: FilePath,
@@ -38,6 +42,7 @@ export class UploadBottlesPage {
               private loadingController: LoadingController,
               private importProvider: ImportProvider,
               private store: Store<ApplicationState>) {
+    this.user$=this.store.select(SharedQuery.getLoginUser);
   }
 
   deleteAccount() {
