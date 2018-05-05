@@ -25,7 +25,7 @@ export const META_REDUCERS: MetaReducer<any>[] = environment.production
   ? []
   : [ storeFreeze, logReducer ];
 
-function logReducer(reducer) {
+export function logReducer(reducer) {
   return (state, action) => {
     console.log(action.type);
     const newState = reducer(state, action);
