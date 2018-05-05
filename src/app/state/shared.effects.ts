@@ -4,8 +4,8 @@ import {BottlePersistenceService} from '../../service/bottle-persistence.service
 import {map, switchMap, tap} from 'rxjs/operators';
 import {
   DeleteAccountAction,
+  LoadSharedAction,
   LoadSharedSuccessAction,
-  LogoutAction,
   SharedActionTypes,
   UpdateMostUsedQueriesAction,
   UpdateThemeAction
@@ -25,19 +25,15 @@ export class SharedEffectsService {
             new LoadSharedSuccessAction(prefs))
     );
 
-  @Effect({dispatch: false}) updateTheme$ = this.actions$
+  @Effect() updateTheme$ = this.actions$
     .ofType(SharedActionTypes.UpdateThemeActionType).pipe(
-      tap((action: UpdateThemeAction) => this.sharedServices.updateTheme(action.theme))
+      tap((action: UpdateThemeAction) => this.sharedServices.updateTheme(action.theme)),
+      map(() => new LoadSharedAction())
     );
 
   @Effect({dispatch: false}) updateQueries$ = this.actions$
     .ofType(SharedActionTypes.UpdateMostUsedQueriesActionType).pipe(
       tap((action: UpdateMostUsedQueriesAction) => this.sharedServices.updateQueryStats(action.keywords))
-    );
-
-  @Effect({dispatch: false}) logout$ = this.actions$
-    .ofType(SharedActionTypes.LogoutActionType).pipe(
-      tap((action: LogoutAction) => this.loginService.logout())
     );
 
   @Effect({dispatch: false}) deleteAccount$ = this.actions$

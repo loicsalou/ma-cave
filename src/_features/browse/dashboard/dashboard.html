@@ -31,15 +31,17 @@
       <!--<ion-segment-button></ion-segment-button>-->
     </ion-card>
     
-    <ion-card class="card-background recent-withdrawal">
-      <ion-scroll scrollY="true" [ngStyle]="withdrawalCardStyle">
-        <ion-title>{{'record-output.recent-withdrawals'| translate}}</ion-title>
-        <ion-list sliding="false">
-          <withdrawal-item [withdrawal]="withdraw" (showDetail)="triggerNotation($event)"
-                           *ngFor="let withdraw of withdrawals$ | async"></withdrawal-item>
-        </ion-list>
-      </ion-scroll>
-    </ion-card>
+    <ng-container *ngIf="withdrawals$ | async as withdrawals">
+      <ion-card class="card-background recent-withdrawal" *ngIf="withdrawals.length > 0">
+        <ion-scroll scrollY="true" [ngStyle]="withdrawalCardStyle">
+          <ion-title>{{'record-output.recent-withdrawals'| translate}}</ion-title>
+          <ion-list sliding="false">
+            <withdrawal-item [withdrawal]="withdraw" (showDetail)="triggerNotation($event)"
+                             *ngFor="let withdraw of withdrawals"></withdrawal-item>
+          </ion-list>
+        </ion-scroll>
+      </ion-card>
+    </ng-container>
     
     <ion-card class="card-background by-label" *ngIf="bottles$">
       <ion-title>{{'statistics.repartition-par-type'| translate}}</ion-title>

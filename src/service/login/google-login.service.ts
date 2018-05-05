@@ -32,7 +32,7 @@ export class GoogleLoginService extends AbstractLoginService {
                                      'webClientId': '58435015061-8bnsnki77q4ffi25ph5plr6m694866vd.apps.googleusercontent.com'
                                    }).then(userData => {
         //alert('login with cordova OK token='+userData.idToken);
-        var token = userData.idToken;
+        const token = userData.idToken;
         const googleCredential = auth.GoogleAuthProvider.credential(token, null);
         firebase.auth().signInWithCredential(googleCredential).then((success) => {
           //alert('firebase signin with credential OK');

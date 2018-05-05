@@ -42,7 +42,7 @@ export class BottleItemComponent {
   }
 
   numberNotPlaced(bottle: Bottle): number {
-    return bottle.numberToBePlaced();
+    return bottle.quantite_courante - bottle.positions.length;
   }
 
   isSelected() {

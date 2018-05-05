@@ -20,6 +20,7 @@ import {sanitizeBeforeSave} from '../../utils/index';
 import {fromPromise} from 'rxjs/observable/fromPromise';
 import {_throw} from 'rxjs/observable/throw';
 import {of} from 'rxjs/observable/of';
+import {map, tap} from 'rxjs/operators';
 import Reference = firebase.database.Reference;
 
 /**
@@ -44,13 +45,6 @@ export class FirebaseBottlesService {
   constructor(private bottleFactory: BottleFactory,
               private angularFirebase: AngularFireDatabase,
               private notificationService: NotificationService) {
-  }
-
-  get allBottlesObservable(): Observable<Bottle[]> {
-    this._bottles = new BehaviorSubject<Bottle[]>([]);
-    this._allBottlesObservable = this._bottles.asObservable();
-    this.fetchAllBottles();
-    return this._allBottlesObservable;
   }
 
   public initialize(user: User) {
@@ -102,7 +96,6 @@ export class FirebaseBottlesService {
    */
   public fetchAllBottles() {
     this.notificationService.debugAlert('fetchAllBottles()');
-    this.firebaseBottlesSub = this.fetchAllBottlesFromDB();
   }
 
   //============================= Image management
@@ -195,12 +188,24 @@ export class FirebaseBottlesService {
     );
   }
 
-  disconnectListeners() {
-    this.firebaseBottlesSub.unsubscribe();
-  }
-
-  reconnectListeners() {
-    this.fetchAllBottles();
+  //============== NO CACHE AVAILABLE
+  public fetchAllBottlesFromDB(): Observable<Bottle[]> {
+    this.notificationService.debugAlert('fetchAllBottlesFromDB()');
+    let popup = this.notificationService.createLoadingPopup('app.loading');
+    popup.onDidDismiss(() =>
+                         popup = undefined
+    );
+    return this.angularFirebase.list<Bottle>(this.BOTTLES_ROOT).snapshotChanges().pipe(
+      map(
+        (snaps: SnapshotAction[]) => snaps.map(snap => this.bottleFactory.create({id: snap.payload.key, ...snap.payload.val()}))
+      ),
+      tap(() => {
+            if (popup) {
+              popup.dismiss();
+            }
+          }
+      )
+    );
   }
 
   private initLogging() {
@@ -209,40 +214,5 @@ export class FirebaseBottlesService {
         this.errorRootRef.limitToFirst(1).ref.remove();
       }
     });
-  }
-
-  //============== NO CACHE AVAILABLE
-  private fetchAllBottlesFromDB(): Subscription {
-    this.notificationService.debugAlert('fetchAllBottlesFromDB()');
-    let popup = this.notificationService.createLoadingPopup('app.loading');
-    popup.onDidDismiss(() =>
-                         popup = undefined
-    );
-    let items = this.angularFirebase.list<Bottle>(this.BOTTLES_ROOT).snapshotChanges();
-
-    return items.subscribe(
-      (changes: SnapshotAction[]) => {
-        const bottles = changes.map(
-          c => this.bottleFactory.create({id: c.payload.key, ...c.payload.val()})
-        );
-        if (popup) {
-          popup.dismiss();
-        }
-        this._bottles.next(bottles);
-      },
-      error => {
-        if (popup) {
-          popup.dismiss();
-        }
-        this._bottles.error(error);
-      },
-      () => {
-        if (popup) {
-          popup.dismiss();
-        }
-        this._bottles.complete();
-
-      }
-    );
   }
 }

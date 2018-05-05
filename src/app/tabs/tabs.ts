@@ -4,6 +4,11 @@ import {DashboardPage} from '../../_features/browse/dashboard/dashboard';
 import {ProfilePage} from '../../_features/admin/profile/profile';
 import {CellarPage} from '../../_features/racks/cellar/cellar.page';
 import {NavController, Platform} from 'ionic-angular';
+import {ApplicationState} from '../state/app.state';
+import {Store} from '@ngrx/store';
+import {SharedQuery, SharedState} from '../state/shared.state';
+import {map} from 'rxjs/operators';
+import {Observable} from 'rxjs/Observable';
 
 @Component({
              templateUrl: 'tabs.html'
@@ -13,9 +18,9 @@ export class TabsPage {
   cellarRoot: any = CellarPage;
   dashboardRoot: any = DashboardPage;
   adminRoot: any = UploadBottlesPage;
-  selectedTheme = 'cavus-theme';
+  selectedTheme$: Observable<string>;
 
-  constructor(platform: Platform, navCtrl: NavController) {
+  constructor(private platform: Platform, private navCtrl: NavController, private store: Store<ApplicationState>) {
     platform.ready().then(() => {
       platform.registerBackButtonAction(() => {
         if (navCtrl.canGoBack()) {
@@ -24,7 +29,13 @@ export class TabsPage {
           //don't do anything
         }
       });
+      this.retrieveTheme();
     });
   }
 
+  private retrieveTheme() {
+    this.selectedTheme$ = this.store.select(SharedQuery.getSharedState).pipe(
+      map((state: SharedState) => state.theme ? state.theme : 'cavus-theme')
+    );
+  }
 }

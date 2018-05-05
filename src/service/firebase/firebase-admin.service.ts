@@ -80,7 +80,7 @@ export class FirebaseAdminService implements AdminService {
         (data: UserPreferences) => {
           return {
             ...data,
-            mostUsedQueries: Object.keys(data.mostUsedQueries)
+            mostUsedQueries: Object.keys(data.mostUsedQueries || {})
               .map(key => data.mostUsedQueries[ key ])
           };
         }
@@ -95,7 +95,7 @@ export class FirebaseAdminService implements AdminService {
     this.profileRootRef.child('theme').once('value').then(
       snapshot => {
         if (snapshot.val()) {
-          this.profileRootRef.child('theme').update(theme);
+          this.profileRootRef.update({theme: theme});
         } else {
           this.profileRootRef.child('theme').set(theme);
         }

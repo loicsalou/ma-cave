@@ -4,14 +4,13 @@ import {
   BottlesActionTypes,
   LoadBottlesSuccessAction, RemoveFilterAction,
   UpdateBottlesAction,
-  UpdateBottleSuccessAction,
-  UpdateFilterAction
+  UpdateBottlesSuccessAction,
+  UpdateFilterAction, WithdrawBottleAction, WithdrawBottleSuccessAction
 } from './bottles.actions';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {map, switchMap, tap} from 'rxjs/operators';
 import {Bottle} from '../../model/bottle';
 import {SharedPersistenceService} from '../../service/shared-persistence.service';
-import {of} from 'rxjs/observable/of';
 
 @Injectable()
 export class BottlesEffectsService {
@@ -28,15 +27,24 @@ export class BottlesEffectsService {
                   this.bottlesService.update(action.bottle)
       ),
       map((bottles: Bottle[]) =>
-            new UpdateBottleSuccessAction(bottles))
+            new UpdateBottlesSuccessAction(bottles))
     );
 
-  @Effect({dispatch: false}) updateFilter$ = this.actions$
-    .ofType(BottlesActionTypes.UpdateFilterActionType).pipe(
-      tap((action: UpdateFilterAction) =>
-            this.sharedServices.updateFilterStats(action.newFilter)
-      )
+  @Effect() withdrawBottle$ = this.actions$
+    .ofType(BottlesActionTypes.WithdrawBottleActionType).pipe(
+      tap((action: WithdrawBottleAction) =>
+                  this.bottlesService.withdraw(action.bottle, action.position)
+      ),
+      map((action: WithdrawBottleAction) =>
+            new WithdrawBottleSuccessAction(action.bottle))
     );
+
+  //@Effect({dispatch: false}) updateFilter$ = this.actions$
+  //  .ofType(BottlesActionTypes.UpdateFilterActionType).pipe(
+  //    tap((action: UpdateFilterAction) =>
+  //          this.sharedServices.updateFilterStats(action.newFilter)
+  //    )
+  //  );
 
   @Effect({dispatch: false}) removeFilter$ = this.actions$
     .ofType(BottlesActionTypes.RemoveFilterActionType).pipe(

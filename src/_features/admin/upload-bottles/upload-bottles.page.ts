@@ -4,9 +4,7 @@ import {FileChooser} from '@ionic-native/file-chooser';
 import {FilePath} from '@ionic-native/file-path';
 import {BottlePersistenceService} from '../../../service/bottle-persistence.service';
 import {NotificationService} from '../../../service/notification.service';
-import {NativeStorageService} from '../../../service/native-storage.service';
 import {ImportProvider} from '../../../providers/import/import';
-import {LoginService} from '../../../service/login/login.service';
 import {ApplicationState} from '../../../app/state/app.state';
 import {Store} from '@ngrx/store';
 import {BottlesQuery} from '../../../app/state/bottles.state';
@@ -37,7 +35,6 @@ export class UploadBottlesPage {
               private notificationService: NotificationService,
               private bottleService: BottlePersistenceService,
               private platform: Platform,
-              private localStorage: NativeStorageService,
               private loadingController: LoadingController,
               private importProvider: ImportProvider,
               private store: Store<ApplicationState>) {
@@ -47,7 +44,7 @@ export class UploadBottlesPage {
     this.notificationService.ask('question', 'app.confirm').take(1).subscribe(
       result => {
         if (result) {
-          this.store.dispatch(new DeleteAccountAction())
+          this.store.dispatch(new DeleteAccountAction());
         }
       }
     );
@@ -64,16 +61,6 @@ export class UploadBottlesPage {
 
   public switchAdvancedOptions() {
     this.optionsVisibles = !this.optionsVisibles;
-  }
-
-  public listLocalStorageData() {
-    this.localStorage.getList()
-      .then(keys => {
-        this.localStorageKeys = keys;
-      })
-      .catch(err => {
-        //alert('accès aux clés KO ' + err)
-      });
   }
 
   /**
@@ -119,18 +106,6 @@ export class UploadBottlesPage {
 
   public emptyLogs() {
     this.bottleService.deleteLogs();
-  }
-
-  showLocalStorage() {
-    this.listLocalStorageData();
-  }
-
-  loadTempValueFor(key) {
-    this.localStorage.getValue(key)
-      .then(v => this.tempValue = JSON.stringify(v))
-      .catch(err => {
-        //alert('accès à la valeur de ' + key + ' KO: ' + JSON.stringify(err))
-      });
   }
 
   private setupUpload(file: any) {

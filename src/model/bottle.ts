@@ -1,9 +1,7 @@
 /**
  * Created by loicsalou on 01.03.17.
  */
-import {ImgDefaultable} from '../directives/default-image/img-defaultable';
-
-export class Bottle implements ImgDefaultable {
+export class Bottle {
 
   id?: string;
   classe_age?: string;
@@ -29,7 +27,6 @@ export class Bottle implements ImgDefaultable {
   quantite_achat: string;
   quantite_courante: number;
   subregion_label: string;
-  selected?: boolean;
   suggestion: string;
   volume: string;
   metadata?: BottleMetadata;
@@ -38,30 +35,6 @@ export class Bottle implements ImgDefaultable {
 
   constructor(jsonOrBottle: Object) {
     Object.assign(this, jsonOrBottle);
-    this.selected = false;
-  }
-
-  getDefaultImageSrc(): string {
-    return this.defaultImage;
-  }
-
-  numberToBePlaced(): number {
-    return this.quantite_courante - this.positions.length
-  }
-
-  addNewPosition(position: Position) {
-    this.positions.push(position);
-  }
-
-  removeFromPosition(position: Position) {
-    this.positions = this.positions.filter(pos => !pos.equals(position));
-  }
-
-  equals(bottle: Bottle) {
-    if (!bottle) {
-      return false;
-    }
-    return this.id === bottle.id;
   }
 }
 

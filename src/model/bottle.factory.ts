@@ -23,10 +23,6 @@ export class BottleFactory {
     return 'assets/img/bottle-color/' + color + '.png';
   }
 
-  getWineColorClass(bottle: Bottle) {
-    return `wine-${this.config.colorsText2Code[bottle.label]}`;
-  }
-
   public create(bottle: Bottle): Bottle {
     let btl: Bottle = new Bottle(bottle);
     this.setClasseAge(btl)

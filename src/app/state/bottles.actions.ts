@@ -1,5 +1,5 @@
 import {Action} from '@ngrx/store';
-import {Bottle} from '../../model/bottle';
+import {Bottle, Position} from '../../model/bottle';
 import {FilterSet} from '../../components/distribution/filterset';
 
 export enum BottlesActionTypes {
@@ -14,6 +14,8 @@ export enum BottlesActionTypes {
   RemoveFilterActionType = '[filter] - remove',
   ResetFilterActionType = '[filter] - reset',
   ResetBottleSelectionActionType = '[bottles] - reset selection',
+  WithdrawBottleActionType = '[bottles] - withdraw bottle',
+  WithdrawBottleSuccessActionType = '[bottles] - withdraw bottle success',
   SelectBottleActionType = '[bottles] - reset'
 }
 
@@ -22,13 +24,14 @@ export type BottlesActions = LoadBottlesAction
   | LoadBottlesFailedAction
   | CreateBottleAction
   | UpdateBottlesAction
-  | UpdateBottleSuccessAction
-  | DrawBottlesAction
+  | UpdateBottlesSuccessAction
   | UpdateFilterAction
   | RemoveFilterAction
   | ResetFilterAction
   | ResetBottleSelectionAction
-  | SelectBottleAction;
+  | SelectBottleAction
+  | WithdrawBottleAction
+  | WithdrawBottleSuccessAction;
 
 /**
  * Mise à jour du filtre
@@ -98,7 +101,7 @@ export class UpdateBottlesAction implements Action {
 /**
  * Mise à jour d'une bouteille
  */
-export class UpdateBottleSuccessAction implements Action {
+export class UpdateBottlesSuccessAction implements Action {
   readonly type = BottlesActionTypes.UpdateBottlesSuccessActionType;
 
   constructor(public bottles: Bottle[]) {}
@@ -126,8 +129,15 @@ export class SelectBottleAction implements Action {
 /**
  * Sortie d'une bouteille
  */
-export class DrawBottlesAction implements Action {
-  readonly type = BottlesActionTypes.DrawBottlesActionType;
+export class WithdrawBottleAction implements Action {
+  readonly type = BottlesActionTypes.WithdrawBottleActionType;
+
+  constructor(public bottle: Bottle, public position: Position) {
+  }
+}
+
+export class WithdrawBottleSuccessAction implements Action {
+  readonly type = BottlesActionTypes.WithdrawBottleSuccessActionType;
 
   constructor(public bottle: Bottle) {
   }

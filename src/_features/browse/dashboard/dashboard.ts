@@ -1,13 +1,10 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ModalController, NavController, Platform, PopoverController, VirtualScroll} from 'ionic-angular';
 import {BrowsePage} from '../browse/browse.page';
-import {LoginService} from '../../../service/login/login.service';
-import {BottlePersistenceService} from '../../../service/bottle-persistence.service';
 import {Bottle} from '../../../model/bottle';
 import {FilterSet} from '../../../components/distribution/filterset';
 import {NativeProvider} from '../../../providers/native/native';
 import {NotificationService} from '../../../service/notification.service';
-import {TranslateService} from '@ngx-translate/core';
 import {PopoverPage} from '../popover/popover.page';
 import {Action} from '../../../model/action';
 import {BottleItemComponent} from '../../../components/list/bottle-item.component';

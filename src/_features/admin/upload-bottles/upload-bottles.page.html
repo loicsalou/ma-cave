@@ -131,17 +131,6 @@
         <ion-icon name="trash"></ion-icon>
         Supprimer l'utilisateur
       </button>
-      <button ion-button align-items-start icon-only block (click)="showLocalStorage()">
-        <ion-icon name="search"></ion-icon>
-        Voir local storage
-      </button>
-    </ion-card>
-    
-    <ion-card *ngIf="localStorageKeys">
-      <ion-item *ngFor="let key of localStorageKeys">
-        <label (click)="loadTempValueFor(key)">{{key}}</label>
-      </ion-item>
-      <textarea [value]="tempValue" style="height:50vh; width:95vw"></textarea>
     </ion-card>
   </responsive-wrapper>
 </ion-content>

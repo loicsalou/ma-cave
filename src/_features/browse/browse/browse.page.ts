@@ -1,14 +1,11 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {MenuController, NavController, Platform} from 'ionic-angular';
-import {BottlePersistenceService} from '../../../service/bottle-persistence.service';
+import {MenuController, NavController} from 'ionic-angular';
 import {Bottle} from '../../../model/bottle';
 import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
 import {FilterSet} from '../../../components/distribution/filterset';
 import * as _ from 'lodash';
-import {NotificationService} from '../../../service/notification.service';
 import {CellarPage} from '../../racks/cellar/cellar.page';
 import {BottleItemComponent} from '../../../components/list/bottle-item.component';
-import {TranslateService} from '@ngx-translate/core';
 import {NativeProvider} from '../../../providers/native/native';
 import {Observable} from 'rxjs/Observable';
 import {ApplicationState} from '../../../app/state/app.state';
@@ -49,6 +46,10 @@ export class BrowsePage implements OnInit, OnDestroy {
               private store: Store<ApplicationState>) {
   }
 
+  get nbSelected(): number {
+    return this.selectedBottles.length;
+  }
+
   ngOnInit() {
     this.nativeProvider.feedBack();
     this.filterSet$ = this.store.select(BottlesQuery.getFilter).pipe(
@@ -64,10 +65,6 @@ export class BrowsePage implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.selectionSub.unsubscribe();
-  }
-
-  get nbSelected(): number {
-    return this.selectedBottles.length;
   }
 
   anyBottleSelected(): boolean {

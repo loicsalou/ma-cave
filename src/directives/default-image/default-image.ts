@@ -1,5 +1,4 @@
 import {Directive, Input} from '@angular/core';
-import {ImgDefaultable} from './img-defaultable';
 
 /**
  * Affecte une image par défaut pour l'img qui point sur une image inexistante
@@ -12,7 +11,7 @@ import {ImgDefaultable} from './img-defaultable';
            })
 export class DefaultImageDirective {
   @Input()
-  defaultImage: ImgDefaultable | string;
+  defaultImage: string | { defaultImage: string };
 
   constructor() {
   }

@@ -18,6 +18,7 @@ const INITIAL_STATE: SharedState = {
 
 export namespace SharedQuery {
   export const getSharedState = (state: ApplicationState) => state.shared;
+  export const getLoginUser = (state: ApplicationState) => state.shared.user;
 }
 
 export function sharedStateReducer(state: SharedState = INITIAL_STATE, action: SharedActions): SharedState {
@@ -32,6 +33,20 @@ export function sharedStateReducer(state: SharedState = INITIAL_STATE, action: S
       } else {
         return state;
       }
+    }
+
+    case SharedActionTypes.LoginActionSuccessType: {
+        return {
+          ...state,
+          user: action.user
+        };
+    }
+
+    case SharedActionTypes.LogoutActionType: {
+        return {
+          ...state,
+          user: undefined
+        };
     }
 
     default:

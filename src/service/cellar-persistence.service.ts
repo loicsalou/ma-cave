@@ -14,6 +14,8 @@ import {BottlePersistenceService} from './bottle-persistence.service';
 import {TranslateService} from '@ngx-translate/core';
 import {Subscription} from 'rxjs/Subscription';
 import {FirebaseLockersService} from './firebase/firebase-lockers.service';
+import {Store} from '@ngrx/store';
+import {ApplicationState} from '../app/state/app.state';
 
 /**
  * Services related to the cellar itself, locker and place of the lockers.
@@ -29,17 +31,15 @@ export class CellarPersistenceService extends AbstractPersistenceService {
   private allLockersArray: Locker[];
   private lockersSubscription: Subscription;
 
+  // TODO supprimer bottleService quand NGRX fournira le bon sélecteur
   constructor(private firebaseLockersService: FirebaseLockersService,
               private lockerFactory: LockerFactory,
               notificationService: NotificationService,
-              // TODO supprimer bottleService quand NGRX fournira le bon sélecteur
               private bottleService: BottlePersistenceService,
               translateService: TranslateService,
-              loginService: LoginService) {
-    super(notificationService, loginService, translateService);
-    if (loginService.user) {
-      this.initialize(loginService.user);
-    }
+              loginService: LoginService, store: Store<ApplicationState>) {
+    super(notificationService, loginService, translateService, store);
+    this.subscribeLogin();
   }
 
   get allLockersObservable(): Observable<Locker[]> {

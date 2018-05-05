@@ -23,6 +23,8 @@ import {FirebaseBottlesService} from './firebase/firebase-bottles.service';
 import {FirebaseLockersService} from './firebase/firebase-lockers.service';
 import {FirebaseImagesService} from './firebase/firebase-images.service';
 import {tap} from 'rxjs/operators';
+import {Store} from '@ngrx/store';
+import {ApplicationState} from '../app/state/app.state';
 
 /**
  * Services related to the bottles in the cellar.
@@ -38,7 +40,6 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
   private filters: FilterSet = new FilterSet();
   private allBottlesArray: Bottle[];
   private bottlesSub: Subscription;
-  private _filtersObservable: BehaviorSubject<FilterSet>;
 
   constructor(private dataConnection: FirebaseAdminService,
               private bottlesService: FirebaseBottlesService,
@@ -46,13 +47,12 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
               private lockersService: FirebaseLockersService,
               private withdrawalService: FirebaseWithdrawalsService,
               notificationService: NotificationService,
-              loginService: LoginService, private bottleFactory: BottleFactory,
-              translateService: TranslateService) {
-    super(notificationService, loginService, translateService);
-    this._filtersObservable = new BehaviorSubject<FilterSet>(new FilterSet());
-    if (loginService.user) {
-      this.initialize(loginService.user);
-    }
+              loginService: LoginService,
+              private bottleFactory: BottleFactory,
+              translateService: TranslateService,
+              store: Store<ApplicationState>) {
+    super(notificationService, loginService, translateService, store);
+    this.subscribeLogin();
   }
 
   get allBottlesObservable(): Observable<Bottle[]> {
@@ -61,10 +61,6 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
 
   get filteredBottlesObservable(): Observable<Bottle[]> {
     return this._filteredBottlesObservable;
-  }
-
-  get filtersObservable(): Observable<FilterSet> {
-    return this._filtersObservable.asObservable();
   }
 
   ngOnInit() {
@@ -84,7 +80,6 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
       let updatedBottle = new Bottle(btl);
       updatedBottle.lastUpdated = new Date().getTime();
       updatedBottle.positions = updatedBottle.positions.filter(pos => pos.lockerId !== undefined);
-      delete updatedBottle.selected;
       return updatedBottle;
     })).pipe(
       tap((bottles: Bottle[]) =>
@@ -121,20 +116,6 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
    */
   public createBottle(btl: Bottle): Bottle {
     return this.bottleFactory.create(btl);
-  }
-
-  /**
-   * durant un import on coupe la souscription pour éviter les cascades d'événements
-   */
-  public disconnectListeners() {
-    this.bottlesService.disconnectListeners();
-  }
-
-  /**
-   * après un import on rebranche la souscription pour éviter les cascades d'événements
-   */
-  public reconnectListeners() {
-    this.bottlesService.reconnectListeners();
   }
 
   removeFromQueryStats(keywords: any) {
@@ -177,7 +158,7 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
   }
 
   loadAllBottles(): Observable<Bottle[]> {
-    return this.bottlesService.allBottlesObservable;
+    return this.bottlesService.fetchAllBottlesFromDB();
   }
 
   protected initialize(user: User) {
@@ -193,6 +174,14 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
     super.cleanup();
     this.allBottlesArray = undefined;
     this.filters = undefined;
+  }
+
+  disconnectListeners() {
+    this.notificationService.error('Déconnection de la DB à réimplémenter')
+  }
+
+  reconnectListeners() {
+    this.notificationService.error('Reconnection de la DB à réimplémenter')
   }
 }
 

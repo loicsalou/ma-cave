@@ -55,12 +55,6 @@ export function bottlesStateReducer(state: BottlesState = INITIAL_STATE, action:
       };
     }
 
-    case BottlesActionTypes.DrawBottlesActionType: {
-      return {
-        ...state
-      };
-    }
-
     case BottlesActionTypes.LoadBottlesActionType: {
       return {
         ...state,
@@ -117,6 +111,16 @@ export function bottlesStateReducer(state: BottlesState = INITIAL_STATE, action:
 
     case BottlesActionTypes.UpdateBottlesActionType: {
       return state;
+    }
+
+    case BottlesActionTypes.WithdrawBottleSuccessActionType: {
+      return {
+        ...state,
+        allBottles: {
+          ...state.allBottles,
+          list: updateList(state.allBottles.list, [ action.bottle ])
+        }
+      };
     }
 
     case BottlesActionTypes.UpdateBottlesSuccessActionType: {

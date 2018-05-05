@@ -12,6 +12,8 @@ import {SearchCriteria} from '../model/search-criteria';
 import {UserPreferences} from '../model/user-preferences';
 import {FilterSet} from '../components/distribution/filterset';
 import {map, tap} from 'rxjs/operators';
+import {Store} from '@ngrx/store';
+import {ApplicationState} from '../app/state/app.state';
 
 /**
  * Services related to the bottles in the cellar.
@@ -24,11 +26,10 @@ export class SharedPersistenceService extends AbstractPersistenceService {
   constructor(private dataConnection: FirebaseAdminService,
               notificationService: NotificationService,
               loginService: LoginService,
-              translateService: TranslateService) {
-    super(notificationService, loginService, translateService);
-    if (loginService.user) {
-      this.initialize(loginService.user);
-    }
+              translateService: TranslateService,
+              store: Store<ApplicationState>) {
+    super(notificationService, loginService, translateService, store);
+    this.subscribeLogin();
   }
 
   getMostUsedQueries(nb: number = 5): Observable<SearchCriteria[]> {

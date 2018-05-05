@@ -12,6 +12,8 @@ import {NotificationService} from './notification.service';
 import {Subject} from 'rxjs/Subject';
 import {TranslateService} from '@ngx-translate/core';
 import {FirebaseImagesService} from './firebase/firebase-images.service';
+import {Store} from '@ngrx/store';
+import {ApplicationState} from '../app/state/app.state';
 
 /**
  * Services related to the bottles in the cellar.
@@ -25,13 +27,10 @@ export class ImagePersistenceService extends AbstractPersistenceService {
   private progressEvent$: Observable<number> = this._progressEvent.asObservable();
 
   constructor(private firebaseImageService: FirebaseImagesService,
-              notificationService: NotificationService, translateService: TranslateService, loginService: LoginService) {
-    super(notificationService, loginService, translateService);
-    if (loginService.user !== undefined) {
-      this.initialize(loginService.user);
-    } else {
-      this.cleanup();
-    }
+              notificationService: NotificationService, translateService: TranslateService, loginService: LoginService,
+              store: Store<ApplicationState>) {
+    super(notificationService, loginService, translateService, store);
+    this.subscribeLogin();
   }
 
   get progressEvent(): Observable<number> {

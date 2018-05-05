@@ -6,10 +6,11 @@ import {EmailLoginService} from './email-login.service';
 import {FacebookLoginService} from './facebook-login.service';
 import {NotificationService} from '../notification.service';
 import {Subscription} from 'rxjs/Subscription';
-import {LocalLoginService} from './local-login.service';
-import {NativeStorageService} from '../native-storage.service';
 import {AbstractLoginService} from './abstract-login.service';
 import {GoogleLoginService} from './google-login.service';
+import {Store} from '@ngrx/store';
+import {ApplicationState} from '../../app/state/app.state';
+import {LoginSuccessAction, LogoutAction} from '../../app/state/shared.actions';
 
 /**
  * Created by loicsalou on 13.06.17.
@@ -19,13 +20,15 @@ export class LoginService {
   public authentifiedObservable: Observable<User> = this.authentified.asObservable();
   private loginSub: Subscription;
   private currentLoginService: AbstractLoginService;
-
-  constructor(private anoLogin: AnonymousLoginService, private mailLogin: EmailLoginService,
-              private fbLogin: FacebookLoginService, private locLogin: LocalLoginService, private gglLogin: GoogleLoginService,
-              private notificationService: NotificationService, private localStorage: NativeStorageService) {
-  }
-
   private _user: User;
+
+  constructor(private anoLogin: AnonymousLoginService,
+              private mailLogin: EmailLoginService,
+              private fbLogin: FacebookLoginService,
+              private gglLogin: GoogleLoginService,
+              private notificationService: NotificationService,
+              private store: Store<ApplicationState>) {
+  }
 
   get user(): User {
     return this._user;
@@ -49,18 +52,6 @@ export class LoginService {
     this.currentLoginService.resetPassword(user);
   }
 
-  public localLogin(user: User) {
-    this.currentLoginService = this.locLogin;
-    this.locLogin.localUser = user;
-    this.loginSub = this.locLogin.login().subscribe(
-      (user: User) => {
-        this.initUser(user)
-      },
-      err => {
-        this.notificationService.failed('L\'authentification a échoué, veuillez vérifier votre saisie');
-      })
-  }
-
   public anonymousLogin() {
     this.currentLoginService = this.anoLogin;
     this.loginSub = this.anoLogin.login().subscribe(
@@ -68,9 +59,9 @@ export class LoginService {
         this.initUser(user);
       },
       err => {
-        this.notificationService.failed('L\'authentification a échoué, veuillez vérifier votre saisie');
+        this.notificationService.failed('L\'authentification a échoué, veuillez vérifier votre saisie ' + err);
       }
-    )
+    );
   }
 
   public googleLogin() {
@@ -80,9 +71,9 @@ export class LoginService {
         this.initUser(user);
       },
       err => {
-        this.notificationService.failed('L\'authentification a échoué, veuillez vérifier votre saisie');
+        this.notificationService.failed('L\'authentification a échoué, veuillez vérifier votre saisie ' + err);
       }
-    )
+    );
   }
 
   public emailLogin(login: string, psw: string) {
@@ -94,7 +85,7 @@ export class LoginService {
         this.initUser(user);
       },
       error => {
-        this.notificationService.failed('L\'authentification a échoué, veuillez vérifier votre saisie');
+        this.notificationService.failed('L\'authentification a échoué, veuillez vérifier votre saisie ' + error);
       }
     );
   }
@@ -103,23 +94,23 @@ export class LoginService {
     this.currentLoginService = this.fbLogin;
     this.loginSub = this.fbLogin.login().subscribe(
       (user: User) => this.initUser(user),
-      error => this.notificationService.failed('L\'authentification Facebook a échoué, veuillez vérifier votre' +
-        ' compte')
-    )
+      error =>
+        this.notificationService.failed('L\'authentification Facebook a échoué, veuillez vérifier votre compte ' + error)
+    );
   }
 
   public logout() {
     this.loginSub.unsubscribe();
+    this.store.dispatch(new LogoutAction());
     this.loginSub = undefined;
     this.user = undefined;
-    this.localStorage.cleanup();
     this.authentified.next(this.user);
   }
 
   private initUser(user: User) {
     if (user) {
+      this.store.dispatch(new LoginSuccessAction(user));
       this.user = user;
-      this.localStorage.initialize(user);
       this.authentified.next(user);
     }
     else {

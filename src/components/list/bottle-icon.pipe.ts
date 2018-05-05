@@ -1,5 +1,4 @@
-import {Pipe, PipeTransform} from '@angular/core';
-import {BottleFactory} from '../../model/bottle.factory';
+import {Inject, Pipe, PipeTransform} from '@angular/core';
 import {Bottle} from '../../model/bottle';
 
 /*
@@ -11,11 +10,11 @@ import {Bottle} from '../../model/bottle';
       })
 export class BottleIconPipe implements PipeTransform {
 
-  constructor(private bottleFactory: BottleFactory) {
+  constructor(@Inject('GLOBAL_CONFIG') protected config) {
   }
 
   transform(bottle: Bottle, ...args: any[]): any {
-    return this.bottleFactory.getImage(bottle);
-
+    const color = bottle.label === undefined ? 'undefined' : this.config.colorsText2Code[ bottle.label.toLowerCase() ];
+    return 'assets/img/bottle-color/' + color + '.png';
   }
 }

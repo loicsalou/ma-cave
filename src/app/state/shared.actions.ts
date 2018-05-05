@@ -1,5 +1,6 @@
 import {Action} from '@ngrx/store';
 import {UserPreferences} from '../../model/user-preferences';
+import {User} from '../../model/user';
 
 export enum SharedActionTypes {
   LoadSharedActionType = '[shared] - load',
@@ -9,7 +10,7 @@ export enum SharedActionTypes {
   LoginActionFailType = '[shared] - login fail',
   LoginActionSuccessType = '[shared] - login success',
   LogoutActionType = '[shared] - logout',
-  DeleteAccountActionType = '[shared] - logout',
+  DeleteAccountActionType = '[shared] - delete account',
   UpdateThemeActionType = '[shared] - update theme',
   UpdateMostUsedQueriesActionType = '[shared] - update most used queries',
 }
@@ -71,6 +72,8 @@ export class LoginFailAction implements Action {
 
 export class LoginSuccessAction implements Action {
   readonly type = SharedActionTypes.LoginActionSuccessType;
+
+  constructor(public user: User) {}
 }
 
 export class LogoutAction implements Action {

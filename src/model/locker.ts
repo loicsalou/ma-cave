@@ -2,12 +2,11 @@
  * Created by loicsalou on 11.07.17.
  */
 
-import {ImgDefaultable} from '../directives/default-image/img-defaultable';
 
 /**
  * Définit ce qu'est un casier à bouteilles et quel est son contrat de base
  */
-export abstract class Locker implements ImgDefaultable {
+export abstract class Locker {
 
   id: string; // identifiant DB si besoin
   name: string; // nom du casier
@@ -39,10 +38,6 @@ export abstract class Locker implements ImgDefaultable {
     //} else {
     //  this.dimension = <Dimension> dimension; //dimension L x H
     //}
-  }
-
-  getDefaultImageSrc(): string {
-    return this.defaultImage;
   }
 
   getNbOfBottles(): number {

@@ -4,22 +4,17 @@ import {MyCaveApp} from './app.component';
 import {ContactPage} from '../_features/admin/contact/contact';
 import {HomePage} from './home/home';
 import {TabsPage} from './tabs/tabs';
-import {BrowsePage} from '../_features/browse/browse/browse.page';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
-import {BottleDetailPage} from '../_features/browse/bottle-detail/page-bottle-detail';
-import {UpdatePage} from '../_features/browse/update/update.page';
 import {BrowserModule} from '@angular/platform-browser';
 import {ChartsModule} from 'ng2-charts';
 import 'chart.js/dist/Chart.bundle.min.js';
 import {EmailLoginPage} from '../_features/admin/login/email-login.page';
-import {DashboardPage} from '../_features/browse/dashboard/dashboard';
 import {AdminFeatureModule} from '../_features/admin/admin-feature.module';
 import {SharedModule} from '../components/shared.module';
 import {BrowseFeatureModule} from '../_features/browse/browse-feature.module';
 import {CellarPage} from '../_features/racks/cellar/cellar.page';
 import {CellarFeatureModule} from '../_features/racks/cellar-feature.module';
-import {LocalLoginPage} from '../_features/admin/login/local-login.page';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {CoreModule} from './core.module';
 import {StoreModule} from '@ngrx/store';
@@ -30,10 +25,6 @@ import {environment} from '../environments/environment';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {WithdrawalsEffectsService} from './state/withdrawals.effects';
 import {SharedEffectsService} from './state/shared.effects';
-import {RecordOutputPage} from '../_features/browse/record-output/record-output';
-import {BottleDetailSlide} from '../_features/browse/bottle-detail/slide-bottle-detail';
-import {FilterPage} from '../_features/browse/filters/filter.page';
-import {PopoverPage} from '../_features/browse/popover/popover.page';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -72,7 +63,6 @@ export const fireConfig = {
               MyCaveApp,
               ContactPage,
               EmailLoginPage,
-              LocalLoginPage,
               HomePage,
               TabsPage
             ],
@@ -81,7 +71,6 @@ export const fireConfig = {
               ContactPage,
               EmailLoginPage,
               HomePage,
-              LocalLoginPage,
               MyCaveApp,
               TabsPage
             ],
