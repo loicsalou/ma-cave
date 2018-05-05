@@ -3,18 +3,17 @@
  */
 import {Injectable} from '@angular/core';
 import {SimpleLocker} from '../model/simple-locker';
-import {Observable} from 'rxjs';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {LockerFactory} from '../model/locker.factory';
 import {AbstractPersistenceService} from './abstract-persistence.service';
 import {NotificationService} from './notification.service';
 import {Locker} from '../model/locker';
 import {BottlePersistenceService} from './bottle-persistence.service';
 import {TranslateService} from '@ngx-translate/core';
-import {Subscription} from 'rxjs/Subscription';
 import {FirebaseLockersService} from './firebase/firebase-lockers.service';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../app/state/app.state';
+import {catchError, map, tap} from 'rxjs/operators';
+import {of} from 'rxjs/observable/of';
 
 /**
  * Services related to the cellar itself, locker and place of the lockers.
@@ -23,12 +22,6 @@ import {ApplicationState} from '../app/state/app.state';
  */
 @Injectable()
 export class CellarPersistenceService extends AbstractPersistenceService {
-
-  private _lockers: BehaviorSubject<Locker[]> = new BehaviorSubject<Locker[]>([]);
-  private _allLockersObservable: Observable<Locker[]> = this._lockers.asObservable();
-
-  private allLockersArray: Locker[];
-  private lockersSubscription: Subscription;
 
   // TODO supprimer bottleService quand NGRX fournira le bon sélecteur
   constructor(private firebaseLockersService: FirebaseLockersService,
@@ -39,10 +32,6 @@ export class CellarPersistenceService extends AbstractPersistenceService {
               store: Store<ApplicationState>) {
     super(notificationService, translateService, store);
     this.subscribeLogin();
-  }
-
-  get allLockersObservable(): Observable<Locker[]> {
-    return this._allLockersObservable;
   }
 
   createLocker(locker: Locker): void {
@@ -75,24 +64,21 @@ export class CellarPersistenceService extends AbstractPersistenceService {
     return this.bottleService.getBottlesInLocker(locker).length === 0;
   }
 
+  loadAllLockers() {
+    let popup = this.notificationService.createLoadingPopup('app.loading');
+    return this.firebaseLockersService.fetchAllLockers().pipe(
+      map((lockers: Locker[]) => lockers.map((locker: Locker) => this.lockerFactory.create(locker))),
+      tap(() => popup.dismiss()),
+      catchError(err => {
+        popup.dismiss();
+        this.notificationService.error('app.failed');
+        return of([]);
+      })
+    );
+  }
+
   protected initialize(user) {
     super.initialize(user);
-    this.initLockers();
-  }
-
-  protected cleanup() {
-    super.cleanup();
-    this.allLockersArray = undefined;
-    this.lockersSubscription.unsubscribe();
-  }
-
-  private initLockers() {
-    this.lockersSubscription = this.firebaseLockersService.fetchAllLockers().subscribe(
-      (lockers: Locker[]) => {
-        this.allLockersArray = lockers.map((locker: Locker) => this.lockerFactory.create(locker));
-        this._lockers.next(this.allLockersArray);
-      }
-    );
   }
 }
 

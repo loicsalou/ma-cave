@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {CUSTOM_ELEMENTS_SCHEMA, NgModule} from '@angular/core';
 import {IonicModule, IonicPageModule} from 'ionic-angular';
 import {CellarPage} from './cellar/cellar.page';
 import {CellarPersistenceService} from '../../service/cellar-persistence.service';
@@ -30,10 +30,13 @@ import {CreateLockerPage} from './create-locker/create-locker.page';
             exports: [
               CellarPage,
               CreateLockerPage,
-              UpdateLockerPage,
+              UpdateLockerPage
             ],
             providers: [
               CellarPersistenceService
+            ],
+            schemas: [
+              CUSTOM_ELEMENTS_SCHEMA
             ]
           })
 export class CellarFeatureModule {

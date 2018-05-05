@@ -29,6 +29,7 @@ import {CurrentFiltersComponent} from './current-filters/current-filters';
 import {SearchBarComponent} from './search-bar/search-bar';
 import {BottleActionComponent} from './bottle-action/bottle-action';
 import {ResponsiveWrapperComponent} from './responsive-wrapper/responsive-wrapper';
+import {ScrollAnchorDirective} from './scroll-anchor.directive';
 
 @NgModule({
             imports: [
@@ -53,6 +54,7 @@ import {ResponsiveWrapperComponent} from './responsive-wrapper/responsive-wrappe
               ProgressBarComponent,
               RatingComponent,
               ResponsiveWrapperComponent,
+              ScrollAnchorDirective,
               SearchBarComponent,
               SimpleLockerComponent,
               StatisticsComponent,
@@ -73,6 +75,7 @@ import {ResponsiveWrapperComponent} from './responsive-wrapper/responsive-wrappe
               ProgressBarComponent,
               RatingComponent,
               ResponsiveWrapperComponent,
+              ScrollAnchorDirective,
               SearchBarComponent,
               SimpleLockerComponent,
               StatisticsComponent,

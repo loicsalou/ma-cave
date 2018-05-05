@@ -1,7 +1,34 @@
+@import "../../../app/app.scss";
+
 .cellar-page {
 
   ion-header {
     display: flex;
+  }
+
+  div.nav-anchor {
+    padding: 5px;
+
+    & > ion-badge {
+      margin-bottom: 2px;
+      margin-right: 5px;
+      padding: 2px;
+    }
+  }
+
+  ion-col.col {
+    display: flex;
+  }
+
+  ion-card, ion-card-content {
+    background: transparent;
+    display: flex;
+    justify-content: space-around;
+    flex-grow: 1;
+  }
+
+  ion-card-content {
+    height: 100%;
   }
 
   div[left][bottom] {
@@ -19,10 +46,6 @@
     height: 35px;
     margin: 8px 8px 8px 0;
     align-self: center;
-  }
-
-  div.slide-zoom {
-    height: 100%;
   }
 
   .ion-md-close:before {

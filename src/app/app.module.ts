@@ -25,6 +25,7 @@ import {environment} from '../environments/environment';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {WithdrawalsEffectsService} from './state/withdrawals.effects';
 import {SharedEffectsService} from './state/shared.effects';
+import {CellarEffectsService} from './state/cellar.effects';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -56,7 +57,7 @@ export const fireConfig = {
               StoreModule.forRoot(ROOT_REDUCERS, {
                 metaReducers: META_REDUCERS
               }),
-              EffectsModule.forRoot([ BottlesEffectsService, WithdrawalsEffectsService, SharedEffectsService ]),
+              EffectsModule.forRoot([ BottlesEffectsService, WithdrawalsEffectsService, SharedEffectsService, CellarEffectsService ]),
               !environment.production ? StoreDevtoolsModule.instrument({maxAge: 5}) : []
             ],
             declarations: [
@@ -75,7 +76,10 @@ export const fireConfig = {
               TabsPage
             ],
             providers: [
-              BottlesEffectsService
+              BottlesEffectsService,
+              CellarEffectsService,
+              SharedEffectsService,
+              WithdrawalsEffectsService
             ],
             bootstrap: [ IonicApp ]
           })

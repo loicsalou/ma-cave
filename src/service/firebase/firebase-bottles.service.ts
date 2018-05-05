@@ -37,10 +37,7 @@ export class FirebaseBottlesService {
 
   private userRootRef: Reference;
   private bottlesRootRef: Reference;
-  private _bottles: BehaviorSubject<Bottle[]>;
-  private firebaseBottlesSub: Subscription;
   private errorRootRef: Reference;
-  private _allBottlesObservable: Observable<Bottle[]>;
 
   constructor(private bottleFactory: BottleFactory,
               private angularFirebase: AngularFireDatabase,
@@ -65,8 +62,6 @@ export class FirebaseBottlesService {
   public cleanup() {
     this.USER_ROOT = undefined;
     this.BOTTLES_ROOT = undefined;
-    this._bottles.next([]);
-    this.firebaseBottlesSub.unsubscribe();
   }
 
   // ===================================================== ERRORS
