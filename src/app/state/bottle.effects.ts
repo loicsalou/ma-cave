@@ -2,15 +2,25 @@ import {Injectable} from '@angular/core';
 import {Actions, Effect} from '@ngrx/effects';
 import {
   BottlesActionTypes,
-  LoadBottlesSuccessAction, RemoveFilterAction,
+  FixBottlesAction, FixBottlesSuccessAction,
+  LoadBottlesSuccessAction,
+  LoadCellarSuccessAction,
+  LockerWasUpdatedAction,
+  RemoveFilterAction,
   UpdateBottlesAction,
   UpdateBottlesSuccessAction,
-  UpdateFilterAction, WithdrawBottleAction, WithdrawBottleSuccessAction
+  UpdateFilterAction,
+  UpdateLockerAction,
+  WithdrawBottleAction,
+  WithdrawBottleSuccessAction
 } from './bottles.actions';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {map, switchMap, tap} from 'rxjs/operators';
 import {Bottle} from '../../model/bottle';
 import {SharedPersistenceService} from '../../service/shared-persistence.service';
+import {Locker} from '../../model/locker';
+import {CellarPersistenceService} from '../../service/cellar-persistence.service';
+import {BottleFactory} from '../../model/bottle.factory';
 
 @Injectable()
 export class BottlesEffectsService {
@@ -18,8 +28,25 @@ export class BottlesEffectsService {
   @Effect() getBottles$ = this.actions$
     .ofType(BottlesActionTypes.LoadBottlesActionType).pipe(
       switchMap(() => this.bottlesService.loadAllBottles()),
-      map((bottles: Bottle[]) => new LoadBottlesSuccessAction(bottles))
+      map((bottles: Bottle[]) => {
+        const invalidBottles: { bottle: Bottle, unsupportedAttrs: string[] }[] = this.bottleFactory.validate(bottles);
+        if (invalidBottles.length === 0) {
+          return new LoadBottlesSuccessAction(bottles);
+        } else {
+          //traiter les erreurs
+          return new FixBottlesAction(invalidBottles);
+        }
+      })
     );
+
+  @Effect() FixBottles$ = this.actions$
+    .ofType(BottlesActionTypes.FixBottlesActionType).pipe(
+      map((action: FixBottlesAction) => this.bottleFactory.fixBottles(action.bugs)),
+      map((bottles: Bottle[]) => new UpdateBottlesAction(bottles))
+    );
+
+//| FixBottlesAction
+//| FixBottlesSuccessAction
 
   @Effect() updateBottle$ = this.actions$
     .ofType(BottlesActionTypes.UpdateBottlesActionType).pipe(
@@ -33,7 +60,7 @@ export class BottlesEffectsService {
   @Effect() withdrawBottle$ = this.actions$
     .ofType(BottlesActionTypes.WithdrawBottleActionType).pipe(
       tap((action: WithdrawBottleAction) =>
-                  this.bottlesService.withdraw(action.bottle, action.position)
+            this.bottlesService.withdraw(action.bottle, action.position)
       ),
       map((action: WithdrawBottleAction) =>
             new WithdrawBottleSuccessAction(action.bottle))
@@ -52,8 +79,36 @@ export class BottlesEffectsService {
             this.bottlesService.removeFromQueryStats(action.keywords)
       )
     );
+  @Effect() loadCellar$ = this.actions$
+    .ofType(BottlesActionTypes.LoadCellarActionType).pipe(
+      switchMap(() =>
+                  this.cellarService.loadAllLockers()),
+      map((lockers: Locker[]) =>
+            new LoadCellarSuccessAction(lockers))
+    );
 
-  constructor(private actions$: Actions, private bottlesService: BottlePersistenceService, private sharedServices: SharedPersistenceService) {
+  @Effect() updateLocker$ = this.actions$
+    .ofType(BottlesActionTypes.UpdateLockerActionType).pipe(
+      switchMap((action: UpdateLockerAction) => {
+        return this.bottlesService.updateLockerAndBottles(action.bottles, action.locker);
+      }),
+      map((updates: { bottles: Bottle[], locker: Locker }) =>
+            new LockerWasUpdatedAction(updates.bottles, updates.locker))
+    );
+
+  @Effect() lockerUpdated$ = this.actions$
+    .ofType(BottlesActionTypes.LockerWasUpdatedActionType).pipe(
+      switchMap(() =>
+                  this.cellarService.loadAllLockers()),
+      map((lockers: Locker[]) =>
+            new LoadCellarSuccessAction(lockers))
+    );
+
+  constructor(private actions$: Actions,
+              private bottlesService: BottlePersistenceService,
+              private cellarService: CellarPersistenceService,
+              private sharedServices: SharedPersistenceService,
+              private bottleFactory: BottleFactory) {
   }
 
 }

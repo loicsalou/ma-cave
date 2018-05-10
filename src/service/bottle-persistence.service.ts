@@ -21,9 +21,11 @@ import {FirebaseWithdrawalsService} from './firebase/firebase-withdrawals.servic
 import {FirebaseBottlesService} from './firebase/firebase-bottles.service';
 import {FirebaseLockersService} from './firebase/firebase-lockers.service';
 import {FirebaseImagesService} from './firebase/firebase-images.service';
-import {tap} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../app/state/app.state';
+import {LockerFactory} from '../model/locker.factory';
+import * as _ from 'lodash';
 
 /**
  * Services related to the bottles in the cellar.
@@ -44,6 +46,7 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
               private bottlesService: FirebaseBottlesService,
               private imagesService: FirebaseImagesService,
               private lockersService: FirebaseLockersService,
+              private lockerFactory: LockerFactory,
               private withdrawalService: FirebaseWithdrawalsService,
               notificationService: NotificationService,
               private bottleFactory: BottleFactory,
@@ -74,6 +77,7 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
   }
 
   public update(bottles: Bottle[]): Observable<Bottle[]> {
+    const uniqueBottles = _.uniqBy(bottles, 'id');
     return this.bottlesService.update(bottles.map((btl: Bottle) => {
       let updatedBottle = new Bottle(btl);
       updatedBottle.lastUpdated = new Date().getTime();
@@ -85,8 +89,12 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
     );
   }
 
-  public updateLockerAndBottles(bottles: Bottle[], locker: Locker) {
-    this.bottlesService.updateLockerAndBottles(bottles, locker);
+  public updateLockerAndBottles(bottles: Bottle[], locker: Locker): Observable<{ bottles: Bottle[], locker: Locker }> {
+    return this.bottlesService.updateLockerAndBottles(bottles, locker).pipe(
+      map((updates: { bottles: Bottle[], locker: Locker }) => {
+        return {...updates, locker: this.lockerFactory.create(updates.locker)};
+      })
+    );
   }
 
   public save(bottles: Bottle[]): Observable<Bottle[]> {
@@ -95,10 +103,6 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
 
   public deleteBottles(): Observable<boolean> {
     return this.bottlesService.deleteBottles();
-  }
-
-  public getBottle(id: string): Bottle {
-    return this.allBottlesArray.find(btl => btl.id === id);
   }
 
   public getBottlesInLocker(locker: Locker): Bottle[] {

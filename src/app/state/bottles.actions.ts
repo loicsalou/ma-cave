@@ -1,35 +1,59 @@
 import {Action} from '@ngrx/store';
 import {Bottle, Position} from '../../model/bottle';
 import {FilterSet} from '../../components/distribution/filterset';
+import {Locker} from '../../model/locker';
 
 export enum BottlesActionTypes {
+  CreateBottleActionType = '[bottles] - create bottle',
+  DrawBottlesActionType = '[bottles] - draw bottles',
   LoadBottlesActionType = '[bottles] - loading',
   LoadBottlesSuccessActionType = '[bottles] - loading success',
   LoadBottlesFailedActionType = '[bottles] - loading failed',
-  CreateBottleActionType = '[bottles] - create bottle',
+  PlaceBottleSelectionActionType = '[bottles] - place selection',
+  HighlightBottleSelectionActionType = '[bottles] - highlight selection',
+  ResetBottleSelectionActionType = '[bottles] - reset selection',
+  SetSelectedBottleActionType = '[bottles] - select',
+  UnselectBottlesActionType = '[bottles] - unselect all',
+  FixBottlesActionType = '[bottles] - fix bogus bottles',
   UpdateBottlesActionType = '[bottles] - update bottles',
   UpdateBottlesSuccessActionType = '[bottles] - update bottles success',
-  DrawBottlesActionType = '[bottles] - draw bottles',
+  WithdrawBottleActionType = '[bottles] - withdraw bottle',
+  WithdrawBottleSuccessActionType = '[bottles] - withdraw bottle success',
+
   UpdateFilterActionType = '[filter] - changed',
   RemoveFilterActionType = '[filter] - remove',
   ResetFilterActionType = '[filter] - reset',
-  ResetBottleSelectionActionType = '[bottles] - reset selection',
-  WithdrawBottleActionType = '[bottles] - withdraw bottle',
-  WithdrawBottleSuccessActionType = '[bottles] - withdraw bottle success',
-  SelectBottleActionType = '[bottles] - reset'
+
+  LoadCellarActionType = '[cellar] - loading',
+  LoadCellarSuccessActionType = '[cellar] - loading success',
+  LoadCellarFailedActionType = '[cellar] - loading failed',
+  UpdateLockerActionType = '[cellar] - update locker',
+  EditLockerActionType = '[cellar] - edit locker',
+  LockerWasUpdatedActionType = '[cellar] - locker updated',
 }
 
-export type BottlesActions = LoadBottlesAction
+export type BottlesActions =
+  CreateBottleAction
+  | EditLockerAction
+  | FixBottlesAction
+  | LoadBottlesAction
   | LoadBottlesSuccessAction
   | LoadBottlesFailedAction
-  | CreateBottleAction
-  | UpdateBottlesAction
-  | UpdateBottlesSuccessAction
-  | UpdateFilterAction
+  | LoadCellarAction
+  | LoadCellarSuccessAction
+  | LoadCellarFailedAction
+  | LockerWasUpdatedAction
+  | PlaceBottleSelectionAction
+  | HightlightBottleSelectionAction
   | RemoveFilterAction
   | ResetFilterAction
   | ResetBottleSelectionAction
-  | SelectBottleAction
+  | SetSelectedBottleAction
+  | UnselectBottlesAction
+  | UpdateBottlesAction
+  | UpdateBottlesSuccessAction
+  | UpdateFilterAction
+  | UpdateLockerAction
   | WithdrawBottleAction
   | WithdrawBottleSuccessAction;
 
@@ -98,13 +122,18 @@ export class UpdateBottlesAction implements Action {
   }
 }
 
-/**
- * Mise à jour d'une bouteille
- */
 export class UpdateBottlesSuccessAction implements Action {
   readonly type = BottlesActionTypes.UpdateBottlesSuccessActionType;
 
-  constructor(public bottles: Bottle[]) {}
+  constructor(public bottles: Bottle[]) {
+  }
+}
+
+export class FixBottlesAction implements Action {
+  readonly type = BottlesActionTypes.FixBottlesActionType;
+
+  constructor(public bugs: { bottle: Bottle, unsupportedAttrs: string[] }[]) {
+  }
 }
 
 /**
@@ -115,15 +144,26 @@ export class ResetBottleSelectionAction implements Action {
   readonly type = BottlesActionTypes.ResetBottleSelectionActionType;
 }
 
-/**
- * Sélection d'une bouteille pour travailler dessus (ex. pour les sorties, les rangements, les suppressions...)
- * Cette action est en général déclenchée depuis la liste de bouteilles.
- */
-export class SelectBottleAction implements Action {
-  readonly type = BottlesActionTypes.SelectBottleActionType;
+export class SetSelectedBottleAction implements Action {
+  readonly type = BottlesActionTypes.SetSelectedBottleActionType;
 
   constructor(public bottle: Bottle, public selected: boolean) {
   }
+}
+
+export class UnselectBottlesAction implements Action {
+  readonly type = BottlesActionTypes.UnselectBottlesActionType;
+
+  constructor() {
+  }
+}
+
+export class PlaceBottleSelectionAction implements Action {
+  readonly type = BottlesActionTypes.PlaceBottleSelectionActionType;
+}
+
+export class HightlightBottleSelectionAction implements Action {
+  readonly type = BottlesActionTypes.HighlightBottleSelectionActionType;
 }
 
 /**
@@ -140,5 +180,50 @@ export class WithdrawBottleSuccessAction implements Action {
   readonly type = BottlesActionTypes.WithdrawBottleSuccessActionType;
 
   constructor(public bottle: Bottle) {
+  }
+}
+
+/**
+ * Gestion des casiers
+ */
+export class UpdateLockerAction implements Action {
+  readonly type = BottlesActionTypes.UpdateLockerActionType;
+
+  constructor(public locker: Locker, public bottles: Bottle[]) {
+  }
+}
+
+export class EditLockerAction implements Action {
+  readonly type = BottlesActionTypes.EditLockerActionType;
+
+  constructor(public locker: Locker) {
+  }
+}
+
+export class LockerWasUpdatedAction implements Action {
+  readonly type = BottlesActionTypes.LockerWasUpdatedActionType;
+
+  constructor(public bottles: Bottle[], public locker: Locker) {
+  }
+}
+
+/**
+ * Chargement des casiers
+ */
+export class LoadCellarAction implements Action {
+  readonly type = BottlesActionTypes.LoadCellarActionType;
+}
+
+export class LoadCellarSuccessAction implements Action {
+  readonly type = BottlesActionTypes.LoadCellarSuccessActionType;
+
+  constructor(public lockers: Locker[]) {
+  }
+}
+
+export class LoadCellarFailedAction implements Action {
+  readonly type = BottlesActionTypes.LoadCellarFailedActionType;
+
+  constructor(public error: any) {
   }
 }

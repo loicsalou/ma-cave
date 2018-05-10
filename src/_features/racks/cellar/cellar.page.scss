@@ -6,25 +6,39 @@
     display: flex;
   }
 
+  h1 {
+    color: white;
+  }
+
   div.nav-anchor {
     padding: 5px;
 
     & > ion-badge {
       margin-bottom: 2px;
       margin-right: 5px;
-      padding: 2px;
+      padding: 2px 7px;
     }
+  }
+
+  ion-buttons {
+    display: flex;
+    justify-content: space-around;
   }
 
   ion-col.col {
     display: flex;
   }
 
+  ion-card-content > div {
+    flex-direction: column;
+  }
+
   ion-card, ion-card-content {
     background: transparent;
     display: flex;
-    justify-content: space-around;
+    flex-direction: column;
     flex-grow: 1;
+    justify-content: space-around;
   }
 
   ion-card-content {

@@ -2,7 +2,6 @@
  * Created by loicsalou on 01.03.17.
  */
 export class Bottle {
-
   id?: string;
   classe_age?: string;
   favorite?: boolean;
@@ -20,7 +19,6 @@ export class Bottle {
   lieu_achat: string;
   millesime: string;
   nomCru: string;
-  positions?: Position[]; // positions auxquelles les bouteilles du lot sont placées
   prix: string;
   profile_image_url?: string;
   image_urls?: string[];
@@ -32,6 +30,7 @@ export class Bottle {
   metadata?: BottleMetadata;
   defaultImage ?: string;
   overdue?: boolean;
+  positions?: Position[]; // positions auxquelles les bouteilles du lot sont placées
 
   constructor(jsonOrBottle: Object) {
     Object.assign(this, jsonOrBottle);
@@ -62,13 +61,13 @@ export class Position {
 
   public equals(pos: Position): boolean {
     if (!pos) {
-      return false
+      return false;
     }
     return (pos.lockerId === this.lockerId &&
       pos.x === this.x &&
       pos.y === this.y &&
       pos.rack === this.rack
-    )
+    );
   }
 
   /**

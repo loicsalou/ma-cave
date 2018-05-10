@@ -59,7 +59,7 @@ export class CellarPersistenceService extends AbstractPersistenceService {
     }
   }
 
-  // TODO remplacer pas un selecteur NGRX
+  // TODO A SUPPRIMER CAR ALLBOTTLESARRAY N'EST PLUS ALIMENTE
   public isEmpty(locker: Locker) {
     return this.bottleService.getBottlesInLocker(locker).length === 0;
   }

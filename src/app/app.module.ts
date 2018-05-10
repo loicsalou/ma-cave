@@ -1,5 +1,5 @@
 import {NgModule} from '@angular/core';
-import {IonicApp, IonicModule} from 'ionic-angular';
+import {IonicApp, IonicModule, NavController} from 'ionic-angular';
 import {MyCaveApp} from './app.component';
 import {ContactPage} from '../_features/admin/contact/contact';
 import {HomePage} from './home/home';
@@ -25,7 +25,6 @@ import {environment} from '../environments/environment';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {WithdrawalsEffectsService} from './state/withdrawals.effects';
 import {SharedEffectsService} from './state/shared.effects';
-import {CellarEffectsService} from './state/cellar.effects';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -57,7 +56,7 @@ export const fireConfig = {
               StoreModule.forRoot(ROOT_REDUCERS, {
                 metaReducers: META_REDUCERS
               }),
-              EffectsModule.forRoot([ BottlesEffectsService, WithdrawalsEffectsService, SharedEffectsService, CellarEffectsService ]),
+              EffectsModule.forRoot([ BottlesEffectsService, WithdrawalsEffectsService, SharedEffectsService ]),
               !environment.production ? StoreDevtoolsModule.instrument({maxAge: 5}) : []
             ],
             declarations: [
@@ -77,7 +76,6 @@ export const fireConfig = {
             ],
             providers: [
               BottlesEffectsService,
-              CellarEffectsService,
               SharedEffectsService,
               WithdrawalsEffectsService
             ],

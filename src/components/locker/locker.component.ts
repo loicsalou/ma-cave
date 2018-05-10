@@ -3,6 +3,7 @@ import {Bottle, Position} from '../../model/bottle';
 import {Gesture} from 'ionic-angular';
 import {Dimension} from '../../model/locker';
 import {NativeProvider} from '../../providers/native/native';
+import {SimpleLocker} from '../../model/simple-locker';
 
 export abstract class LockerComponent implements OnChanges {
 
@@ -29,9 +30,9 @@ export abstract class LockerComponent implements OnChanges {
   abstract get dimension(): Dimension;
 
   ngOnChanges(changeEvent) {
-    if (changeEvent[ 'content' ]) {
-      this.resetComponent();
-    }
+    //if (changeEvent[ 'content' ] || changeEvent[ 'locker' ]) {
+    //  this.resetComponent();
+    //}
   }
 
   /**
@@ -50,6 +51,24 @@ export abstract class LockerComponent implements OnChanges {
 
   //avant d'enlever la dernière colonne on s'assure qu'elle est vide
   public abstract canRemoveLastColumn(colNumber: number): boolean;
+
+  /**
+   * affecte une nouvelle dimension au locker. Comme la dimension est immutable on en recrée une.
+   * @param {SimpleLocker} locker
+   * @param {number} added
+   */
+  protected updateX(locker: SimpleLocker, added: number) {
+    locker.dimension = {x: locker.dimension.x + added, y: locker.dimension.y};
+  }
+
+  /**
+   * affecte une nouvelle dimension au locker. Comme la dimension est immutable on en recrée une.
+   * @param {SimpleLocker} locker
+   * @param {number} added
+   */
+  protected updateY(locker: SimpleLocker, added: number) {
+    locker.dimension = {x: locker.dimension.x, y: locker.dimension.y + added};
+  }
 
   protected hapticConfirm() {
     this.nativeProvider.feedBack();

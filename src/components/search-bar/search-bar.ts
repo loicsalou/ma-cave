@@ -1,4 +1,13 @@
-import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges
+} from '@angular/core';
 import {FilterSet} from '../distribution/filterset';
 
 /**
@@ -9,9 +18,10 @@ import {FilterSet} from '../distribution/filterset';
  */
 @Component({
              selector: 'search-bar',
-             templateUrl: 'search-bar.html'
+             templateUrl: 'search-bar.html',
+             changeDetection: ChangeDetectionStrategy.OnPush
            })
-export class SearchBarComponent implements OnChanges {
+export class SearchBarComponent implements OnInit, OnChanges {
 
   @Input() nbCrus: number | undefined;
   @Input() nbBottles: number | undefined;
@@ -20,6 +30,9 @@ export class SearchBarComponent implements OnChanges {
   @Output() change: EventEmitter<string> = new EventEmitter<string>();
 
   searchVisible = false;
+
+  ngOnInit(): void {
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (!changes.filterSet || !changes.filterSet.currentValue) {

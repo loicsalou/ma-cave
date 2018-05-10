@@ -16,7 +16,7 @@ export class SimpleLocker extends Locker {
     super(id, name, type, comment, defaultImage, imageUrl, supportedFormats, dimension, inFridge);
   }
 
-  getNbOfBottles(): number {
+  getCapacity(): number {
     return this.dimension.x * this.dimension.y;
   }
 

@@ -40,7 +40,7 @@ export abstract class Locker {
     //}
   }
 
-  getNbOfBottles(): number {
+  getCapacity(): number {
     return 0;
   }
 

@@ -20,6 +20,7 @@
   "very-old": "Très vieux",
   "young": "Jeune",
   "app": {
+    "all-bottles": "Votre cave",
     "keep-or-delete-data": "Confirmez-vous la suppression de vos données ? opération non réversible",
     "confirm": "Etes-vous sûr ?",
     "please-login": "Authentification",
@@ -50,7 +51,9 @@
     "unavailable-function": "Fonction indisponible - êtes vous offline ?",
     "warning": "Attention",
     "withdrawn": "La bouteille a été retirée du casier",
-    "loading": "Chargement en cours..."
+    "loading": "Chargement en cours...",
+    "no-bottles-placed": "Ces bouteilles sont en attente de rangement",
+    "no-bottles-to-place": "Ces bouteilles sont déjà placées"
   },
   "bottle": {
     "area_label": "Appellation",

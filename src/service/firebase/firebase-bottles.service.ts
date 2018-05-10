@@ -8,19 +8,17 @@ import * as schema from './firebase-schema';
 import {Injectable} from '@angular/core';
 import {Bottle} from '../../model/bottle';
 import {Observable} from 'rxjs';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {AngularFireDatabase, SnapshotAction} from 'angularfire2/database';
 import {Image} from '../../model/image';
 import {NotificationService} from '../notification.service';
 import {BottleFactory} from '../../model/bottle.factory';
 import {User} from '../../model/user';
-import {Subscription} from 'rxjs/Subscription';
 import {Locker} from '../../model/locker';
 import {sanitizeBeforeSave} from '../../utils/index';
 import {fromPromise} from 'rxjs/observable/fromPromise';
 import {_throw} from 'rxjs/observable/throw';
 import {of} from 'rxjs/observable/of';
-import {map, tap} from 'rxjs/operators';
+import {map, take, tap} from 'rxjs/operators';
 import Reference = firebase.database.Reference;
 
 /**
@@ -80,19 +78,6 @@ export class FirebaseBottlesService {
     }
   }
 
-// ===================================================== BOTTLES
-
-  /**
-   * récupérer du cache si il y en a un.
-   * prendre la date de mise à jour la plus récente dans le cache et aller chercher en DB les màj plus récentes que
-   * cette date. Remettre à jour le cache et ré-émettre les données pour l'affichage.
-   *
-   * @returns {void}
-   */
-  public fetchAllBottles() {
-    this.notificationService.debugAlert('fetchAllBottles()');
-  }
-
   //============================= Image management
   /**
    * list images in Firebase Storage
@@ -130,7 +115,7 @@ export class FirebaseBottlesService {
    * @param {Locker} locker casier contenant les bouteilles
    * @returns {Promise<any>}
    */
-  public updateLockerAndBottles(bottles: Bottle[], locker: Locker): Observable<Bottle[]> {
+  public updateLockerAndBottles(bottles: Bottle[], locker: Locker): Observable<{ bottles: Bottle[], locker: Locker }> {
     let updates = {};
     bottles.forEach(bottle => {
       bottle[ 'lastUpdated' ] = new Date().getTime();
@@ -141,7 +126,10 @@ export class FirebaseBottlesService {
     updates[ '/' + schema.CELLAR_FOLDER + '/' + locker.id ] = locker;
     return fromPromise(
       this.userRootRef.update(updates)
-        .then(() => bottles)
+        .then(() => {
+                return {bottles: bottles, locker: locker};
+              }
+        )
         .catch(err => err)
     );
   }
@@ -191,6 +179,7 @@ export class FirebaseBottlesService {
                          popup = undefined
     );
     return this.angularFirebase.list<Bottle>(this.BOTTLES_ROOT).snapshotChanges().pipe(
+      take(1),
       map(
         (snaps: SnapshotAction[]) => snaps.map(snap => this.bottleFactory.create({id: snap.payload.key, ...snap.payload.val()}))
       ),

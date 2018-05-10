@@ -4,7 +4,6 @@ import {Bottle} from '../../../model/bottle';
 import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
 import {FilterSet} from '../../../components/distribution/filterset';
 import * as _ from 'lodash';
-import {CellarPage} from '../../racks/cellar/cellar.page';
 import {BottleItemComponent} from '../../../components/list/bottle-item.component';
 import {NativeProvider} from '../../../providers/native/native';
 import {Observable} from 'rxjs/Observable';
@@ -12,15 +11,19 @@ import {ApplicationState} from '../../../app/state/app.state';
 import {Store} from '@ngrx/store';
 import {BottlesQuery} from '../../../app/state/bottles.state';
 import {
+  HightlightBottleSelectionAction,
+  PlaceBottleSelectionAction,
   ResetBottleSelectionAction,
   ResetFilterAction,
-  SelectBottleAction,
+  SetSelectedBottleAction,
   UpdateBottlesAction,
   UpdateFilterAction
 } from '../../../app/state/bottles.actions';
-import {map, tap} from 'rxjs/operators';
+import {map, take, tap} from 'rxjs/operators';
 import {SortOption} from '../../../components/distribution/distribution';
 import {Subscription} from 'rxjs/Subscription';
+import {NotificationService} from '../../../service/notification.service';
+import {CellarPage} from '../../racks/cellar/cellar.page';
 
 function sliceAround(currentBottles: Bottle[], bottle: Bottle, slice: number) {
   const ix = currentBottles.findIndex(btl => btl.id === bottle.id);
@@ -51,7 +54,8 @@ export class BrowsePage implements OnInit, OnDestroy {
   constructor(public navCtrl: NavController,
               private menuController: MenuController,
               private nativeProvider: NativeProvider,
-              private store: Store<ApplicationState>) {
+              private store: Store<ApplicationState>,
+              private notificationService: NotificationService) {
   }
 
   get nbSelected(): number {
@@ -80,13 +84,39 @@ export class BrowsePage implements OnInit, OnDestroy {
   }
 
   placeSelection() {
-    this.navCtrl.push(CellarPage, {bottlesToPlace: this.selectedBottles});
-    this.resetSelection();
+    // TODO ionic4: avec le router Angular l'action pourra déclencher une navigation dans l'Effect ngrx
+    this.store.select(BottlesQuery.getSelectedBottles).pipe(
+      take(1),
+      map((bottles: Bottle[]) => bottles.filter(
+        (bottle: Bottle) => bottle.positions.length < bottle.quantite_courante)
+      )
+    ).subscribe(
+      (bottles: Bottle[]) => {
+        if (bottles.length > 0) {
+          this.navCtrl.push(CellarPage, {action: new PlaceBottleSelectionAction()});
+        }
+        else {
+          this.notificationService.information('app.no-bottles-to-place');
+        }
+      }
+    );
   }
 
   locateSelection() {
-    this.navCtrl.push(CellarPage, {bottlesToHighlight: this.selectedBottles});
-    this.resetSelection();
+    // TODO ionic4: avec le router Angular l'action pourra déclencher une navigation dans l'Effect ngrx
+    this.store.select(BottlesQuery.getSelectedBottles).pipe(
+      take(1),
+      map((bottles: Bottle[]) => bottles.filter((bottle: Bottle) => bottle.positions.length > 0))
+    ).subscribe(
+      (bottles: Bottle[]) => {
+        if (bottles.length > 0) {
+          this.navCtrl.push(CellarPage, {action: new HightlightBottleSelectionAction()});
+        }
+        else {
+          this.notificationService.information('app.no-bottles-placed');
+        }
+      }
+    );
   }
 
   registerSelectionAsFavorite() {
@@ -109,7 +139,7 @@ export class BrowsePage implements OnInit, OnDestroy {
    * @param {bottle: Bottle; selected: boolean} event bouteille sélectionnée ou désélectionnée
    */
   switchSelected(event: { bottle: Bottle, selected: boolean }) {
-    this.store.dispatch(new SelectBottleAction(event.bottle, event.selected));
+    this.store.dispatch(new SetSelectedBottleAction(event.bottle, event.selected));
   }
 
   ionViewWillLeave() {

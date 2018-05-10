@@ -5,19 +5,16 @@ import {storeFreeze} from 'ngrx-store-freeze';
 import {bottlesStateReducer, BottlesState} from './bottles.state';
 import {withdrawalsStateReducer, WithdrawalsState} from './withdrawals.state';
 import {SharedState, sharedStateReducer} from './shared.state';
-import {CellarState, lockersStateReducer} from './cellar.state';
 
 export interface ApplicationState {
   bottles: BottlesState;
   withdrawals: WithdrawalsState;
-  cellar: CellarState;
   shared: SharedState;
 }
 
 export const ROOT_REDUCERS: ActionReducerMap<ApplicationState> = {
   bottles: bottlesStateReducer,
   withdrawals: withdrawalsStateReducer,
-  cellar: lockersStateReducer,
   shared: sharedStateReducer
 };
 
