@@ -18,7 +18,7 @@ export abstract class AbstractPersistenceService implements OnDestroy {
 
   constructor(protected notificationService: NotificationService,
               protected translateService: TranslateService,
-              private store: Store<ApplicationState>) {
+              protected store: Store<ApplicationState>) {
   }
 
   ngOnDestroy(): void {

@@ -14,6 +14,7 @@ import {Store} from '@ngrx/store';
 import {ApplicationState} from '../app/state/app.state';
 import {catchError, map, tap} from 'rxjs/operators';
 import {of} from 'rxjs/observable/of';
+import {Bottle} from '../model/bottle';
 
 /**
  * Services related to the cellar itself, locker and place of the lockers.
@@ -50,18 +51,17 @@ export class CellarPersistenceService extends AbstractPersistenceService {
   }
 
   public deleteLocker(locker: Locker) {
-    if (this.isEmpty(locker)) {
-      this.firebaseLockersService.deleteLocker(locker);
-      this.notificationService.information('Le casier "' + locker.name + '" a bien été supprimé');
-    } else {
-      this.notificationService.warning('Le casier "' + locker.name + '" n\'est pas vide et ne peut donc pas' +
-        ' être supprimé');
-    }
-  }
-
-  // TODO A SUPPRIMER CAR ALLBOTTLESARRAY N'EST PLUS ALIMENTE
-  public isEmpty(locker: Locker) {
-    return this.bottleService.getBottlesInLocker(locker).length === 0;
+    this.bottleService.getBottlesInLocker(locker).subscribe(
+      (bottles: Bottle[]) => {
+        if (bottles.length === 0) {
+          this.firebaseLockersService.deleteLocker(locker);
+          this.notificationService.information('Le casier "' + locker.name + '" a bien été supprimé');
+        } else {
+          this.notificationService.warning('Le casier "' + locker.name + '" n\'est pas vide et ne peut donc pas' +
+            ' être supprimé');
+        }
+      }
+    );
   }
 
   loadAllLockers() {

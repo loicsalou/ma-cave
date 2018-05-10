@@ -21,11 +21,12 @@ import {FirebaseWithdrawalsService} from './firebase/firebase-withdrawals.servic
 import {FirebaseBottlesService} from './firebase/firebase-bottles.service';
 import {FirebaseLockersService} from './firebase/firebase-lockers.service';
 import {FirebaseImagesService} from './firebase/firebase-images.service';
-import {map, tap} from 'rxjs/operators';
+import {map, take, tap} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../app/state/app.state';
 import {LockerFactory} from '../model/locker.factory';
 import * as _ from 'lodash';
+import {BottlesQuery} from '../app/state/bottles.state';
 
 /**
  * Services related to the bottles in the cellar.
@@ -39,7 +40,6 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
   private _filteredBottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
   private _filteredBottlesObservable: Observable<Bottle[]> = this._filteredBottles.asObservable();
   private filters: FilterSet = new FilterSet();
-  private allBottlesArray: Bottle[];
   private bottlesSub: Subscription;
 
   constructor(private dataConnection: FirebaseAdminService,
@@ -105,10 +105,12 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
     return this.bottlesService.deleteBottles();
   }
 
-  public getBottlesInLocker(locker: Locker): Bottle[] {
-    return this.allBottlesArray.filter(
-      bottle => bottle.positions.filter(pos => pos.lockerId === locker.id).length > 0
-    );
+  public getBottlesInLocker(locker: Locker): Observable<Bottle[]> {
+    return this.store.select(BottlesQuery.getBottles).pipe(
+      take(1),
+      tap((allBottlesArray: Bottle[]) => allBottlesArray.filter(
+        bottle => bottle.positions.filter(pos => pos.lockerId === locker.id).length > 0)
+      ));
   }
 
   /**
@@ -182,7 +184,6 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
 
   protected cleanup() {
     super.cleanup();
-    this.allBottlesArray = undefined;
     this.filters = undefined;
   }
 }

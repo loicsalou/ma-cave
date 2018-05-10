@@ -95,10 +95,6 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
     this.content.forEach(
       bottle => {
         if (bottle.positions) {
-          if (bottle.positions.filter(pos => pos === undefined).length > 0) {
-            console.info('');
-          }
-          ;
           bottle.positions.filter(
             position => position.inRack(this.locker.id, this.rack)
           ).forEach(
@@ -108,12 +104,12 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
       }
     );
     if (this.bogusBottles && this.bogusBottles.length > 0) {
-      this.handleBogusBottles();
+      //this.handleBogusBottles();
     }
   }
 
   public placeBottle(bottle: Bottle, position: Position) {
-    if (this.rows.length < position.y || !this.rows[ position.y ] || this.rows[ position.y ].cells.length <= position.x) {
+    if (this.rows.length <= position.y || !this.rows[ position.y ] || this.rows[ position.y ].cells.length <= position.x) {
       this.bogusBottles.push({bottle: bottle, position: position});
     } else {
       let targetCell = this.rows[ position.y ].cells[ position.x ];
@@ -294,21 +290,22 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
         data.bottle.nomCru + ':' + data.position.x + ',' + data.position.y
                                 )
     );
-    this.notificationService.ask('Supprimer les positions inexistantes ? ', bugs)
-      .subscribe(
-        result => {
-          if (result) {
-            let updatedBottles = this.bogusBottles.map(
-              (bogusTuple: { bottle: Bottle, position: Position }) => {
-                let updatedBottle = new Bottle(bogusTuple.bottle);
-                updatedBottle.positions = updatedBottle.positions.filter(pos => !pos.equals(bogusTuple.position));
-                return updatedBottle;
-              }
-            );
-            this.store.dispatch(new UpdateBottlesAction(updatedBottles));
-          }
-        }
-      );
+    this.notificationService.information(this.bogusBottles.length+' bouteilles hors casier');
+    //this.notificationService.ask('Supprimer les positions inexistantes ? ', bugs)
+    //  .subscribe(
+    //    result => {
+    //      if (result) {
+    //        let updatedBottles = this.bogusBottles.map(
+    //          (bogusTuple: { bottle: Bottle, position: Position }) => {
+    //            let updatedBottle = new Bottle(bogusTuple.bottle);
+    //            updatedBottle.positions = updatedBottle.positions.filter(pos => !pos.equals(bogusTuple.position));
+    //            return updatedBottle;
+    //          }
+    //        );
+    //        //this.store.dispatch(new UpdateBottlesAction(updatedBottles));
+    //      }
+    //    }
+    //  );
   }
 
   private initRow(nbcells: number, rowIndex: number): Row {

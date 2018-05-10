@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Actions, Effect} from '@ngrx/effects';
 import {
   BottlesActionTypes,
-  FixBottlesAction, FixBottlesSuccessAction,
+  FixBottlesAction,
   LoadBottlesSuccessAction,
   LoadCellarSuccessAction,
   LockerWasUpdatedAction,
@@ -44,9 +44,6 @@ export class BottlesEffectsService {
       map((action: FixBottlesAction) => this.bottleFactory.fixBottles(action.bugs)),
       map((bottles: Bottle[]) => new UpdateBottlesAction(bottles))
     );
-
-//| FixBottlesAction
-//| FixBottlesSuccessAction
 
   @Effect() updateBottle$ = this.actions$
     .ofType(BottlesActionTypes.UpdateBottlesActionType).pipe(

@@ -13,7 +13,7 @@ import {UpdateLockerAction} from '../../../app/state/bottles.actions';
 import {ApplicationState} from '../../../app/state/app.state';
 import {Store} from '@ngrx/store';
 import {BottlesQuery} from '../../../app/state/bottles.state';
-import {map, take} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import {Observable} from 'rxjs/Observable';
 
 /**
@@ -51,7 +51,7 @@ export class UpdateLockerPage implements OnInit {
     // on récupère le locker édité et les crus qui ont au moins une bouteille dans ce locker
     // on ne le prend qu'une fois pour éviter les refresh inutiles et qui posent problème
     this.lockerAndBottles$ = this.store.select(BottlesQuery.getEditLockerAndBottles).pipe(
-      take(1),
+      //take(1),
       map((data: { locker: Locker, bottles: Bottle[ ] }) => {
             this.locker = this.cloneLocker(data.locker);
             this.lockerContent = this.cloneContent(data.bottles);
@@ -92,14 +92,16 @@ export class UpdateLockerPage implements OnInit {
     let cloned: Locker;
     if (paramlocker instanceof FridgeLocker) {
       cloned = new FridgeLocker(paramlocker.id, paramlocker.name, paramlocker.type,
-                                [ ...paramlocker.dimensions ], paramlocker.comment, paramlocker.supportedFormats,
+                                [ ...paramlocker.dimensions ],
+                                paramlocker.comment, paramlocker.supportedFormats,
                                 paramlocker.defaultImage, paramlocker.imageUrl);
     } else {
       cloned = new SimpleLocker(paramlocker.id, paramlocker.name, paramlocker.type,
-                                {...paramlocker.dimension}, paramlocker.inFridge, paramlocker.comment, paramlocker.supportedFormats,
+                                {...paramlocker.dimension}, paramlocker.inFridge,
+                                paramlocker.comment, paramlocker.supportedFormats,
                                 paramlocker.defaultImage, paramlocker.imageUrl);
     }
-    cloned = Object.assign(cloned, paramlocker);
+    //cloned = Object.assign(cloned, paramlocker);
     return cloned;
   }
 }

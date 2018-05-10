@@ -1,4 +1,4 @@
-import {Component, Input, QueryList, ViewChildren} from '@angular/core';
+import {Component, Input, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {FridgeLocker} from '../../model/fridge-locker';
 import {Cell, LockerComponent} from './locker.component';
 import {NotificationService} from '../../service/notification.service';
@@ -7,7 +7,6 @@ import {SimpleLockerComponent} from './simple-locker.component';
 import {SimpleLocker} from '../../model/simple-locker';
 import {NativeProvider} from '../../providers/native/native';
 import {Position} from '../../model/bottle';
-import {Observable} from 'rxjs/Observable';
 
 /**
  * Generated class for the CompositeLockerComponent component.
@@ -20,7 +19,7 @@ import {Observable} from 'rxjs/Observable';
              templateUrl: './fridge-locker.component.html'
              // styleUrls:[ 'fridge-locker.component.scss' ]
            })
-export class FridgeLockerComponent extends LockerComponent {
+export class FridgeLockerComponent extends LockerComponent implements OnInit {
   protected static MAX_NB_COLUMNS: number = 8;
   protected static MIN_NB_COLUMNS: number = 1;
   protected static MAX_NB_ROWS: number = 40;
@@ -32,6 +31,10 @@ export class FridgeLockerComponent extends LockerComponent {
 
   constructor(private notificationService: NotificationService, nativeProvider: NativeProvider) {
     super(nativeProvider);
+  }
+
+  ngOnInit(): void {
+    console.info('');
   }
 
   get dimension(): Dimension {

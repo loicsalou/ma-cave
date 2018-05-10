@@ -24,12 +24,12 @@ export enum BottlesActionTypes {
   RemoveFilterActionType = '[filter] - remove',
   ResetFilterActionType = '[filter] - reset',
 
-  LoadCellarActionType = '[cellar] - loading',
-  LoadCellarSuccessActionType = '[cellar] - loading success',
-  LoadCellarFailedActionType = '[cellar] - loading failed',
-  UpdateLockerActionType = '[cellar] - update locker',
-  EditLockerActionType = '[cellar] - edit locker',
-  LockerWasUpdatedActionType = '[cellar] - locker updated',
+  LoadCellarActionType = '[lockers] - loading',
+  LoadCellarSuccessActionType = '[lockers] - loading success',
+  LoadCellarFailedActionType = '[lockers] - loading failed',
+  UpdateLockerActionType = '[lockers] - update locker',
+  EditLockerActionType = '[lockers] - edit locker',
+  LockerWasUpdatedActionType = '[lockers] - locker and bottles updated',
 }
 
 export type BottlesActions =

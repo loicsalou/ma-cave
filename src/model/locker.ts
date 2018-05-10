@@ -29,15 +29,6 @@ export abstract class Locker {
     ];
     this.imageUrl = imageUrl;
     this.comment = comment;
-    //if (Array.isArray(dimension)) {
-    //  let totDim: Dimension = {x: 0, y: 0}
-    //  this.dimension = dimension.reduce(
-    //    (totDim, dim) => {
-    //      return {x: totDim.x + dim.x, y: totDim.y + dim.y}
-    //    }, totDim);
-    //} else {
-    //  this.dimension = <Dimension> dimension; //dimension L x H
-    //}
   }
 
   getCapacity(): number {

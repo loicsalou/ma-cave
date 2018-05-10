@@ -6,26 +6,25 @@
     <img src="assets/icon/primary-logout.png" icon-only (click)="logout()"/>
   </div>
   <div class="nav-anchor">
-    <ion-badge *ngFor="let lockerName of lockerNames$ | async" (click)="scrollTo(lockerName)">
+    <ion-badge *ngFor="let lockerName of lockerNames" (click)="scrollTo(lockerName)">
       {{lockerName}}
     </ion-badge>
   </div>
 </ion-header>
 
 <ion-content padding class="cellar-page page">
-  <ng-container *ngIf="otherLockers$ | async as otherLockers">
-    <ng-container *ngIf="lockerContent$ | async as lockerContent">
+  <ng-container *ngIf="lockersAndBottles$ | async as lockersAndBottles">
       <ion-row>
-        <ion-col *ngFor="let locker of otherLockers" [scrollAnchor]="locker.name" col-sm-12 col-md-12 col-lg-4
+        <ion-col *ngFor="let locker of lockersAndBottles.lockers" [scrollAnchor]="locker.name" col-sm-12 col-md-12 col-lg-4
                  col-xl-3>
           <ion-card #zoomable>
             <ion-card-content>
               <span><h1>{{locker.name}}</h1></span>
               <div>
-                <locker [locker]="locker" [content]="lockerContent" *ngIf="!locker.isFridge()" [editing]="false"
-                        [highlighted]="bottlesToHighlight" (onCellSelected)="cellSelected($event)"></locker>
-                <fridge-locker [fridge]="locker" [content]="lockerContent" *ngIf="locker.isFridge()" [editing]="false"
-                               [highlighted]="bottlesToHighlight"
+                <locker [locker]="locker" [content]="lockersAndBottles.bottles" *ngIf="!locker.isFridge()" [editing]="false"
+                        [highlighted]="(selectedBottles$ | async)" (onCellSelected)="cellSelected($event)"></locker>
+                <fridge-locker [fridge]="locker" [content]="lockersAndBottles.bottles" *ngIf="locker.isFridge()" [editing]="false"
+                               [highlighted]="(selectedBottles$ | async)"
                                (onCellSelected)="cellSelected($event)"></fridge-locker>
                 <ion-buttons>
                   <button ion-button outline icon-only (click)="updateLocker(locker)">
@@ -40,7 +39,6 @@
           </ion-card>
         </ion-col>
       </ion-row>
-    </ng-container>
   </ng-container>
   
   <ion-fab bottom right>

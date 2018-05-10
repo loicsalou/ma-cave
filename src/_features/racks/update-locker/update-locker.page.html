@@ -78,7 +78,7 @@
     </ion-row>
     
     <ion-row *ngIf="lockerAndBottles.locker.isFridge()">
-      <fridge-locker #lockerCmp [fridge]="locker$" [content]="lockerAndBottles.lockerContent" [selectable]="true" [editing]="true"
+      <fridge-locker #lockerCmp [fridge]="lockerAndBottles.locker" [content]="lockerAndBottles.lockerContent" [selectable]="true" [editing]="true"
                      (selected)="cellSelected($event)"></fridge-locker>
     </ion-row>
   </ng-container>
