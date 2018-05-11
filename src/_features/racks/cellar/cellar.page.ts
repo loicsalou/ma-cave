@@ -1,4 +1,5 @@
 import {
+  AfterViewChecked,
   AfterViewInit,
   Component,
   ElementRef,
@@ -40,6 +41,7 @@ import {ScrollAnchorDirective} from '../../../components/scroll-anchor.directive
 import {combineLatest, filter, map, tap} from 'rxjs/operators';
 import {Subscription} from 'rxjs/Subscription';
 import {DimensionOfDirective} from '../../../components/dimension-of.directive';
+import {Subject} from 'rxjs/Subject';
 
 /**
  * Generated class for the CellarPage page.
@@ -51,7 +53,7 @@ import {DimensionOfDirective} from '../../../components/dimension-of.directive';
              templateUrl: './cellar.page.html'
              // styleUrls:[ 'cellar.page.scss' ]
            })
-export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
+export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
 
   @ViewChildren('zoomable') zoomable: QueryList<ElementRef>;
   @ViewChild(Content) content: Content;
@@ -63,6 +65,8 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
   bottlesToPlaceLocker: SimpleLocker;
   bottlesToHighlight: Bottle[];
   pendingCell: Cell;
+  dimensions$: { [ lockerId: string ]: Observable<Dimension> };
+  dimensionsSubjects: { [ lockerId: string ]: Subject<Dimension> } = {};
 
   @ViewChild('placedLockerComponent') private placedLockerComponent: SimpleLockerComponent;
   @ViewChildren(ScrollAnchorDirective) private lockerRows: QueryList<ScrollAnchorDirective>;
@@ -83,16 +87,13 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
     this.store.dispatch(new LoadCellarAction());
   }
 
-  getContainerDimension(locker: Locker): Dimension {
-    const container = this.containers.find(container => container.dimensionOf.id === locker.id);
-    if (container) {
-      let dim = container.getContainerSize();
-      return {
-        x: dim.x - 32,
-        y: dim.y - 32
-      };
+  getContainerDimension$(locker: Locker): Observable<Dimension> {
+    let subject = this.dimensionsSubjects[ locker.id ];
+    if (!subject) {
+      subject = new Subject();
+      this.dimensionsSubjects[ locker.id ] = subject;
     }
-    return undefined;
+    return subject.asObservable();
   }
 
   ngOnInit(): void {
@@ -116,6 +117,23 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
         return {lockers: combined[ 0 ], bottles: combined[ 1 ]};
       })
     );
+  }
+
+  ngAfterViewChecked() {
+    console.info('');
+    if (this.containers && this.containers.length > 0) {
+      this.containers.forEach(
+        container => {
+          let lockerId = container.dimensionOf.id;
+          let subject = this.dimensionsSubjects[ lockerId ];
+          if (subject) {
+            subject.next(container.getContainerSize());
+          } else {
+            console.info('');
+          }
+        }
+      );
+    }
   }
 
   ionViewWillLeave() {

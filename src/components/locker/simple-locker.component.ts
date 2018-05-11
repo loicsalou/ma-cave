@@ -1,4 +1,5 @@
 import {
+  AfterViewChecked,
   AfterViewInit,
   Component,
   Inject,
@@ -6,7 +7,6 @@ import {
   OnChanges,
   OnDestroy,
   OnInit,
-  SimpleChanges,
   ViewChild
 } from '@angular/core';
 import {SimpleLocker} from '../../model/simple-locker';
@@ -20,6 +20,9 @@ import {ApplicationState} from '../../app/state/app.state';
 import {Store} from '@ngrx/store';
 import {RackDirective} from '../rack.directive';
 import {DimensionOfDirective} from '../dimension-of.directive';
+import {Observable} from 'rxjs/Observable';
+import {filter} from 'rxjs/operators';
+import {Subscription} from 'rxjs/Subscription';
 
 /**
  * Generated class for the SimpleLockerComponent component.
@@ -32,7 +35,7 @@ import {DimensionOfDirective} from '../dimension-of.directive';
              templateUrl: './simple-locker.component.html'
              // styleUrls:[ 'locker.component.scss' ]
            })
-export class SimpleLockerComponent extends LockerComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
+export class SimpleLockerComponent extends LockerComponent implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy, OnChanges {
   protected static MAX_NB_COLUMNS: number = 16;
   protected static MIN_NB_COLUMNS: number = 1;
   protected static MAX_NB_ROWS: number = 16;
@@ -45,17 +48,18 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   rack: number = 0;
 
   @Input()
-  containerDimension: Dimension;
+  containerDimension$: Observable<Dimension>;
 
   @Input()
   editing: boolean = false;
 
   rows: Row[];
+  containerDimension: Dimension;
   @ViewChild(DimensionOfDirective) private dimensionOfDirective: DimensionOfDirective<Locker>;
-
   private bogusBottles: { bottle: Bottle, position: Position }[] = [];
   private gesture: Gesture;
   private initialScale: number;
+  private containerDimensionsSub: Subscription;
 
   constructor(private notificationService: NotificationService, nativeProvider: NativeProvider,
               @Inject('GLOBAL_CONFIG') private config, private store: Store<ApplicationState>) {
@@ -70,26 +74,32 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
     if (this.locker.dimension && !this.rows) {
       this.resetComponent();
     }
+    this.containerDimensionsSub = this.containerDimension$.pipe(
+      filter(dim => dim !== undefined)
+    ).subscribe(
+      dim => {
+        console.info('dimension reçue: ' + JSON.stringify(dim));
+        this.containerDimension = {x: dim.x - 32, y: dim.y - 32};
+        if (this.dimensionOfDirective) {
+          const lockerDim = this.dimensionOfDirective.getContainerSize();
+          this.initialScale = Math.min(
+            this.containerDimension.x / lockerDim.x,
+            this.containerDimension.y / lockerDim.y,
+            1
+          );
+          this.gesture.destroy();
+          this.gesture = this.setupPinchZoom(this.zoomable.nativeElement, this.initialScale);
+        }
+      }
+    );
   }
 
   ngOnDestroy(): void {
     if (this.gesture) {
       this.gesture.destroy();
     }
-  }
-
-  ngOnChanges(change: SimpleChanges) {
-    if (change[ 'containerDimension' ] && change[ 'containerDimension' ].currentValue) {
-      if (this.containerDimension && this.dimensionOfDirective) {
-        const lockerDim = this.dimensionOfDirective.getContainerSize();
-        this.initialScale = Math.min(
-          this.containerDimension.x / lockerDim.x,
-          this.containerDimension.y / lockerDim.y,
-          1
-        );
-        this.gesture.destroy();
-        this.gesture = this.setupPinchZoom(this.zoomable.nativeElement, this.initialScale);
-      }
+    if (this.containerDimensionsSub) {
+      this.containerDimensionsSub.unsubscribe();
     }
   }
 
@@ -101,6 +111,10 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
         this.setupPressGesture(this.zoomable.nativeElement);
       }
     }
+  }
+
+  ngAfterViewChecked(): void {
+    console.info('');
   }
 
   isShifted(): boolean {

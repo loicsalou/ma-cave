@@ -23,7 +23,7 @@
               <span><h1>{{locker.name}}</h1></span>
               <div>
                 <locker [locker]="locker" [content]="lockersAndBottles.bottles" *ngIf="!locker.isFridge()"
-                        [editing]="false" [containerDimension]="getContainerDimension(locker)"
+                        [editing]="false" [containerDimension$]="getContainerDimension$(locker)"
                         [highlighted]="(selectedBottles$ | async)" (onCellSelected)="cellSelected($event)"></locker>
                 <fridge-locker [fridge]="locker" [content]="lockersAndBottles.bottles" *ngIf="locker.isFridge()"
                                [editing]="false"
