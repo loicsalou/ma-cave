@@ -74,24 +74,26 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
     if (this.locker.dimension && !this.rows) {
       this.resetComponent();
     }
-    this.containerDimensionsSub = this.containerDimension$.pipe(
-      filter(dim => dim !== undefined)
-    ).subscribe(
-      dim => {
-        console.info('dimension reçue: ' + JSON.stringify(dim));
-        this.containerDimension = {x: dim.x - 32, y: dim.y - 32};
-        if (this.dimensionOfDirective) {
-          const lockerDim = this.dimensionOfDirective.getContainerSize();
-          this.initialScale = Math.min(
-            this.containerDimension.x / lockerDim.x,
-            this.containerDimension.y / lockerDim.y,
-            1
-          );
-          this.gesture.destroy();
-          this.gesture = this.setupPinchZoom(this.zoomable.nativeElement, this.initialScale);
+    if (this.containerDimension$) {
+      this.containerDimensionsSub = this.containerDimension$.pipe(
+        filter(dim => dim !== undefined)
+      ).subscribe(
+        dim => {
+          console.info('dimension reçue: ' + JSON.stringify(dim));
+          this.containerDimension = {x: dim.x - 32, y: dim.y - 32};
+          if (this.dimensionOfDirective) {
+            const lockerDim = this.dimensionOfDirective.getContainerSize();
+            this.initialScale = Math.min(
+              this.containerDimension.x / lockerDim.x,
+              this.containerDimension.y / lockerDim.y,
+              1
+            );
+            this.gesture.destroy();
+            this.gesture = this.setupPinchZoom(this.zoomable.nativeElement, this.initialScale);
+          }
         }
-      }
-    );
+      );
+    }
   }
 
   ngOnDestroy(): void {
