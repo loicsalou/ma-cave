@@ -95,9 +95,6 @@ export class DashboardPage implements OnInit, OnDestroy {
 
     this.mostUsedQueries$ = this.store.select(SharedQuery.getSharedState).pipe(
       map((state: SharedState) => state.mostUsedQueries),
-      tap(mostused => {
-        console.info('=== ' + JSON.stringify(mostused));
-      }),
       catchError((err) => {
                    this.notificationService.error('messages.most-used-queries-failed');
                    return of([]);

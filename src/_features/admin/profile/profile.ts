@@ -9,7 +9,7 @@ import {LogoutAction, UpdateThemeAction} from '../../../app/state/shared.actions
 import {SharedQuery} from '../../../app/state/shared.state';
 import {Subscription} from 'rxjs/Subscription';
 import {Observable} from 'rxjs/Observable';
-import {tap} from 'rxjs/operators';
+import {filter, tap} from 'rxjs/operators';
 
 @Component({
              selector: 'page-profile',
@@ -33,7 +33,7 @@ export class ProfilePage implements OnInit, OnDestroy {
     );
   }
 
-  get themes(): { name: string, class: string }[] {
+  get themes(): Theme[] {
     return this.config.settings.themes;
   }
 
@@ -41,14 +41,15 @@ export class ProfilePage implements OnInit, OnDestroy {
     return this._currentTheme;
   }
 
-  set currentTheme(value: string) {
-    this._currentTheme = value;
-    this.store.dispatch(new UpdateThemeAction(value));
+  set currentTheme(theme: string) {
+    this._currentTheme = theme;
+    this.updateProfile();
   }
 
   ngOnInit(): void {
     this.version = VERSION;
     this.user$ = this.store.select(SharedQuery.getLoginUser).pipe(
+      filter(user => user!==undefined),
       tap(user => {
         this.userDataKeys = Object.keys(user);
         this.userDataValues = [];
@@ -74,4 +75,13 @@ export class ProfilePage implements OnInit, OnDestroy {
   logout() {
     this.store.dispatch(new LogoutAction());
   }
+
+  private updateProfile() {
+    this.store.dispatch(new UpdateThemeAction(this.currentTheme));
+  }
+}
+
+interface Theme {
+  name: string;
+  class: string;
 }

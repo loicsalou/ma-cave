@@ -18,7 +18,7 @@
       <ion-row>
         <ion-col *ngFor="let locker of lockersAndBottles.lockers" [scrollAnchor]="locker.name"
                  col-sm-12 col-md-12 col-lg-4 col-xl-3>
-          <ion-card #zoomable>
+          <ion-card>
             <ion-card-content [dimensionOf]="locker">
               <span><h1>{{locker.name}}</h1></span>
               <div>

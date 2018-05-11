@@ -1,6 +1,6 @@
 {
   "name": "assistant-caviste",
-  "version": "5.27.0",
+  "version": "5.31.0",
   "author": "Loic Salou",
   "homepage": "http://ionicframework.com/",
   "private": true,
@@ -14,9 +14,9 @@
     "build:prod": "ionic-app-scripts build --prod",
     "serve:prod": "ionic-app-scripts serve --prod",
     "run:android": "ionic cordova run android --device",
-    "-------": "IOS",
     "apk": "ionic cordova build android",
     "apk:prod": "ionic cordova build android --prod --release",
+    "-------": "IOS",
     "ios": "ionic cordova build ios --prod"
   },
   "dependencies": {

@@ -18,14 +18,14 @@
     <ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>
     <ion-list sliding="true" class="bottle-page" #bottleList>
       <div *ngFor="let bottle of bottles$ | async" style="width: 100%">
-        <bottle-item [bottle]="bottle" (onShowDetail)="triggerDetail($event)"
+        <bottle-item [bottle]="bottle" (onShowDetail)="triggerDetail($event)" [selected]="isSelected(bottle)"
                      (onSelected)="switchSelected($event)"></bottle-item>
       </div>
     </ion-list>
   </responsive-wrapper>
 </ion-content>
 
-<ion-fab class="browse-page" bottom right *ngIf="anyBottleSelected()">
+<ion-fab #fab class="browse-page" bottom right *ngIf="anyBottleSelected()">
   <button ion-fab>
     <ion-icon name="menu"></ion-icon>
   </button>

@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {MenuController, NavController} from 'ionic-angular';
+import {FabList, MenuController, NavController} from 'ionic-angular';
 import {Bottle} from '../../../model/bottle';
 import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
 import {FilterSet} from '../../../components/distribution/filterset';
@@ -44,6 +44,7 @@ export class BrowsePage implements OnInit, OnDestroy {
   bottles$: Observable<Bottle[]>;
   filterSet$: Observable<FilterSet>;
   @ViewChild('bottleList') listComponent: BottleItemComponent;
+  @ViewChild(FabList) ionFAB: FabList;
 
   private nbOfBottles: number = 0;
   private searchBarVisible: boolean = false;
@@ -71,12 +72,21 @@ export class BrowsePage implements OnInit, OnDestroy {
       map((bottles: Bottle[]) => this.getPrepareDisplayedList(bottles))
     );
     this.selectionSub = this.store.select(BottlesQuery.getSelectedBottles).subscribe(
-      (bottles: Bottle[]) => this.selectedBottles = bottles
+      (bottles: Bottle[]) => {
+        this.selectedBottles = bottles;
+      }
     );
   }
 
   ngOnDestroy() {
     this.selectionSub.unsubscribe();
+    if (this.ionFAB) {
+      this.ionFAB.setVisible(false);
+    }
+  }
+
+  isSelected(bottle: Bottle) {
+    return this.selectedBottles && this.selectedBottles.findIndex(btl => btl.id === bottle.id) !== -1;
   }
 
   anyBottleSelected(): boolean {
@@ -100,6 +110,9 @@ export class BrowsePage implements OnInit, OnDestroy {
         }
       }
     );
+    if (this.ionFAB) {
+      this.ionFAB.setVisible(false);
+    }
   }
 
   locateSelection() {
@@ -117,6 +130,9 @@ export class BrowsePage implements OnInit, OnDestroy {
         }
       }
     );
+    if (this.ionFAB) {
+      this.ionFAB.setVisible(false);
+    }
   }
 
   registerSelectionAsFavorite() {

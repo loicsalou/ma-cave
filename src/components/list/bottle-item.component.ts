@@ -5,7 +5,11 @@ import {CellarPage} from '../../_features/racks/cellar/cellar.page';
 import {NativeProvider} from '../../providers/native/native';
 import {ApplicationState} from '../../app/state/app.state';
 import {Store} from '@ngrx/store';
-import {UpdateBottlesAction} from '../../app/state/bottles.actions';
+import {
+  HightlightBottleSelectionAction,
+  SetSelectedBottleAction,
+  UpdateBottlesAction
+} from '../../app/state/bottles.actions';
 
 @Component({
              selector: 'bottle-item',
@@ -16,12 +20,12 @@ export class BottleItemComponent {
   isFilterPanelShown = false;
   @Input()
   bottle: Bottle;
+  @Input()
+  selected = false;
   @Output()
   onShowDetail: EventEmitter<Bottle> = new EventEmitter();
   @Output()
   onSelected: EventEmitter<{ bottle: Bottle, selected: boolean }> = new EventEmitter();
-
-  selected = false;
 
   constructor(private store: Store<ApplicationState>,
               private navCtrl: NavController, private nativeProvider: NativeProvider) {
@@ -53,13 +57,14 @@ export class BottleItemComponent {
     return bottle.favorite;
   }
 
-  locateBottles(event: Event, slidingItem: ItemSliding, bottles: Bottle[]) {
+  locateBottle(event: Event, slidingItem: ItemSliding, bottle: Bottle) {
     this.nativeProvider.feedBack();
     event.stopPropagation();
     if (slidingItem) {
       slidingItem.close();
     }
-    this.navCtrl.push(CellarPage, {bottlesToHighlight: bottles});
+    this.store.dispatch(new SetSelectedBottleAction(bottle, true));
+    this.navCtrl.push(CellarPage, {action: new HightlightBottleSelectionAction()});
   }
 
   addToFavorite(event: Event, slidingItem: ItemSliding, bottle: Bottle) {
@@ -67,7 +72,7 @@ export class BottleItemComponent {
     event.stopPropagation();
     let updatedBottle = new Bottle(bottle);
     updatedBottle.favorite = !bottle.favorite;
-    this.store.dispatch(new UpdateBottlesAction([updatedBottle]));
+    this.store.dispatch(new UpdateBottlesAction([ updatedBottle ]));
     slidingItem.close();
   }
 }

@@ -112,9 +112,6 @@ export class BottleFactory {
     if (!btl.positions) {
       btl.positions = [];
     }
-    if (btl.positions.filter(pos => pos===undefined).length > 0) {
-      console.info('');
-    };
     return this;
   }
 

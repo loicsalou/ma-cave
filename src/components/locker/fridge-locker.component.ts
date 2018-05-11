@@ -67,8 +67,8 @@ export class FridgeLockerComponent extends LockerComponent implements OnDestroy 
   }
 
   ngAfterViewInit(): void {
-    if (this.zoomable) {
-      this.gesture=this.setupPinchZoom(this.zoomable.nativeElement);
+    if (this.zoomable && this.zoomable.zoomable) {
+      this.gesture=this.setupPinchZoom(this.zoomable.zoomableComponent);
     }
   }
 

@@ -35,7 +35,7 @@ import {Subscription} from 'rxjs/Subscription';
              templateUrl: './simple-locker.component.html'
              // styleUrls:[ 'locker.component.scss' ]
            })
-export class SimpleLockerComponent extends LockerComponent implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy, OnChanges {
+export class SimpleLockerComponent extends LockerComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   protected static MAX_NB_COLUMNS: number = 16;
   protected static MIN_NB_COLUMNS: number = 1;
   protected static MAX_NB_ROWS: number = 16;
@@ -79,7 +79,6 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
         filter(dim => dim !== undefined)
       ).subscribe(
         dim => {
-          console.info('dimension reçue: ' + JSON.stringify(dim));
           this.containerDimension = {x: dim.x - 32, y: dim.y - 32};
           if (this.dimensionOfDirective) {
             const lockerDim = this.dimensionOfDirective.getContainerSize();
@@ -89,7 +88,7 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
               1
             );
             this.gesture.destroy();
-            this.gesture = this.setupPinchZoom(this.zoomable.nativeElement, this.initialScale);
+            this.gesture = this.setupPinchZoom(this.zoomable.zoomableComponent, this.initialScale);
           }
         }
       );
@@ -108,15 +107,11 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   ngAfterViewInit(): void {
     if (this.selectable) {
       if (this.zoomable && !this.locker.inFridge) {
-        this.gesture = this.setupPinchZoom(this.zoomable.nativeElement);
+        this.gesture = this.setupPinchZoom(this.zoomable.zoomableComponent);
       } else if (this.zoomable && this.locker.inFridge) {
-        this.setupPressGesture(this.zoomable.nativeElement);
+        this.setupPressGesture(this.zoomable.zoomableComponent);
       }
     }
-  }
-
-  ngAfterViewChecked(): void {
-    console.info('');
   }
 
   isShifted(): boolean {

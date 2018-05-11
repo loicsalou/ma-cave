@@ -32,6 +32,7 @@ import {ResponsiveWrapperComponent} from './responsive-wrapper/responsive-wrappe
 import {ScrollAnchorDirective} from './scroll-anchor.directive';
 import {RackDirective} from './rack.directive';
 import {DimensionOfDirective} from './dimension-of.directive';
+import {ZoomableDirective} from './zoomable.directive';
 
 @NgModule({
             imports: [
@@ -61,7 +62,8 @@ import {DimensionOfDirective} from './dimension-of.directive';
               SearchBarComponent,
               SimpleLockerComponent,
               StatisticsComponent,
-              WithdrawalItemComponent
+              WithdrawalItemComponent,
+              ZoomableDirective
             ],
             exports: [
               BottleActionComponent,
@@ -83,7 +85,8 @@ import {DimensionOfDirective} from './dimension-of.directive';
               SearchBarComponent,
               SimpleLockerComponent,
               StatisticsComponent,
-              WithdrawalItemComponent
+              WithdrawalItemComponent,
+              ZoomableDirective
             ],
             providers: [
               Camera,

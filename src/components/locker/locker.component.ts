@@ -4,10 +4,11 @@ import {Gesture} from 'ionic-angular';
 import {Dimension} from '../../model/locker';
 import {NativeProvider} from '../../providers/native/native';
 import {SimpleLocker} from '../../model/simple-locker';
+import {ZoomableDirective} from '../zoomable.directive';
 
 export abstract class LockerComponent implements OnChanges {
 
-  @ViewChild('zoomable') zoomable: ElementRef;
+  @ViewChild(ZoomableDirective) zoomable: ZoomableDirective;
 
   @Input()
   content: Bottle[] = [];
@@ -51,13 +52,6 @@ export abstract class LockerComponent implements OnChanges {
 
   //avant d'enlever la dernière colonne on s'assure qu'elle est vide
   public abstract canRemoveLastColumn(colNumber: number): boolean;
-
-  getActualWidth(): number | null {
-    if (this.zoomable != null) {
-      return this.zoomable.nativeElement[ 'width' ];
-    }
-    return null;
-  }
 
   /**
    * affecte une nouvelle dimension au locker. Comme la dimension est immutable on en recrée une.
@@ -105,6 +99,8 @@ export abstract class LockerComponent implements OnChanges {
     let last_y = 0;
     this.scale = initScale;
     let base = this.scale;
+    let xCenter=0;
+    let yCenter=0;
 
     gesture.listen();
     gesture.on('pan', onPan);
@@ -118,12 +114,22 @@ export abstract class LockerComponent implements OnChanges {
     let self = this;
 
     function onPan(ev) {
-      self.currentGesture = 'pan';
       ev.preventDefault();
       x = ev.deltaX;
       y = ev.deltaY;
+      setCenter(ev.srcEvent);
       setCoor(ev.deltaX, ev.deltaY);
       transform();
+    }
+
+    /**
+     * centre d'action de l'utilisateur pour le pan par ex.
+     * A réactiver quand j'aurai compris les calculs de redimensionnement (à dessiner pour comprendre)
+     * @param {PointerEvent} ev
+     */
+    function setCenter(ev: PointerEvent) {
+      //xCenter=ev.offsetX;
+      //yCenter=ev.offsetY;
     }
 
     function onPanend(ev) {
@@ -142,6 +148,7 @@ export abstract class LockerComponent implements OnChanges {
     }
 
     function onTap(ev) {
+      setCenter(ev.srcEvent);
       self.currentGesture = 'tap';
       ev.preventDefault();
       if (ev.tapCount === 2) {
@@ -157,6 +164,7 @@ export abstract class LockerComponent implements OnChanges {
     }
 
     function onPinch(ev) {
+      setCenter(ev.srcEvent);
       self.currentGesture = 'pinch';
       ev.preventDefault();
       // formula to append scale to new scale
@@ -167,6 +175,7 @@ export abstract class LockerComponent implements OnChanges {
     }
 
     function onPinchend(ev) {
+      setCenter(ev.srcEvent);
       self.currentGesture = 'pinchend';
       if (self.scale > 4) {
         self.scale = 4;
@@ -207,7 +216,7 @@ export abstract class LockerComponent implements OnChanges {
 
     // xx && yy are for resetting the position when the scale return to 1.
     function transform(xx?: number, yy?: number) {
-      elm.style.webkitTransform = `translate3d(${xx || x}px, ${yy || y}px, 0) scale3d(${self.scale}, ${self.scale}, 1)`;
+      elm.style.webkitTransform = `translate3d(${(xx || x)+xCenter}px, ${(yy || y)+yCenter}px, 0) scale3d(${self.scale}, ${self.scale}, 1)`;
       self.currentStyle = elm.style.webkitTransform;
     }
 

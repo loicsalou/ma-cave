@@ -55,7 +55,6 @@ import {Subject} from 'rxjs/Subject';
            })
 export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
 
-  @ViewChildren('zoomable') zoomable: QueryList<ElementRef>;
   @ViewChild(Content) content: Content;
   lockerNames: string[];
   lockersAndBottles$: Observable<{ lockers: Locker[], bottles: Bottle[] }>;
@@ -120,7 +119,6 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked, OnDe
   }
 
   ngAfterViewChecked() {
-    console.info('');
     if (this.containers && this.containers.length > 0) {
       this.containers.forEach(
         container => {
@@ -128,8 +126,6 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked, OnDe
           let subject = this.dimensionsSubjects[ lockerId ];
           if (subject) {
             subject.next(container.getContainerSize());
-          } else {
-            console.info('');
           }
         }
       );
