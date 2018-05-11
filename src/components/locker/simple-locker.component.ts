@@ -1,14 +1,25 @@
-import {AfterViewInit, Component, Inject, Input, OnInit} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  Inject,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import {SimpleLocker} from '../../model/simple-locker';
-import {Dimension, LockerType} from '../../model/locker';
+import {Dimension, Locker, LockerType} from '../../model/locker';
 import {Bottle, Position} from '../../model/bottle';
 import {NotificationService} from '../../service/notification.service';
 import {Cell, LockerComponent, Row} from './locker.component';
 import {Gesture} from 'ionic-angular';
 import {NativeProvider} from '../../providers/native/native';
-import {UpdateBottlesAction} from '../../app/state/bottles.actions';
 import {ApplicationState} from '../../app/state/app.state';
 import {Store} from '@ngrx/store';
+import {RackDirective} from '../rack.directive';
+import {DimensionOfDirective} from '../dimension-of.directive';
 
 /**
  * Generated class for the SimpleLockerComponent component.
@@ -21,7 +32,7 @@ import {Store} from '@ngrx/store';
              templateUrl: './simple-locker.component.html'
              // styleUrls:[ 'locker.component.scss' ]
            })
-export class SimpleLockerComponent extends LockerComponent implements OnInit, AfterViewInit {
+export class SimpleLockerComponent extends LockerComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   protected static MAX_NB_COLUMNS: number = 16;
   protected static MIN_NB_COLUMNS: number = 1;
   protected static MAX_NB_ROWS: number = 16;
@@ -34,10 +45,17 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   rack: number = 0;
 
   @Input()
+  containerDimension: Dimension;
+
+  @Input()
   editing: boolean = false;
 
   rows: Row[];
+  @ViewChild(DimensionOfDirective) private dimensionOfDirective: DimensionOfDirective<Locker>;
+
   private bogusBottles: { bottle: Bottle, position: Position }[] = [];
+  private gesture: Gesture;
+  private initialScale: number;
 
   constructor(private notificationService: NotificationService, nativeProvider: NativeProvider,
               @Inject('GLOBAL_CONFIG') private config, private store: Store<ApplicationState>) {
@@ -54,10 +72,31 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
     }
   }
 
+  ngOnDestroy(): void {
+    if (this.gesture) {
+      this.gesture.destroy();
+    }
+  }
+
+  ngOnChanges(change: SimpleChanges) {
+    if (change[ 'containerDimension' ] && change[ 'containerDimension' ].currentValue) {
+      if (this.containerDimension && this.dimensionOfDirective) {
+        const lockerDim = this.dimensionOfDirective.getContainerSize();
+        this.initialScale = Math.min(
+          this.containerDimension.x / lockerDim.x,
+          this.containerDimension.y / lockerDim.y,
+          1
+        );
+        this.gesture.destroy();
+        this.gesture = this.setupPinchZoom(this.zoomable.nativeElement, this.initialScale);
+      }
+    }
+  }
+
   ngAfterViewInit(): void {
     if (this.selectable) {
       if (this.zoomable && !this.locker.inFridge) {
-        this.setupPinchZoom(this.zoomable.nativeElement);
+        this.gesture = this.setupPinchZoom(this.zoomable.nativeElement);
       } else if (this.zoomable && this.locker.inFridge) {
         this.setupPressGesture(this.zoomable.nativeElement);
       }
@@ -290,7 +329,7 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
         data.bottle.nomCru + ':' + data.position.x + ',' + data.position.y
                                 )
     );
-    this.notificationService.information(this.bogusBottles.length+' bouteilles hors casier');
+    this.notificationService.information(this.bogusBottles.length + ' bouteilles hors casier');
     //this.notificationService.ask('Supprimer les positions inexistantes ? ', bugs)
     //  .subscribe(
     //    result => {

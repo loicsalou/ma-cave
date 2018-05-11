@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {Component, ElementRef, Input, OnDestroy, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {FridgeLocker} from '../../model/fridge-locker';
 import {Cell, LockerComponent} from './locker.component';
 import {NotificationService} from '../../service/notification.service';
@@ -7,6 +7,7 @@ import {SimpleLockerComponent} from './simple-locker.component';
 import {SimpleLocker} from '../../model/simple-locker';
 import {NativeProvider} from '../../providers/native/native';
 import {Position} from '../../model/bottle';
+import {Gesture} from 'ionic-angular';
 
 /**
  * Generated class for the CompositeLockerComponent component.
@@ -19,7 +20,7 @@ import {Position} from '../../model/bottle';
              templateUrl: './fridge-locker.component.html'
              // styleUrls:[ 'fridge-locker.component.scss' ]
            })
-export class FridgeLockerComponent extends LockerComponent implements OnInit {
+export class FridgeLockerComponent extends LockerComponent implements OnDestroy {
   protected static MAX_NB_COLUMNS: number = 8;
   protected static MIN_NB_COLUMNS: number = 1;
   protected static MAX_NB_ROWS: number = 40;
@@ -29,16 +30,20 @@ export class FridgeLockerComponent extends LockerComponent implements OnInit {
   @Input() editing: boolean = false;
   @ViewChildren(SimpleLockerComponent) rackComponents: QueryList<SimpleLockerComponent>;
 
+  private gesture: Gesture;
+
   constructor(private notificationService: NotificationService, nativeProvider: NativeProvider) {
     super(nativeProvider);
   }
 
-  ngOnInit(): void {
-    console.info('');
-  }
-
   get dimension(): Dimension {
     return this.fridge.dimension;
+  }
+
+  ngOnDestroy(): void {
+    if (this.gesture) {
+      this.gesture.destroy();
+    }
   }
 
   public resetComponent() {
@@ -63,7 +68,7 @@ export class FridgeLockerComponent extends LockerComponent implements OnInit {
 
   ngAfterViewInit(): void {
     if (this.zoomable) {
-      this.setupPinchZoom(this.zoomable.nativeElement);
+      this.gesture=this.setupPinchZoom(this.zoomable.nativeElement);
     }
   }
 

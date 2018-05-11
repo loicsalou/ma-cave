@@ -30,6 +30,8 @@ import {SearchBarComponent} from './search-bar/search-bar';
 import {BottleActionComponent} from './bottle-action/bottle-action';
 import {ResponsiveWrapperComponent} from './responsive-wrapper/responsive-wrapper';
 import {ScrollAnchorDirective} from './scroll-anchor.directive';
+import {RackDirective} from './rack.directive';
+import {DimensionOfDirective} from './dimension-of.directive';
 
 @NgModule({
             imports: [
@@ -46,6 +48,7 @@ import {ScrollAnchorDirective} from './scroll-anchor.directive';
               BottleItemComponent,
               BottleNotingComponent,
               ChartComponent,
+              DimensionOfDirective,
               CurrentFiltersComponent,
               DefaultImageDirective,
               DistributionComponent,
@@ -67,6 +70,7 @@ import {ScrollAnchorDirective} from './scroll-anchor.directive';
               BottleItemComponent,
               BottleNotingComponent,
               ChartComponent,
+              DimensionOfDirective,
               CurrentFiltersComponent,
               DefaultImageDirective,
               DistributionComponent,

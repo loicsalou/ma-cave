@@ -52,6 +52,13 @@ export abstract class LockerComponent implements OnChanges {
   //avant d'enlever la dernière colonne on s'assure qu'elle est vide
   public abstract canRemoveLastColumn(colNumber: number): boolean;
 
+  getActualWidth(): number | null {
+    if (this.zoomable != null) {
+      return this.zoomable.nativeElement[ 'width' ];
+    }
+    return null;
+  }
+
   /**
    * affecte une nouvelle dimension au locker. Comme la dimension est immutable on en recrée une.
    * @param {SimpleLocker} locker
@@ -74,7 +81,7 @@ export abstract class LockerComponent implements OnChanges {
     this.nativeProvider.feedBack();
   }
 
-  protected setupPinchZoom(elm: HTMLElement): void {
+  protected setupPinchZoom(elm: HTMLElement, initScale: number=1): Gesture {
     const gesture = new Gesture(elm);
 
     // max translate x = (container_width - element absolute_width)px
@@ -96,7 +103,7 @@ export abstract class LockerComponent implements OnChanges {
     let y = 0;
     let last_x = 0;
     let last_y = 0;
-    this.scale = 1;
+    this.scale = initScale;
     let base = this.scale;
 
     gesture.listen();
@@ -126,6 +133,12 @@ export abstract class LockerComponent implements OnChanges {
       last_x = x;
       last_y = y;
       transform(x, y);
+    }
+
+    function setScale(sc: number) {
+      self.scale = sc;
+      setBounds();
+      transform();
     }
 
     function onTap(ev) {
@@ -197,6 +210,13 @@ export abstract class LockerComponent implements OnChanges {
       elm.style.webkitTransform = `translate3d(${xx || x}px, ${yy || y}px, 0) scale3d(${self.scale}, ${self.scale}, 1)`;
       self.currentStyle = elm.style.webkitTransform;
     }
+
+    if (this.scale!==1) {
+      setBounds();
+      transform();
+    };
+
+    return gesture;
   }
 }
 

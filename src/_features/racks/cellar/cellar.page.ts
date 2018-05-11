@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import {Content, ModalController, NavController, NavParams} from 'ionic-angular';
 import {CellarPersistenceService} from '../../../service/cellar-persistence.service';
-import {Locker, LockerType} from '../../../model/locker';
+import {Dimension, Locker, LockerType} from '../../../model/locker';
 import {SimpleLockerComponent} from '../../../components/locker/simple-locker.component';
 import {NotificationService} from '../../../service/notification.service';
 import {Bottle, Position} from '../../../model/bottle';
@@ -39,6 +39,7 @@ import {logInfo, logWarn} from '../../../utils';
 import {ScrollAnchorDirective} from '../../../components/scroll-anchor.directive';
 import {combineLatest, filter, map, tap} from 'rxjs/operators';
 import {Subscription} from 'rxjs/Subscription';
+import {DimensionOfDirective} from '../../../components/dimension-of.directive';
 
 /**
  * Generated class for the CellarPage page.
@@ -52,7 +53,7 @@ import {Subscription} from 'rxjs/Subscription';
            })
 export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
 
-  @ViewChild('zoomable') zoomable: ElementRef;
+  @ViewChildren('zoomable') zoomable: QueryList<ElementRef>;
   @ViewChild(Content) content: Content;
   lockerNames: string[];
   lockersAndBottles$: Observable<{ lockers: Locker[], bottles: Bottle[] }>;
@@ -65,6 +66,8 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('placedLockerComponent') private placedLockerComponent: SimpleLockerComponent;
   @ViewChildren(ScrollAnchorDirective) private lockerRows: QueryList<ScrollAnchorDirective>;
+  @ViewChildren(DimensionOfDirective) private containers: QueryList<DimensionOfDirective<Locker>>;
+
   private doWithAction: string;
   private selectedBottlesSubscription: Subscription;
   private somethingWasUpdated = false;
@@ -78,6 +81,18 @@ export class CellarPage implements OnInit, AfterViewInit, OnDestroy {
               private params: NavParams,
               private store: Store<ApplicationState>) {
     this.store.dispatch(new LoadCellarAction());
+  }
+
+  getContainerDimension(locker: Locker): Dimension {
+    const container = this.containers.find(container => container.dimensionOf.id === locker.id);
+    if (container) {
+      let dim = container.getContainerSize();
+      return {
+        x: dim.x - 32,
+        y: dim.y - 32
+      };
+    }
+    return undefined;
   }
 
   ngOnInit(): void {
