@@ -132,7 +132,7 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked, OnDe
     }
   }
 
-  ionViewWillLeave() {
+  ionViewDidLeave() {
     //reset de la sélection si on a effectué un traitement demandé
     if (this.doWithAction === BottlesActionTypes.HighlightBottleSelectionActionType
       || this.doWithAction === BottlesActionTypes.PlaceBottleSelectionActionType

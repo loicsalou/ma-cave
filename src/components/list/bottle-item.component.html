@@ -3,10 +3,10 @@
     <ion-row>
       <ion-col col-2 class="icons" style="padding-right:7px;">
         <ion-avatar item-start (click)="switchSelected($event, bottle)">
-          <ion-icon *ngIf="isSelected(bottle)" name="checkmark-circle-outline" style="font-size: 2.4em;"></ion-icon>
-          <div class="icon" *ngIf="!isSelected(bottle)" [ngClass]="(bottle | bottleClass)">
-            <img src="assets/icon/starred.png" *ngIf="isBottleFavorite(bottle) && !isSelected(bottle)">
-            <img src="assets/icon/alert-status.png" *ngIf="bottle.overdue && !isSelected(bottle)">
+          <ion-icon *ngIf="selected" name="checkmark-circle-outline" style="font-size: 2.4em;"></ion-icon>
+          <div class="icon" *ngIf="!selected" [ngClass]="(bottle | bottleClass)">
+            <img src="assets/icon/starred.png" *ngIf="isBottleFavorite(bottle) && !selected">
+            <img src="assets/icon/alert-status.png" *ngIf="bottle.overdue && !selected">
           </div>
         </ion-avatar>
       </ion-col>

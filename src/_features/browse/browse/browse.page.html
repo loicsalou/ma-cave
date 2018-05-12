@@ -10,17 +10,20 @@
 </ion-header>
 
 <ion-menu class="browse-page" [content]="content" id="menu-components" type="overlay">
-  <page-filter [bottles]="bottles$"></page-filter>
+  <page-filter [bottles]="bottleStates$"></page-filter>
 </ion-menu>
 
 <ion-content class="browse-page page mod-content">
   <responsive-wrapper>
     <ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>
     <ion-list sliding="true" class="bottle-page" #bottleList>
-      <div *ngFor="let bottle of bottles$ | async" style="width: 100%">
-        <bottle-item [bottle]="bottle" (onShowDetail)="triggerDetail($event)" [selected]="isSelected(bottle)"
-                     (onSelected)="switchSelected($event)"></bottle-item>
-      </div>
+      <ng-container *ngIf="bottleStates$ | async as bottleStates">
+        <div *ngFor="let bottleState of bottleStates" style="width: 100%">
+          <bottle-item [bottle]="bottleState.bottle" (onShowDetail)="triggerDetail($event)"
+                       [selected]="bottleState.selected"
+                       (onSelected)="switchSelected($event)"></bottle-item>
+        </div>
+      </ng-container>
     </ion-list>
   </responsive-wrapper>
 </ion-content>

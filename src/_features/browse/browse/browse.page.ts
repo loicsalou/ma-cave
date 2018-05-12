@@ -16,12 +16,10 @@ import {
   ResetBottleSelectionAction,
   ResetFilterAction,
   SetSelectedBottleAction,
-  UpdateBottlesAction,
   UpdateFilterAction
 } from '../../../app/state/bottles.actions';
-import {map, take, tap} from 'rxjs/operators';
+import {combineLatest, map, shareReplay, take, tap} from 'rxjs/operators';
 import {SortOption} from '../../../components/distribution/distribution';
-import {Subscription} from 'rxjs/Subscription';
 import {NotificationService} from '../../../service/notification.service';
 import {CellarPage} from '../../racks/cellar/cellar.page';
 
@@ -39,16 +37,15 @@ function sliceAround(currentBottles: Bottle[], bottle: Bottle, slice: number) {
            })
 export class BrowsePage implements OnInit, OnDestroy {
   nbOfLots = 0;
-  selectedBottles: Bottle[] = [];
+  nbSelected = 0;
 
-  bottles$: Observable<Bottle[]>;
+  bottleStates$: Observable<[ Bottle[], Bottle[] ]>;
   filterSet$: Observable<FilterSet>;
   @ViewChild('bottleList') listComponent: BottleItemComponent;
   @ViewChild(FabList) ionFAB: FabList;
 
   private nbOfBottles: number = 0;
   private searchBarVisible: boolean = false;
-  private selectionSub: Subscription;
   private sortOption: SortOption;
   private currentBottles: Bottle[];
 
@@ -59,34 +56,44 @@ export class BrowsePage implements OnInit, OnDestroy {
               private notificationService: NotificationService) {
   }
 
-  get nbSelected(): number {
-    return this.selectedBottles.length;
-  }
-
   ngOnInit() {
     this.nativeProvider.feedBack();
     this.filterSet$ = this.store.select(BottlesQuery.getFilter).pipe(
       tap((filterSet: FilterSet) => this.sortOption = filterSet.sortOption)
     );
-    this.bottles$ = this.store.select(BottlesQuery.getFilteredBottles).pipe(
+    let bottles$ = this.store.select(BottlesQuery.getFilteredBottles).pipe(
       map((bottles: Bottle[]) => this.getPrepareDisplayedList(bottles))
     );
-    this.selectionSub = this.store.select(BottlesQuery.getSelectedBottles).subscribe(
-      (bottles: Bottle[]) => {
-        this.selectedBottles = bottles;
-      }
+    let selection$ = this.store.select(BottlesQuery.getSelectedBottles);
+
+    this.bottleStates$ = selection$.pipe(
+      combineLatest(bottles$),
+      map((result: [ Bottle[], Bottle[] ]) => {
+        let ret = {selected: result[ 0 ], bottles: result[ 1 ]};
+        this.nbSelected = ret.selected.length;
+        return ret;
+      }),
+      map((selectedAndBottles: { selected: Bottle[], bottles: Bottle[] }) => {
+        const selected = selectedAndBottles.selected;
+        return selectedAndBottles.bottles.map(btl => {
+          return {
+            bottle: btl,
+            selected: selected.findIndex(b => b.id === btl.id) !== -1
+          };
+        });
+      }),
+      shareReplay(1),
+      tap((result: any) => {
+            console.info();
+          }
+      )
     );
   }
 
   ngOnDestroy() {
-    this.selectionSub.unsubscribe();
     if (this.ionFAB) {
       this.ionFAB.setVisible(false);
     }
-  }
-
-  isSelected(bottle: Bottle) {
-    return this.selectedBottles && this.selectedBottles.findIndex(btl => btl.id === bottle.id) !== -1;
   }
 
   anyBottleSelected(): boolean {
@@ -136,18 +143,19 @@ export class BrowsePage implements OnInit, OnDestroy {
   }
 
   registerSelectionAsFavorite() {
+    this.notificationService.error('registerSelectionAsFavorite est à réimplémenter');
     // règle: si une seule n'est pas favorite on les met toutes en favorite, sinon on les sort des favorites
-    const atLeastOneNonFavorite = this.selectedBottles.filter(btl => !btl.favorite).length > 0;
-    const updatedBottles = this.selectedBottles.map(
-      btl => {
-        const updated = new Bottle(btl);
-        updated.favorite = atLeastOneNonFavorite;
-        return updated;
-      }
-    );
-
-    this.store.dispatch(new UpdateBottlesAction(updatedBottles));
-    this.resetSelection();
+    //const atLeastOneNonFavorite = this.selectedBottles.filter(btl => !btl.favorite).length > 0;
+    //const updatedBottles = this.selectedBottles.map(
+    //  btl => {
+    //    const updated = new Bottle(btl);
+    //    updated.favorite = atLeastOneNonFavorite;
+    //    return updated;
+    //  }
+    //);
+    //
+    //this.store.dispatch(new UpdateBottlesAction(updatedBottles));
+    //this.resetSelection();
   }
 
   /**

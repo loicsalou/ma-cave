@@ -24,7 +24,7 @@ export class FilterPage implements OnInit, OnDestroy {
   ];
 
   @Input()
-  bottles: Observable<Bottle[]>;
+  bottles: Observable<{ selected: Bottle[], bottles: Bottle[] }>;
 
   nbOfBottles: number = 0;
   filterSet: FilterSet;
@@ -41,12 +41,12 @@ export class FilterPage implements OnInit, OnDestroy {
       filterSet => this.filterSet = Object.assign(new FilterSet(), filterSet)
     );
     this.bottles.subscribe(
-      (bottles: Bottle[]) => {
-        if (!bottles) {
-          bottles = [];
+      (selectedAndBottles: { selected: Bottle[], bottles: Bottle[] }) => {
+        if (!selectedAndBottles.bottles) {
+          selectedAndBottles.bottles = [];
         }
-        this.nbOfBottles = bottles.reduce((tot: number, btl: Bottle) => tot + +btl.quantite_courante, 0);
-        this.nbLots = bottles.length;
+        this.nbOfBottles = selectedAndBottles.bottles.reduce((tot: number, btl: Bottle) => tot + +btl.quantite_courante, 0);
+        this.nbLots = selectedAndBottles.bottles.length;
       }
     );
   }

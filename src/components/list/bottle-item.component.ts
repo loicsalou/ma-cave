@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Bottle} from '../../model/bottle';
 import {ItemSliding, NavController} from 'ionic-angular';
 import {CellarPage} from '../../_features/racks/cellar/cellar.page';
@@ -16,12 +16,12 @@ import {
              templateUrl: 'bottle-item.component.html'
              // styleUrls:[ 'bottle-item.component.scss' ]
            })
-export class BottleItemComponent {
+export class BottleItemComponent implements OnInit {
   isFilterPanelShown = false;
   @Input()
   bottle: Bottle;
   @Input()
-  selected = false;
+  selected: boolean;
   @Output()
   onShowDetail: EventEmitter<Bottle> = new EventEmitter();
   @Output()
@@ -29,6 +29,9 @@ export class BottleItemComponent {
 
   constructor(private store: Store<ApplicationState>,
               private navCtrl: NavController, private nativeProvider: NativeProvider) {
+  }
+
+  ngOnInit() {
   }
 
   filter() {
@@ -42,15 +45,12 @@ export class BottleItemComponent {
   switchSelected() {
     event.stopPropagation();
     this.selected = !this.selected;
-    this.onSelected.emit({bottle: this.bottle, selected: this.selected});
+    setTimeout(() => this.onSelected.emit({bottle: this.bottle, selected: this.selected})
+    );
   }
 
   numberNotPlaced(bottle: Bottle): number {
     return bottle.quantite_courante - bottle.positions.length;
-  }
-
-  isSelected() {
-    return this.selected;
   }
 
   isBottleFavorite(bottle: Bottle): boolean {
