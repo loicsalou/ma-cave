@@ -1,9 +1,8 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FabList, MenuController, NavController} from 'ionic-angular';
-import {Bottle} from '../../../model/bottle';
+import {Bottle, BottleState} from '../../../model/bottle';
 import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
 import {FilterSet} from '../../../components/distribution/filterset';
-import * as _ from 'lodash';
 import {BottleItemComponent} from '../../../components/list/bottle-item.component';
 import {NativeProvider} from '../../../providers/native/native';
 import {Observable} from 'rxjs/Observable';
@@ -13,7 +12,6 @@ import {BottlesQuery} from '../../../app/state/bottles.state';
 import {
   HightlightBottleSelectionAction,
   PlaceBottleSelectionAction,
-  ResetBottleSelectionAction,
   ResetFilterAction,
   SetSelectedBottleAction,
   UpdateFilterAction
@@ -22,6 +20,7 @@ import {combineLatest, map, shareReplay, take, tap} from 'rxjs/operators';
 import {SortOption} from '../../../components/distribution/distribution';
 import {NotificationService} from '../../../service/notification.service';
 import {CellarPage} from '../../racks/cellar/cellar.page';
+import * as _ from 'lodash';
 
 function sliceAround(currentBottles: Bottle[], bottle: Bottle, slice: number) {
   const ix = currentBottles.findIndex(btl => btl.id === bottle.id);
@@ -39,7 +38,7 @@ export class BrowsePage implements OnInit, OnDestroy {
   nbOfLots = 0;
   nbSelected = 0;
 
-  bottleStates$: Observable<[ Bottle[], Bottle[] ]>;
+  bottleStates$: Observable<BottleState[]>;
   filterSet$: Observable<FilterSet>;
   @ViewChild('bottleList') listComponent: BottleItemComponent;
   @ViewChild(FabList) ionFAB: FabList;
@@ -82,11 +81,7 @@ export class BrowsePage implements OnInit, OnDestroy {
           };
         });
       }),
-      shareReplay(1),
-      tap((result: any) => {
-            console.info();
-          }
-      )
+      shareReplay(1)
     );
   }
 
@@ -191,10 +186,6 @@ export class BrowsePage implements OnInit, OnDestroy {
                           bottle: bottle
                         }
                       });
-  }
-
-  private resetSelection() {
-    this.store.dispatch(new ResetBottleSelectionAction());
   }
 
   private getPrepareDisplayedList(received: Bottle[]): Bottle[] {

@@ -1,5 +1,5 @@
-import {Bottle} from '../../../model/bottle';
-import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Bottle, BottleState} from '../../../model/bottle';
+import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import {SortOption} from '../../../components/distribution/distribution';
 import {MenuController} from 'ionic-angular';
 import {Subscription} from 'rxjs/Subscription';
@@ -9,6 +9,7 @@ import {ApplicationState} from '../../../app/state/app.state';
 import {ResetFilterAction, UpdateFilterAction} from '../../../app/state/bottles.actions';
 import {BottlesQuery} from '../../../app/state/bottles.state';
 import {FilterSet} from '../../../components/distribution/filterset';
+import {map, tap} from 'rxjs/operators';
 
 @Component({
              selector: 'page-filter',
@@ -23,13 +24,12 @@ export class FilterPage implements OnInit, OnDestroy {
     {id: 'area', name: 'Région', col: 'area_label'}
   ];
 
-  @Input()
-  bottles: Observable<{ selected: Bottle[], bottles: Bottle[] }>;
-
   nbOfBottles: number = 0;
   filterSet: FilterSet;
   sortOn: string = 'country_label';
   ascending: boolean = true;
+  bottles$: Observable<Bottle[]>;
+
   private filtersSub: Subscription;
   private nbLots = 0;
 
@@ -40,14 +40,11 @@ export class FilterPage implements OnInit, OnDestroy {
     this.filtersSub = this.store.select(BottlesQuery.getFilter).subscribe(
       filterSet => this.filterSet = Object.assign(new FilterSet(), filterSet)
     );
-    this.bottles.subscribe(
-      (selectedAndBottles: { selected: Bottle[], bottles: Bottle[] }) => {
-        if (!selectedAndBottles.bottles) {
-          selectedAndBottles.bottles = [];
-        }
-        this.nbOfBottles = selectedAndBottles.bottles.reduce((tot: number, btl: Bottle) => tot + +btl.quantite_courante, 0);
-        this.nbLots = selectedAndBottles.bottles.length;
-      }
+    this.bottles$ = this.store.select(BottlesQuery.getFilteredBottles).pipe(
+      tap((bottles: Bottle[]) => {
+        this.nbOfBottles = bottles.reduce((tot: number, btl: Bottle) => tot + +btl.quantite_courante, 0);
+        this.nbLots = bottles.length;
+      })
     );
   }
 

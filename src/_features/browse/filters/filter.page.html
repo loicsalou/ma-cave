@@ -11,9 +11,9 @@
 
 <ion-content>
   
-  <ng-conteiner *ngIf="bottles$ | async">
-    <distribution [opened]="true" [bottles]="bottles.bottles" (filterSetChanged)="refineFilter($event)"></distribution>
-  </ng-conteiner>
+  <ng-container *ngIf="bottles$ | async as bottles">
+    <distribution [opened]="true" [bottles]="bottles" (filterSetChanged)="refineFilter($event)"></distribution>
+  </ng-container>
   
   <ion-item>
     <ion-label>{{'filter.history' | translate}}</ion-label>

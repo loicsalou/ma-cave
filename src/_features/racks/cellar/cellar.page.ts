@@ -38,7 +38,7 @@ import {
 import {Observable} from 'rxjs/Observable';
 import {logInfo, logWarn} from '../../../utils';
 import {ScrollAnchorDirective} from '../../../components/scroll-anchor.directive';
-import {combineLatest, filter, map, tap} from 'rxjs/operators';
+import {combineLatest, filter, map, shareReplay, tap} from 'rxjs/operators';
 import {Subscription} from 'rxjs/Subscription';
 import {DimensionOfDirective} from '../../../components/dimension-of.directive';
 import {Subject} from 'rxjs/Subject';
@@ -106,12 +106,16 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked, OnDe
       filter((lockers: Locker[]) => lockers.length > 0),
       tap((lockers) => {
         this.lockerNames = lockers.map(locker => locker.name);
-        setTimeout(() => this.content.resize(), 10);
-      })
+        //setTimeout(() => this.content.resize(), 10);
+      }),
+      shareReplay()
     );
-    const bottles$ = this.store.select(BottlesQuery.getBottles);
+    const bottles$ = this.store.select(BottlesQuery.getBottles).pipe(
+      shareReplay()
+    );
     this.lockersAndBottles$ = lockers$.pipe(
       combineLatest(bottles$),
+      shareReplay(),
       map((combined: [ Locker[], Bottle[] ]) => {
         return {lockers: combined[ 0 ], bottles: combined[ 1 ]};
       })
@@ -145,7 +149,8 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked, OnDe
     logInfo('view init');
     if (this.doWithAction) {
       this.selectedBottles$ = this.store.select(BottlesQuery.getSelectedBottles).pipe(
-        tap((bottles: Bottle[]) => this.handleBottlesSelection(bottles, this.doWithAction))
+        tap((bottles: Bottle[]) => this.handleBottlesSelection(bottles, this.doWithAction)),
+        shareReplay()
       );
     }
     if (this.doWithAction === BottlesActionTypes.HighlightBottleSelectionActionType) {

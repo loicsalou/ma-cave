@@ -6,10 +6,11 @@ import {FilterSet} from '../../components/distribution/filterset';
 import {createSelector} from '@ngrx/store';
 import {match} from '../../components/distribution/filter-matcher';
 import {Locker} from '../../model/locker';
+import * as _ from 'lodash';
 
 export interface BottlesState {
   allBottles: {
-    list: Bottle[];
+    entities: { [ id: string ]: Bottle };
     loading: boolean;
     loaded: boolean;
   };
@@ -27,7 +28,7 @@ export interface BottlesState {
 
 const INITIAL_STATE: BottlesState = {
   allBottles: {
-    list: [],
+    entities: {},
     loading: false,
     loaded: false
   },
@@ -49,7 +50,11 @@ export namespace BottlesQuery {
   export const getLockersLoading = (state: ApplicationState) => state.bottles.allLockers.loading;
   export const getEditedLocker = (state: ApplicationState) => state.bottles.edition.locker;
   export const getFilter = (state: ApplicationState) => state.bottles.filters;
-  export const getBottles = (state: ApplicationState) => state.bottles.allBottles.list;
+  export const getBottleEntities = (state: ApplicationState) => state.bottles.allBottles.entities;
+  export const getBottles = (state: ApplicationState) => {
+    const entities = state.bottles.allBottles.entities;
+    return entitiesToArray(entities);
+  };
   export const getBottlesLoaded = (state: ApplicationState) => state.bottles.allBottles.loaded;
   export const getBottlesLoading = (state: ApplicationState) => state.bottles.allBottles.loading;
   export const getBottlesSelectedIds = (state: ApplicationState) => state.bottles.selected;
@@ -60,10 +65,24 @@ export namespace BottlesQuery {
         : bottles)
       : bottles
   );
+
   export const getSelectedBottles = createSelector(
-    getBottles, getBottlesSelectedIds, (bottles: Bottle[], selected: string[]) =>
-      selected.map((id: string) => bottles.find(btl => btl.id === id))
+    getBottleEntities, getBottlesSelectedIds, (bottles: { [ id: string ]: Bottle }, selected: string[]) =>
+      selected.map((id: string) => bottles[ id ])
         .filter(btl => btl != undefined)
+  );
+  export const getFilteredBottlesStates = createSelector(
+    getFilteredBottles, getSelectedBottles,
+    (bottles: Bottle[], selected: Bottle[]) => {
+      return bottles.map(
+        btl => {
+          return {
+            bottle: btl,
+            selected: selected.findIndex(sel => sel.id == btl.id) !== -1
+          };
+        }
+      );
+    }
   );
   export const getEditLockerAndBottles = createSelector(
     getBottles, getEditedLocker, (bottles: Bottle[], locker: Locker) => {
@@ -107,11 +126,12 @@ export function bottlesStateReducer(state: BottlesState = INITIAL_STATE, action:
     }
 
     case BottlesActionTypes.LoadBottlesSuccessActionType: {
+      const entities = toEntitiesById(action.bottles);
       return {
         ...state,
         allBottles: {
           ...state.allBottles,
-          list: action.bottles,
+          entities: entities,
           loading: false,
           loaded: true
         }
@@ -155,7 +175,7 @@ export function bottlesStateReducer(state: BottlesState = INITIAL_STATE, action:
         ...state,
         allBottles: {
           ...state.allBottles,
-          list: updateBottles(state.allBottles.list, [ action.bottle ])
+          entities: updateBottles(state.allBottles.entities, [ action.bottle ])
         }
       };
     }
@@ -165,7 +185,7 @@ export function bottlesStateReducer(state: BottlesState = INITIAL_STATE, action:
         ...state,
         allBottles: {
           ...state.allBottles,
-          list: updateBottles(state.allBottles.list, action.bottles)
+          entities: updateBottles(state.allBottles.entities, action.bottles)
         }
       };
     }
@@ -197,7 +217,7 @@ export function bottlesStateReducer(state: BottlesState = INITIAL_STATE, action:
         ...state,
         allBottles: {
           ...state.allBottles,
-          list: updateBottles(state.allBottles.list, action.bottles)
+          entities: updateBottles(state.allBottles.entities, action.bottles)
         },
         allLockers: {
           ...state.allLockers,
@@ -218,20 +238,31 @@ export function bottlesStateReducer(state: BottlesState = INITIAL_STATE, action:
   }
 }
 
+// renvoie les entités indexées par ID sous forme de tableau d'entité
+function toEntitiesById(bottles: any[]): { [ id: string ]: Bottle } {
+  return bottles.reduce(
+    (bottlesById: { [ id: string ]: any }, bottle: any) => {
+      return {
+        ...bottlesById,
+        [ bottle.id ]: bottle
+      };
+    }, {}
+  );
+}
+
+// renvoie les entités indexées par ID sous forme de tableau d'entité
+function entitiesToArray(entities: { [ id: string ]: any }): any[] {
+  return Object.keys(entities).map(id => entities[ id ]);
+}
+
 /**
  * Mise à jour de la liste des bouteilles suite à l'update d'une ou plusieurs bouteilles.
  * @param {Bottle[]} bottles la liste actuelle de bouteilles
  * @param {Bottle[]} updatedBottles la liste des bouteilles mises à jour
  * @returns {Bottle[]} la nouvelle liste
  */
-function updateBottles(bottles: Bottle[], updatedBottles: Bottle[]): Bottle[] {
-  const currentBottlesMinusUpdated: Bottle[] = bottles.filter(
-    bottle => {
-      let ix = updatedBottles.findIndex(updatedBottle => updatedBottle.id === bottle.id);
-      return ix === -1;
-    });
-
-  return [ ...currentBottlesMinusUpdated, ...updatedBottles ];
+function updateBottles(bottles: { [ id: string ]: Bottle }, updatedBottles: Bottle[]): { [ id: string ]: Bottle } {
+  return {...bottles, ...toEntitiesById(updatedBottles)};
 }
 
 /**
