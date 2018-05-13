@@ -1,4 +1,4 @@
-import {ElementRef, EventEmitter, Input, OnChanges, Output, ViewChild} from '@angular/core';
+import {EventEmitter, Input, OnChanges, Output, ViewChild} from '@angular/core';
 import {Bottle, Position} from '../../model/bottle';
 import {Gesture} from 'ionic-angular';
 import {Dimension} from '../../model/locker';
@@ -19,6 +19,7 @@ export abstract class LockerComponent implements OnChanges {
 
   @Output()
   onCellSelected: EventEmitter<Cell> = new EventEmitter<Cell>();
+
   currentGesture: any;
   currentStyle: any;
   scale: number;
@@ -31,9 +32,9 @@ export abstract class LockerComponent implements OnChanges {
   abstract get dimension(): Dimension;
 
   ngOnChanges(changeEvent) {
-    //if (changeEvent[ 'content' ] || changeEvent[ 'locker' ]) {
-    //  this.resetComponent();
-    //}
+    if (changeEvent[ 'content' ] || changeEvent[ 'locker' ]) {
+      this.resetComponent();
+    }
   }
 
   /**
@@ -75,7 +76,7 @@ export abstract class LockerComponent implements OnChanges {
     this.nativeProvider.feedBack();
   }
 
-  protected setupPinchZoom(elm: HTMLElement, initScale: number=1): Gesture {
+  protected setupPinchZoom(elm: HTMLElement, initScale: number = 1): Gesture {
     const gesture = new Gesture(elm);
 
     // max translate x = (container_width - element absolute_width)px
@@ -99,8 +100,8 @@ export abstract class LockerComponent implements OnChanges {
     let last_y = 0;
     this.scale = initScale;
     let base = this.scale;
-    let xCenter=0;
-    let yCenter=0;
+    let xCenter = 0;
+    let yCenter = 0;
 
     gesture.listen();
     gesture.on('pan', onPan);
@@ -216,14 +217,15 @@ export abstract class LockerComponent implements OnChanges {
 
     // xx && yy are for resetting the position when the scale return to 1.
     function transform(xx?: number, yy?: number) {
-      elm.style.webkitTransform = `translate3d(${(xx || x)+xCenter}px, ${(yy || y)+yCenter}px, 0) scale3d(${self.scale}, ${self.scale}, 1)`;
+      elm.style.webkitTransform = `translate3d(${(xx || x) + xCenter}px, ${(yy || y) + yCenter}px, 0) scale3d(${self.scale}, ${self.scale}, 1)`;
       self.currentStyle = elm.style.webkitTransform;
     }
 
-    if (this.scale!==1) {
+    if (this.scale !== 1) {
       setBounds();
       transform();
-    };
+    }
+    ;
 
     return gesture;
   }

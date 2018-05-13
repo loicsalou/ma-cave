@@ -1,12 +1,13 @@
 import {
-  AfterViewChecked,
   AfterViewInit,
   Component,
+  EventEmitter,
   Inject,
   Input,
   OnChanges,
   OnDestroy,
   OnInit,
+  Output,
   ViewChild
 } from '@angular/core';
 import {SimpleLocker} from '../../model/simple-locker';
@@ -52,6 +53,9 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
 
   @Input()
   editing: boolean = false;
+
+  @Output()
+  onRackSelected: EventEmitter<{ rack: Locker, selected: boolean }> = new EventEmitter<{ rack: Locker, selected: boolean }>();
 
   rows: Row[];
   containerDimension: Dimension;
@@ -298,6 +302,7 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
       ev.preventDefault();
       if (self.editing) {
         self.selected = !self.selected;
+        self.onRackSelected.emit({rack: this.locker, selected: self.selected});
       }
     }
   }

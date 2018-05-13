@@ -1,6 +1,5 @@
 <!-- Generated template for the SimpleLockerComponent component -->
 <div class="locker-component" [class.selected]="selected">
-  <!--<span *ngIf="initialScale">{{initialScale | json}}</span>-->
   <div class="locker">
     <div class="container" [class.shifted]="isShifted()" [dimensionOf]="locker" [zoomable]="!locker.inFridge">
       <div class="row" *ngFor="let row of rows">

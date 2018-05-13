@@ -101,7 +101,6 @@ export class FirebaseBottlesService {
       bottle[ 'lastUpdated' ] = new Date().getTime();
       updates[ '/' + bottle.id ] = sanitizeBeforeSave(bottle);
     });
-    this.notificationService.debugAlert('sur le point de this.bottlesRootRef.update(' + JSON.stringify(updates) + ')');
     return fromPromise(this.bottlesRootRef.update(updates)
                          .then(() => bottles)
                          .catch(err => err)

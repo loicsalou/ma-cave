@@ -6,7 +6,6 @@ import {FilterSet} from '../../components/distribution/filterset';
 import {createSelector} from '@ngrx/store';
 import {match} from '../../components/distribution/filter-matcher';
 import {Locker} from '../../model/locker';
-import * as _ from 'lodash';
 
 export interface BottlesState {
   allBottles: {

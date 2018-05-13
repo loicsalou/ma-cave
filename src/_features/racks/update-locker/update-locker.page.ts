@@ -13,7 +13,7 @@ import {UpdateLockerAction} from '../../../app/state/bottles.actions';
 import {ApplicationState} from '../../../app/state/app.state';
 import {Store} from '@ngrx/store';
 import {BottlesQuery} from '../../../app/state/bottles.state';
-import {map} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 import {Observable} from 'rxjs/Observable';
 
 /**
@@ -36,9 +36,11 @@ export class UpdateLockerPage implements OnInit {
   comment: string;
   supportedFormats: BottleSize[];
   lockerAndBottles$: Observable<{ locker: Locker, lockerContent: Bottle[ ] }>;
+  isEditable = false;
 
   private locker: Locker;
   private lockerContent: Bottle[];
+  private selectedRacks: number[] = [];
 
   constructor(private params: NavParams,
               private bottlesService: BottlePersistenceService,
@@ -49,9 +51,8 @@ export class UpdateLockerPage implements OnInit {
 
   ngOnInit(): void {
     // on récupère le locker édité et les crus qui ont au moins une bouteille dans ce locker
-    // on ne le prend qu'une fois pour éviter les refresh inutiles et qui posent problème
     this.lockerAndBottles$ = this.store.select(BottlesQuery.getEditLockerAndBottles).pipe(
-      //take(1),
+      tap((data: { locker: Locker, bottles: Bottle[ ] }) => this.setIsEditable()),
       map((data: { locker: Locker, bottles: Bottle[ ] }) => {
             this.locker = this.cloneLocker(data.locker);
             this.lockerContent = this.cloneContent(data.bottles);
@@ -61,17 +62,22 @@ export class UpdateLockerPage implements OnInit {
     );
   }
 
-  isLockerEditable(): boolean {
-    return (this.lockerComponent instanceof SimpleLockerComponent) ||
-      (this.lockerComponent instanceof FridgeLockerComponent && (<FridgeLockerComponent>this.lockerComponent).anyRackSelected());
-  }
-
   cancel() {
     this.notificationService.information('update.cancelled');
     this.navCtrl.pop();
   }
 
+  racksSelected(racks: number[]) {
+    this.selectedRacks = racks;
+    this.setIsEditable();
+  }
+
   saveLocker() {
+    if (this.locker instanceof FridgeLocker) {
+      this.locker.dimensions = this.locker.racks.map(
+        (rack: SimpleLocker) => rack.dimension
+      );
+    }
     this.store.dispatch(new UpdateLockerAction(this.locker, this.lockerContent));
     this.navCtrl.pop();
   }
@@ -103,5 +109,10 @@ export class UpdateLockerPage implements OnInit {
     }
     //cloned = Object.assign(cloned, paramlocker);
     return cloned;
+  }
+
+  private setIsEditable() {
+    this.isEditable = (this.lockerComponent instanceof SimpleLockerComponent) ||
+      (this.lockerComponent instanceof FridgeLockerComponent && this.selectedRacks.length > 0);
   }
 }

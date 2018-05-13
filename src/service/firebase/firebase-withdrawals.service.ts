@@ -112,7 +112,6 @@ export class FirebaseWithdrawalsService {
         bottle[ 'lastUpdated' ] = new Date().getTime();
         updates[ '/' + bottle.id ] = tools.sanitizeBeforeSave(bottle);
       });
-      this.notificationService.debugAlert('sur le point de this.bottlesRootRef.update(' + JSON.stringify(updates) + ')');
       this.bottlesRootRef.update(updates, (
         err => {
           if (err == null) {

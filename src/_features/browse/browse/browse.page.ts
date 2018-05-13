@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {FabList, MenuController, NavController} from 'ionic-angular';
+import {FabButton, FabList, MenuController, NavController} from 'ionic-angular';
 import {Bottle, BottleState} from '../../../model/bottle';
 import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
 import {FilterSet} from '../../../components/distribution/filterset';
@@ -40,8 +40,7 @@ export class BrowsePage implements OnInit, OnDestroy {
 
   bottleStates$: Observable<BottleState[]>;
   filterSet$: Observable<FilterSet>;
-  @ViewChild('bottleList') listComponent: BottleItemComponent;
-  @ViewChild(FabList) ionFAB: FabList;
+  @ViewChild(FabButton) ionFAB: FabButton;
 
   private nbOfBottles: number = 0;
   private searchBarVisible: boolean = false;
@@ -87,7 +86,8 @@ export class BrowsePage implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.ionFAB) {
-      this.ionFAB.setVisible(false);
+      // TODO ne permet appremment pas de refermer les FAB boutons...
+      //this.ionFAB.setActiveClose(true);
     }
   }
 
@@ -113,7 +113,8 @@ export class BrowsePage implements OnInit, OnDestroy {
       }
     );
     if (this.ionFAB) {
-      this.ionFAB.setVisible(false);
+      // TODO ne permet appremment pas de refermer les FAB boutons...
+      //this.ionFAB.setActiveClose(true);
     }
   }
 
@@ -133,7 +134,8 @@ export class BrowsePage implements OnInit, OnDestroy {
       }
     );
     if (this.ionFAB) {
-      this.ionFAB.setVisible(false);
+      // TODO ne permet appremment pas de refermer les FAB boutons...
+      //this.ionFAB.setActiveClose(true);
     }
   }
 

@@ -3,7 +3,7 @@
   <div class="rack" [zoomable]="true">
     <locker *ngFor="let rack of fridge.racks; let ix=index" [locker]="rack" [selectable]="selectable"
             [highlighted]="highlighted" [content]="content" [rack]="ix" [editing]="editing"
-            [zoomable]="false"
-            (onCellSelected)="cellSelected($event)"></locker>
+            [zoomable]="false" (onCellSelected)="cellSelected($event)" (onRackSelected)="rackSelected($event)" >
+    </locker>
   </div>
 </div>

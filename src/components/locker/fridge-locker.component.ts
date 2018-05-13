@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnDestroy, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, Output, QueryList, ViewChildren} from '@angular/core';
 import {FridgeLocker} from '../../model/fridge-locker';
 import {Cell, LockerComponent} from './locker.component';
 import {NotificationService} from '../../service/notification.service';
@@ -28,7 +28,10 @@ export class FridgeLockerComponent extends LockerComponent implements OnDestroy 
 
   @Input() fridge: FridgeLocker;
   @Input() editing: boolean = false;
+
   @ViewChildren(SimpleLockerComponent) rackComponents: QueryList<SimpleLockerComponent>;
+  @Output()
+  onRacksSelected: EventEmitter<number[]> = new EventEmitter<number[]>();
 
   private gesture: Gesture;
 
@@ -66,9 +69,20 @@ export class FridgeLockerComponent extends LockerComponent implements OnDestroy 
     }
   }
 
+  rackSelected(event: {rack:Locker, selected:boolean}) {
+    this.onRacksSelected.emit(
+      this.rackComponents
+        .map((rack: SimpleLockerComponent, ix: number) => {
+          return {rack: rack, ix: ix};
+        })
+        .filter((rack: { rack: SimpleLockerComponent, ix: number }) => rack.rack.selected)
+        .map((rack: { rack: SimpleLockerComponent, ix: number }) => rack.ix)
+    );
+  }
+
   ngAfterViewInit(): void {
     if (this.zoomable && this.zoomable.zoomable) {
-      this.gesture=this.setupPinchZoom(this.zoomable.zoomableComponent);
+      this.gesture = this.setupPinchZoom(this.zoomable.zoomableComponent);
     }
   }
 
@@ -451,11 +465,12 @@ export class FridgeLockerComponent extends LockerComponent implements OnDestroy 
   private shiftBottles(rack: number, shiftX: number, shiftY: number) {
     this.content.forEach(
       bottle => {
-        bottle.positions.forEach(
+        bottle.positions = bottle.positions.map(
           pos => {
             if (pos.inRack(this.fridge.id, rack)) {
-              pos.x += shiftX;
-              pos.y += shiftY;
+              return new Position(pos.lockerId, pos.x + shiftX, pos.y + shiftY, pos.rack);
+            } else {
+              return pos;
             }
           }
         );
