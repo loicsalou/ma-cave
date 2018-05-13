@@ -3,7 +3,6 @@
  */
 import {Injectable} from '@angular/core';
 import 'firebase/storage';
-import {LoginService} from './login/login.service';
 import {Bottle, BottleMetadata} from '../model/bottle';
 import {AbstractPersistenceService} from './abstract-persistence.service';
 import {Observable} from 'rxjs/Observable';
@@ -12,6 +11,9 @@ import {NotificationService} from './notification.service';
 import {Subject} from 'rxjs/Subject';
 import {TranslateService} from '@ngx-translate/core';
 import {FirebaseImagesService} from './firebase/firebase-images.service';
+import {Store} from '@ngrx/store';
+import {ApplicationState} from '../app/state/app.state';
+import {of} from 'rxjs/observable/of';
 
 /**
  * Services related to the bottles in the cellar.
@@ -22,20 +24,21 @@ import {FirebaseImagesService} from './firebase/firebase-images.service';
 export class ImagePersistenceService extends AbstractPersistenceService {
 
   private _progressEvent: Subject<number> = new Subject<number>();
-  private progressEvent$: Observable<number> = this._progressEvent.asObservable();
+  private progressEvent$: Observable<number>;
 
   constructor(private firebaseImageService: FirebaseImagesService,
-              notificationService: NotificationService, translateService: TranslateService, loginService: LoginService) {
-    super(notificationService, loginService, translateService);
-    if (loginService.user !== undefined) {
-      this.initialize(loginService.user);
-    } else {
-      this.cleanup();
-    }
+              notificationService: NotificationService, translateService: TranslateService,
+              store: Store<ApplicationState>) {
+    super(notificationService, translateService, store);
+    this.subscribeLogin();
   }
 
+  /**
+   * permet de suivre la progression des uploads.
+   * @returns {Observable<number>}
+   */
   get progressEvent(): Observable<number> {
-    return this.progressEvent$;
+    return this.firebaseImageService.progress();
   }
 
   /**
@@ -43,17 +46,10 @@ export class ImagePersistenceService extends AbstractPersistenceService {
    * @param bottle
    */
   public getList(bottle: Bottle): Observable<Image[]> {
-    let items = new Observable<Image[]>();
     if (!bottle) {
-      return items;
+      return of([]);
     }
-    items = this.firebaseImageService.listBottleImages(bottle);
-    items.subscribe(
-      (images: Image[]) => this.notificationService.traceInfo(images.length + ' images reçues'),
-      error => this.handleError('liste des images disponibles', error)
-    );
-
-    return items;
+    return this.firebaseImageService.listBottleImages(bottle);
   }
 
   public deleteImage(file: File) {

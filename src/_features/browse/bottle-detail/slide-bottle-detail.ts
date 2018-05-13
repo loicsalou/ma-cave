@@ -1,10 +1,11 @@
-import {Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {NavController} from 'ionic-angular';
 import {Bottle} from '../../../model/bottle';
 
 @Component({
              selector: 'slide-bottle-detail',
              templateUrl: 'slide-bottle-detail.html',
+             changeDetection: ChangeDetectionStrategy.OnPush
              // styleUrls:[ 'slide-bottle-detail.scss' ]
            })
 export class BottleDetailSlide {

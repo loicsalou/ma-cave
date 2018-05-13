@@ -1,6 +1,8 @@
 import {Component} from '@angular/core';
 import {ViewController} from 'ionic-angular';
 import {SearchCriteria} from '../../../model/search-criteria';
+import {Observable} from 'rxjs/Observable';
+import {take} from 'rxjs/operators';
 
 @Component({
              selector: 'items-page',
@@ -10,7 +12,7 @@ import {SearchCriteria} from '../../../model/search-criteria';
                    <ion-list-header>
                      <ion-title>{{'dashboard.usual-queries' | translate}}</ion-title>
                    </ion-list-header>
-                   <div *ngFor="let item of items" style="display: flex; align-items: center;">
+                   <div *ngFor="let item of items$ | async" style="display: flex; align-items: center;">
                      <button ion-item (click)="choose(item)" class="flex-grow">
                        <span class="flex-grow">{{present(item.keywords)}}</span>
                      </button>
@@ -22,10 +24,10 @@ import {SearchCriteria} from '../../../model/search-criteria';
            })
 export class PopoverPage {
 
-  items: SearchCriteria[];
+  items$: Observable<SearchCriteria[]>;
 
   constructor(public viewCtrl: ViewController) {
-    this.items = viewCtrl.data;
+    this.items$ = viewCtrl.data;
   }
 
   choose(item: SearchCriteria) {

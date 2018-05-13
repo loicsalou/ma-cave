@@ -3,17 +3,18 @@
  */
 import {Injectable} from '@angular/core';
 import {SimpleLocker} from '../model/simple-locker';
-import {Observable} from 'rxjs';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {LockerFactory} from '../model/locker.factory';
-import {LoginService} from './login/login.service';
 import {AbstractPersistenceService} from './abstract-persistence.service';
 import {NotificationService} from './notification.service';
 import {Locker} from '../model/locker';
 import {BottlePersistenceService} from './bottle-persistence.service';
 import {TranslateService} from '@ngx-translate/core';
-import {Subscription} from 'rxjs/Subscription';
 import {FirebaseLockersService} from './firebase/firebase-lockers.service';
+import {Store} from '@ngrx/store';
+import {ApplicationState} from '../app/state/app.state';
+import {catchError, map, tap} from 'rxjs/operators';
+import {of} from 'rxjs/observable/of';
+import {Bottle} from '../model/bottle';
 
 /**
  * Services related to the cellar itself, locker and place of the lockers.
@@ -23,27 +24,15 @@ import {FirebaseLockersService} from './firebase/firebase-lockers.service';
 @Injectable()
 export class CellarPersistenceService extends AbstractPersistenceService {
 
-  private _lockers: BehaviorSubject<Locker[]> = new BehaviorSubject<Locker[]>([]);
-  private _allLockersObservable: Observable<Locker[]> = this._lockers.asObservable();
-
-  private allLockersArray: Locker[];
-  private lockersSubscription: Subscription;
-
+  // TODO supprimer bottleService quand NGRX fournira le bon sélecteur
   constructor(private firebaseLockersService: FirebaseLockersService,
               private lockerFactory: LockerFactory,
               notificationService: NotificationService,
-              // TODO supprimer bottleService quand NGRX fournira le bon sélecteur
               private bottleService: BottlePersistenceService,
               translateService: TranslateService,
-              loginService: LoginService) {
-    super(notificationService, loginService, translateService);
-    if (loginService.user) {
-      this.initialize(loginService.user);
-    }
-  }
-
-  get allLockersObservable(): Observable<Locker[]> {
-    return this._allLockersObservable;
+              store: Store<ApplicationState>) {
+    super(notificationService, translateService, store);
+    this.subscribeLogin();
   }
 
   createLocker(locker: Locker): void {
@@ -62,38 +51,34 @@ export class CellarPersistenceService extends AbstractPersistenceService {
   }
 
   public deleteLocker(locker: Locker) {
-    if (this.isEmpty(locker)) {
-      this.firebaseLockersService.deleteLocker(locker);
-      this.notificationService.information('Le casier "' + locker.name + '" a bien été supprimé');
-    } else {
-      this.notificationService.warning('Le casier "' + locker.name + '" n\'est pas vide et ne peut donc pas' +
-        ' être supprimé');
-    }
+    this.bottleService.getBottlesInLocker(locker).subscribe(
+      (bottles: Bottle[]) => {
+        if (bottles.length === 0) {
+          this.firebaseLockersService.deleteLocker(locker);
+          this.notificationService.information('Le casier "' + locker.name + '" a bien été supprimé');
+        } else {
+          this.notificationService.warning('Le casier "' + locker.name + '" n\'est pas vide et ne peut donc pas' +
+            ' être supprimé');
+        }
+      }
+    );
   }
 
-  // TODO remplacer pas un selecteur NGRX
-  public isEmpty(locker: Locker) {
-    return this.bottleService.getBottlesInLocker(locker).length === 0;
+  loadAllLockers() {
+    let popup = this.notificationService.createLoadingPopup('app.loading');
+    return this.firebaseLockersService.fetchAllLockers().pipe(
+      map((lockers: Locker[]) => lockers.map((locker: Locker) => this.lockerFactory.create(locker))),
+      tap(() => popup.dismiss()),
+      catchError(err => {
+        popup.dismiss();
+        this.notificationService.error('app.failed');
+        return of([]);
+      })
+    );
   }
 
   protected initialize(user) {
     super.initialize(user);
-    this.initLockers();
-  }
-
-  protected cleanup() {
-    super.cleanup();
-    this.allLockersArray = undefined;
-    this.lockersSubscription.unsubscribe();
-  }
-
-  private initLockers() {
-    this.lockersSubscription = this.firebaseLockersService.fetchAllLockers().subscribe(
-      (lockers: Locker[]) => {
-        this.allLockersArray = lockers.map((locker: Locker) => this.lockerFactory.create(locker));
-        this._lockers.next(this.allLockersArray);
-      }
-    );
   }
 }
 

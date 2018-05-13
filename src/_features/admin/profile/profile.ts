@@ -1,10 +1,15 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {LoginService} from '../../../service/login/login.service';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {User} from '../../../model/user';
 import {NotificationService} from '../../../service/notification.service';
-import {SettingsService} from '../../../service/settings.service';
-import {Subscription} from 'rxjs/Subscription';
 import VERSION from '../version';
+import {SharedPersistenceService} from '../../../service/shared-persistence.service';
+import {Store} from '@ngrx/store';
+import {ApplicationState} from '../../../app/state/app.state';
+import {LogoutAction, UpdateThemeAction} from '../../../app/state/shared.actions';
+import {SharedQuery} from '../../../app/state/shared.state';
+import {Subscription} from 'rxjs/Subscription';
+import {Observable} from 'rxjs/Observable';
+import {filter, tap} from 'rxjs/operators';
 
 @Component({
              selector: 'page-profile',
@@ -14,46 +19,50 @@ export class ProfilePage implements OnInit, OnDestroy {
   version: any;
   userData: any;
   _currentTheme: string;
+  prefsSub: Subscription;
+  user$: Observable<User>;
+
   private userDataKeys: string[];
   private userDataValues: any[];
-  private sub: Subscription;
 
-  constructor(public loginService: LoginService, private notificationService: NotificationService,
-              private settings: SettingsService) {
-    this.sub = this.settings.activeTheme.subscribe(
-      th => this._currentTheme = th
+  constructor(private notificationService: NotificationService,
+              private sharedServices: SharedPersistenceService, @Inject('GLOBAL_CONFIG') private config,
+              private store: Store<ApplicationState>) {
+    this.prefsSub = store.select(SharedQuery.getSharedState).subscribe(
+      prefs => this._currentTheme = prefs.theme
     );
   }
 
-  get themes(): { name: string, class: string }[] {
-    return this.settings.getAvailableThemes();
+  get themes(): Theme[] {
+    return this.config.settings.themes;
   }
 
   get currentTheme(): string {
     return this._currentTheme;
   }
 
-  set currentTheme(value: string) {
-    this.settings.setActiveTheme(value);
-  }
-
-  get user(): User {
-    return this.loginService.user;
-  }
-
-  ngOnDestroy(): void {
-    this.sub.unsubscribe();
+  set currentTheme(theme: string) {
+    this._currentTheme = theme;
+    this.updateProfile();
   }
 
   ngOnInit(): void {
-    //this.version = require('../../../../package.json').version;
     this.version = VERSION;
-    this.userDataKeys = Object.keys(this.loginService.user);
-    this.userDataValues = [];
-    this.userDataKeys.forEach(key => {
-      this.userDataValues.push(this.loginService.user[ key ]);
-    });
-    this.notificationService.debugAlert('photo user=' + JSON.stringify(this.loginService.user));
+    this.user$ = this.store.select(SharedQuery.getLoginUser).pipe(
+      filter(user => user!==undefined),
+      tap(user => {
+        this.userDataKeys = Object.keys(user);
+        this.userDataValues = [];
+        this.userDataKeys.forEach(key => {
+          this.userDataValues.push(user[ key ]);
+        });
+        this.notificationService.debugAlert('photo user=' + JSON.stringify(user));
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.prefsSub.unsubscribe();
   }
 
   filterOnText(event: any) {
@@ -64,6 +73,15 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   logout() {
-    this.loginService.logout();
+    this.store.dispatch(new LogoutAction());
   }
+
+  private updateProfile() {
+    this.store.dispatch(new UpdateThemeAction(this.currentTheme));
+  }
+}
+
+interface Theme {
+  name: string;
+  class: string;
 }

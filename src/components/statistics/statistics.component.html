@@ -1,5 +1,5 @@
-<div style="display: block" *ngIf="ready">
-  <chart *ngIf="ready"
+<div style="display: block" *ngIf="actualBottles$ | async as bottles">
+  <chart *ngIf="bottles.length > 0"
          [data]="chartData"
          [axis]="axis"
          [labels]="chartLabels"

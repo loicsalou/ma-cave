@@ -10,8 +10,6 @@ export abstract class AdminService {
 
   abstract cleanup();
 
-  abstract getMostUsedQueries(nb: number): Observable<SearchCriteria[]>;
-
   abstract updateQueryStats(keywords: string[]);
 
   abstract removeFromQueryStats(keywords: any);

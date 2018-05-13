@@ -1,26 +1,37 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {BottlePersistenceService} from '../../service/bottle-persistence.service';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Bottle} from '../../model/bottle';
 import {ItemSliding, NavController} from 'ionic-angular';
 import {CellarPage} from '../../_features/racks/cellar/cellar.page';
 import {NativeProvider} from '../../providers/native/native';
+import {ApplicationState} from '../../app/state/app.state';
+import {Store} from '@ngrx/store';
+import {
+  HightlightBottleSelectionAction,
+  SetSelectedBottleAction,
+  UpdateBottlesAction
+} from '../../app/state/bottles.actions';
 
 @Component({
              selector: 'bottle-item',
              templateUrl: 'bottle-item.component.html'
              // styleUrls:[ 'bottle-item.component.scss' ]
            })
-export class BottleItemComponent {
+export class BottleItemComponent implements OnInit {
   isFilterPanelShown = false;
   @Input()
   bottle: Bottle;
+  @Input()
+  selected: boolean;
   @Output()
-  showDetail: EventEmitter<Bottle> = new EventEmitter();
+  onShowDetail: EventEmitter<Bottle> = new EventEmitter();
   @Output()
-  selected: EventEmitter<Bottle> = new EventEmitter();
+  onSelected: EventEmitter<{ bottle: Bottle, selected: boolean }> = new EventEmitter();
 
-  constructor(private bottlesService: BottlePersistenceService,
+  constructor(private store: Store<ApplicationState>,
               private navCtrl: NavController, private nativeProvider: NativeProvider) {
+  }
+
+  ngOnInit() {
   }
 
   filter() {
@@ -28,41 +39,40 @@ export class BottleItemComponent {
   }
 
   triggerDetail(bottle: Bottle) {
-    this.showDetail.emit(bottle);
+    this.onShowDetail.emit(bottle);
   }
 
-  switchSelected(event: Event, bottle: Bottle) {
+  switchSelected() {
     event.stopPropagation();
-    bottle.selected = !bottle.selected;
-    this.selected.emit(bottle);
+    this.selected = !this.selected;
+    setTimeout(() => this.onSelected.emit({bottle: this.bottle, selected: this.selected})
+    );
   }
 
   numberNotPlaced(bottle: Bottle): number {
-    return bottle.numberToBePlaced();
-  }
-
-  isSelected(bottle) {
-    return bottle.selected;
+    return bottle.quantite_courante - bottle.positions.length;
   }
 
   isBottleFavorite(bottle: Bottle): boolean {
     return bottle.favorite;
   }
 
-  locateBottles(event: Event, slidingItem: ItemSliding, bottles: Bottle[]) {
+  locateBottle(event: Event, slidingItem: ItemSliding, bottle: Bottle) {
     this.nativeProvider.feedBack();
     event.stopPropagation();
     if (slidingItem) {
       slidingItem.close();
     }
-    this.navCtrl.push(CellarPage, {bottlesToHighlight: bottles});
+    this.store.dispatch(new SetSelectedBottleAction(bottle, true));
+    this.navCtrl.push(CellarPage, {action: new HightlightBottleSelectionAction()});
   }
 
   addToFavorite(event: Event, slidingItem: ItemSliding, bottle: Bottle) {
     this.nativeProvider.feedBack();
     event.stopPropagation();
-    bottle.favorite = bottle.favorite ? !bottle.favorite : true;
-    this.bottlesService.update([ bottle ]);
+    let updatedBottle = new Bottle(bottle);
+    updatedBottle.favorite = !bottle.favorite;
+    this.store.dispatch(new UpdateBottlesAction([ updatedBottle ]));
     slidingItem.close();
   }
 }

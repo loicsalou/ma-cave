@@ -22,7 +22,7 @@ export class FridgeLocker extends Locker {
     )
   }
 
-  getNbOfBottles(): number {
+  getCapacity(): number {
     return this.dimensions.reduce((tot: number, dim: Dimension) => tot += dim.x * dim.y, 0);
   }
 

@@ -1,12 +1,20 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {NavController, NavParams} from 'ionic-angular';
-import {BottleSize, Locker, LockerType} from '../../../model/locker';
+import {BottleSize, Locker} from '../../../model/locker';
 import {Bottle} from '../../../model/bottle';
 import {NotificationService} from '../../../service/notification.service';
 import {LockerComponent} from '../../../components/locker/locker.component';
 import {BottlePersistenceService} from '../../../service/bottle-persistence.service';
 import {SimpleLockerComponent} from '../../../components/locker/simple-locker.component';
 import {FridgeLockerComponent} from '../../../components/locker/fridge-locker.component';
+import {FridgeLocker} from '../../../model/fridge-locker';
+import {SimpleLocker} from '../../../model/simple-locker';
+import {UpdateLockerAction} from '../../../app/state/bottles.actions';
+import {ApplicationState} from '../../../app/state/app.state';
+import {Store} from '@ngrx/store';
+import {BottlesQuery} from '../../../app/state/bottles.state';
+import {map, tap} from 'rxjs/operators';
+import {Observable} from 'rxjs/Observable';
 
 /**
  * Generated class for the LockerEditorComponent component.
@@ -16,7 +24,7 @@ import {FridgeLockerComponent} from '../../../components/locker/fridge-locker.co
  */
 @Component({
              selector: 'locker-editor2',
-             templateUrl: 'update-locker.page.html',
+             templateUrl: 'update-locker.page.html'
              // styleUrls:[ 'update-locker.page.scss' ]
            })
 export class UpdateLockerPage implements OnInit {
@@ -27,32 +35,31 @@ export class UpdateLockerPage implements OnInit {
   name: string;
   comment: string;
   supportedFormats: BottleSize[];
-  type: LockerType;
-  locker: Locker;
-  lockerContent: Bottle[];
+  lockerAndBottles$: Observable<{ locker: Locker, lockerContent: Bottle[ ] }>;
+  isEditable = false;
+
+  private locker: Locker;
+  private lockerContent: Bottle[];
+  private selectedRacks: number[] = [];
 
   constructor(private params: NavParams,
-              private bottlesService: BottlePersistenceService, private notificationService: NotificationService,
-              private navCtrl: NavController) {
+              private bottlesService: BottlePersistenceService,
+              private notificationService: NotificationService,
+              private navCtrl: NavController,
+              private store: Store<ApplicationState>) {
   }
 
   ngOnInit(): void {
-    if (this.params.data) {
-      this.locker = this.params.data[ 'locker' ];
-      this.lockerContent = this.params.data[ 'content' ].filter(
-        bottle => bottle.positions.filter(
-          pos => pos.inLocker(this.locker.id)).length > 0
-      );
-    }
-  }
-
-  isLockerEditable(): boolean {
-    return (this.lockerComponent instanceof SimpleLockerComponent) ||
-      (this.lockerComponent instanceof FridgeLockerComponent && (<FridgeLockerComponent>this.lockerComponent).anyRackSelected())
-  }
-
-  isFridge(): boolean {
-    return this.type === LockerType.fridge;
+    // on récupère le locker édité et les crus qui ont au moins une bouteille dans ce locker
+    this.lockerAndBottles$ = this.store.select(BottlesQuery.getEditLockerAndBottles).pipe(
+      tap((data: { locker: Locker, bottles: Bottle[ ] }) => this.setIsEditable()),
+      map((data: { locker: Locker, bottles: Bottle[ ] }) => {
+            this.locker = this.cloneLocker(data.locker);
+            this.lockerContent = this.cloneContent(data.bottles);
+            return {locker: this.locker, lockerContent: this.lockerContent};
+          }
+      )
+    );
   }
 
   cancel() {
@@ -60,12 +67,52 @@ export class UpdateLockerPage implements OnInit {
     this.navCtrl.pop();
   }
 
+  racksSelected(racks: number[]) {
+    this.selectedRacks = racks;
+    this.setIsEditable();
+  }
+
   saveLocker() {
-    this.bottlesService.updateLockerAndBottles(this.lockerContent, this.locker);
+    if (this.locker instanceof FridgeLocker) {
+      this.locker.dimensions = this.locker.racks.map(
+        (rack: SimpleLocker) => rack.dimension
+      );
+    }
+    this.store.dispatch(new UpdateLockerAction(this.locker, this.lockerContent));
     this.navCtrl.pop();
   }
 
   private getDefaultSupportedFormats(): BottleSize[] {
     return this.lockerFormats.slice(0, 6);
+  }
+
+  private cloneContent(content: Bottle[]): Bottle[] {
+    return content.map(
+      (bottle: Bottle) => {
+        return new Bottle({...bottle, positions: [ ...bottle.positions ], metadata: {...bottle.metadata}});
+      }
+    );
+  }
+
+  private cloneLocker(paramlocker: Locker): Locker {
+    let cloned: Locker;
+    if (paramlocker instanceof FridgeLocker) {
+      cloned = new FridgeLocker(paramlocker.id, paramlocker.name, paramlocker.type,
+                                [ ...paramlocker.dimensions ],
+                                paramlocker.comment, paramlocker.supportedFormats,
+                                paramlocker.defaultImage, paramlocker.imageUrl);
+    } else {
+      cloned = new SimpleLocker(paramlocker.id, paramlocker.name, paramlocker.type,
+                                {...paramlocker.dimension}, paramlocker.inFridge,
+                                paramlocker.comment, paramlocker.supportedFormats,
+                                paramlocker.defaultImage, paramlocker.imageUrl);
+    }
+    //cloned = Object.assign(cloned, paramlocker);
+    return cloned;
+  }
+
+  private setIsEditable() {
+    this.isEditable = (this.lockerComponent instanceof SimpleLockerComponent) ||
+      (this.lockerComponent instanceof FridgeLockerComponent && this.selectedRacks.length > 0);
   }
 }

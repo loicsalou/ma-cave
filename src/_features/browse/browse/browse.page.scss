@@ -1,5 +1,4 @@
 .browse-page {
-
   span.search-container {
     flex-grow: 1;
   }
@@ -15,6 +14,9 @@
     margin-right: 0;
     order: 1;
   }
+}
 
+ion-fab.browse-page {
+  bottom: 50px;
 }
 

@@ -1,5 +1,8 @@
 <!-- Generated template for the CurrentDistributionComponent component -->
 <span>
+  <span *ngIf="translated.length===0 && values.length===0">
+    {{'app.all-bottles' | translate}}
+  </span>
   <span *ngFor="let tx of translated, let i=index">{{tx | translate}}
     <span *ngIf="i+1 < translated.length || values.length!==0">,</span>
   </span>

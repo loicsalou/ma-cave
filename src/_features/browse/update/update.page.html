@@ -9,7 +9,7 @@
 
 
 <ion-content class="page-update page" padding-horizontal>
-
+  
   <ion-fab bottom right *ngIf="bottleForm.dirty">
     <button ion-fab>
       <ion-icon name="menu"></ion-icon>
@@ -23,7 +23,7 @@
       </button>
     </ion-fab-list>
   </ion-fab>
-
+  
   <!--<ion-scroll scrollY="true">-->
   <form #bottleForm="ngForm">
     <ion-row d-flex class="form-group">
@@ -45,10 +45,10 @@
         </ion-item>
       </ion-col>
     </ion-row>
-
+    
     <image-attacher (imageUrl)="setProfileImage($event)" (error)="error($event)"
                     [metadata]="metadata"></image-attacher>
-
+    
     <ion-row class="form-group">
       <ion-item>
         <ion-label float-left>{{'bottle.label' | translate}}</ion-label>
@@ -60,14 +60,14 @@
         </ion-select>
       </ion-item>
     </ion-row>
-
+    
     <ion-row class="form-group">
       <ion-item>
         <ion-label>{{'bottle.nomCru'| translate}}</ion-label>
         <ion-input type="text" [(ngModel)]="bottle.nomCru" name="nomCru" class="form-control" required></ion-input>
       </ion-item>
     </ion-row>
-
+    
     <ion-row class="form-group">
       <ion-item>
         <ion-label>{{'bottle.country_label' | translate}}</ion-label>
@@ -75,7 +75,7 @@
                    required></ion-input>
       </ion-item>
     </ion-row>
-
+    
     <ion-row class="form-group">
       <ion-item>
         <ion-label>{{'bottle.subregion_label' | translate}}</ion-label>
@@ -87,7 +87,7 @@
         </ion-select>
       </ion-item>
     </ion-row>
-
+    
     <ion-row class="form-group">
       <ion-item>
         <ion-label>{{'bottle.area_label' | translate}}</ion-label>
@@ -100,7 +100,7 @@
         </ion-select>
       </ion-item>
     </ion-row>
-
+    
     <ion-row class="form-group">
       <ion-item>
         <ion-label>{{'bottle.quantite_achat' | translate}}</ion-label>
@@ -108,7 +108,7 @@
                    class="form-control"></ion-input>
       </ion-item>
     </ion-row>
-
+    
     <ion-row class="form-group">
       <h4>{{'details' | translate}}</h4>
       <ion-item>
@@ -117,35 +117,35 @@
                       class="form-control"></ion-datetime>
       </ion-item>
     </ion-row>
-
+    
     <ion-row class="form-group">
       <ion-item>
         <ion-label>{{ 'bottle.lieu_achat' | translate }}</ion-label>
         <ion-input type="text" [(ngModel)]="bottle.lieu_achat" name="lieu_achat" class="form-control"></ion-input>
       </ion-item>
     </ion-row>
-
+    
     <ion-row class="form-group">
       <ion-item>
         <ion-label>{{ 'bottle.prix' | translate }}</ion-label>
         <ion-input type="text" [(ngModel)]="bottle.prix" name="prix" class="form-control"></ion-input>
       </ion-item>
     </ion-row>
-
+    
     <ion-row class="form-group">
       <ion-item>
         <ion-label>{{ 'bottle.cote' | translate }}</ion-label>
         <ion-input type="text" [(ngModel)]="bottle.cote" name="cote" class="form-control"></ion-input>
       </ion-item>
     </ion-row>
-
+    
     <ion-row class="form-group">
       <ion-item>
         <ion-label>{{ 'bottle.garde_min' | translate }}</ion-label>
         <ion-input type="number" [(ngModel)]="bottle.garde_min" name="garde_min" class="form-control"></ion-input>
       </ion-item>
     </ion-row>
-
+    
     <ion-row class="form-group">
       <ion-item>
         <ion-label>{{ 'bottle.garde_max' | translate }}</ion-label>
@@ -157,16 +157,16 @@
                    class="form-control"></ion-input>
       </ion-item>
     </ion-row>
-
+    
     <ion-row class="form-group">
       <h4>{{'infos' | translate}}</h4>
-
+      
       <ion-item>
         <ion-label>{{ 'bottle.comment' | translate }}</ion-label>
         <ion-textarea [(ngModel)]="bottle.comment" name="comment" class="form-control"></ion-textarea>
       </ion-item>
     </ion-row>
-
+    
     <ion-row class="form-group">
       <ion-item>
         <ion-label>{{ 'bottle.suggestion' | translate }}</ion-label>
@@ -174,11 +174,21 @@
       </ion-item>
     </ion-row>
   </form>
-
+  
   <ion-slides style="height: 40vh" *ngIf="bottle.image_urls">
     <ion-slide *ngFor="let url of bottle.image_urls">
-      <ion-card *ngIf="imageIsAvailable(url)" style="may-height: 100%">
+      <ion-card *ngIf="imageIsAvailable(url)" style="max-width: 100vw; max-height: 40vh;">
         <img [src]="url" [defaultImage]="'/assets/img/missing-image.jpg'" (error)="declareMissingImage($event)"/>
+      </ion-card>
+    </ion-slide>
+  </ion-slides>
+  
+  <ion-slides style="height: 40vh" *ngIf="image$ | async as images">
+    <ion-slide *ngFor="let image of images">
+      <ion-card *ngIf="imageIsAvailable(image.src)"
+                style="max-width: 100vw; max-height: 40vh;display: flex;justify-content: space-around;">
+        <img [src]="image.src" style="max-width: 100vw; max-height: 40vh;"
+             [defaultImage]="'/assets/img/missing-image.jpg'" (error)="declareMissingImage($event)"/>
       </ion-card>
     </ion-slide>
   </ion-slides>

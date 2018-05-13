@@ -1,10 +1,12 @@
 /**
  * Created by loicsalou on 01.03.17.
  */
-import {ImgDefaultable} from '../directives/default-image/img-defaultable';
+export interface BottleState {
+  bottle: Bottle;
+  selected: boolean;
+}
 
-export class Bottle implements ImgDefaultable {
-
+export class Bottle {
   id?: string;
   classe_age?: string;
   favorite?: boolean;
@@ -22,46 +24,21 @@ export class Bottle implements ImgDefaultable {
   lieu_achat: string;
   millesime: string;
   nomCru: string;
-  positions?: Position[]; // positions auxquelles les bouteilles du lot sont placées
   prix: string;
   profile_image_url?: string;
   image_urls?: string[];
   quantite_achat: string;
   quantite_courante: number;
   subregion_label: string;
-  selected?: boolean;
   suggestion: string;
   volume: string;
   metadata?: BottleMetadata;
   defaultImage ?: string;
   overdue?: boolean;
+  positions?: Position[]; // positions auxquelles les bouteilles du lot sont placées
 
   constructor(jsonOrBottle: Object) {
     Object.assign(this, jsonOrBottle);
-    this.selected = false;
-  }
-
-  getDefaultImageSrc(): string {
-    return this.defaultImage;
-  }
-
-  numberToBePlaced(): number {
-    return this.quantite_courante - this.positions.length
-  }
-
-  addNewPosition(position: Position) {
-    this.positions.push(position);
-  }
-
-  removeFromPosition(position: Position) {
-    this.positions = this.positions.filter(pos => !pos.equals(position));
-  }
-
-  equals(bottle: Bottle) {
-    if (!bottle) {
-      return false;
-    }
-    return this.id === bottle.id;
   }
 }
 
@@ -89,13 +66,13 @@ export class Position {
 
   public equals(pos: Position): boolean {
     if (!pos) {
-      return false
+      return false;
     }
     return (pos.lockerId === this.lockerId &&
       pos.x === this.x &&
       pos.y === this.y &&
       pos.rack === this.rack
-    )
+    );
   }
 
   /**

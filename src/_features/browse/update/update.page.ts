@@ -7,6 +7,10 @@ import {NotificationService} from '../../../service/notification.service';
 import * as _ from 'lodash';
 import {NgForm} from '@angular/forms';
 import {AocInfo} from '../../../config/aoc-info';
+import {map, tap} from 'rxjs/operators';
+import {Observable} from 'rxjs/Observable';
+import {Image} from '../../../model/image';
+import {logInfo} from '../../../utils';
 
 /*
  Generated class for the Update component.
@@ -26,11 +30,11 @@ export class UpdatePage implements OnInit {
   private static SPECIAL_CHARS_REMOVED = new RegExp(/[\.|\d|\n|\r|,|!|?|@]/g);
 
   bottle: Bottle;
-  images: Array<{ src: String }> = [];
-  progress: number = 0;
-  @ViewChild('bottleForm') bottleForm: NgForm;
+  image$: Observable<{ src: string }[]>;
   aocData: any[];
   colorsData: any[];
+
+  @ViewChild('bottleForm') bottleForm: NgForm;
 
   private aoc: AocInfo[];
   private missingImages: string[] = [];
@@ -44,10 +48,11 @@ export class UpdatePage implements OnInit {
     this.aocData = this.initAoc(this.config.bottles.aocData);
     this.colorsData = Object.keys(this.config.bottles.colorsData).map(
       (key: string) => {
-        return {key: key, value: this.config.bottles.colorsData[ key ]}
+        return {key: key, value: this.config.bottles.colorsData[ key ]};
       }
     );
-    this.bottle = navParams.data[ 'bottle' ];
+    // input bottle is immutable ==> clone
+    this.bottle = new Bottle(navParams.data[ 'bottle' ]);
     this.metadata = UpdatePage.getMetadata(this.bottle);
   }
 
@@ -81,7 +86,7 @@ export class UpdatePage implements OnInit {
       subregion_label: bottle.subregion_label,
       keywords: keywords,
       secondaryKeywords: secondaryKeywords
-    }
+    };
   }
 
   private static extractKeywords(text: string): string[] {
@@ -92,23 +97,26 @@ export class UpdatePage implements OnInit {
         .filter(keyword => keyword.length > 2)
         .map(keyword => keyword.toLowerCase());
     } else {
-      return []
+      return [];
     }
   }
 
   ngOnInit(): void {
     this.loadRegionAreas();
-    this.imageService.getList(this.bottle).take(1).subscribe(
-      images => {
-        this.images = images.map(
-          image => {
-            return {src: image.image}
-          }
-        );
-      }
-    );
-    this.imageService.progressEvent.subscribe(
-      value => this.progress = value
+    this.image$ = this.imageService.getList(this.bottle).pipe(
+      tap(images => {
+        logInfo('images reçues: ' + images.length);
+      }),
+      map((images: Image[]) => images.filter((image: Image) => image.nomCru === this.bottle.nomCru)),
+      tap(images => {
+        logInfo('images retenues: ' + images.length);
+      }),
+      map((images: Image[]) =>
+            images.map(image => {
+                         return {src: image.URL};
+                       }
+            )
+      )
     );
   }
 
@@ -168,7 +176,6 @@ export class UpdatePage implements OnInit {
   }
 
   declareMissingImage(event) {
-    //console.info(event.currentTarget.src);
     this.missingImages.push(event.currentTarget.src);
   }
 
@@ -176,7 +183,7 @@ export class UpdatePage implements OnInit {
   setProfileImage(downloadURL: string) {
     this.bottle.profile_image_url = downloadURL ? downloadURL : '';
     if (!this.bottle.image_urls) {
-      this.bottle.image_urls = []
+      this.bottle.image_urls = [];
     }
     this.bottle.image_urls.push(downloadURL);
   }
@@ -208,7 +215,7 @@ export class UpdatePage implements OnInit {
         'appellationSearched': UpdatePage.getSearchStringFor(aoc.Appellations),
         'types': aoc[ 'Type de vins produit' ],
         'dryness': aoc[ 'Teneur en sucre' ]
-      }
+      };
     })
       .sort((a: AocInfo, b: AocInfo) => a.appellation > b.appellation ? 1 : -1);
   }

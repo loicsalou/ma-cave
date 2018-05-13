@@ -1,11 +1,29 @@
-import {AfterViewInit, Component, Inject, Input, OnInit} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  Inject,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
 import {SimpleLocker} from '../../model/simple-locker';
-import {Dimension, LockerType} from '../../model/locker';
+import {Dimension, Locker, LockerType} from '../../model/locker';
 import {Bottle, Position} from '../../model/bottle';
 import {NotificationService} from '../../service/notification.service';
 import {Cell, LockerComponent, Row} from './locker.component';
 import {Gesture} from 'ionic-angular';
 import {NativeProvider} from '../../providers/native/native';
+import {ApplicationState} from '../../app/state/app.state';
+import {Store} from '@ngrx/store';
+import {RackDirective} from '../rack.directive';
+import {DimensionOfDirective} from '../dimension-of.directive';
+import {Observable} from 'rxjs/Observable';
+import {filter} from 'rxjs/operators';
+import {Subscription} from 'rxjs/Subscription';
 
 /**
  * Generated class for the SimpleLockerComponent component.
@@ -15,10 +33,10 @@ import {NativeProvider} from '../../providers/native/native';
  */
 @Component({
              selector: 'locker',
-             templateUrl: './simple-locker.component.html',
+             templateUrl: './simple-locker.component.html'
              // styleUrls:[ 'locker.component.scss' ]
            })
-export class SimpleLockerComponent extends LockerComponent implements OnInit, AfterViewInit {
+export class SimpleLockerComponent extends LockerComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   protected static MAX_NB_COLUMNS: number = 16;
   protected static MIN_NB_COLUMNS: number = 1;
   protected static MAX_NB_ROWS: number = 16;
@@ -31,60 +49,100 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   rack: number = 0;
 
   @Input()
+  containerDimension$: Observable<Dimension>;
+
+  @Input()
   editing: boolean = false;
 
+  @Output()
+  onRackSelected: EventEmitter<{ rack: Locker, selected: boolean }> = new EventEmitter<{ rack: Locker, selected: boolean }>();
+
   rows: Row[];
-  private bogusBottles = [];
+  containerDimension: Dimension;
+  @ViewChild(DimensionOfDirective) private dimensionOfDirective: DimensionOfDirective<Locker>;
+  private bogusBottles: { bottle: Bottle, position: Position }[] = [];
+  private gesture: Gesture;
+  private initialScale: number;
+  private containerDimensionsSub: Subscription;
 
   constructor(private notificationService: NotificationService, nativeProvider: NativeProvider,
-              @Inject('GLOBAL_CONFIG') private config) {
-    super(nativeProvider)
+              @Inject('GLOBAL_CONFIG') private config, private store: Store<ApplicationState>) {
+    super(nativeProvider);
+  }
+
+  get dimension(): Dimension {
+    return this.locker.dimension;
   }
 
   ngOnInit(): void {
     if (this.locker.dimension && !this.rows) {
       this.resetComponent();
     }
+    if (this.containerDimension$) {
+      this.containerDimensionsSub = this.containerDimension$.pipe(
+        filter(dim => dim !== undefined)
+      ).subscribe(
+        dim => {
+          this.containerDimension = {x: dim.x - 32, y: dim.y - 32};
+          if (this.dimensionOfDirective) {
+            const lockerDim = this.dimensionOfDirective.getContainerSize();
+            this.initialScale = Math.min(
+              this.containerDimension.x / lockerDim.x,
+              this.containerDimension.y / lockerDim.y,
+              1
+            );
+            this.gesture.destroy();
+            this.gesture = this.setupPinchZoom(this.zoomable.zoomableComponent, this.initialScale);
+          }
+        }
+      );
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.gesture) {
+      this.gesture.destroy();
+    }
+    if (this.containerDimensionsSub) {
+      this.containerDimensionsSub.unsubscribe();
+    }
   }
 
   ngAfterViewInit(): void {
     if (this.selectable) {
       if (this.zoomable && !this.locker.inFridge) {
-        this.setupPinchZoom(this.zoomable.nativeElement);
+        this.gesture = this.setupPinchZoom(this.zoomable.zoomableComponent);
       } else if (this.zoomable && this.locker.inFridge) {
-        this.setupPressGesture(this.zoomable.nativeElement);
+        this.setupPressGesture(this.zoomable.zoomableComponent);
       }
     }
   }
 
-  get dimension(): Dimension {
-    return this.locker.dimension
-  }
-
   isShifted(): boolean {
-    return this.locker.type == LockerType.shifted
+    return this.locker.type == LockerType.shifted;
   }
 
   isDiamond(): boolean {
-    return this.locker.type == LockerType.diamond
+    return this.locker.type == LockerType.diamond;
   }
 
   isSimple(): boolean {
-    return this.locker.type == LockerType.simple
+    return this.locker.type == LockerType.simple;
   }
 
   isFridge(): boolean {
-    return false
+    return false;
   }
 
   cellSelected(cell: Cell) {
-    if (cell) {
+    if (!this.editing && cell) {
       this.onCellSelected.emit(cell);
     }
   }
 
   public resetComponent() {
     this.rows = [];
+    this.bogusBottles = [];
     for (let i = 0; i < this.locker.dimension.y; i++) {
       this.rows[ i ] = this.initRow(this.locker.dimension.x, i);
     }
@@ -95,27 +153,18 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
             position => position.inRack(this.locker.id, this.rack)
           ).forEach(
             position => this.placeBottle(bottle, position)
-          )
+          );
         }
-      });
-    if (this.bogusBottles.length > 0) {
-      this.notificationService.ask('Position inexistante', this.bogusBottles.length + ' bouteilles sont dans une position' +
-        ' inexistante: les remettre en attente de rangement ?')
-        .subscribe(
-          result => {
-            if (result) {
-              this.notificationService.information('SUPPRESSION DES POSITIONS ERRONEES A IMPLEMENTER')
-              //this.bogusBottles.forEach(btl => btl.positions = btl.positions.filter(
-              //  pos => !(pos.lockerId = position.lockerId && pos.x === position.x && pos.y === position.y)))
-            }
-          })
+      }
+    );
+    if (this.bogusBottles && this.bogusBottles.length > 0) {
+      //this.handleBogusBottles();
     }
   }
 
   public placeBottle(bottle: Bottle, position: Position) {
-    this.bogusBottles = [];
-    if (this.rows.length < position.y || this.rows[ position.y ].cells.length < position.x) {
-      this.bogusBottles.push(bottle);
+    if (this.rows.length <= position.y || !this.rows[ position.y ] || this.rows[ position.y ].cells.length <= position.x) {
+      this.bogusBottles.push({bottle: bottle, position: position});
     } else {
       let targetCell = this.rows[ position.y ].cells[ position.x ];
       targetCell.storeBottle(bottle, this.isHighlighted(bottle));
@@ -139,9 +188,9 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
     this.hapticConfirm();
 
     if (!this.canIncreaseHeight()) {
-      return
+      return;
     }
-    this.locker.dimension.y++;
+    this.updateY(this.locker, 1);
     this.shiftBottles(0, 1);
     this.resetComponent();
   }
@@ -149,59 +198,59 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   removeTopRow() {
     this.hapticConfirm();
     if (!this.canRemoveRow(0)) {
-      return
+      return;
     }
 
     //décaler d'une rangée vers le haut toutes les bouteilles du casier
     this.shiftBottles(0, -1);
 
-    this.locker.dimension.y--;
+    this.updateY(this.locker, -1);
     this.resetComponent();
   }
 
   addRightColumn() {
     this.hapticConfirm();
     if (!this.canIncreaseWidth()) {
-      return
+      return;
     }
-    this.locker.dimension.x++;
+    this.updateX(this.locker, 1);
     this.resetComponent();
   }
 
   removeRightColumn() {
     this.hapticConfirm();
     if (!this.canRemoveColumn(this.locker.dimension.x - 1)) {
-      return
+      return;
     }
-    this.locker.dimension.x--;
+    this.updateX(this.locker, -1);
     this.resetComponent();
   }
 
   addBottomRow() {
     this.hapticConfirm();
     if (!this.canIncreaseHeight()) {
-      return
+      return;
     }
-    this.locker.dimension.y++;
+    this.updateY(this.locker, 1);
     this.resetComponent();
   }
 
   removeBottomRow() {
     this.hapticConfirm();
     if (!this.canRemoveRow(this.locker.dimension.y - 1)) {
-      return
+      return;
     }
-    this.locker.dimension.y--;
+    this.updateY(this.locker, -1);
     this.resetComponent();
   }
 
   addLeftColumn() {
     this.hapticConfirm();
     if (!this.canIncreaseWidth()) {
-      return
+      return;
     }
 
-    this.locker.dimension.x++;
+    this.updateX(this.locker, 1);
     //décaler les bouteilles d'une colonne vers la droite
     this.shiftBottles(1, 0);
 
@@ -211,19 +260,19 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   removeLeftColumn() {
     this.hapticConfirm();
     if (!this.canRemoveColumn(0)) {
-      return
+      return;
     }
 
     //décaler les bouteilles d'une colonne vers la gauche
     this.shiftBottles(-1, 0);
 
-    this.locker.dimension.x--;
+    this.updateX(this.locker, -1);
     this.resetComponent();
   }
 
   //avant d'enlever une rangée on s'assure qu'elle est vide
   public canRemoveFirstRow(): boolean {
-    return this.canRemoveRow(0)
+    return this.canRemoveRow(0);
   }
 
   //avant d'enlever une rangée on s'assure qu'elle est vide
@@ -233,7 +282,7 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
 
   //avant d'enlever une colonne on s'assure qu'elle est vide
   public canRemoveFirstColumn(): boolean {
-    return this.canRemoveColumn(0)
+    return this.canRemoveColumn(0);
   }
 
   //avant d'enlever une colonne on s'assure qu'elle est vide
@@ -253,6 +302,7 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
       ev.preventDefault();
       if (self.editing) {
         self.selected = !self.selected;
+        self.onRackSelected.emit({rack: this.locker, selected: self.selected});
       }
     }
   }
@@ -260,33 +310,57 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   protected canIncreaseHeight() {
     if (this.dimension.y >= SimpleLockerComponent.MAX_NB_ROWS) {
       this.notificationService.warning('locker-editor.maxi-row-reached');
-      return false
+      return false;
     }
-    return true
+    return true;
   }
 
   protected canIncreaseWidth() {
     if (this.dimension.x >= SimpleLockerComponent.MAX_NB_COLUMNS) {
       this.notificationService.warning('locker-editor.maxi-col-reached');
-      return false
+      return false;
     }
-    return true
+    return true;
   }
 
   protected canDecreaseHeight() {
     if (this.dimension.y > SimpleLockerComponent.MIN_NB_ROWS) {
-      return true
+      return true;
     }
     this.notificationService.warning('locker-editor.mini-row-reached');
-    return false
+    return false;
   }
 
   protected canDecreaseWidth() {
     if (this.dimension.x > SimpleLockerComponent.MIN_NB_COLUMNS) {
-      return true
+      return true;
     }
     this.notificationService.warning('locker-editor.mini-col-reached');
-    return false
+    return false;
+  }
+
+  private handleBogusBottles() {
+    const bugs = JSON.stringify(this.bogusBottles.map(
+      (data: { bottle: Bottle, position: Position }) =>
+        data.bottle.nomCru + ':' + data.position.x + ',' + data.position.y
+                                )
+    );
+    this.notificationService.information(this.bogusBottles.length + ' bouteilles hors casier');
+    //this.notificationService.ask('Supprimer les positions inexistantes ? ', bugs)
+    //  .subscribe(
+    //    result => {
+    //      if (result) {
+    //        let updatedBottles = this.bogusBottles.map(
+    //          (bogusTuple: { bottle: Bottle, position: Position }) => {
+    //            let updatedBottle = new Bottle(bogusTuple.bottle);
+    //            updatedBottle.positions = updatedBottle.positions.filter(pos => !pos.equals(bogusTuple.position));
+    //            return updatedBottle;
+    //          }
+    //        );
+    //        //this.store.dispatch(new UpdateBottlesAction(updatedBottles));
+    //      }
+    //    }
+    //  );
   }
 
   private initRow(nbcells: number, rowIndex: number): Row {
@@ -313,7 +387,7 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
     let filled = btl.length > 0;
     if (filled) {
       this.notificationService.warning('locker-editor.filled-row');
-      return false
+      return false;
     }
 
     return true;
@@ -332,23 +406,21 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
     let filled = btl.length > 0;
     if (filled) {
       this.notificationService.warning('locker-editor.filled-column');
-      return false
+      return false;
     }
-    return true
+    return true;
   }
 
   private shiftBottles(shiftX: number, shiftY: number) {
-    this.content.forEach(
-      bottle => {
-        bottle.positions.forEach(
-          pos => {
-            if (pos.inRack(this.locker.id, this.rack)) {
-              pos.x += shiftX;
-              pos.y += shiftY;
-            }
+    this.content.forEach((bottle: Bottle) => {
+      bottle.positions = bottle.positions.map(
+        (position: Position) => {
+          if (position.inRack(this.locker.id, this.rack)) {
+            return new Position(position.lockerId, position.x + shiftX,
+              position.y + shiftY, position.rack);
           }
-        )
-      }
-    )
+        }
+      ).filter(pos => pos !== undefined);
+    });
   }
 }

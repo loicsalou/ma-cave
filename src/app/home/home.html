@@ -2,31 +2,25 @@
   <ion-title><h2>{{'app.title' | translate}}</h2></ion-title>
 </ion-header>
 
-<ion-content align-items-center class="home card-background-page page" [ngClass]="currentTheme">
+<ion-content align-items-center class="home card-background-page page" [ngClass]="currentTheme$ | async">
   <responsive-wrapper>
     <div class="login">
       <fieldset>
         <legend><h2>{{'app.please-login' | translate}}</h2></legend>
         <div d-flex>
-          <button ion-button badge [class.clicked]="fbidentifying" (click)="facebookLogin()"
-                  *ngIf="isConnectionAllowed()">
+          <button ion-button badge [class.clicked]="fbidentifying" (click)="facebookLogin()">
             <img icon-only src="assets/icon/social_facebook_box_blue.png"/>
           </button>
-          <button ion-button badge [class.clicked]="mailidentifying" (click)="emailLogin()"
-                  *ngIf="isConnectionAllowed()">
+          <button ion-button badge [class.clicked]="mailidentifying" (click)="emailLogin()">
             <ion-icon name="mail" style="font-size: 2.4em;"></ion-icon>
           </button>
-          <button ion-button badge [class.clicked]="anoidentifying" (click)="anonymousLogin()"
-                  *ngIf="isConnectionAllowed()">
+          <button ion-button badge [class.clicked]="anoidentifying" (click)="anonymousLogin()">
             <img icon-only src="assets/icon/anonymous.png"/>
           </button>
           <button ion-button badge [class.clicked]="anoidentifying" (click)="googleLogin()"
-                  *ngIf="isConnectionAllowed() && isGoogleLoginEnabled()">
+                  *ngIf="isGoogleLoginEnabled()">
             <img icon-only src="assets/icon/google-login.png"/>
           </button>
-          <!--<button ion-button badge [class.clicked]="locidentifying" (click)="localLogin()">-->
-          <!--<ion-icon name="phone-portrait"></ion-icon>-->
-          <!--</button>-->
         </div>
       </fieldset>
      </div>

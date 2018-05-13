@@ -4,9 +4,14 @@ import {FileChooser} from '@ionic-native/file-chooser';
 import {FilePath} from '@ionic-native/file-path';
 import {BottlePersistenceService} from '../../../service/bottle-persistence.service';
 import {NotificationService} from '../../../service/notification.service';
-import {NativeStorageService} from '../../../service/native-storage.service';
 import {ImportProvider} from '../../../providers/import/import';
-import {LoginService} from '../../../service/login/login.service';
+import {ApplicationState} from '../../../app/state/app.state';
+import {Store} from '@ngrx/store';
+import {BottlesQuery} from '../../../app/state/bottles.state';
+import {DeleteAccountAction, LogoutAction} from '../../../app/state/shared.actions';
+import {SharedQuery, SharedState} from '../../../app/state/shared.state';
+import {Observable} from 'rxjs/Observable';
+import {User} from '../../../model/user';
 
 /**
  * Generated class for the UploadBottles page.
@@ -26,33 +31,32 @@ export class UploadBottlesPage {
   deleteBefore: boolean = true;
   localStorageKeys: any;
   tempValue: any;
+  private user$: Observable<User>;
 
   constructor(private navCtrl: NavController,
               private filepath: FilePath,
               private fileChooser: FileChooser,
               private notificationService: NotificationService,
               private bottleService: BottlePersistenceService,
-              private loginService: LoginService,
               private platform: Platform,
-              private localStorage: NativeStorageService,
               private loadingController: LoadingController,
-              private importProvider: ImportProvider) {
+              private importProvider: ImportProvider,
+              private store: Store<ApplicationState>) {
+    this.user$=this.store.select(SharedQuery.getLoginUser);
   }
 
   deleteAccount() {
     this.notificationService.ask('question', 'app.confirm').take(1).subscribe(
       result => {
         if (result) {
-          this.bottleService.deleteAccountData().subscribe(
-            result => this.loginService.deleteAccount()
-          );
+          this.store.dispatch(new DeleteAccountAction());
         }
       }
     );
   }
 
   logout() {
-    this.loginService.logout();
+    this.store.dispatch(new LogoutAction());
     this.navCtrl.popToRoot();
   }
 
@@ -62,16 +66,6 @@ export class UploadBottlesPage {
 
   public switchAdvancedOptions() {
     this.optionsVisibles = !this.optionsVisibles;
-  }
-
-  public listLocalStorageData() {
-    this.localStorage.getList()
-      .then(keys => {
-        this.localStorageKeys = keys;
-      })
-      .catch(err => {
-        //alert('accès aux clés KO ' + err)
-      });
   }
 
   /**
@@ -84,8 +78,8 @@ export class UploadBottlesPage {
           (<any>window).resolveLocalFileSystemURL(nativepath, (res) => {
             res.file((resFile) => {
               this.setupUpload(resFile);
-            })
-          })
+            });
+          });
         })
           .catch(error => this.notificationService.error('uri incorrecte ' + uri + ' error:' + error));
       })
@@ -101,7 +95,8 @@ export class UploadBottlesPage {
   }
 
   public emptyLockers() {
-    this.bottleService.allBottlesObservable.take(1).subscribe(
+    //this.bottleService.allBottlesObservable.take(1).subscribe(
+    this.store.select(BottlesQuery.getBottles).take(1).subscribe(
       bottles => {
         let updatedBottles = bottles.map(
           bottle => {
@@ -111,23 +106,11 @@ export class UploadBottlesPage {
         );
         this.bottleService.update(updatedBottles);
       }
-    )
+    );
   }
 
   public emptyLogs() {
-    this.bottleService.deleteLogs()
-  }
-
-  showLocalStorage() {
-    this.listLocalStorageData();
-  }
-
-  loadTempValueFor(key) {
-    this.localStorage.getValue(key)
-      .then(v => this.tempValue = JSON.stringify(v))
-      .catch(err => {
-        //alert('accès à la valeur de ' + key + ' KO: ' + JSON.stringify(err))
-      });
+    this.bottleService.deleteLogs();
   }
 
   private setupUpload(file: any) {
@@ -148,7 +131,7 @@ export class UploadBottlesPage {
         this.notificationService.error('Erreur durant le process d\'importation !' + err);
         this.dismissLoading(loading);
       }
-    )
+    );
   }
 
   private processParsing(loading: Loading, file: File) {
@@ -172,7 +155,7 @@ export class UploadBottlesPage {
                                                            });
                    loading.present().then(
                      () => {
-                       this.bottleService.save(parsedBottles).then(
+                       this.bottleService.save(parsedBottles).take(1).subscribe(
                          () => {
                            this.dismissLoading(loading);
                            let endTimestamp = new Date().getTime();
@@ -184,14 +167,14 @@ export class UploadBottlesPage {
                                }
                              );
                          }
-                       )
+                       );
                      }
                    ).catch(
                      err => {
                        this.notificationService.error('Erreur durant le process d\'importation !' + err);
                        this.dismissLoading(loading);
                      }
-                   )
+                   );
                  }
       );
   }

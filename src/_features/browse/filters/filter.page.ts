@@ -1,10 +1,15 @@
-import {Bottle} from '../../../model/bottle';
-import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {FilterSet, SortOption} from '../../../components/distribution/distribution';
-import {BottlePersistenceService} from '../../../service/bottle-persistence.service';
+import {Bottle, BottleState} from '../../../model/bottle';
+import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
+import {SortOption} from '../../../components/distribution/distribution';
 import {MenuController} from 'ionic-angular';
 import {Subscription} from 'rxjs/Subscription';
 import {Observable} from 'rxjs/Observable';
+import {Store} from '@ngrx/store';
+import {ApplicationState} from '../../../app/state/app.state';
+import {ResetFilterAction, UpdateFilterAction} from '../../../app/state/bottles.actions';
+import {BottlesQuery} from '../../../app/state/bottles.state';
+import {FilterSet} from '../../../components/distribution/filterset';
+import {map, tap} from 'rxjs/operators';
 
 @Component({
              selector: 'page-filter',
@@ -19,31 +24,27 @@ export class FilterPage implements OnInit, OnDestroy {
     {id: 'area', name: 'Région', col: 'area_label'}
   ];
 
-  @Input()
-  bottles: Observable<Bottle[]>;
-
   nbOfBottles: number = 0;
   filterSet: FilterSet;
   sortOn: string = 'country_label';
   ascending: boolean = true;
+  bottles$: Observable<Bottle[]>;
+
   private filtersSub: Subscription;
   private nbLots = 0;
 
-  constructor(private bottlesService: BottlePersistenceService, private menuController: MenuController) {
+  constructor(private menuController: MenuController, private store: Store<ApplicationState>) {
   }
 
   ngOnInit(): void {
-    this.filtersSub = this.bottlesService.filtersObservable.subscribe(
-      filterSet => this.filterSet = filterSet
+    this.filtersSub = this.store.select(BottlesQuery.getFilter).subscribe(
+      filterSet => this.filterSet = Object.assign(new FilterSet(), filterSet)
     );
-    this.bottles.subscribe(
-      (bottles: Bottle[]) => {
-        if (!bottles) {
-          bottles = [];
-        }
+    this.bottles$ = this.store.select(BottlesQuery.getFilteredBottles).pipe(
+      tap((bottles: Bottle[]) => {
         this.nbOfBottles = bottles.reduce((tot: number, btl: Bottle) => tot + +btl.quantite_courante, 0);
         this.nbLots = bottles.length;
-      }
+      })
     );
   }
 
@@ -60,7 +61,7 @@ export class FilterPage implements OnInit, OnDestroy {
       sortOrder: (this.ascending ? 'asc' : 'desc')
     };
     this.filterSet.setSortOption(sortOption);
-    this.bottlesService.filterOn(this.filterSet);
+    this.store.dispatch(new UpdateFilterAction(this.filterSet));
   }
 
   //ngOnChanges() {
@@ -70,45 +71,42 @@ export class FilterPage implements OnInit, OnDestroy {
   //}
 
   switchFavorite(event) {
-    this.filterSet = Object.assign(new FilterSet(), this.filterSet);
     this.filterSet.switchFavorite();
-    this.bottlesService.filterOn(this.filterSet);
+    this.store.dispatch(new UpdateFilterAction(this.filterSet));
   }
 
   switchOverdue(event) {
-    this.filterSet = Object.assign(new FilterSet(), this.filterSet);
     this.filterSet.switchOverdue();
-    this.bottlesService.filterOn(this.filterSet);
+    this.store.dispatch(new UpdateFilterAction(this.filterSet));
   }
 
   switchedPlaced(event) {
-    this.filterSet = Object.assign(new FilterSet(), this.filterSet);
     this.filterSet.placed = event.checked;
-    this.bottlesService.filterOn(this.filterSet);
+    this.store.dispatch(new UpdateFilterAction(this.filterSet));
   }
 
   switchedToBePlaced(event) {
-    this.filterSet = Object.assign(new FilterSet(), this.filterSet);
     this.filterSet.toBePlaced = event.checked;
-    this.bottlesService.filterOn(this.filterSet);
+    this.store.dispatch(new UpdateFilterAction(this.filterSet));
   }
 
   switchHistory(event) {
-    this.filterSet = Object.assign(new FilterSet(), this.filterSet);
     this.filterSet.switchHistory();
-    this.bottlesService.filterOn(this.filterSet);
+    this.store.dispatch(new UpdateFilterAction(this.filterSet));
   }
 
-  //appelé depuis la page des filtres dnas le but d'enrichir le filtre textuel existant déjà si c'est le cas
+  //appelé depuis la page des distributions dans le but d'enrichir le filtre existant déjà
   refineFilter(filters: FilterSet) {
-    this.filterSet = Object.assign(new FilterSet(), this.filterSet);
-    filters.text = this.filterSet.text;
-    filters.history = this.filterSet.history;
-    filters.placed = this.filterSet.placed;
-    filters.toBePlaced = this.filterSet.toBePlaced;
-    filters.favoriteOnly = this.filterSet.favoriteOnly;
-    this.filterSet = filters;
-    this.bottlesService.filterOn(filters);
+    // on prend ce qui vient de la distribution
+    let newFilterSet = Object.assign(new FilterSet(), filters);
+    // on récupère le filterset courant
+    newFilterSet.text = this.filterSet.text;
+    newFilterSet.history = this.filterSet.history;
+    newFilterSet.placed = this.filterSet.placed;
+    newFilterSet.toBePlaced = this.filterSet.toBePlaced;
+    newFilterSet.favoriteOnly = this.filterSet.favoriteOnly;
+    this.filterSet = newFilterSet;
+    this.store.dispatch(new UpdateFilterAction(this.filterSet));
   }
 
   getNbOfLots(): number {
@@ -121,13 +119,11 @@ export class FilterPage implements OnInit, OnDestroy {
   }
 
   close() {
-    this.bottlesService.filterOn(this.filterSet);
     this.menuController.close();
   }
 
   reset() {
-    this.filterSet.reset();
-    this.bottlesService.filterOn(this.filterSet);
+    this.store.dispatch(new ResetFilterAction());
     this.menuController.close();
   }
 }

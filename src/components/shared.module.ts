@@ -27,9 +27,12 @@ import {CommonModule} from '@angular/common';
 import {BottleClassPipe} from './list/bottle-color-class.pipe';
 import {CurrentFiltersComponent} from './current-filters/current-filters';
 import {SearchBarComponent} from './search-bar/search-bar';
-import {PageHeaderComponent} from './page-header/page-header';
 import {BottleActionComponent} from './bottle-action/bottle-action';
 import {ResponsiveWrapperComponent} from './responsive-wrapper/responsive-wrapper';
+import {ScrollAnchorDirective} from './scroll-anchor.directive';
+import {RackDirective} from './rack.directive';
+import {DimensionOfDirective} from './dimension-of.directive';
+import {ZoomableDirective} from './zoomable.directive';
 
 @NgModule({
             imports: [
@@ -46,19 +49,21 @@ import {ResponsiveWrapperComponent} from './responsive-wrapper/responsive-wrappe
               BottleItemComponent,
               BottleNotingComponent,
               ChartComponent,
+              DimensionOfDirective,
               CurrentFiltersComponent,
               DefaultImageDirective,
               DistributionComponent,
               FridgeLockerComponent,
               ImageAttacherComponent,
-              PageHeaderComponent,
               ProgressBarComponent,
               RatingComponent,
               ResponsiveWrapperComponent,
+              ScrollAnchorDirective,
               SearchBarComponent,
               SimpleLockerComponent,
               StatisticsComponent,
-              WithdrawalItemComponent
+              WithdrawalItemComponent,
+              ZoomableDirective
             ],
             exports: [
               BottleActionComponent,
@@ -67,19 +72,21 @@ import {ResponsiveWrapperComponent} from './responsive-wrapper/responsive-wrappe
               BottleItemComponent,
               BottleNotingComponent,
               ChartComponent,
+              DimensionOfDirective,
               CurrentFiltersComponent,
               DefaultImageDirective,
               DistributionComponent,
               FridgeLockerComponent,
               ImageAttacherComponent,
-              PageHeaderComponent,
               ProgressBarComponent,
               RatingComponent,
               ResponsiveWrapperComponent,
+              ScrollAnchorDirective,
               SearchBarComponent,
               SimpleLockerComponent,
               StatisticsComponent,
-              WithdrawalItemComponent
+              WithdrawalItemComponent,
+              ZoomableDirective
             ],
             providers: [
               Camera,

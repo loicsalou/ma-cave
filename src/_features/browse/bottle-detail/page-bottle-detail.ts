@@ -4,6 +4,7 @@ import {Bottle} from '../../../model/bottle';
 import {BottleEvent} from '../../../components/list/bottle-event';
 import {UpdatePage} from '../update/update.page';
 import * as _ from 'lodash';
+import {logInfo} from '../../../utils';
 
 /*
  Generated class for the BottleDetail page.
@@ -12,7 +13,6 @@ import * as _ from 'lodash';
  Ionic pages and navigation.
  */
 @Component({
-             selector: 'page-bottle-detail',
              templateUrl: 'page-bottle-detail.html',
              // styleUrls:[ 'page-bottle-detail.scss' ]
            })
@@ -25,7 +25,6 @@ export class BottleDetailPage implements OnInit {
   slideBottles: Bottle[];
 
   //bouteille à afficher
-  @Input()
   bottle: Bottle;
 
   @ViewChild(Slides) slides: Slides;
@@ -38,7 +37,11 @@ export class BottleDetailPage implements OnInit {
     let bottleEvent: BottleEvent = navParams.data[ 'bottleEvent' ];
     this.wholeSelection = bottleEvent.bottles;
     this.bottle = bottleEvent.bottle;
-    this.originalIndex = this.wholeSelection.findIndex((bottle: Bottle) => bottle.id === this.bottle.id);
+    this.originalIndex = this.wholeSelection.findIndex((btl: Bottle) => {
+      logInfo(JSON.stringify(this.bottle));
+      logInfo(JSON.stringify(btl));
+      return btl.id === this.bottle.id;
+    });
   }
 
   ngOnInit(): void {

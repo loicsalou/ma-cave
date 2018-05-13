@@ -3,41 +3,44 @@
     <ion-icon name="menu"></ion-icon>
   </button>
   <span class="search-container">
-    <search-bar right [filterSet]="filterSet" [nbBottles]="numberOfBottles()" [nbCrus]="numberOfLots()"
+    <search-bar right [filterSet]="filterSet$ | async" [nbBottles]="nbOfBottles" [nbCrus]="nbOfLots"
                 (change)="filterOnText($event)">
     </search-bar>
   </span>
 </ion-header>
 
 <ion-menu class="browse-page" [content]="content" id="menu-components" type="overlay">
-  <page-filter [bottles]="bottles$"></page-filter>
+  <page-filter></page-filter>
 </ion-menu>
 
 <ion-content class="browse-page page mod-content">
   <responsive-wrapper>
     <ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>
     <ion-list sliding="true" class="bottle-page" #bottleList>
-      <div *ngFor="let bottle of bottles" style="width: 100%">
-        <bottle-item [bottle]="bottle" (showDetail)="triggerDetail($event)"
-                     (selected)="switchSelected($event)"></bottle-item>
-      </div>
+      <ng-container *ngIf="bottleStates$ | async as bottleStates">
+        <div *ngFor="let bottleState of bottleStates" style="width: 100%">
+          <bottle-item [bottle]="bottleState.bottle" (onShowDetail)="triggerDetail($event)"
+                       [selected]="bottleState.selected"
+                       (onSelected)="switchSelected($event)"></bottle-item>
+        </div>
+      </ng-container>
     </ion-list>
-    
-    <ion-fab bottom right *ngIf="anyBottleSelected()">
-      <button ion-fab>
-        <ion-icon name="menu"></ion-icon>
-      </button>
-      <ion-fab-list side="top">
-        <button ion-fab (click)="placeSelection()" style="background-color: #ebeced">
-          <ion-icon name="apps"></ion-icon>
-        </button>
-        <button ion-fab (click)="locateSelection()" style="background-color: #ebeced">
-          <ion-icon name="pin"></ion-icon>
-        </button>
-        <button ion-fab (click)="registerSelectionAsFavorite()" style="background-color: #ebeced">
-          <ion-icon name="star" style="color: yellow"></ion-icon>
-        </button>
-      </ion-fab-list>
-    </ion-fab>
   </responsive-wrapper>
 </ion-content>
+
+<ion-fab #fab class="browse-page" bottom right *ngIf="anyBottleSelected()">
+  <button ion-fab>
+    <ion-icon name="menu"></ion-icon>
+  </button>
+  <ion-fab-list side="top">
+    <button ion-fab (click)="placeSelection()">
+      <ion-icon name="apps"></ion-icon>
+    </button>
+    <button ion-fab (click)="locateSelection()">
+      <ion-icon name="pin"></ion-icon>
+    </button>
+    <button ion-fab (click)="registerSelectionAsFavorite()">
+      <ion-icon name="star" style="color: yellow"></ion-icon>
+    </button>
+  </ion-fab-list>
+</ion-fab>

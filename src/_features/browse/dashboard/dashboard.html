@@ -7,7 +7,7 @@
 
 <ion-content align-items-center class="page">
   <responsive-wrapper>
-    <ion-card class="card-background" *ngIf="bottles">
+    <ion-card class="card-background">
       <button ion-button outline small round icon-left (click)="showAll()">
         <ion-icon name="search"></ion-icon>
         {{'dashboard.see-all' | translate: {nb: totalNumberOfBottles} }}
@@ -23,32 +23,35 @@
         {{'filter.overdue-only' | translate}}
       </button>
       
-      <button ion-button outline small round (click)="showPopover()" *ngIf="mostUsedQueries">
+      <!--<button ion-button outline small round (click)="showPopover()" *ngIf="popOverVisible$ | async">-->
+      <button ion-button outline small round (click)="showPopover()">
         <span style="margin-right: 7px" class="fa fa-history"></span>
         Fréquentes
       </button>
       <!--<ion-segment-button></ion-segment-button>-->
     </ion-card>
     
-    <ion-card class="card-background recent-withdrawal" *ngIf="withdrawals.length > 0">
-      <ion-scroll scrollY="true" [ngStyle]="withdrawalCardStyle">
-        <ion-title>{{'record-output.recent-withdrawals'| translate}}</ion-title>
-        <ion-list sliding="false">
-          <withdrawal-item [withdrawal]="withdraw" (showDetail)="triggerNotation($event)"
-                           *ngFor="let withdraw of withdrawals"></withdrawal-item>
-        </ion-list>
-      </ion-scroll>
-    </ion-card>
+    <ng-container *ngIf="withdrawals$ | async as withdrawals">
+      <ion-card class="card-background recent-withdrawal" *ngIf="withdrawals.length > 0">
+        <ion-scroll scrollY="true" [ngStyle]="withdrawalCardStyle">
+          <ion-title>{{'record-output.recent-withdrawals'| translate}}</ion-title>
+          <ion-list sliding="false">
+            <withdrawal-item [withdrawal]="withdraw" (showDetail)="triggerNotation($event)"
+                             *ngFor="let withdraw of withdrawals"></withdrawal-item>
+          </ion-list>
+        </ion-scroll>
+      </ion-card>
+    </ng-container>
     
-    <ion-card class="card-background by-label" *ngIf="bottles">
+    <ion-card class="card-background by-label" *ngIf="bottles$">
       <ion-title>{{'statistics.repartition-par-type'| translate}}</ion-title>
-      <statistics [bottles]="bottles" [type]="'bar'" [axis]="'label'" [topMost]="10" [legend]="'none'"
+      <statistics [bottles$]="bottles$" [type]="'bar'" [axis]="'label'" [topMost]="10" [legend]="'none'"
                   (filterApplied)="showFiltered($event)"></statistics>
     </ion-card>
     
-    <ion-card class="card-background by-region" *ngIf="bottles">
+    <ion-card class="card-background by-region" *ngIf="bottles$">
       <ion-title>{{'statistics.repartition-par-region'| translate}}</ion-title>
-      <statistics [bottles]="bottles" [type]="'bar'" [axis]="'subregion_label'" [topMost]="7" [legend]="'none'"
+      <statistics [bottles$]="bottles$" [type]="'bar'" [axis]="'subregion_label'" [topMost]="7" [legend]="'none'"
                   (filterApplied)="showFiltered($event)"></statistics>
     </ion-card>
   </responsive-wrapper>

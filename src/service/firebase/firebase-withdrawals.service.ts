@@ -51,13 +51,14 @@ export class FirebaseWithdrawalsService {
   // ===================================================== WITHDRAWS
   public withdraw(bottle: Bottle, position: Position): Promise<any> {
     return new Promise((resolve, reject) => {
-      bottle.removeFromPosition(position);
-      bottle.quantite_courante--;
-      bottle[ 'lastUpdated' ] = new Date().getTime();
-      this.update([ bottle ]).then(
+      let updatedBottle=new Bottle(bottle);
+      updatedBottle.positions=bottle.positions.filter(pos => !pos.equals(position));
+      updatedBottle.quantite_courante--;
+      updatedBottle[ 'lastUpdated' ] = new Date().getTime();
+      this.update([ updatedBottle ]).then(
         err => {
           if (err == null) {
-            let withdrawal = new Withdrawal(bottle);
+            let withdrawal = new Withdrawal(updatedBottle);
             this.createWithdrawal(withdrawal);
           } else {
             this.notificationService.debugAlert('mise à jour KO ' + err);
@@ -111,7 +112,6 @@ export class FirebaseWithdrawalsService {
         bottle[ 'lastUpdated' ] = new Date().getTime();
         updates[ '/' + bottle.id ] = tools.sanitizeBeforeSave(bottle);
       });
-      this.notificationService.debugAlert('sur le point de this.bottlesRootRef.update(' + JSON.stringify(updates) + ')');
       this.bottlesRootRef.update(updates, (
         err => {
           if (err == null) {

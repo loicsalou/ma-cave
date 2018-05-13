@@ -1,8 +1,9 @@
 <!-- Generated template for the SimpleLockerComponent component -->
-<div class="fridge-locker-component" #zoomable>
-  <div class="rack">
+<div class="fridge-locker-component">
+  <div class="rack" [zoomable]="true">
     <locker *ngFor="let rack of fridge.racks; let ix=index" [locker]="rack" [selectable]="selectable"
             [highlighted]="highlighted" [content]="content" [rack]="ix" [editing]="editing"
-            (onCellSelected)="cellSelected($event)"></locker>
+            [zoomable]="false" (onCellSelected)="cellSelected($event)" (onRackSelected)="rackSelected($event)" >
+    </locker>
   </div>
 </div>

@@ -19,9 +19,7 @@ import {FacebookLoginService} from '../service/login/facebook-login.service';
 import {NotificationService} from '../service/notification.service';
 import {LockerFactory} from '../model/locker.factory';
 import {FirebaseAdminService} from '../service/firebase/firebase-admin.service';
-import {NativeStorageService} from '../service/native-storage.service';
 import {NativeStorage} from '@ionic-native/native-storage';
-import {LocalLoginService} from '../service/login/local-login.service';
 import {AndroidPermissions} from '@ionic-native/android-permissions';
 import {HttpClient} from '@angular/common/http';
 import {GoogleLoginService} from '../service/login/google-login.service';
@@ -32,8 +30,9 @@ import {FirebaseWithdrawalsService} from '../service/firebase/firebase-withdrawa
 import {FirebaseBottlesService} from '../service/firebase/firebase-bottles.service';
 import {FirebaseImagesService} from '../service/firebase/firebase-images.service';
 import {appConfig} from './app.conf';
-import {SettingsService} from '../service/settings.service';
-//import {MockBottlesService} from '../service/mock/mock-bottles.service';
+import {SharedPersistenceService} from '../service/shared-persistence.service';
+import {ApplicationState} from './state/app.state';
+import {Store} from '@ngrx/store';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -70,23 +69,21 @@ export const fireConfig = {
               FirebaseBottlesService,
               //{provide: FirebaseBottlesService, useClass:MockBottlesService},
               FirebaseWithdrawalsService,
-              LocalLoginService,
               GoogleLoginService,
               LockerFactory,
               {
                 provide: LoginService,
                 useFactory: (createLoginFactory),
-                deps: [ AnonymousLoginService, EmailLoginService, FacebookLoginService, LocalLoginService, GoogleLoginService,
-                  NotificationService, NativeStorageService ]
+                deps: [ AnonymousLoginService, EmailLoginService, FacebookLoginService, GoogleLoginService,
+                  NotificationService, Store ]
               },
               NativeStorage,
-              NativeStorageService,
               {
                 provide: NotificationService,
                 useFactory: (createNotificationFactory),
                 deps: [ AlertController, ToastController, TranslateService, LoadingController ]
               },
-              SettingsService,
+              SharedPersistenceService,
               SplashScreen,
               StatusBar,
               TranslateService
@@ -101,8 +98,9 @@ export class CoreModule {
 }
 
 export function createLoginFactory(ano: AnonymousLoginService, ema: EmailLoginService, fac: FacebookLoginService,
-                                   lls: LocalLoginService, ggl: GoogleLoginService, ns: NotificationService, lss: NativeStorageService) {
-  return new LoginService(ano, ema, fac, lls, ggl, ns, lss);
+                                   ggl: GoogleLoginService, ns: NotificationService,
+                                   store: Store<ApplicationState>) {
+  return new LoginService(ano, ema, fac, ggl, ns, store);
 }
 
 export function createNotificationFactory(alrt: AlertController, toast: ToastController, translate: TranslateService,

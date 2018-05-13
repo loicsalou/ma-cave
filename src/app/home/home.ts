@@ -1,36 +1,58 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {Modal, ModalController, NavController, Platform} from 'ionic-angular';
 import {LoginService} from '../../service/login/login.service';
 import {EmailLoginPage} from '../../_features/admin/login/email-login.page';
 import {User} from '../../model/user';
 import {TabsPage} from '../tabs/tabs';
 import {Subscription} from 'rxjs/Subscription';
-import {LocalLoginPage} from '../../_features/admin/login/local-login.page';
 import {NotificationService} from '../../service/notification.service';
 import {NativeProvider} from '../../providers/native/native';
 import {VERSION} from '../../_features/admin/version';
+import {ApplicationState} from '../state/app.state';
+import {Store} from '@ngrx/store';
+import {LoadBottlesAction} from '../state/bottles.actions';
+import {LogoutAction} from '../state/shared.actions';
+import {SharedQuery} from '../state/shared.state';
+import {map, tap} from 'rxjs/operators';
+import {Observable} from 'rxjs/Observable';
 
 @Component({
              selector: 'page-home',
-             templateUrl: 'home.html'
+             templateUrl: 'home.html',
+             changeDetection: ChangeDetectionStrategy.OnPush
              // styleUrls:[ 'home.scss' ]
            })
 export class HomePage implements OnInit, AfterViewInit {
 
   version: any;
+  currentTheme$: Observable<string>;
+
   private loginPage: Modal;
 
-  private authenticated = false;
   private loginSubscription: Subscription;
+  private loggedIn = false;
 
   constructor(public navCtrl: NavController, public loginService: LoginService,
               private modalController: ModalController,
               private notificationService: NotificationService,
-              private nativeProvider: NativeProvider, private platform: Platform) {
+              private nativeProvider: NativeProvider, private platform: Platform,
+              private store: Store<ApplicationState>) {
+    this.loginSubscription = this.store.select(SharedQuery.getLoginUser).pipe(
+      tap(() => {
+        if (this.loginPage) {
+          this.loginPage.dismiss();
+        }
+      })
+    ).subscribe((user: User) =>
+                  this.handleLoginEvent(user)
+    );
+    this.currentTheme$ = this.store.select(SharedQuery.getSharedState).pipe(
+      map(state =>
+            state.theme ? state.theme : 'cavus-theme')
+    );
   }
 
   ngOnInit(): void {
-    //this.version = require('../../../package.json').version;
     this.version = VERSION;
   }
 
@@ -40,49 +62,22 @@ export class HomePage implements OnInit, AfterViewInit {
 
   facebookLogin() {
     this.nativeProvider.feedBack();
-    this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
-      this.handleLoginEvent(user);
-    });
     this.loginService.facebookLogin();
   }
 
   emailLogin() {
     this.nativeProvider.feedBack();
-    this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
-      this.handleLoginEvent(user);
-      if (user) {
-        this.loginPage.dismiss();
-      }
-    });
     this.loginPage = this.modalController.create(EmailLoginPage);
-    this.loginPage.present();
-  }
-
-  localLogin() {
-    this.nativeProvider.feedBack();
-    this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
-      this.handleLoginEvent(user);
-      if (user) {
-        this.loginPage.dismiss();
-      }
-    });
-    this.loginPage = this.modalController.create(LocalLoginPage);
     this.loginPage.present();
   }
 
   googleLogin() {
     this.nativeProvider.feedBack();
-    this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
-      this.handleLoginEvent(user);
-    });
     this.loginService.googleLogin();
   }
 
   anonymousLogin() {
     this.nativeProvider.feedBack();
-    this.loginSubscription = this.loginService.authentifiedObservable.subscribe(user => {
-      this.handleLoginEvent(user);
-    });
     this.loginService.anonymousLogin();
   }
 
@@ -90,31 +85,26 @@ export class HomePage implements OnInit, AfterViewInit {
     this.notificationService.debugMode = b;
   }
 
-  isConnectionAllowed(): boolean {
-    //return this.dataConnection.isConnectionAllowed();
-    return true;
-  }
-
   isGoogleLoginEnabled(): boolean {
     return !this.platform.is('cordova');
   }
 
   logout() {
-    this.loginService.logout();
+    this.store.dispatch(new LogoutAction());
   }
 
   private handleLoginEvent(user: User) {
-    this.authenticated = (user !== undefined);
-    if (this.authenticated) {
-      // login ok ==> dashboard
+    if (user !== undefined) {
+      this.loggedIn = true;
+      this.store.dispatch(new LoadBottlesAction());
       this.navCtrl.setRoot(TabsPage);
     }
     else {
       // logout ==> retour à la page de login
-      this.navCtrl.setRoot(HomePage);
-      // pas de onDestroy ici car après un logout on reste quand même sur le home
-      // ==> il faut faire l'unsubscribe à la main
-      this.loginSubscription.unsubscribe();
+      if (this.loggedIn) {
+        this.navCtrl.setRoot(HomePage);
+        this.loginSubscription.unsubscribe();
+      }
     }
   }
 }

@@ -32,7 +32,7 @@ export class GoogleLoginService extends AbstractLoginService {
                                      'webClientId': '58435015061-8bnsnki77q4ffi25ph5plr6m694866vd.apps.googleusercontent.com'
                                    }).then(userData => {
         //alert('login with cordova OK token='+userData.idToken);
-        var token = userData.idToken;
+        const token = userData.idToken;
         const googleCredential = auth.GoogleAuthProvider.credential(token, null);
         firebase.auth().signInWithCredential(googleCredential).then((success) => {
           //alert('firebase signin with credential OK');
@@ -40,13 +40,9 @@ export class GoogleLoginService extends AbstractLoginService {
           let ggUser = new GoogleUser(fbUser.email, fbUser.photoURL, fbUser.displayName, fbUser.uid, fbUser.phoneNumber);
           observer.next(ggUser);
         }).catch(error => {
-          //console.log(error);
-          //alert('firebase signin with credential a planté ! '+error);
           observer.error(error);
         });
       }).catch(error => {
-        //console.log(error);
-        //alert('Googleplus login a planté ! '+error);
         observer.error(error);
       });
     });
