@@ -17,8 +17,6 @@ import {NotificationService} from '../../service/notification.service';
 import {Cell, LockerComponent, Row} from './locker.component';
 import {Gesture} from 'ionic-angular';
 import {NativeProvider} from '../../providers/native/native';
-import {ApplicationState} from '../../app/state/app.state';
-import {Store} from '@ngrx/store';
 import {RackDirective} from '../rack.directive';
 import {DimensionOfDirective} from '../dimension-of.directive';
 import {Observable} from 'rxjs/Observable';
@@ -66,7 +64,7 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   private containerDimensionsSub: Subscription;
 
   constructor(private notificationService: NotificationService, nativeProvider: NativeProvider,
-              @Inject('GLOBAL_CONFIG') private config, private store: Store<ApplicationState>) {
+              @Inject('GLOBAL_CONFIG') private config) {
     super(nativeProvider);
   }
 
@@ -370,7 +368,6 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
       let position = new Position(this.locker.id, i, rowIndex, this.rack);
       cells[ i ] = new Cell(position, this.config);
     }
-    //return new Row(cells, rowId, rowIndex);
     return new Row(cells, rowIndex);
   }
 

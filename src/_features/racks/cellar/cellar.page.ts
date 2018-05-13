@@ -73,6 +73,8 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked, OnDe
   pendingCell: Cell;
   dimensions$: { [ lockerId: string ]: Observable<Dimension> };
   dimensionsSubjects: { [ lockerId: string ]: Subject<Dimension> } = {};
+  lockers$: Observable<Locker[]>;
+  bottles$: Observable<Bottle[]>;
 
   @ViewChild('placedLockerComponent') private placedLockerComponent: SimpleLockerComponent;
   @ViewChildren(ScrollAnchorDirective) private lockerRows: QueryList<ScrollAnchorDirective>;
@@ -82,8 +84,7 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked, OnDe
   private selectedBottlesSubscription: Subscription;
   private somethingWasUpdated = false;
   private lastUpdated: Bottle;
-  private lockers$: Observable<Locker[]>;
-  private bottles$: Observable<Bottle[]>;
+  private mustInitScale = true;
 
   constructor(private navCtrl: NavController,
               private cellarService: CellarPersistenceService,
@@ -110,7 +111,9 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked, OnDe
     this.doWithAction = this.params.data[ 'action' ] ? this.params.data[ 'action' ].type : undefined;
     if (this.doWithAction) {
       this.selectedBottlesSubscription = this.store.select(BottlesQuery.getSelectedBottles).pipe(
-        tap((bottles: Bottle[]) => this.handleBottlesSelection(bottles, this.doWithAction)),
+        tap((bottles: Bottle[]) => {
+          this.handleBottlesSelection(bottles, this.doWithAction);
+        })
       ).subscribe();
       //this.selectedBottlesSubscription = this.selectedBottles$.subscribe();
     }
@@ -118,11 +121,14 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked, OnDe
       filter((lockers: Locker[]) => lockers.length > 0),
       tap((lockers) => {
         this.lockerNames = lockers.map(locker => locker.name);
+        this.mustInitScale = true;
       }),
       shareReplay()
     );
     this.bottles$ = this.store.select(BottlesQuery.getBottles).pipe(
-      tap(bottles => this.traceSavedReceived(bottles)),
+      tap(bottles => {
+        this.traceSavedReceived(bottles);
+      }),
       shareReplay()
     );
   }
@@ -134,13 +140,14 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked, OnDe
   }
 
   ngAfterViewChecked() {
-    if (this.containers && this.containers.length > 0) {
+    if (this.mustInitScale && this.containers && this.containers.length > 0) {
       this.containers.forEach(
         container => {
           let lockerId = container.dimensionOf.id;
           let subject = this.dimensionsSubjects[ lockerId ];
           if (subject) {
             subject.next(container.getContainerSize());
+            this.mustInitScale = false;
           }
         }
       );
@@ -182,6 +189,7 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked, OnDe
     //let zoomedBottles = this.getBottlesInRowOf(this._pendingCell);
     //this.navCtrl.push(BottleDetailPage, {bottleEvent: {bottles: zoomedBottles, bottle: bottle}});
     this.navCtrl.push(BottleDetailPage, {bottleEvent: {bottles: [ bottle ], bottle: bottle}});
+    this.somethingWasUpdated = true;
   }
 
   withdraw(pendingCell: Cell) {
@@ -198,6 +206,7 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked, OnDe
   createLocker() {
     let editorModal = this.modalCtrl.create(CreateLockerPage, {}, {showBackdrop: false});
     editorModal.present();
+    this.somethingWasUpdated = true;
   }
 
   updateLocker(locker) {
