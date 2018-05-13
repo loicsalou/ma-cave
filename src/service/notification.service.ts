@@ -63,7 +63,7 @@ export class NotificationService {
     if (this._debugMode) {
       alert(message + ' ' + (obj ? JSON.stringify(obj) : '-'));
     } else {
-      console.debug(message + (obj ? obj : ''));
+      logDebug(message + (obj ? obj : ''));
     }
   }
 

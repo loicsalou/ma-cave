@@ -79,8 +79,8 @@
   </ion-fab>
   
   <div *ngIf="bottlesToPlaceLocker" bottom left>
-    <locker #placedLockerComponent [locker]="bottlesToPlaceLocker" [content]="selectedBottles"
-            (onCellSelected)="cellSelected($event)"></locker>
+    <place-locker #placedLockerComponent [locker]="bottlesToPlaceLocker" [content]="selectedBottles"
+            (onCellSelected)="cellSelected($event)"></place-locker>
   </div>
   <!--</responsive-wrapper>-->
 </ion-content>

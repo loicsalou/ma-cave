@@ -12,7 +12,6 @@ import {Content, ModalController, NavController, NavParams} from 'ionic-angular'
 import {CellarPersistenceService} from '../../../service/cellar-persistence.service';
 import {Bottle, Position} from '../../../model/bottle';
 import {Dimension, Locker, LockerType} from '../../../model/locker';
-import {SimpleLockerComponent} from '../../../components/locker/simple-locker.component';
 import {NotificationService} from '../../../service/notification.service';
 import {SimpleLocker} from '../../../model/simple-locker';
 import {BottlePersistenceService} from '../../../service/bottle-persistence.service';
@@ -41,6 +40,7 @@ import {filter, shareReplay, tap} from 'rxjs/operators';
 import {Subscription} from 'rxjs/Subscription';
 import {DimensionOfDirective} from '../../../components/dimension-of.directive';
 import {Subject} from 'rxjs/Subject';
+import {PlaceLockerComponent} from '../../../components/locker/place-locker.component';
 
 function shortenBottle(btl: Bottle) {
   return {
@@ -76,7 +76,7 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked, OnDe
   lockers$: Observable<Locker[]>;
   bottles$: Observable<Bottle[]>;
 
-  @ViewChild('placedLockerComponent') private placedLockerComponent: SimpleLockerComponent;
+  @ViewChild('placedLockerComponent') private placedLockerComponent: PlaceLockerComponent;
   @ViewChildren(ScrollAnchorDirective) private lockerRows: QueryList<ScrollAnchorDirective>;
   @ViewChildren(DimensionOfDirective) private containers: QueryList<DimensionOfDirective<Locker>>;
 
@@ -109,14 +109,15 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked, OnDe
   ngOnInit(): void {
     this.nativeProvider.feedBack();
     this.doWithAction = this.params.data[ 'action' ] ? this.params.data[ 'action' ].type : undefined;
+    // si une action est demandée on récupère la sélection et on crée le nécessaire
     if (this.doWithAction) {
       this.selectedBottlesSubscription = this.store.select(BottlesQuery.getSelectedBottles).pipe(
         tap((bottles: Bottle[]) => {
           this.handleBottlesSelection(bottles, this.doWithAction);
         })
       ).subscribe();
-      //this.selectedBottlesSubscription = this.selectedBottles$.subscribe();
     }
+    // observable sur les lockers pour le template
     this.lockers$ = this.store.select(BottlesQuery.getLockers).pipe(
       filter((lockers: Locker[]) => lockers.length > 0),
       tap((lockers) => {
@@ -125,6 +126,7 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked, OnDe
       }),
       shareReplay()
     );
+    // observable sur les bouteilles pour le template
     this.bottles$ = this.store.select(BottlesQuery.getBottles).pipe(
       tap(bottles => {
         this.traceSavedReceived(bottles);
@@ -286,9 +288,9 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked, OnDe
   private traceSavedReceived(bottles: Bottle[]) {
     if (this.lastUpdated) {
       let lastupdatedReceived = bottles.filter((btl: Bottle) => btl.id === this.lastUpdated.id);
-      console.info('saved:' + JSON.stringify(shortenBottle(this.lastUpdated)));
-      console.info('retrieved:' + JSON.stringify(shortenBottle(lastupdatedReceived[ 0 ])));
-      console.info('===============================================');
+      //console.info('saved:' + JSON.stringify(shortenBottle(this.lastUpdated)));
+      //console.info('retrieved:' + JSON.stringify(shortenBottle(lastupdatedReceived[ 0 ])));
+      //console.info('===============================================');
     }
   }
 
