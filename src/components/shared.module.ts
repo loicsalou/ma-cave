@@ -33,7 +33,6 @@ import {ScrollAnchorDirective} from './scroll-anchor.directive';
 import {RackDirective} from './rack.directive';
 import {DimensionOfDirective} from './dimension-of.directive';
 import {ZoomableDirective} from './zoomable.directive';
-import {PlaceLockerComponent} from './locker/place-locker.component';
 
 @NgModule({
             imports: [
@@ -56,7 +55,6 @@ import {PlaceLockerComponent} from './locker/place-locker.component';
               DistributionComponent,
               FridgeLockerComponent,
               ImageAttacherComponent,
-              PlaceLockerComponent,
               ProgressBarComponent,
               RatingComponent,
               ResponsiveWrapperComponent,
@@ -80,7 +78,6 @@ import {PlaceLockerComponent} from './locker/place-locker.component';
               DistributionComponent,
               FridgeLockerComponent,
               ImageAttacherComponent,
-              PlaceLockerComponent,
               ProgressBarComponent,
               RatingComponent,
               ResponsiveWrapperComponent,

@@ -14,7 +14,7 @@ import {SimpleLocker} from '../../model/simple-locker';
 import {Dimension, Locker, LockerType} from '../../model/locker';
 import {Bottle, Position} from '../../model/bottle';
 import {NotificationService} from '../../service/notification.service';
-import {Cell, LockerComponent, Row} from './locker.component';
+import {LockerComponent} from './locker.component';
 import {Gesture} from 'ionic-angular';
 import {NativeProvider} from '../../providers/native/native';
 import {RackDirective} from '../rack.directive';
@@ -22,6 +22,8 @@ import {DimensionOfDirective} from '../dimension-of.directive';
 import {Observable} from 'rxjs/Observable';
 import {filter} from 'rxjs/operators';
 import {Subscription} from 'rxjs/Subscription';
+import {Row} from './row';
+import {Cell} from './cell';
 
 /**
  * Generated class for the SimpleLockerComponent component.
@@ -58,10 +60,13 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   rows: Row[];
   containerDimension: Dimension;
   @ViewChild(DimensionOfDirective) private dimensionOfDirective: DimensionOfDirective<Locker>;
+
   private bogusBottles: { bottle: Bottle, position: Position }[] = [];
   private gesture: Gesture;
+  private pressGesture: Gesture;
   private initialScale: number;
   private containerDimensionsSub: Subscription;
+  private wrongLocker: boolean;
 
   constructor(private notificationService: NotificationService, nativeProvider: NativeProvider,
               @Inject('GLOBAL_CONFIG') private config) {
@@ -73,33 +78,22 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   }
 
   ngOnInit(): void {
-    if (this.locker.dimension && !this.rows) {
+    if (this.locker.dimension) {
+      //if (!this.rows) {
       this.resetComponent();
+      //}
+    } else {
+      this.setAsWrongLocker();
     }
-    if (this.containerDimension$) {
-      this.containerDimensionsSub = this.containerDimension$.pipe(
-        filter(dim => dim !== undefined)
-      ).subscribe(
-        dim => {
-          this.containerDimension = {x: dim.x - 32, y: dim.y - 32};
-          if (this.dimensionOfDirective) {
-            const lockerDim = this.dimensionOfDirective.getContainerSize();
-            this.initialScale = Math.min(
-              this.containerDimension.x / lockerDim.x,
-              this.containerDimension.y / lockerDim.y,
-              1
-            );
-            this.gesture.destroy();
-            this.gesture = this.setupPinchZoom(this.zoomable.zoomableComponent, this.initialScale);
-          }
-        }
-      );
-    }
+    this.adjustZoomAuto();
   }
 
   ngOnDestroy(): void {
     if (this.gesture) {
       this.gesture.destroy();
+    }
+    if (this.pressGesture) {
+      this.pressGesture.destroy();
     }
     if (this.containerDimensionsSub) {
       this.containerDimensionsSub.unsubscribe();
@@ -107,11 +101,12 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   }
 
   ngAfterViewInit(): void {
-    if (this.selectable) {
-      if (this.zoomable && !this.locker.inFridge) {
+    if (this.selectable && this.zoomable) {
+      if (this.locker.inFridge) {
         this.gesture = this.setupPinchZoom(this.zoomable.zoomableComponent);
-      } else if (this.zoomable && this.locker.inFridge) {
-        this.setupPressGesture(this.zoomable.zoomableComponent);
+        this.pressGesture = this.setupPressGesture(this.zoomable.zoomableComponent);
+      //} else if (!this.locker.inFridge) {
+      //  this.pressGesture = this.setupPressGesture(this.zoomable.zoomableComponent);
       }
     }
   }
@@ -138,7 +133,13 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
     }
   }
 
-  public resetComponent() {
+  /**
+   *  init ou réinit du composant:
+   *  - on (re)crée les rangées par rapport au locker modèle
+   *  - On filtre les bouteilles de ce locker et on les place conformément aux positions auxquelles elles se rattachent
+   *  - pour l'instant les éventuelles erreurs sont ignorées, à revoir
+   */
+  resetComponent() {
     this.rows = [];
     this.bogusBottles = [];
     for (let i = 0; i < this.locker.dimension.y; i++) {
@@ -156,17 +157,24 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
       }
     );
     if (this.bogusBottles && this.bogusBottles.length > 0) {
+      // TODO avons-nous besoin de gérer les bogus bottles ?
       //this.handleBogusBottles();
     }
   }
 
-  public placeBottle(bottle: Bottle, position: Position) {
+  /**
+   * placement d'une bouteille à une position donnée. Cela ne modifie en rien la bouteille ni le locker, c'est juste
+   * de la présentation.
+   * @param {Bottle} bottle
+   * @param {Position} position
+   */
+  placeBottle(bottle: Bottle, position: Position) {
     if (this.rows.length <= position.y || !this.rows[ position.y ] || this.rows[ position.y ].cells.length <= position.x) {
+      // TODO avons-nous besoin de gérer les bogus bottles ?
       this.bogusBottles.push({bottle: bottle, position: position});
     } else {
       let targetCell = this.rows[ position.y ].cells[ position.x ];
       targetCell.storeBottle(bottle, this.isHighlighted(bottle));
-      //bottle.addNewPosition(targetCell.position);
     }
   }
 
@@ -288,7 +296,7 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
     return this.canRemoveColumn(this.dimension.x - 1);
   }
 
-  protected setupPressGesture(elm: HTMLElement): void {
+  protected setupPressGesture(elm: HTMLElement): Gesture {
     const pressGesture = new Gesture(elm);
 
     pressGesture.listen();
@@ -303,6 +311,8 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
         self.onRackSelected.emit({rack: this.locker, selected: self.selected});
       }
     }
+
+    return pressGesture;
   }
 
   protected canIncreaseHeight() {
@@ -344,21 +354,6 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
                                 )
     );
     this.notificationService.information(this.bogusBottles.length + ' bouteilles hors casier');
-    //this.notificationService.ask('Supprimer les positions inexistantes ? ', bugs)
-    //  .subscribe(
-    //    result => {
-    //      if (result) {
-    //        let updatedBottles = this.bogusBottles.map(
-    //          (bogusTuple: { bottle: Bottle, position: Position }) => {
-    //            let updatedBottle = new Bottle(bogusTuple.bottle);
-    //            updatedBottle.positions = updatedBottle.positions.filter(pos => !pos.equals(bogusTuple.position));
-    //            return updatedBottle;
-    //          }
-    //        );
-    //        //this.store.dispatch(new UpdateBottlesAction(updatedBottles));
-    //      }
-    //    }
-    //  );
   }
 
   private initRow(nbcells: number, rowIndex: number): Row {
@@ -419,5 +414,35 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
         }
       ).filter(pos => pos !== undefined);
     });
+  }
+
+  // zoom automatique pour que tous les casiers rentrent dans l'espace alloué
+  private adjustZoomAuto() {
+    if (this.containerDimension$) {
+      this.containerDimensionsSub = this.containerDimension$.pipe(
+        filter(dim => dim !== undefined)
+      ).subscribe(
+        dim => {
+          // 32px de padding 16 de chaque côté
+          this.containerDimension = {x: dim.x - 32, y: dim.y - 32};
+          if (this.dimensionOfDirective) {
+            const lockerDim = this.dimensionOfDirective.getContainerSize();
+            this.initialScale = Math.min(
+              this.containerDimension.x / lockerDim.x,
+              this.containerDimension.y / lockerDim.y,
+              1
+            );
+            if (this.gesture) {
+              this.gesture.destroy();
+            }
+            this.gesture = this.setupPinchZoom(this.zoomable.zoomableComponent, this.initialScale);
+          }
+        }
+      );
+    }
+  }
+
+  private setAsWrongLocker() {
+    this.wrongLocker = true;
   }
 }

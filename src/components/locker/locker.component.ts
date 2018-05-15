@@ -1,10 +1,11 @@
 import {EventEmitter, Input, OnChanges, Output, ViewChild} from '@angular/core';
-import {Bottle, Position} from '../../model/bottle';
+import {Bottle} from '../../model/bottle';
 import {Gesture} from 'ionic-angular';
 import {Dimension} from '../../model/locker';
 import {NativeProvider} from '../../providers/native/native';
 import {SimpleLocker} from '../../model/simple-locker';
 import {ZoomableDirective} from '../zoomable.directive';
+import {Cell} from './cell';
 
 export abstract class LockerComponent implements OnChanges {
 
@@ -19,6 +20,8 @@ export abstract class LockerComponent implements OnChanges {
 
   @Output()
   onCellSelected: EventEmitter<Cell> = new EventEmitter<Cell>();
+  @Output()
+  bottlesChanged: EventEmitter<Bottle[]> = new EventEmitter<Bottle[]>();
 
   currentGesture: any;
   currentStyle: any;
@@ -231,67 +234,3 @@ export abstract class LockerComponent implements OnChanges {
   }
 }
 
-export class Row {
-  index: number;
-  cells: Cell[];
-  private id: string;
-
-  constructor(cells: Cell[], rowIndex: number) {
-    this.cells = cells;
-    this.index = rowIndex;
-  }
-}
-
-export class Cell {
-  bottle: Bottle;
-  cellClass: string;
-  selected = false;
-  position: Position;
-
-  constructor(position: Position, private config: any) {
-    this.position = position;
-  }
-
-  public isEmpty(): boolean {
-    return this.bottle === undefined;
-  }
-
-  public withdraw(): Bottle {
-    let btl = this.bottle;
-    this.bottle = undefined;
-    this.cellClass = 'empty';
-    if (this.selected) {
-      this.cellClass += ' selected';
-    }
-    return btl;
-  }
-
-  public storeBottle(bottle: Bottle, highlight = false) {
-    if (!bottle) {
-      return;
-    }
-
-    this.bottle = bottle;
-    if (this.isEmpty()) {
-      this.cellClass = 'empty';
-    } else {
-      this.cellClass = this.config.colorsText2Code[ bottle.label ? bottle.label.toLowerCase() : '' ];
-    }
-    if (highlight) {
-      this.cellClass += ' highlighted';
-    }
-  }
-
-  /**
-   * cellule cliquée ==> remonter l'information jusqu'à la page pour qu'une éventuelle bouteille en transit soit
-   * affectée à la cellule cliquée
-   */
-  setSelected(selected: boolean) {
-    this.selected = selected;
-    if (this.selected) {
-      this.cellClass += ' selected';
-    } else {
-      this.cellClass = this.cellClass.replace('selected', '').trim();
-    }
-  }
-}
