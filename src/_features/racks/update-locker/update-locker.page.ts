@@ -5,8 +5,6 @@ import {Bottle} from '../../../model/bottle';
 import {NotificationService} from '../../../service/notification.service';
 import {LockerComponent} from '../../../components/locker/locker.component';
 import {BottlePersistenceService} from '../../../service/bottle-persistence.service';
-import {SimpleLockerComponent} from '../../../components/locker/simple-locker.component';
-import {FridgeLockerComponent} from '../../../components/locker/fridge-locker.component';
 import {FridgeLocker} from '../../../model/fridge-locker';
 import {SimpleLocker} from '../../../model/simple-locker';
 import {UpdateLockerAction} from '../../../app/state/bottles.actions';
@@ -52,13 +50,15 @@ export class UpdateLockerPage implements OnInit {
   ngOnInit(): void {
     // on récupère le locker édité et les crus qui ont au moins une bouteille dans ce locker
     this.lockerAndBottles$ = this.store.select(BottlesQuery.getEditLockerAndBottles).pipe(
-      tap((data: { locker: Locker, bottles: Bottle[ ] }) => this.setIsEditable()),
       map((data: { locker: Locker, bottles: Bottle[ ] }) => {
             this.locker = this.cloneLocker(data.locker);
             this.lockerContent = this.cloneContent(data.bottles);
             return {locker: this.locker, lockerContent: this.lockerContent};
           }
-      )
+      ),
+      tap((data: { locker: Locker, lockerContent: Bottle[ ] }) => {
+        this.setIsEditable();
+      })
     );
   }
 
@@ -112,7 +112,7 @@ export class UpdateLockerPage implements OnInit {
   }
 
   private setIsEditable() {
-    this.isEditable = (this.lockerComponent instanceof SimpleLockerComponent) ||
-      (this.lockerComponent instanceof FridgeLockerComponent && this.selectedRacks.length > 0);
+    this.isEditable = (this.locker instanceof SimpleLocker) ||
+      (this.locker instanceof FridgeLocker && this.selectedRacks.length > 0);
   }
 }

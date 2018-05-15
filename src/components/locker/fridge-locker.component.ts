@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnDestroy, Output, QueryList, ViewChildren} from '@angular/core';
 import {FridgeLocker} from '../../model/fridge-locker';
-import {Cell, LockerComponent} from './locker.component';
+import {LockerComponent} from './locker.component';
 import {NotificationService} from '../../service/notification.service';
 import {Dimension, Locker, LockerType} from '../../model/locker';
 import {SimpleLockerComponent} from './simple-locker.component';
@@ -8,6 +8,7 @@ import {SimpleLocker} from '../../model/simple-locker';
 import {NativeProvider} from '../../providers/native/native';
 import {Position} from '../../model/bottle';
 import {Gesture} from 'ionic-angular';
+import {Cell} from './cell';
 
 /**
  * Generated class for the CompositeLockerComponent component.

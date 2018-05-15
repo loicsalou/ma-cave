@@ -1,22 +1,12 @@
-import {
-  AfterViewChecked,
-  AfterViewInit,
-  Component,
-  OnDestroy,
-  OnInit,
-  QueryList,
-  ViewChild,
-  ViewChildren
-} from '@angular/core';
+import {AfterViewChecked, AfterViewInit, Component, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {Content, ModalController, NavController, NavParams} from 'ionic-angular';
 import {CellarPersistenceService} from '../../../service/cellar-persistence.service';
 import {Bottle, Position} from '../../../model/bottle';
 import {Dimension, Locker, LockerType} from '../../../model/locker';
-import {SimpleLockerComponent} from '../../../components/locker/simple-locker.component';
 import {NotificationService} from '../../../service/notification.service';
 import {SimpleLocker} from '../../../model/simple-locker';
 import {BottlePersistenceService} from '../../../service/bottle-persistence.service';
-import {Cell} from '../../../components/locker/locker.component';
+import {Cell} from '../../../components/locker/cell';
 import * as _ from 'lodash';
 import {NativeProvider} from '../../../providers/native/native';
 import {BottleDetailPage} from '../../browse/bottle-detail/page-bottle-detail';
@@ -37,10 +27,10 @@ import {
 import {Observable} from 'rxjs/Observable';
 import {logWarn} from '../../../utils';
 import {ScrollAnchorDirective} from '../../../components/scroll-anchor.directive';
-import {filter, shareReplay, tap} from 'rxjs/operators';
-import {Subscription} from 'rxjs/Subscription';
+import {filter, map, shareReplay, tap} from 'rxjs/operators';
 import {DimensionOfDirective} from '../../../components/dimension-of.directive';
 import {Subject} from 'rxjs/Subject';
+import {SimpleLockerComponent} from '../../../components/locker/simple-locker.component';
 
 function shortenBottle(btl: Bottle) {
   return {
@@ -60,7 +50,7 @@ function shortenBottle(btl: Bottle) {
              templateUrl: './cellar.page.html'
              // styleUrls:[ 'cellar.page.scss' ]
            })
-export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
+export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
 
   @ViewChild(Content) content: Content;
   lockerNames: string[];
@@ -73,17 +63,17 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked, OnDe
   pendingCell: Cell;
   dimensions$: { [ lockerId: string ]: Observable<Dimension> };
   dimensionsSubjects: { [ lockerId: string ]: Subject<Dimension> } = {};
+  lockers$: Observable<Locker[]>;
+  bottles$: Observable<Bottle[]>;
 
   @ViewChild('placedLockerComponent') private placedLockerComponent: SimpleLockerComponent;
   @ViewChildren(ScrollAnchorDirective) private lockerRows: QueryList<ScrollAnchorDirective>;
   @ViewChildren(DimensionOfDirective) private containers: QueryList<DimensionOfDirective<Locker>>;
 
   private doWithAction: string;
-  private selectedBottlesSubscription: Subscription;
   private somethingWasUpdated = false;
   private lastUpdated: Bottle;
-  private lockers$: Observable<Locker[]>;
-  private bottles$: Observable<Bottle[]>;
+  private mustInitScale = true;
 
   constructor(private navCtrl: NavController,
               private cellarService: CellarPersistenceService,
@@ -108,48 +98,67 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked, OnDe
   ngOnInit(): void {
     this.nativeProvider.feedBack();
     this.doWithAction = this.params.data[ 'action' ] ? this.params.data[ 'action' ].type : undefined;
+    // si une action est demandée on récupère la sélection et on crée le nécessaire
     if (this.doWithAction) {
-      this.selectedBottlesSubscription = this.store.select(BottlesQuery.getSelectedBottles).pipe(
-        tap((bottles: Bottle[]) => this.handleBottlesSelection(bottles, this.doWithAction)),
-      ).subscribe();
-      //this.selectedBottlesSubscription = this.selectedBottles$.subscribe();
+      this.selectedBottles$ = this.store.select(BottlesQuery.getSelectedBottles).pipe(
+        tap((bottles: Bottle[]) => {
+          this.handleBottlesSelection(bottles, this.doWithAction);
+        }),
+        map((bottles: Bottle[]) => {
+          let ix = 0;
+          return bottles.map((btl: Bottle) => {
+            let bottle = new Bottle(btl);
+            bottle.positions = [ ...btl.positions ];
+            let nbBottles = bottle.quantite_courante - bottle.positions.length;
+            for (let i = 0; i < nbBottles; i++) {
+              let pos = new Position(this.bottlesToPlaceLocker.id, ix++, 0);
+              bottle.positions.push(pos);
+              //this.placedLockerComponent.placeBottle(bottle, pos);
+            }
+            return bottle;
+          });
+        }),
+        tap((bottles: Bottle[]) => {
+          this.selectedBottles = bottles;
+        })
+      );
     }
+    // observable sur les lockers pour le template
     this.lockers$ = this.store.select(BottlesQuery.getLockers).pipe(
       filter((lockers: Locker[]) => lockers.length > 0),
       tap((lockers) => {
         this.lockerNames = lockers.map(locker => locker.name);
+        this.mustInitScale = true;
       }),
       shareReplay()
     );
+    // observable sur les bouteilles pour le template
     this.bottles$ = this.store.select(BottlesQuery.getBottles).pipe(
-      tap(bottles => this.traceSavedReceived(bottles)),
+      tap(bottles => {
+        this.traceSavedReceived(bottles);
+      }),
       shareReplay()
     );
   }
 
   ngAfterViewInit() {
     if (this.doWithAction === BottlesActionTypes.PlaceBottleSelectionActionType) {
-      this.showBottlesToPlace();
+      //this.showBottlesToPlace();
     }
   }
 
   ngAfterViewChecked() {
-    if (this.containers && this.containers.length > 0) {
+    if (this.mustInitScale && this.containers && this.containers.length > 0) {
       this.containers.forEach(
         container => {
           let lockerId = container.dimensionOf.id;
           let subject = this.dimensionsSubjects[ lockerId ];
           if (subject) {
             subject.next(container.getContainerSize());
+            this.mustInitScale = false;
           }
         }
       );
-    }
-  }
-
-  ngOnDestroy() {
-    if (this.selectedBottlesSubscription) {
-      this.selectedBottlesSubscription.unsubscribe();
     }
   }
 
@@ -182,6 +191,7 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked, OnDe
     //let zoomedBottles = this.getBottlesInRowOf(this._pendingCell);
     //this.navCtrl.push(BottleDetailPage, {bottleEvent: {bottles: zoomedBottles, bottle: bottle}});
     this.navCtrl.push(BottleDetailPage, {bottleEvent: {bottles: [ bottle ], bottle: bottle}});
+    this.somethingWasUpdated = true;
   }
 
   withdraw(pendingCell: Cell) {
@@ -198,6 +208,7 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked, OnDe
   createLocker() {
     let editorModal = this.modalCtrl.create(CreateLockerPage, {}, {showBackdrop: false});
     editorModal.present();
+    this.somethingWasUpdated = true;
   }
 
   updateLocker(locker) {
@@ -277,9 +288,9 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked, OnDe
   private traceSavedReceived(bottles: Bottle[]) {
     if (this.lastUpdated) {
       let lastupdatedReceived = bottles.filter((btl: Bottle) => btl.id === this.lastUpdated.id);
-      console.info('saved:' + JSON.stringify(shortenBottle(this.lastUpdated)));
-      console.info('retrieved:' + JSON.stringify(shortenBottle(lastupdatedReceived[ 0 ])));
-      console.info('===============================================');
+      //console.info('saved:' + JSON.stringify(shortenBottle(this.lastUpdated)));
+      //console.info('retrieved:' + JSON.stringify(shortenBottle(lastupdatedReceived[ 0 ])));
+      //console.info('===============================================');
     }
   }
 
@@ -321,21 +332,21 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked, OnDe
   private handleBottlesSelection(bottles: Bottle[], action: string) {
     switch (action) {
       case BottlesActionTypes.PlaceBottleSelectionActionType: {
-        this.selectedBottles = bottles;
         if (!this.bottlesToPlaceLocker) {
           //première réception: créer le locker de placement, attendre que le composant correspondant soit créé
           let nbToBePlaced = bottles.reduce((total, btl) => {
             let ret = total + +btl.quantite_courante - btl.positions.length;
             return ret;
           }, 0);
-          this.bottlesToPlaceLocker = new SimpleLocker(undefined, 'placedLocker', LockerType.simple, {
+          this.bottlesToPlaceLocker = new SimpleLocker('placedLocker', 'placedLocker', LockerType.simple, {
             x: nbToBePlaced,
             y: 1
           }, false);
-        } else {
-          //toutes les autres réceptions: rafraichir le composant
-          this.showBottlesToPlace();
         }
+        //else {
+        //  //toutes les autres réceptions: rafraichir le composant
+        //  this.fillPlacedLocker();
+        //}
         break;
       }
 
@@ -349,13 +360,18 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked, OnDe
     }
   }
 
-  private showBottlesToPlace() {
-    this.selectedBottles.forEach((bottle: Bottle) => {
-      let ix = 0;
-      let nbBottles = bottle.quantite_courante - bottle.positions.length;
-      for (let i = 0; i < nbBottles; i++) {
-        this.placedLockerComponent.placeBottle(bottle, new Position(undefined, ix++, 0));
-      }
-    });
-  }
+  // creéer des positions dans le placedLocker pour qu'elles y apparaissent
+  //private fillPlacedLocker() {
+  //  this.selectedBottles.forEach((btl: Bottle) => {
+  //    let bottle=new Bottle(btl);
+  //    bottle.positions=[...btl.positions];
+  //    let ix = 0;
+  //    let nbBottles = bottle.quantite_courante - bottle.positions.length;
+  //    for (let i = 0; i < nbBottles; i++) {
+  //      let pos=new Position(this.bottlesToPlaceLocker.id, ix++, 0);
+  //      bottle.positions.push(pos);
+  //      this.placedLockerComponent.placeBottle(bottle, pos);
+  //    }
+  //  });
+  //}
 }

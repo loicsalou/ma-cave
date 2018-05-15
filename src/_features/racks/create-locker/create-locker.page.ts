@@ -92,6 +92,10 @@ export class CreateLockerPage {
     this.navController.pop();
   }
 
+  cancelCreation() {
+    this.navController.pop();
+  }
+
   changeFridgeDimension() {
     while (this.fridgeDimension.y > this.fridgeLockersDimensions.length) {
       this.fridgeLockersDimensions.push(CreateLockerPage.getDefaultFridgeDimensions());

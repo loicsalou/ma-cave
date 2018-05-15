@@ -62,6 +62,11 @@ ion-sliding > ion-item {
   }
 }
 
+.attention {
+  height: 50px;
+  width:50px;
+}
+
 .app-root ion-list > *:nth-child(2n+1) ion-item-sliding ion-item {
   background-color: white;
 }
