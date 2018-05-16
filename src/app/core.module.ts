@@ -41,11 +41,13 @@ export const fireConfig = {
   projectId: 'ma-cave-15a66',
   storageBucket: 'ma-cave-15a66.appspot.com',
   messagingSenderId: '58435015061'
-}
+};
+
+export const angularFireModule = AngularFireModule.initializeApp(fireConfig);
 
 @NgModule({
             imports: [
-              AngularFireModule.initializeApp(fireConfig),
+              angularFireModule,
               AngularFireAuthModule,
               AngularFireDatabaseModule
             ],
@@ -67,7 +69,6 @@ export const fireConfig = {
               FirebaseLockersService,
               FirebaseImagesService,
               FirebaseBottlesService,
-              //{provide: FirebaseBottlesService, useClass:MockBottlesService},
               FirebaseWithdrawalsService,
               GoogleLoginService,
               LockerFactory,
