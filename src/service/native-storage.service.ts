@@ -1,9 +1,10 @@
+
+import {of as observableOf, Observable, Subject} from 'rxjs';
 /**
  * Created by loicsalou on 28.02.17.
  */
 import {Injectable} from '@angular/core';
 import {Bottle, BottleMetadata} from '../model/bottle';
-import {Observable} from 'rxjs';
 import {Image} from '../model/image';
 import {FileItem} from '../model/file-item';
 import {UploadMetadata} from './image-persistence.service';
@@ -12,7 +13,6 @@ import {NativeStorage} from '@ionic-native/native-storage';
 import {User} from '../model/user';
 import {Platform} from 'ionic-angular';
 import {BottleFactory} from '../model/bottle.factory';
-import {Subject} from 'rxjs/Subject';
 
 import * as schema from './firebase/firebase-schema';
 
@@ -106,7 +106,7 @@ export class NativeStorageService {
           }
         );
     } else {
-      this.bottlesObservable = Observable.of(<Bottle[]>[]);
+      this.bottlesObservable = observableOf(<Bottle[]>[]);
     }
 
     return this.bottlesObservable;

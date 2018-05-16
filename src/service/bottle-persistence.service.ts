@@ -3,18 +3,15 @@
  */
 import {Injectable, OnDestroy, OnInit} from '@angular/core';
 import {Bottle, Position} from '../model/bottle';
-import {Observable} from 'rxjs';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Observable, BehaviorSubject, Subscription, Subject} from 'rxjs';
 import {FilterSet} from '../components/distribution/filterset';
 import {AbstractPersistenceService} from './abstract-persistence.service';
 import {NotificationService} from './notification.service';
 import {FirebaseAdminService} from './firebase/firebase-admin.service';
 import {User} from '../model/user';
-import {Subscription} from 'rxjs/Subscription';
 import {Locker} from '../model/locker';
 import {TranslateService} from '@ngx-translate/core';
 import {BottleFactory} from '../model/bottle.factory';
-import {Subject} from 'rxjs/Subject';
 import {BottleNoting} from '../components/bottle-noting/bottle-noting.component';
 import {Withdrawal} from '../model/withdrawal';
 import {FirebaseWithdrawalsService} from './firebase/firebase-withdrawals.service';
@@ -128,10 +125,10 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
 
   deleteAccountData(): Observable<boolean> {
     let sub = new Subject<boolean>();
-    this.notificationService.ask('question', 'app.keep-or-delete-data').take(1).subscribe(
+    this.notificationService.ask('question', 'app.keep-or-delete-data').pipe(take(1)).subscribe(
       resp => {
         if (resp) {
-          this.dataConnection.deleteAccount().take(1).subscribe(
+          this.dataConnection.deleteAccount().pipe(take(1)).subscribe(
             result => sub.next(result)
           );
         }

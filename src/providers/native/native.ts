@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
-import 'rxjs/add/operator/map';
+
 import {AndroidPermissions} from '@ionic-native/android-permissions';
 import {NavController, Platform} from 'ionic-angular';
 import {SplashScreen} from '@ionic-native/splash-screen';
 import {DeviceFeedback} from '@ionic-native/device-feedback';
 import {Network} from '@ionic-native/network';
-import {Subscription} from 'rxjs/Subscription';
+import {Subscription} from 'rxjs';
 import {NotificationService} from '../../service/notification.service';
 
 /*

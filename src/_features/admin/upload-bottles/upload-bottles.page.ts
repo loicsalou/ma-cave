@@ -1,3 +1,4 @@
+
 import {Component} from '@angular/core';
 import {Loading, LoadingController, NavController, Platform} from 'ionic-angular';
 import {FileChooser} from '@ionic-native/file-chooser';
@@ -10,8 +11,9 @@ import {Store} from '@ngrx/store';
 import {BottlesQuery} from '../../../app/state/bottles.state';
 import {DeleteAccountAction, LogoutAction} from '../../../app/state/shared.actions';
 import {SharedQuery, SharedState} from '../../../app/state/shared.state';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {User} from '../../../model/user';
+import {take} from 'rxjs/operators';
 
 /**
  * Generated class for the UploadBottles page.
@@ -46,7 +48,7 @@ export class UploadBottlesPage {
   }
 
   deleteAccount() {
-    this.notificationService.ask('question', 'app.confirm').take(1).subscribe(
+    this.notificationService.ask('question', 'app.confirm').pipe(take(1)).subscribe(
       result => {
         if (result) {
           this.store.dispatch(new DeleteAccountAction());
@@ -96,7 +98,7 @@ export class UploadBottlesPage {
 
   public emptyLockers() {
     //this.bottleService.allBottlesObservable.take(1).subscribe(
-    this.store.select(BottlesQuery.getBottles).take(1).subscribe(
+    this.store.select(BottlesQuery.getBottles).pipe(take(1)).subscribe(
       bottles => {
         let updatedBottles = bottles.map(
           bottle => {
@@ -155,7 +157,7 @@ export class UploadBottlesPage {
                                                            });
                    loading.present().then(
                      () => {
-                       this.bottleService.save(parsedBottles).take(1).subscribe(
+                       this.bottleService.save(parsedBottles).pipe(take(1)).subscribe(
                          () => {
                            this.dismissLoading(loading);
                            let endTimestamp = new Date().getTime();

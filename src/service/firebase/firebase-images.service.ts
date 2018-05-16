@@ -7,13 +7,12 @@ import * as schema from './firebase-schema';
 
 import {Injectable} from '@angular/core';
 import {Bottle, BottleMetadata} from '../../model/bottle';
-import {Observable} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {AngularFireDatabase} from 'angularfire2/database';
 import {Image} from '../../model/image';
 import {FileItem} from '../../model/file-item';
 import {UploadMetadata} from '../image-persistence.service';
 import {NotificationService} from '../notification.service';
-import {Subject} from 'rxjs/Subject';
 import {User} from '../../model/user';
 import {Reference as FbStorageTypesReference} from '@firebase/storage-types';
 import Reference = firebase.database.Reference;
@@ -55,7 +54,7 @@ export class FirebaseImagesService {
     this.ERROR_ROOT = schema.USERS_FOLDER + '/' + userRoot + '/' + schema.ERROR_CONTENT_FOLDER;
 
     this.errorRootRef = this.angularFirebase.database.ref(this.ERROR_ROOT);
-    this.imageStorageRef = this.angularFirebase.app.storage().ref(this.IMAGES_ROOT);
+    this.angularFirebase.database.app.storage().ref(this.IMAGES_ROOT);
 
     this.initLogging();
   }

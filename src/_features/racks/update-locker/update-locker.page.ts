@@ -12,7 +12,7 @@ import {ApplicationState} from '../../../app/state/app.state';
 import {Store} from '@ngrx/store';
 import {BottlesQuery} from '../../../app/state/bottles.state';
 import {map, tap} from 'rxjs/operators';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 
 /**
  * Generated class for the LockerEditorComponent component.

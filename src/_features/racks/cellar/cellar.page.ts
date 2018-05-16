@@ -24,12 +24,10 @@ import {
   UpdateBottlesAction,
   WithdrawBottleAction
 } from '../../../app/state/bottles.actions';
-import {Observable} from 'rxjs/Observable';
-import {logWarn} from '../../../utils';
+import {Observable, Subject} from 'rxjs';
 import {ScrollAnchorDirective} from '../../../components/scroll-anchor.directive';
 import {filter, map, shareReplay, tap} from 'rxjs/operators';
 import {DimensionOfDirective} from '../../../components/dimension-of.directive';
-import {Subject} from 'rxjs/Subject';
 import {SimpleLockerComponent} from '../../../components/locker/simple-locker.component';
 
 function shortenBottle(btl: Bottle) {
@@ -99,10 +97,17 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
     this.nativeProvider.feedBack();
     this.doWithAction = this.params.data[ 'action' ] ? this.params.data[ 'action' ].type : undefined;
     // si une action est demandée on récupère la sélection et on crée le nécessaire
-    if (this.doWithAction) {
+    if (this.doWithAction == BottlesActionTypes.HighlightBottleSelectionActionType) {
       this.selectedBottles$ = this.store.select(BottlesQuery.getSelectedBottles).pipe(
         tap((bottles: Bottle[]) => {
-          this.handleBottlesSelection(bottles, this.doWithAction);
+          this.selectedBottles = bottles;
+        })
+      );
+    }
+    if (this.doWithAction == BottlesActionTypes.PlaceBottleSelectionActionType) {
+      this.selectedBottles$ = this.store.select(BottlesQuery.getSelectedBottles).pipe(
+        tap((bottles: Bottle[]) => {
+            this.ensurePlaceLockerInitialized(bottles);
         }),
         map((bottles: Bottle[]) => {
           let ix = 0;
@@ -113,13 +118,9 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
             for (let i = 0; i < nbBottles; i++) {
               let pos = new Position(this.bottlesToPlaceLocker.id, ix++, 0);
               bottle.positions.push(pos);
-              //this.placedLockerComponent.placeBottle(bottle, pos);
             }
             return bottle;
           });
-        }),
-        tap((bottles: Bottle[]) => {
-          this.selectedBottles = bottles;
         })
       );
     }
@@ -329,34 +330,17 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
    * Si le placement est demandé et que le locker de placement n'existe pas il faut le créer
    * @param {Bottle[]} bottles
    */
-  private handleBottlesSelection(bottles: Bottle[], action: string) {
-    switch (action) {
-      case BottlesActionTypes.PlaceBottleSelectionActionType: {
-        if (!this.bottlesToPlaceLocker) {
-          //première réception: créer le locker de placement, attendre que le composant correspondant soit créé
-          let nbToBePlaced = bottles.reduce((total, btl) => {
-            let ret = total + +btl.quantite_courante - btl.positions.length;
-            return ret;
-          }, 0);
-          this.bottlesToPlaceLocker = new SimpleLocker('placedLocker', 'placedLocker', LockerType.simple, {
-            x: nbToBePlaced,
-            y: 1
-          }, false);
-        }
-        //else {
-        //  //toutes les autres réceptions: rafraichir le composant
-        //  this.fillPlacedLocker();
-        //}
-        break;
-      }
-
-      case BottlesActionTypes.HighlightBottleSelectionActionType: {
-        this.selectedBottles = bottles;
-        break;
-      }
-
-      default:
-        logWarn('Action non supportée ' + action);
+  private ensurePlaceLockerInitialized(bottles: Bottle[]) {
+    if (!this.bottlesToPlaceLocker) {
+      //première réception: créer le locker de placement, attendre que le composant correspondant soit créé
+      let nbToBePlaced = bottles.reduce((total, btl) => {
+        let ret = total + +btl.quantite_courante - btl.positions.length;
+        return ret;
+      }, 0);
+      this.bottlesToPlaceLocker = new SimpleLocker('placedLocker', 'placedLocker', LockerType.simple, {
+        x: nbToBePlaced,
+        y: 1
+      }, false);
     }
   }
 

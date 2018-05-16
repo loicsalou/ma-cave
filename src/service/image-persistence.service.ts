@@ -5,15 +5,13 @@ import {Injectable} from '@angular/core';
 import 'firebase/storage';
 import {Bottle, BottleMetadata} from '../model/bottle';
 import {AbstractPersistenceService} from './abstract-persistence.service';
-import {Observable} from 'rxjs/Observable';
+import {Observable, Subject, of} from 'rxjs';
 import {Image} from '../model/image';
 import {NotificationService} from './notification.service';
-import {Subject} from 'rxjs/Subject';
 import {TranslateService} from '@ngx-translate/core';
 import {FirebaseImagesService} from './firebase/firebase-images.service';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../app/state/app.state';
-import {of} from 'rxjs/observable/of';
 
 /**
  * Services related to the bottles in the cellar.

@@ -1,7 +1,6 @@
-import {Observable} from 'rxjs/Observable';
+import {Observable, Subject} from 'rxjs';
 import {User} from '../../model/user';
 import {NotificationService} from '../notification.service';
-import {Subject} from 'rxjs/Subject';
 import * as firebase from 'firebase/app';
 
 /**

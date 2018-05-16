@@ -1,3 +1,5 @@
+
+import {map} from 'rxjs/operators';
 /**
  * Created by loicsalou on 28.02.17.
  */
@@ -63,12 +65,12 @@ export class FirebaseLockersService {
   // ===================================================== LOCKERS
   public fetchAllLockers(): Observable<Locker[]> {
     return this.angularFirebase
-      .list<Locker>(this.CELLAR_ROOT).snapshotChanges()
-      .map(
+      .list<Locker>(this.CELLAR_ROOT).snapshotChanges().pipe(
+      map(
         (changes: SnapshotAction[]) => {
           return changes.map(c => ({id: c.payload.key, ...c.payload.val()}));
         }
-      );
+      ));
   }
 
   public createLocker(locker: Locker): void {

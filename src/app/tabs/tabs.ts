@@ -8,7 +8,7 @@ import {ApplicationState} from '../state/app.state';
 import {Store} from '@ngrx/store';
 import {SharedQuery, SharedState} from '../state/shared.state';
 import {map} from 'rxjs/operators';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 
 @Component({
              templateUrl: 'tabs.html',

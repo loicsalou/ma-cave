@@ -1,10 +1,9 @@
 import {Injectable} from '@angular/core';
-import 'rxjs/add/operator/map';
+
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
-import {Observable} from 'rxjs/Observable';
+import {Observable, Subject} from 'rxjs';
 import {Bottle} from '../../model/bottle';
 import * as _ from 'lodash';
-import {Subject} from 'rxjs/Subject';
 
 /*
   Generated class for the ImportProvider provider.

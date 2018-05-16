@@ -3,7 +3,7 @@ import {Camera} from '@ionic-native/camera';
 import {BottleMetadata} from '../../model/bottle';
 import {ImagePersistenceService, UploadMetadata} from '../../service/image-persistence.service';
 import {NotificationService} from '../../service/notification.service';
-import {Subscription} from 'rxjs/Subscription';
+import {Subscription} from 'rxjs';
 
 /**
  * Generated class for the ImageAttacherComponent component.

@@ -5,9 +5,8 @@ import * as _ from 'lodash';
 import {FilterSet} from '../distribution/filterset';
 import {ChartEvent} from '../chart/chart.component';
 import {TranslateService} from '@ngx-translate/core';
-import {Observable} from 'rxjs/Observable';
 import {switchMap, tap} from 'rxjs/operators';
-import {of} from 'rxjs/observable/of';
+import {Observable, of} from 'rxjs';
 
 /**
  * Generated class for the StatisticsComponent component.

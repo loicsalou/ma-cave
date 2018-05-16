@@ -1,3 +1,5 @@
+
+import {map} from 'rxjs/operators';
 import {Injectable} from '@angular/core';
 import {Bottle, Position} from '../../model/bottle';
 import {Observable} from 'rxjs';
@@ -71,15 +73,15 @@ export class FirebaseWithdrawalsService {
 
   public fetchAllWithdrawals(): Observable<Withdrawal[]> {
     return this.angularFirebase
-      .list<Withdrawal>(this.WITHDRAW_ROOT).snapshotChanges()
-      .map((changes: SnapshotAction[]) =>
+      .list<Withdrawal>(this.WITHDRAW_ROOT).snapshotChanges().pipe(
+      map((changes: SnapshotAction[]) =>
              changes.map(
                // ATTENTION l'ordre de ...c.payload.val() et id est important. Dans l'autre sens l'id est écrasé !
                c => this.withdrawalFactory.create({
                                                     ...c.payload.val(), id: c.payload.key
                                                   })
              )
-      );
+      ));
   }
 
   public createWithdrawal(withdrawal: Withdrawal): void {
