@@ -43,11 +43,9 @@ export const fireConfig = {
   messagingSenderId: '58435015061'
 };
 
-export const angularFireModule = AngularFireModule.initializeApp(fireConfig);
-
 @NgModule({
             imports: [
-              angularFireModule,
+              AngularFireModule.initializeApp(fireConfig),
               AngularFireAuthModule,
               AngularFireDatabaseModule
             ],

@@ -74,7 +74,7 @@ export class FirebaseWithdrawalsService {
   public fetchAllWithdrawals(): Observable<Withdrawal[]> {
     return this.angularFirebase
       .list<Withdrawal>(this.WITHDRAW_ROOT).snapshotChanges().pipe(
-      map((changes: SnapshotAction[]) =>
+      map((changes: SnapshotAction<Withdrawal>[]) =>
              changes.map(
                // ATTENTION l'ordre de ...c.payload.val() et id est important. Dans l'autre sens l'id est écrasé !
                c => this.withdrawalFactory.create({

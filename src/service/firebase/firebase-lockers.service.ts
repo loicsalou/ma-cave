@@ -67,7 +67,7 @@ export class FirebaseLockersService {
     return this.angularFirebase
       .list<Locker>(this.CELLAR_ROOT).snapshotChanges().pipe(
       map(
-        (changes: SnapshotAction[]) => {
+        (changes: SnapshotAction<any>[]) => {
           return changes.map(c => ({id: c.payload.key, ...c.payload.val()}));
         }
       ));

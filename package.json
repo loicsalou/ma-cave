@@ -52,7 +52,7 @@
     "@ngx-translate/core": "9.0.1",
     "@ngx-translate/http-loader": "2.0.1",
     "angular2-uuid": "1.1.1",
-    "angularfire2": "5.0.0-rc.8.0",
+    "angularfire2": "5.0.0-rc.9",
     "bootstrap": "4.1.1",
     "chart.js": "2.7.2",
     "com.megster.cordova.FileChooser": "https://github.com/loicsalou/cordova-filechooser.git",
