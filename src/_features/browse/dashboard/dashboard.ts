@@ -81,6 +81,11 @@ export class DashboardPage implements OnInit, OnDestroy {
     );
 
     this.withdrawals$ = this.store.select(WithdrawalsQuery.getWithdrawals).pipe(
+      map((withdrawals: Withdrawal[]) => withdrawals.sort(
+        (a: Withdrawal, b: Withdrawal) => {
+          return a.withdrawal_date > b.withdrawal_date ? -1 : 1;
+        })
+      ),
       tap((withdrawals: Withdrawal[]) => {
         let height = 30 + Math.min(3, withdrawals.length) * 92;
         this._withdrawalCardStyle = {'min-height': '120px', 'height': height + 'px'};

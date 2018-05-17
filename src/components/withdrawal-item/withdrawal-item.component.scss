@@ -14,12 +14,20 @@
   }
 
   ion-avatar {
+    margin-left: 5px;
     position: relative;
+
     img {
       position: absolute;
       top: 0;
-      left: 0;
+      left: 5px;
       border-radius: 0;
     }
+  }
+
+  ion-col {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
   }
 }

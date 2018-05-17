@@ -1,13 +1,14 @@
 <ion-item-sliding (click)="triggerDetail(withdrawal)" class="withdrawal-item" #item>
   <ion-item>
     <ion-row>
-      <ion-col col-2 style="padding-right:10px;">
-        <ion-avatar item-start class="text-align">
+      <ion-col col-2>
+        <ion-avatar item-start>
           <img src="{{ withdrawal | bottleIcon }}" class="overridable logo">
           <img src="assets/icon/starred.png" *ngIf="isBottleFavorite(withdrawal)"
                    class="overridable logo">
           <img src="assets/icon/alert-status.png" *ngIf="withdrawal.overdue" class="overridable logo">
         </ion-avatar>
+        <span>{{fromNow}}</span>
       </ion-col>
       <ion-col col-10 text-wrap>
         <h4 class="label">{{ withdrawal.nomCru }}</h4>
