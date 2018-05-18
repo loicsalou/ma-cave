@@ -107,7 +107,7 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
     if (this.doWithAction == BottlesActionTypes.PlaceBottleSelectionActionType) {
       this.selectedBottles$ = this.store.select(BottlesQuery.getSelectedBottles).pipe(
         tap((bottles: Bottle[]) => {
-            this.ensurePlaceLockerInitialized(bottles);
+          this.ensurePlaceLockerInitialized(bottles);
         }),
         map((bottles: Bottle[]) => {
           let ix = 0;
@@ -198,6 +198,7 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
   withdraw(pendingCell: Cell) {
     let bottle = this.pendingCell.bottle;
     if (bottle) {
+      this.lastUpdated = bottle;
       this.store.dispatch(new WithdrawBottleAction(bottle, pendingCell.position));
       this.somethingWasUpdated = true;
       this.pendingCell.setSelected(false);
@@ -289,9 +290,9 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
   private traceSavedReceived(bottles: Bottle[]) {
     if (this.lastUpdated) {
       let lastupdatedReceived = bottles.filter((btl: Bottle) => btl.id === this.lastUpdated.id);
-      //console.info('saved:' + JSON.stringify(shortenBottle(this.lastUpdated)));
-      //console.info('retrieved:' + JSON.stringify(shortenBottle(lastupdatedReceived[ 0 ])));
-      //console.info('===============================================');
+      console.info('saved:' + JSON.stringify(shortenBottle(this.lastUpdated)));
+      console.info('retrieved:' + JSON.stringify(shortenBottle(lastupdatedReceived[ 0 ])));
+      console.info('===============================================');
     }
   }
 

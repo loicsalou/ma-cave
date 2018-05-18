@@ -115,7 +115,7 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
    * @param {Bottle} btl
    * @returns {Bottle}
    */
-  public createBottle(btl: Bottle): Bottle {
+  public saveBottle(btl: Bottle): Bottle {
     return this.bottleFactory.create(btl);
   }
 
@@ -137,8 +137,19 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
     return sub.asObservable();
   }
 
-  withdraw(bottle: Bottle, position: Position) {
-    this.withdrawalService.withdraw(bottle, position);
+  createWithdrawal(bottle: Bottle): Withdrawal {
+    return new Withdrawal(bottle);
+  }
+
+  removeBottleFrom(bottle: Bottle, position: Position): Bottle {
+    let updatedBottle=new Bottle(bottle);
+    updatedBottle.positions=bottle.positions.filter(pos => !pos.equals(position));
+    updatedBottle.quantite_courante--;
+    return updatedBottle;
+  }
+
+  saveWithdrawal(withdrawal: Withdrawal): Observable<Withdrawal> {
+    return this.withdrawalService.saveWithdrawal(withdrawal);
   }
 
   recordBottleNotation(bottle: Bottle, notes: BottleNoting) {

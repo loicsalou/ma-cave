@@ -58,7 +58,7 @@ export class ImportProvider {
           (row, ix) => {
             try {
               let btl: Bottle = <Bottle>buildObjectFromCsv(row, keys);
-              btl = this.bottlesService.createBottle(btl);
+              btl = this.bottlesService.saveBottle(btl);
               this.bottleParsed.next(btl);
               return btl;
             } catch (error) {
@@ -86,7 +86,7 @@ export class ImportProvider {
           (row, ix) => {
             try {
               let btl: Bottle = <Bottle>buildObjectFromXLS(row, keys);
-              btl = this.bottlesService.createBottle(btl);
+              btl = this.bottlesService.saveBottle(btl);
               this.bottleParsed.next(btl);
               return btl;
             } catch (error) {

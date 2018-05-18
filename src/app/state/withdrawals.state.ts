@@ -3,6 +3,7 @@ import {ApplicationState} from './app.state';
 import {Withdrawal} from '../../model/withdrawal';
 import {WithdrawalsActions, WithdrawalsActionTypes} from './withdrawals.actions';
 import {createSelector} from '@ngrx/store';
+import {Bottle} from '../../model/bottle';
 
 export interface WithdrawalsState {
   withdrawals: { [ key: string ]: Withdrawal };
@@ -46,16 +47,16 @@ export function withdrawalsStateReducer(state: WithdrawalsState = INITIAL_STATE,
     case WithdrawalsActionTypes.LoadWithdrawalsSuccessActionType: {
       return {
         ...state,
-        withdrawals: toEntities(action.withdrawals),
+        withdrawals: toEntitiesById(action.withdrawals),
         loading: false,
         loaded: true
       };
     }
 
-    // TODO mettre à jour le state une fois que le retrait est confirmé
     case WithdrawalsActionTypes.CreateOrUpdateWithdrawalSuccessActionType: {
       return {
-        ...state
+        ...state,
+        withdrawals: updateWithdrawals(state.withdrawals, action.withdrawal)
       };
     }
 
@@ -64,7 +65,7 @@ export function withdrawalsStateReducer(state: WithdrawalsState = INITIAL_STATE,
   }
 }
 
-function toEntities(withdrawals: Withdrawal[]): { [ id: string ]: Withdrawal } {
+function toEntitiesById(withdrawals: Withdrawal[]): { [ id: string ]: Withdrawal } {
   return withdrawals.reduce(
     (entities: { [ id: string ]: Withdrawal }, withdrawal: Withdrawal) => {
       return {
@@ -74,4 +75,14 @@ function toEntities(withdrawals: Withdrawal[]): { [ id: string ]: Withdrawal } {
     },
     {}
   );
+}
+
+/**
+ * Mise à jour de la liste des bouteilles suite à l'update d'une ou plusieurs bouteilles.
+ * @param {Bottle[]} bottles la liste actuelle de bouteilles
+ * @param {Bottle[]} updatedBottles la liste des bouteilles mises à jour
+ * @returns {Bottle[]} la nouvelle liste
+ */
+function updateWithdrawals(withdrawals: { [ id: string ]: Withdrawal }, updatedWithdrawal: Withdrawal): { [ id: string ]: Withdrawal } {
+  return {...withdrawals, ...toEntitiesById([ updatedWithdrawal ])};
 }
