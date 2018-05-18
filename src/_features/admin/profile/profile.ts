@@ -7,8 +7,7 @@ import {Store} from '@ngrx/store';
 import {ApplicationState} from '../../../app/state/app.state';
 import {LogoutAction, UpdateThemeAction} from '../../../app/state/shared.actions';
 import {SharedQuery} from '../../../app/state/shared.state';
-import {Subscription} from 'rxjs/Subscription';
-import {Observable} from 'rxjs/Observable';
+import {Subscription, Observable} from 'rxjs';
 import {filter, tap} from 'rxjs/operators';
 
 @Component({

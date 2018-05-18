@@ -8,7 +8,7 @@ import * as _ from 'lodash';
 import {NgForm} from '@angular/forms';
 import {AocInfo} from '../../../config/aoc-info';
 import {map, tap} from 'rxjs/operators';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {Image} from '../../../model/image';
 import {logInfo} from '../../../utils';
 

@@ -16,9 +16,8 @@ import {ApplicationState} from '../../../app/state/app.state';
 import {Store} from '@ngrx/store';
 import {BottlesQuery} from '../../../app/state/bottles.state';
 import {RemoveFilterAction, ResetFilterAction, UpdateFilterAction} from '../../../app/state/bottles.actions';
-import {Observable} from 'rxjs/Observable';
+import {Observable, of} from 'rxjs';
 import {catchError, map, switchMap, tap} from 'rxjs/operators';
-import {of} from 'rxjs/observable/of';
 import {WithdrawalsQuery} from '../../../app/state/withdrawals.state';
 import {LoadWithdrawalsAction} from '../../../app/state/withdrawals.actions';
 import {SharedQuery, SharedState} from '../../../app/state/shared.state';
@@ -82,6 +81,11 @@ export class DashboardPage implements OnInit, OnDestroy {
     );
 
     this.withdrawals$ = this.store.select(WithdrawalsQuery.getWithdrawals).pipe(
+      map((withdrawals: Withdrawal[]) => withdrawals.sort(
+        (a: Withdrawal, b: Withdrawal) => {
+          return a.withdrawal_date > b.withdrawal_date ? -1 : 1;
+        })
+      ),
       tap((withdrawals: Withdrawal[]) => {
         let height = 30 + Math.min(3, withdrawals.length) * 92;
         this._withdrawalCardStyle = {'min-height': '120px', 'height': height + 'px'};

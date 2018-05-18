@@ -1,12 +1,14 @@
-import {Observable} from 'rxjs/Observable';
+
+import {Subscription} from 'rxjs';
+
 import {NotificationService} from './notification.service';
 import {User} from '../model/user';
-import {Subscription} from 'rxjs/Subscription';
 import {TranslateService} from '@ngx-translate/core';
 import {OnDestroy} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../app/state/app.state';
 import {SharedQuery} from '../app/state/shared.state';
+import {Observable} from 'rxjs/index';
 
 /**
  * Created by loicsalou on 16.06.17.
@@ -32,7 +34,7 @@ export abstract class AbstractPersistenceService implements OnDestroy {
 
   protected handleError(message: string, error: any) {
     this.notificationService.error(message, error);
-    return Observable.throw(error.json().error || 'Firebase error');
+    return Observable.throwError(error.json().error || 'Firebase error');
   }
 
   protected subscribeLogin() {

@@ -2,12 +2,11 @@
  * Created by loicsalou on 28.02.17.
  */
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {AngularFireDatabase} from 'angularfire2/database';
 import * as firebase from 'firebase/app';
 import * as moment from 'moment';
 import {NotificationService} from '../notification.service';
-import {Subject} from 'rxjs/Subject';
 import {User} from '../../model/user';
 
 import * as schema from './firebase-schema';

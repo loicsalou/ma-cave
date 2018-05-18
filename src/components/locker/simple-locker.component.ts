@@ -19,9 +19,8 @@ import {Gesture} from 'ionic-angular';
 import {NativeProvider} from '../../providers/native/native';
 import {RackDirective} from '../rack.directive';
 import {DimensionOfDirective} from '../dimension-of.directive';
-import {Observable} from 'rxjs/Observable';
+import {Observable, Subscription} from 'rxjs';
 import {filter} from 'rxjs/operators';
-import {Subscription} from 'rxjs/Subscription';
 import {Row} from './row';
 import {Cell} from './cell';
 

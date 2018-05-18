@@ -1,11 +1,9 @@
-import {Observable} from 'rxjs/Observable';
-import {Subject} from 'rxjs/Subject';
+import {Observable, Subject, Subscription} from 'rxjs';
 import {User} from '../../model/user';
 import {AnonymousLoginService} from './anonymous-login.service';
 import {EmailLoginService} from './email-login.service';
 import {FacebookLoginService} from './facebook-login.service';
 import {NotificationService} from '../notification.service';
-import {Subscription} from 'rxjs/Subscription';
 import {AbstractLoginService} from './abstract-login.service';
 import {GoogleLoginService} from './google-login.service';
 import {Store} from '@ngrx/store';

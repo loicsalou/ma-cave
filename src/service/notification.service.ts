@@ -1,7 +1,6 @@
 import {AlertController, Loading, LoadingController, ToastController} from 'ionic-angular';
 import {TranslateService} from '@ngx-translate/core';
-import {Observable} from 'rxjs/Observable';
-import {Subject} from 'rxjs/Subject';
+import {Observable, Subject} from 'rxjs';
 import {logDebug, logInfo, logWarn} from '../utils';
 
 /**

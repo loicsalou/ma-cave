@@ -7,7 +7,7 @@ import * as schema from './firebase-schema';
 
 import {Injectable} from '@angular/core';
 import {Bottle} from '../../model/bottle';
-import {Observable} from 'rxjs';
+import {Observable, from as fromPromise, throwError as _throw, of} from 'rxjs';
 import {AngularFireDatabase, SnapshotAction} from 'angularfire2/database';
 import {Image} from '../../model/image';
 import {NotificationService} from '../notification.service';
@@ -15,9 +15,6 @@ import {BottleFactory} from '../../model/bottle.factory';
 import {User} from '../../model/user';
 import {Locker} from '../../model/locker';
 import {sanitizeBeforeSave} from '../../utils/index';
-import {fromPromise} from 'rxjs/observable/fromPromise';
-import {_throw} from 'rxjs/observable/throw';
-import {of} from 'rxjs/observable/of';
 import {map, take, tap} from 'rxjs/operators';
 import Reference = firebase.database.Reference;
 
@@ -180,7 +177,7 @@ export class FirebaseBottlesService {
     return this.angularFirebase.list<Bottle>(this.BOTTLES_ROOT).snapshotChanges().pipe(
       take(1),
       map(
-        (snaps: SnapshotAction[]) => snaps.map(snap => this.bottleFactory.create({id: snap.payload.key, ...snap.payload.val()}))
+        (snaps: SnapshotAction<Bottle>[]) => snaps.map(snap => this.bottleFactory.create({id: snap.payload.key, ...snap.payload.val()}))
       ),
       tap(() => {
             if (popup) {

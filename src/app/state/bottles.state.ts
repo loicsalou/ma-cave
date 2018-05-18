@@ -169,16 +169,6 @@ export function bottlesStateReducer(state: BottlesState = INITIAL_STATE, action:
       return state;
     }
 
-    case BottlesActionTypes.WithdrawBottleSuccessActionType: {
-      return {
-        ...state,
-        allBottles: {
-          ...state.allBottles,
-          entities: updateBottles(state.allBottles.entities, [ action.bottle ])
-        }
-      };
-    }
-
     case BottlesActionTypes.UpdateBottlesSuccessActionType: {
       return {
         ...state,

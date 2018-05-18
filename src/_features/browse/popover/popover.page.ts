@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {ViewController} from 'ionic-angular';
 import {SearchCriteria} from '../../../model/search-criteria';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {take} from 'rxjs/operators';
 
 @Component({

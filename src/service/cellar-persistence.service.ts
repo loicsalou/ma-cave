@@ -13,8 +13,8 @@ import {FirebaseLockersService} from './firebase/firebase-lockers.service';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../app/state/app.state';
 import {catchError, map, tap} from 'rxjs/operators';
-import {of} from 'rxjs/observable/of';
 import {Bottle} from '../model/bottle';
+import {of} from 'rxjs';
 
 /**
  * Services related to the cellar itself, locker and place of the lockers.

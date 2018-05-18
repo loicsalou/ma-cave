@@ -5,7 +5,7 @@ import {Injectable} from '@angular/core';
 import {AngularFireAuth} from 'angularfire2/auth';
 import {AbstractLoginService} from './abstract-login.service';
 import {User} from '../../model/user';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {NotificationService} from '../notification.service';
 
 /**

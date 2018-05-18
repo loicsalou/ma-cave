@@ -2,6 +2,7 @@ import {Action} from '@ngrx/store';
 import {Bottle, Position} from '../../model/bottle';
 import {FilterSet} from '../../components/distribution/filterset';
 import {Locker} from '../../model/locker';
+import {Withdrawal} from '../../model/withdrawal';
 
 export enum BottlesActionTypes {
   CreateBottleActionType = '[bottles] - create bottle',
@@ -18,7 +19,6 @@ export enum BottlesActionTypes {
   UpdateBottlesActionType = '[bottles] - update bottles',
   UpdateBottlesSuccessActionType = '[bottles] - update bottles success',
   WithdrawBottleActionType = '[bottles] - withdraw bottle',
-  WithdrawBottleSuccessActionType = '[bottles] - withdraw bottle success',
 
   UpdateFilterActionType = '[filter] - changed',
   RemoveFilterActionType = '[filter] - remove',
@@ -54,8 +54,7 @@ export type BottlesActions =
   | UpdateBottlesSuccessAction
   | UpdateFilterAction
   | UpdateLockerAction
-  | WithdrawBottleAction
-  | WithdrawBottleSuccessAction;
+  | WithdrawBottleAction;
 
 /**
  * Mise à jour du filtre
@@ -173,13 +172,6 @@ export class WithdrawBottleAction implements Action {
   readonly type = BottlesActionTypes.WithdrawBottleActionType;
 
   constructor(public bottle: Bottle, public position: Position) {
-  }
-}
-
-export class WithdrawBottleSuccessAction implements Action {
-  readonly type = BottlesActionTypes.WithdrawBottleSuccessActionType;
-
-  constructor(public bottle: Bottle) {
   }
 }
 

@@ -1,16 +1,17 @@
+import {map} from 'rxjs/operators';
 import {Injectable} from '@angular/core';
 import {Bottle, Position} from '../../model/bottle';
-import {Observable} from 'rxjs';
+import {Observable, throwError, of} from 'rxjs';
 import {AngularFireDatabase, SnapshotAction} from 'angularfire2/database';
 import {NotificationService} from '../notification.service';
 import {WithdrawalFactory} from '../../model/withdrawal.factory';
 import {User} from '../../model/user';
 import {Withdrawal} from '../../model/withdrawal';
 import {BottleNoting} from '../../components/bottle-noting/bottle-noting.component';
-
-import * as firebase from 'firebase/app';
 import * as schema from './firebase-schema';
 import * as tools from '../../utils/index';
+import {fromPromise} from 'rxjs-compat/observable/fromPromise';
+import * as firebase from 'firebase';
 import Reference = firebase.database.Reference;
 
 /**
@@ -49,49 +50,30 @@ export class FirebaseWithdrawalsService {
   }
 
   // ===================================================== WITHDRAWS
-  public withdraw(bottle: Bottle, position: Position): Promise<any> {
-    return new Promise((resolve, reject) => {
-      let updatedBottle=new Bottle(bottle);
-      updatedBottle.positions=bottle.positions.filter(pos => !pos.equals(position));
-      updatedBottle.quantite_courante--;
-      updatedBottle[ 'lastUpdated' ] = new Date().getTime();
-      this.update([ updatedBottle ]).then(
-        err => {
-          if (err == null) {
-            let withdrawal = new Withdrawal(updatedBottle);
-            this.createWithdrawal(withdrawal);
-          } else {
-            this.notificationService.debugAlert('mise à jour KO ' + err);
-            reject(err);
-          }
-        }
-      );
-    });
-  }
-
   public fetchAllWithdrawals(): Observable<Withdrawal[]> {
     return this.angularFirebase
-      .list<Withdrawal>(this.WITHDRAW_ROOT).snapshotChanges()
-      .map((changes: SnapshotAction[]) =>
-             changes.map(
-               // ATTENTION l'ordre de ...c.payload.val() et id est important. Dans l'autre sens l'id est écrasé !
-               c => this.withdrawalFactory.create({
-                                                    ...c.payload.val(), id: c.payload.key
-                                                  })
-             )
-      );
+      .list<Withdrawal>(this.WITHDRAW_ROOT).snapshotChanges().pipe(
+        map((changes: SnapshotAction<Withdrawal>[]) =>
+              changes.map(
+                // ATTENTION l'ordre de ...c.payload.val() et id est important. Dans l'autre sens l'id est écrasé !
+                c => this.withdrawalFactory.create({
+                                                     ...c.payload.val(), id: c.payload.key
+                                                   })
+              )
+        ));
   }
 
-  public createWithdrawal(withdrawal: Withdrawal): void {
+  public saveWithdrawal(withdrawal: Withdrawal): Observable<Withdrawal> {
     this.withdrawRootRef.push(tools.sanitizeBeforeSave(withdrawal), (
       err => {
         if (err !== null) {
-          throw err;
+          throwError(err);
         } else {
           this.notificationService.debugAlert('Withdrawal created ' + withdrawal.id);
         }
       }
     ));
+    return of(withdrawal);
   }
 
   recordNotation(withdrawal: Withdrawal, notes: BottleNoting) {

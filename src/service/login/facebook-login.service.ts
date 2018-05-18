@@ -6,7 +6,7 @@ import * as firebase from 'firebase/app';
 import {AbstractLoginService} from './abstract-login.service';
 import {Facebook} from '@ionic-native/facebook';
 import {User} from '../../model/user';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {NotificationService} from '../notification.service';
 
 @Injectable()

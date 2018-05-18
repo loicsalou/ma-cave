@@ -5,7 +5,7 @@ import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
 import {FilterSet} from '../../../components/distribution/filterset';
 import {BottleItemComponent} from '../../../components/list/bottle-item.component';
 import {NativeProvider} from '../../../providers/native/native';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {ApplicationState} from '../../../app/state/app.state';
 import {Store} from '@ngrx/store';
 import {BottlesQuery} from '../../../app/state/bottles.state';

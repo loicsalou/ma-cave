@@ -11,16 +11,16 @@ import {
   UpdateBottlesSuccessAction,
   UpdateFilterAction,
   UpdateLockerAction,
-  WithdrawBottleAction,
-  WithdrawBottleSuccessAction
+  WithdrawBottleAction
 } from './bottles.actions';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
-import {map, switchMap, tap} from 'rxjs/operators';
+import {flatMap, map, switchMap, tap} from 'rxjs/operators';
 import {Bottle} from '../../model/bottle';
 import {SharedPersistenceService} from '../../service/shared-persistence.service';
 import {Locker} from '../../model/locker';
 import {CellarPersistenceService} from '../../service/cellar-persistence.service';
 import {BottleFactory} from '../../model/bottle.factory';
+import {CreateOrUpdateWithdrawalAction} from './withdrawals.actions';
 
 @Injectable()
 export class BottlesEffectsService {
@@ -54,13 +54,18 @@ export class BottlesEffectsService {
             new UpdateBottlesSuccessAction(bottles))
     );
 
+  // retrait: on update l'objet bottle, on crée l'objet withdraw et on déclenche les actions de mises à jour
   @Effect() withdrawBottle$ = this.actions$
     .ofType(BottlesActionTypes.WithdrawBottleActionType).pipe(
-      tap((action: WithdrawBottleAction) =>
-            this.bottlesService.withdraw(action.bottle, action.position)
-      ),
-      map((action: WithdrawBottleAction) =>
-            new WithdrawBottleSuccessAction(action.bottle))
+      flatMap((action: WithdrawBottleAction) => {
+                let withdrawal = this.bottlesService.createWithdrawal(action.bottle);
+                let updatedBottle = this.bottlesService.removeBottleFrom(action.bottle, action.position);
+                return [
+                  new UpdateBottlesAction([ updatedBottle ]),
+                  new CreateOrUpdateWithdrawalAction(withdrawal)
+                ];
+              }
+      )
     );
 
   @Effect({dispatch: false}) updateFilter$ = this.actions$

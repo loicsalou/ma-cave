@@ -4,7 +4,7 @@ import {LoginService} from '../../service/login/login.service';
 import {EmailLoginPage} from '../../_features/admin/login/email-login.page';
 import {User} from '../../model/user';
 import {TabsPage} from '../tabs/tabs';
-import {Subscription} from 'rxjs/Subscription';
+import {Subscription, Observable} from 'rxjs';
 import {NotificationService} from '../../service/notification.service';
 import {NativeProvider} from '../../providers/native/native';
 import {VERSION} from '../../_features/admin/version';
@@ -14,7 +14,6 @@ import {LoadBottlesAction} from '../state/bottles.actions';
 import {LogoutAction} from '../state/shared.actions';
 import {SharedQuery} from '../state/shared.state';
 import {map, tap} from 'rxjs/operators';
-import {Observable} from 'rxjs/Observable';
 
 @Component({
              selector: 'page-home',

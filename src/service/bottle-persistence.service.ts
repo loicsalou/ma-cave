@@ -3,18 +3,15 @@
  */
 import {Injectable, OnDestroy, OnInit} from '@angular/core';
 import {Bottle, Position} from '../model/bottle';
-import {Observable} from 'rxjs';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Observable, BehaviorSubject, Subscription, Subject} from 'rxjs';
 import {FilterSet} from '../components/distribution/filterset';
 import {AbstractPersistenceService} from './abstract-persistence.service';
 import {NotificationService} from './notification.service';
 import {FirebaseAdminService} from './firebase/firebase-admin.service';
 import {User} from '../model/user';
-import {Subscription} from 'rxjs/Subscription';
 import {Locker} from '../model/locker';
 import {TranslateService} from '@ngx-translate/core';
 import {BottleFactory} from '../model/bottle.factory';
-import {Subject} from 'rxjs/Subject';
 import {BottleNoting} from '../components/bottle-noting/bottle-noting.component';
 import {Withdrawal} from '../model/withdrawal';
 import {FirebaseWithdrawalsService} from './firebase/firebase-withdrawals.service';
@@ -118,7 +115,7 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
    * @param {Bottle} btl
    * @returns {Bottle}
    */
-  public createBottle(btl: Bottle): Bottle {
+  public saveBottle(btl: Bottle): Bottle {
     return this.bottleFactory.create(btl);
   }
 
@@ -128,10 +125,10 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
 
   deleteAccountData(): Observable<boolean> {
     let sub = new Subject<boolean>();
-    this.notificationService.ask('question', 'app.keep-or-delete-data').take(1).subscribe(
+    this.notificationService.ask('question', 'app.keep-or-delete-data').pipe(take(1)).subscribe(
       resp => {
         if (resp) {
-          this.dataConnection.deleteAccount().take(1).subscribe(
+          this.dataConnection.deleteAccount().pipe(take(1)).subscribe(
             result => sub.next(result)
           );
         }
@@ -140,8 +137,19 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
     return sub.asObservable();
   }
 
-  withdraw(bottle: Bottle, position: Position) {
-    this.withdrawalService.withdraw(bottle, position);
+  createWithdrawal(bottle: Bottle): Withdrawal {
+    return new Withdrawal(bottle);
+  }
+
+  removeBottleFrom(bottle: Bottle, position: Position): Bottle {
+    let updatedBottle=new Bottle(bottle);
+    updatedBottle.positions=bottle.positions.filter(pos => !pos.equals(position));
+    updatedBottle.quantite_courante--;
+    return updatedBottle;
+  }
+
+  saveWithdrawal(withdrawal: Withdrawal): Observable<Withdrawal> {
+    return this.withdrawalService.saveWithdrawal(withdrawal);
   }
 
   recordBottleNotation(bottle: Bottle, notes: BottleNoting) {

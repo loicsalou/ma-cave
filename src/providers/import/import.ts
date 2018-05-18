@@ -1,10 +1,9 @@
 import {Injectable} from '@angular/core';
-import 'rxjs/add/operator/map';
+
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
-import {Observable} from 'rxjs/Observable';
+import {Observable, Subject} from 'rxjs';
 import {Bottle} from '../../model/bottle';
 import * as _ from 'lodash';
-import {Subject} from 'rxjs/Subject';
 
 /*
   Generated class for the ImportProvider provider.
@@ -59,7 +58,7 @@ export class ImportProvider {
           (row, ix) => {
             try {
               let btl: Bottle = <Bottle>buildObjectFromCsv(row, keys);
-              btl = this.bottlesService.createBottle(btl);
+              btl = this.bottlesService.saveBottle(btl);
               this.bottleParsed.next(btl);
               return btl;
             } catch (error) {
@@ -87,7 +86,7 @@ export class ImportProvider {
           (row, ix) => {
             try {
               let btl: Bottle = <Bottle>buildObjectFromXLS(row, keys);
-              btl = this.bottlesService.createBottle(btl);
+              btl = this.bottlesService.saveBottle(btl);
               this.bottleParsed.next(btl);
               return btl;
             } catch (error) {
