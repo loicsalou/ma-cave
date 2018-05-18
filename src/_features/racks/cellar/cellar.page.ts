@@ -62,7 +62,7 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
   dimensions$: { [ lockerId: string ]: Observable<Dimension> };
   dimensionsSubjects: { [ lockerId: string ]: Subject<Dimension> } = {};
   lockers$: Observable<Locker[]>;
-  bottles$: Observable<Bottle[]>;
+  bottlesPerRack$: Observable<{ [ lockerId: string ]: Bottle[] }>;
 
   @ViewChild('placedLockerComponent') private placedLockerComponent: SimpleLockerComponent;
   @ViewChildren(ScrollAnchorDirective) private lockerRows: QueryList<ScrollAnchorDirective>;
@@ -134,12 +134,29 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
       shareReplay()
     );
     // observable sur les bouteilles pour le template
-    this.bottles$ = this.store.select(BottlesQuery.getBottles).pipe(
+    this.bottlesPerRack$ = this.store.select(BottlesQuery.getBottles).pipe(
       tap(bottles => {
         this.traceSavedReceived(bottles);
       }),
+      map((bottles: Bottle[]) => bottles.filter(bottle => bottle.positions.length > 0)),
+      map((bottles: Bottle[]) => {
+        let bottlesPerRack: { [ lockerId: string ]: Bottle[] } = {};
+        bottles.forEach(bottle => {
+                          bottle.positions.forEach(pos => {
+                            let rack = bottlesPerRack[ pos.lockerId ];
+                            if (rack === undefined) {
+                              rack = [];
+                              bottlesPerRack[ pos.lockerId ] = rack;
+                            }
+                            rack.push(bottle);
+                          });
+                        }
+        );
+        return bottlesPerRack;
+      }),
       shareReplay()
-    );
+    )
+    ;
   }
 
   ngAfterViewInit() {
@@ -290,9 +307,9 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
   private traceSavedReceived(bottles: Bottle[]) {
     if (this.lastUpdated) {
       let lastupdatedReceived = bottles.filter((btl: Bottle) => btl.id === this.lastUpdated.id);
-      console.info('saved:' + JSON.stringify(shortenBottle(this.lastUpdated)));
-      console.info('retrieved:' + JSON.stringify(shortenBottle(lastupdatedReceived[ 0 ])));
-      console.info('===============================================');
+      //console.info('saved:' + JSON.stringify(shortenBottle(this.lastUpdated)));
+      //console.info('retrieved:' + JSON.stringify(shortenBottle(lastupdatedReceived[ 0 ])));
+      //console.info('===============================================');
     }
   }
 
