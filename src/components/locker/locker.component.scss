@@ -1,0 +1,105 @@
+.locker-component {
+  .locker .container {
+    border: thin solid transparent;
+    background-color: transparent;
+  }
+
+  &.selected .locker .container {
+    border: thin solid red;
+    background-color: red;
+  }
+
+  .locker {
+    .container {
+      background: url("../assets/img/background/tex-bois.jpeg");
+      display: inline-flex;
+      flex-direction: column;
+      flex-shrink: 1;
+      padding: 5px;
+
+      &.shifted {
+        div.row:nth-child(2n+1) {
+          padding-left: 12px;
+        }
+      }
+    }
+
+    .row {
+      flex-wrap: nowrap;
+    }
+
+    .cell {
+      background-image: radial-gradient(circle at center, black, white);
+      background-size: contain;
+      border-radius: 50% 50%;
+      margin-left: 1px;
+      margin-bottom: 1px;
+      min-height: 25px;
+      min-width: 25px;
+
+      &.empty {
+        border: thin solid darken(white, 20%);
+      }
+
+      &.selected {
+        border: thin solid red;
+      }
+
+      &.bubbles {
+        background-image: url("../assets/img/cell-color/bubbles.png"), radial-gradient(circle at center, black, white);
+      }
+
+      &.bubbles-rose {
+        background-image: url("../assets/img/cell-color/bubbles-rose.png"), radial-gradient(circle at center, black, white);
+      }
+
+      &.cognac {
+        background-image: url("../assets/img/cell-color/cognac.png"), radial-gradient(circle at center, black, white);
+      }
+
+      &.liquorous {
+        background-image: url("../assets/img/cell-color/liquorous.png"), radial-gradient(circle at center, black, white);
+      }
+
+      &.red {
+        background-image: url("../assets/img/cell-color/red.png"), radial-gradient(circle at center, black, white);
+      }
+
+      &.red-mutated {
+        background-image: url("../assets/img/cell-color/red-mutated.png"), radial-gradient(circle at center, black, white);
+      }
+
+      &.rose {
+        background-image: url("../assets/img/cell-color/rose.png"), radial-gradient(circle at center, black, white);
+      }
+
+      &.straw {
+        background-image: url("../assets/img/cell-color/straw.png"), radial-gradient(circle at center, black, white);
+      }
+
+      &.undefined {
+        background-image: url("../assets/img/cell-color/undefined.png"), radial-gradient(circle at center, black, white);
+      }
+
+      &.white {
+        background-image: url("../assets/img/cell-color/white.png"), radial-gradient(circle at center, black, white);
+      }
+
+      &.white-halfdry {
+        background-image: url("../assets/img/cell-color/white-halfdry.png"), radial-gradient(circle at center, black, white);
+      }
+
+      &.white-mutated {
+        background-image: url("../assets/img/cell-color/white-mutated.png"), radial-gradient(circle at center, black, white);
+      }
+
+      &.yellow {
+        background-image: url("../assets/img/cell-color/yellow.png"), radial-gradient(circle at center, black, white);
+      }
+    }
+
+    .highlighted {
+      border: medium green solid;
+    }
+  }
+}

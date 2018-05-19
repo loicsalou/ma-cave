@@ -1,0 +1,62 @@
+.bottle-item {
+
+  ion-col > ion-badge[item-right] {
+    margin: 3px 0;
+
+    &.not-placed {
+      background-color: lightgray;
+    }
+  }
+
+  ion-label {
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+
+  button[ion-button] {
+    img, ion-icon {
+      border-radius: 50%;
+      //background-color: map-get($colors, primary);
+      height: $action-icon-height;
+      width: $action-icon-width;
+    }
+    ion-icon {
+      color: white;
+      font-size: x-large;
+      padding-top: 10px;
+    }
+    ion-icon.favorite {
+      color: $favorite-color;
+    }
+  }
+
+  ion-avatar {
+    position: relative;
+    img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-radius: 0;
+    }
+  }
+
+  ion-item-sliding:nth-child(2n) {
+    background-color: $even-rows-background-color;
+
+    button {
+      background-color: $even-rows-background-color;
+    }
+
+    ion-item {
+      background-color: inherit;
+    }
+  }
+
+  ion-item-sliding:nth-child(2n+1) {
+    background-color: $odd-rows-background-color;
+
+    button {
+      background-color: $odd-rows-background-color;
+    }
+  }
+}

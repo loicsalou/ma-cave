@@ -1,0 +1,22 @@
+.browse-page {
+  span.search-container {
+    flex-grow: 1;
+  }
+
+  button[menutoggle] {
+    margin-left: 10px;
+    margin-right: 0;
+    order: 0;
+  }
+
+  .back-button {
+    margin-left: 0px;
+    margin-right: 0;
+    order: 1;
+  }
+}
+
+ion-fab.browse-page {
+  bottom: 50px;
+}
+

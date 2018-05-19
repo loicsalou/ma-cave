@@ -1,0 +1,41 @@
+<ion-header class="mod-header home">
+  <h1 align-self-center padding>Identification</h1>
+</ion-header>
+
+<ion-content class="home card-background-page page">
+  <ion-row padding-top>
+    <ion-item>
+      <ion-label floating>E-mail</ion-label>
+      <ion-input type="email" [(ngModel)]="user"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label floating>Mot de passe</ion-label>
+      <ion-input type="password" [(ngModel)]="psw" (keyup)="keyup($event)"></ion-input>
+    </ion-item>
+
+    <button ion-button icon-start margin-top align-items-center (click)="signin()">
+      <ion-icon name="key" margin-right></ion-icon>
+      Pousser la porte...
+    </button>
+  </ion-row>
+
+
+  <ion-card class="card-background" justify-content-center style="background-color: transparent">
+    <ion-card-title class="card-title">Bienvenue dans votre cave !</ion-card-title>
+    <img src="assets/img/cave-moderne.jpg"/>
+  </ion-card>
+
+  <ion-footer style="background-color: white">
+    <ion-segment [(ngModel)]="icons" color="primary">
+      <ion-segment-button value="create" (click)="createAccount()">
+        <ion-icon name="person-add"></ion-icon>
+        Créer un compte
+      </ion-segment-button>
+      <ion-segment-button value="reset" (click)="resetPassword()">
+        <ion-icon name="unlock"></ion-icon>
+        Réinit mot de passe
+      </ion-segment-button>
+    </ion-segment>
+  </ion-footer>
+</ion-content>

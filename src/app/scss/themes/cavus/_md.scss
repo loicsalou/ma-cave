@@ -1,0 +1,27 @@
+@import '../../gradient-mixins';
+@import "./variables";
+
+.bar-button-default-md, .bar-button-clear-md-default, .bar-button-md-default {
+  background-color: transparent;
+}
+
+.tabs-md .tab-button {
+  &[aria-selected=true] {
+    .tab-button-icon {
+      color: $tabs-md-tab-icon-color-active;
+    }
+
+    .tab-button-text {
+      color: $tabs-md-tab-text-color-active;
+    }
+  }
+  &[aria-selected=false] {
+    .tab-button-icon {
+      color: $tabs-md-tab-icon-color;
+    }
+
+    .tab-button-text {
+      color: $tabs-md-tab-text-color;
+    }
+  }
+}

@@ -1,0 +1,31 @@
+.fridge-locker-component {
+
+  .small .cell {
+    min-height: 20px;
+    min-width: 20px;
+  }
+
+  .medium .cell {
+    min-height: 25px;
+    min-width: 25px;
+  }
+
+  .big .cell {
+    min-height: 30px;
+    min-width: 30px;
+  }
+
+  .huge .cell {
+    min-height: 35px;
+    min-width: 35px;
+  }
+
+  .rack {
+    display: flex;
+    flex-direction: column;
+
+    locker .container {
+      border-bottom: 3px solid map-get($colors, brown);
+    }
+  }
+}

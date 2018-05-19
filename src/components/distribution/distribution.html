@@ -4,20 +4,22 @@
   See https://angular.io/docs/ts/latest/api/core/index/ComponentMetadata-class.html
   for more info on Angular 2 Components.
 -->
+<ion-card *ngFor="let dimension of distribution" class="distribution">
 
-<div class="distribution" *ngIf="opened && distribution">
-  <div class="filterPanel">
-    <ion-slides>
-      <ion-slide *ngFor="let dimension of distribution">
-        <div class="slide">
-          <h3>{{dimension.axis | translate}}</h3>
-          <hr>
-          <ion-badge (click)="valueClicked($event, dimension.axis)" item-right *ngFor="let value of dimension.values">
-            {{value.key}}:
-            {{value.value}}
-          </ion-badge>
-        </div>
-      </ion-slide>
-    </ion-slides>
+  <p (click)="switchDistribution(dimension)">
+    <button *ngIf="isOpen(dimension.axis)" ion-button color="light" icon-only>
+      <ion-icon name='arrow-dropdown'></ion-icon>
+    </button>
+    <button *ngIf="!isOpen(dimension.axis)" ion-button color="light" icon-only>
+      <ion-icon name='arrow-dropright'></ion-icon>
+    </button>
+    {{'bottle.'+dimension.axis| translate}}
+  </p>
+  <div *ngIf="isOpen(dimension.axis)">
+    <ion-badge (click)="valueClicked($event, dimension.axis)" item-right *ngFor="let value of dimension.values"
+               [class.selected]="isFilterSelected(dimension.axis, value.key)">
+      {{value.key}}: {{value.value}}
+    </ion-badge>
   </div>
-</div>
+
+</ion-card>

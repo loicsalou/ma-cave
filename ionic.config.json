@@ -1,6 +1,8 @@
 {
-  "name": "myApp",
+  "name": "ma-cave",
   "app_id": "e54fea8c",
-  "v2": true,
-  "typescript": true
+  "type": "ionic-angular",
+  "integrations": {
+    "cordova": {}
+  }
 }

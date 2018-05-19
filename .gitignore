@@ -11,7 +11,7 @@ log.txt
 *.sublime-workspace
 .vscode/
 npm-debug.log*
-
+*.jks
 .idea/
 .sass-cache/
 .tmp/
@@ -31,3 +31,6 @@ $RECYCLE.BIN/
 Thumbs.db
 UserInterfaceState.xcuserstate
 src/components/detail/
+_creation_data/init/cavus-export-utf8.csv
+_creation_data/init/cavusvinifera-export-csv-win.csv
+/*.apk

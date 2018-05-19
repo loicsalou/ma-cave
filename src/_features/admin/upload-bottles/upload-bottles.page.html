@@ -1,0 +1,138 @@
+<!--
+  Generated template for the UploadBottles page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header class="mod-header page-upload-bottles">
+  <ion-navbar>
+    <ion-title>Administration</ion-title>
+  </ion-navbar>
+  <img src="assets/icon/primary-logout.png" icon-only (click)="logout()"/>
+</ion-header>
+
+
+<ion-content padding class="page-upload-bottles page">
+  <responsive-wrapper>
+    <div>
+      <ion-card class="card-background">
+        <ion-col col-12>
+          <ion-title>Charger votre cave</ion-title>
+          <p>Pour charger votre cave, connectez-vous sur
+            <a href="http://www.cavus-vinifera.com" target="_blank">cavus-vinifera</a>, et aller dans la page
+            <i>exporter vos données sous excel</i> puis exportez par lots. Le fichier XLS sera téléchargé,
+            il ne reste plus qu'à cliquer sur le bouton de chargement, choisir le fichier et votre stock de
+            bouteilles sera chargé et sauvegardé dans le logiciel.</p>
+          <p>Par défaut:</p>
+          <li>les XLS sont parsés en ascii, le séparateur est la tabulation et les données sont entre
+            guillemets
+          </li>
+          <li>les CSV sont parsés en UTF-8, le séparateur est le point-virgule (pas de guillemets)</li>
+          <p>si les caractères accentués ne passent pas il s'agit d'un problème d'encodage (voir
+            <a (click)="switchAdvancedOptions()" style="cursor: pointer">options avancées</a>)</p>
+        </ion-col>
+      </ion-card>
+      <ion-card class="card-background" *ngIf="optionsVisibles">
+        <ion-row>
+          <ion-col col-3>
+            <label for="from">Charger depuis:</label>
+          </ion-col>
+          <ion-col col-6>
+            <input id="from" type="text" [(ngModel)]="from">
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col col-3>
+            <label for="nbRead">En charger:</label>
+          </ion-col>
+          <ion-col col-6>
+            <input id="nbRead" type="text" [(ngModel)]="nbRead">
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-list>
+            <ion-item>
+              <ion-label>Encoding</ion-label>
+              <ion-select [(ngModel)]="encoding">
+                <ion-option value="utf-8">UTF-8</ion-option>
+                <ion-option value="windows-1252">windows-1252 / Ascii</ion-option>
+                <ion-option value="ibm866">ibm866</ion-option>
+                <ion-option value="iso-8859-2">iso-8859-2</ion-option>
+                <ion-option value="iso-8859-3">iso-8859-3</ion-option>
+                <ion-option value="iso-8859-4">iso-8859-4</ion-option>
+                <ion-option value="iso-8859-5">iso-8859-5</ion-option>
+                <ion-option value="iso-8859-6">iso-8859-6</ion-option>
+                <ion-option value="iso-8859-7">iso-8859-7</ion-option>
+                <ion-option value="iso-8859-8">iso-8859-8</ion-option>
+                <ion-option value="iso-8859-8i">iso-8859-8i</ion-option>
+                <ion-option value="iso-8859-10">iso-8859-10</ion-option>
+                <ion-option value="iso-8859-13">iso-8859-13</ion-option>
+                <ion-option value="iso-8859-14">iso-8859-14</ion-option>
+                <ion-option value="iso-8859-15">iso-8859-15</ion-option>
+                <ion-option value="iso-8859-16">iso-8859-16</ion-option>
+                <ion-option value="koi8-r">koi8-r</ion-option>
+                <ion-option value="koi8-u">koi8-u</ion-option>
+                <ion-option value="macintosh">macintosh</ion-option>
+                <ion-option value="windows-874">windows-874</ion-option>
+                <ion-option value="windows-1250">windows-1250</ion-option>
+                <ion-option value="windows-1251">windows-1251</ion-option>
+                <ion-option value="windows-1253">windows-1253</ion-option>
+                <ion-option value="windows-1254">windows-1254</ion-option>
+                <ion-option value="windows-1255">windows-1255</ion-option>
+                <ion-option value="windows-1256">windows-1256</ion-option>
+                <ion-option value="windows-1257">windows-1257</ion-option>
+                <ion-option value="windows-1258">windows-1258</ion-option>
+                <ion-option value="x-mac-cyrillic">x-mac-cyrillic</ion-option>
+                <ion-option value="gbk">gbk</ion-option>
+                <ion-option value="gb18030">gb18030</ion-option>
+                <ion-option value="hz-gb-2312">hz-gb-2312</ion-option>
+                <ion-option value="big5">big5</ion-option>
+                <ion-option value="euc-jp">euc-jp</ion-option>
+                <ion-option value="iso-2022-jp">iso-2022-jp</ion-option>
+                <ion-option value="shift-jis">shift-jis</ion-option>
+                <ion-option value="euc-kr">euc-kr</ion-option>
+                <ion-option value="iso-2022-kr">iso-2022-kr</ion-option>
+                <ion-option value="utf-16be">utf-16be</ion-option>
+                <ion-option value="utf-16le">utf-16le</ion-option>
+              </ion-select>
+            </ion-item>
+          </ion-list>
+        </ion-row>
+      </ion-card>
+      
+      <ion-card>
+        <label>Vidage de la base avant importation</label>
+        <ion-checkbox id="deleteBefore" [(ngModel)]="deleteBefore"></ion-checkbox>
+        
+        <div *ngIf="platformIsCordova()">
+          <button ion-button align-items-start round icon-only block (click)="chooseFile()">
+            <ion-icon name="cloud-upload"></ion-icon>
+            Importer...
+          </button>
+        </div>
+        
+        <div *ngIf="! platformIsCordova()">
+          <input type="file" id="input" (change)="readBrowserFile($event)">
+        </div>
+        <ng-container *ngIf="user$ | async as user">
+          <p *ngIf="user">{{user.user}}</p>
+        </ng-container>
+      </ion-card>
+    </div>
+    
+    <ion-card class="actions">
+      <button ion-button align-items-start icon-only block (click)="emptyLockers()">
+        <ion-icon name="trash"></ion-icon>
+        Vider les casiers
+      </button>
+      <button ion-button align-items-start icon-only block (click)="emptyLogs()">
+        <ion-icon name="trash"></ion-icon>
+        Vider les logs
+      </button>
+      <button ion-button align-items-start icon-only block (click)="deleteAccount()">
+        <ion-icon name="trash"></ion-icon>
+        Supprimer l'utilisateur
+      </button>
+    </ion-card>
+  </responsive-wrapper>
+</ion-content>

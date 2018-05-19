@@ -1,0 +1,15 @@
+<!-- Generated template for the SimpleLockerComponent component -->
+<div class="locker-component" [class.selected]="selected" *ngIf="!wrongLocker">
+  <div class="locker">
+    <div class="container" [class.shifted]="isShifted()" [dimensionOf]="locker" [zoomable]="!locker.inFridge">
+      <div class="row" *ngFor="let row of rows">
+        <div *ngFor="let cell of row.cells">
+          <div class="cell" [ngClass]="cell.cellClass" (click)="cellSelected(cell)"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="locker-component" *ngIf="wrongLocker">
+  <img src="assets/icon/attention.png" class="attention">
+</div>

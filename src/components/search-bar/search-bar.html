@@ -1,0 +1,25 @@
+<ion-navbar class="mod-navbar">
+  <div class="search" [class.active]="isSearchVisible()">
+    <ion-searchbar [placeholder]="Chercher" [autocomplete]="on" [autocorrect]="on" [animated]="true"
+                   (search)="filterOnText($event)" [class.searching]="isSearchVisible()">
+    </ion-searchbar>
+  </div>
+  
+  <div class="reminder" [class.active]="!isSearchVisible()">
+    <ion-title wrap *ngIf="!filterSet.isEmpty()">
+      <current-filters [filterSet]="filterSet"></current-filters>
+    </ion-title>
+    
+    <ion-note class="summary">
+      <span *ngIf="nbCrus">{{nbCrus}} {{'crus'|translate}}</span>
+      <span *ngIf="nbCrus || nbBottles">/</span>
+      <span *ngIf="nbBottles">{{nbBottles}} {{'bottles'|translate}}</span>
+    </ion-note>
+  </div>
+  
+  <div class="button-container">
+    <button class="search-toggle" mini (click)="toggleSearchBar()">
+      <ion-icon name="search"></ion-icon>
+    </button>
+  </div>
+</ion-navbar>

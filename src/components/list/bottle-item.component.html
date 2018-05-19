@@ -1,0 +1,34 @@
+<ion-item-sliding (click)="triggerDetail(bottle)" class="bottle-item" #item>
+  <ion-item>
+    <ion-row>
+      <ion-col col-2 class="icons" style="padding-right:7px;">
+        <ion-avatar item-start (click)="switchSelected($event, bottle)">
+          <ion-icon *ngIf="selected" name="checkmark-circle-outline" style="font-size: 2.4em;"></ion-icon>
+          <div class="icon" *ngIf="!selected" [ngClass]="(bottle | bottleClass)">
+            <img src="assets/icon/starred.png" *ngIf="isBottleFavorite(bottle) && !selected">
+            <img src="assets/icon/alert-status.png" *ngIf="bottle.overdue && !selected">
+          </div>
+        </ion-avatar>
+      </ion-col>
+      <ion-col col-9 text-wrap>
+        <h2 class="label">{{ bottle.nomCru }}</h2>
+        <ion-note>{{bottle.area_label}} ({{bottle.millesime}})</ion-note>
+      </ion-col>
+      <ion-col col-1 text-wrap>
+        <ion-badge item-right>
+          {{bottle.quantite_courante}}
+        </ion-badge>
+        <ion-badge item-right class="not-placed" *ngIf="numberNotPlaced(bottle) > 0">
+          {{numberNotPlaced(bottle)}}
+        </ion-badge>
+      </ion-col>
+    </ion-row>
+  </ion-item>
+  
+  <ion-item-options side="right">
+    <bottle-action [bottle]="bottle" (locate)="locateBottle($event, item, bottle)"
+                   (favorite)="addToFavorite($event, item, bottle)">
+    </bottle-action>
+  </ion-item-options>
+
+</ion-item-sliding>

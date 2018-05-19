@@ -1,0 +1,56 @@
+<ion-header class="mod-header">
+  <ion-toolbar>
+    <ion-title style="margin-top: 4px;">{{ getNbOfLots() }} {{'lots' | translate}} / {{ getNbOfBottles() }}
+      {{'bottles' | translate}}
+    </ion-title>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  
+  <ng-container *ngIf="bottles$ | async as bottles">
+    <distribution [opened]="true" [bottles]="bottles" (filterSetChanged)="refineFilter($event)"></distribution>
+  </ng-container>
+  
+  <ion-item>
+    <ion-label>{{'filter.history' | translate}}</ion-label>
+    <ion-checkbox [checked]="filterSet.history" (ionChange)="switchHistory($event)"></ion-checkbox>
+  </ion-item>
+  
+  <ion-item>
+    <ion-label>{{'filter.favorite-only' | translate}}</ion-label>
+    <ion-checkbox [checked]="filterSet.favoriteOnly" (ionChange)="switchFavorite($event)"></ion-checkbox>
+  </ion-item>
+  
+  <ion-item>
+    <ion-label>{{'filter.placement-placed' | translate }}</ion-label>
+    <ion-checkbox [checked]="filterSet.placed" (ionChange)="switchedPlaced($event)"></ion-checkbox>
+  </ion-item>
+  
+  <ion-item>
+    <ion-label>{{'filter.placement-to-be-placed' | translate }}</ion-label>
+    <ion-checkbox [checked]="filterSet.toBePlaced" (ionChange)="switchedToBePlaced($event)"></ion-checkbox>
+  </ion-item>
+  
+  <ion-row align-items-start>
+    <ion-col margin-left col-4 align-item-center>
+      <ion-label>Asc</ion-label>
+      <ion-checkbox [(ngModel)]="ascending" (click)="sort()"></ion-checkbox>
+    </ion-col>
+    <ion-col padding-top col-7>
+      <ion-badge margin-right margin-bottom *ngFor="let axis of sortAxis" (click)="sort(axis)">
+        {{axis.name}}
+      </ion-badge>
+    </ion-col>
+  </ion-row>
+  
+  <div style="height:35px"></div>
+</ion-content>
+
+<ion-footer>
+  <button ion-button float-end (click)="close()">{{'validate' | translate}}</button>
+  <button ion-button float-end (click)="reset()">{{'reset' | translate}}</button>
+</ion-footer>

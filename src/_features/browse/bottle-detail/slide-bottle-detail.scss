@@ -1,0 +1,24 @@
+.slide-bottle-detail {
+  position: relative;
+
+  section.head {
+    display: flex;
+
+    div.icon {
+      min-width: 40vw;
+      max-width: 45vw;
+      max-height: 100%;
+    }
+  }
+
+  p, li {
+    margin: 3px 0;
+    text-align: left;
+  }
+
+  h4 {
+    background: #3d39ff;
+    color: #FFF;
+    border: thin solid #fff;
+  }
+}

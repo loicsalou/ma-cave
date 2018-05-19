@@ -1,0 +1,17 @@
+.page-bottle-detail {
+
+  div.slide-content {
+    background: darken(#fff, 12%);
+    overflow-y: scroll;
+    height: 100%;
+  }
+
+  .swiper-slide img.contain {
+    object-fit: contain;
+  }
+
+  ion-slide.swiper-slide {
+    align-items: initial;
+  }
+
+}
