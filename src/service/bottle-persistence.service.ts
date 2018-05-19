@@ -31,13 +31,12 @@ import {BottlesQuery} from '../app/state/bottles.state';
  * clicks on a region to filter bottles. Any change on either side must be propagated on the other side.
  */
 @Injectable()
-export class BottlePersistenceService extends AbstractPersistenceService implements OnInit, OnDestroy {
+export class BottlePersistenceService extends AbstractPersistenceService implements OnDestroy {
   private _bottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
   private _allBottlesObservable: Observable<Bottle[]> = this._bottles.asObservable();
   private _filteredBottles: BehaviorSubject<Bottle[]> = new BehaviorSubject<Bottle[]>([]);
   private _filteredBottlesObservable: Observable<Bottle[]> = this._filteredBottles.asObservable();
   private filters: FilterSet = new FilterSet();
-  private bottlesSub: Subscription;
 
   constructor(private dataConnection: FirebaseAdminService,
               private bottlesService: FirebaseBottlesService,
@@ -61,32 +60,23 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
     return this._filteredBottlesObservable;
   }
 
-  ngOnInit() {
-  }
-
   ngOnDestroy() {
-    if (this.bottlesSub) {
-      this.bottlesSub.unsubscribe();
-    }
     if (this.dataConnection) {
       this.dataConnection.cleanup();
     }
   }
 
-  public update(bottles: Bottle[]): Observable<Bottle[]> {
+  update(bottles: Bottle[]): Observable<Bottle[]> {
     const uniqueBottles = _.uniqBy(bottles, 'id');
     return this.bottlesService.update(bottles.map((btl: Bottle) => {
       let updatedBottle = new Bottle(btl);
       updatedBottle.lastUpdated = new Date().getTime();
       updatedBottle.positions = updatedBottle.positions.filter(pos => pos.lockerId !== undefined);
       return updatedBottle;
-    })).pipe(
-      tap((bottles: Bottle[]) =>
-            this.notificationService.information('update.saved'))
-    );
+    }));
   }
 
-  public updateLockerAndBottles(bottles: Bottle[], locker: Locker): Observable<{ bottles: Bottle[], locker: Locker }> {
+  updateLockerAndBottles(bottles: Bottle[], locker: Locker): Observable<{ bottles: Bottle[], locker: Locker }> {
     return this.bottlesService.updateLockerAndBottles(bottles, locker).pipe(
       map((updates: { bottles: Bottle[], locker: Locker }) => {
         return {...updates, locker: this.lockerFactory.create(updates.locker)};
@@ -94,15 +84,15 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
     );
   }
 
-  public save(bottles: Bottle[]): Observable<Bottle[]> {
+  save(bottles: Bottle[]): Observable<Bottle[]> {
     return this.bottlesService.saveBottles(bottles);
   }
 
-  public deleteBottles(): Observable<boolean> {
+  deleteBottles(): Observable<boolean> {
     return this.bottlesService.deleteBottles();
   }
 
-  public getBottlesInLocker(locker: Locker): Observable<Bottle[]> {
+  getBottlesInLocker(locker: Locker): Observable<Bottle[]> {
     return this.store.select(BottlesQuery.getBottles).pipe(
       take(1),
       tap((allBottlesArray: Bottle[]) => allBottlesArray.filter(
@@ -115,7 +105,7 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
    * @param {Bottle} btl
    * @returns {Bottle}
    */
-  public saveBottle(btl: Bottle): Bottle {
+  saveBottle(btl: Bottle): Bottle {
     return this.bottleFactory.create(btl);
   }
 
@@ -152,13 +142,9 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
     return this.withdrawalService.saveWithdrawal(withdrawal);
   }
 
-  recordBottleNotation(bottle: Bottle, notes: BottleNoting) {
+  saveBottleNotation(bottle: Bottle, notes: BottleNoting) {
     let withdrawal = new Withdrawal(bottle, notes);
-    this.recordWidthdrawNotation(withdrawal, notes);
-  }
-
-  recordWidthdrawNotation(withdrawal: Withdrawal, notes: BottleNoting) {
-    this.withdrawalService.recordNotation(withdrawal, notes);
+    this.withdrawalService.saveNotation(withdrawal, notes);
   }
 
   fetchAllWithdrawals(): Observable<Withdrawal[]> {
