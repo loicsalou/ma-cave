@@ -242,6 +242,7 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
     this.notificationService.ask('app.confirm', 'app.delete-locker').subscribe(
       validated => {
         if (validated) {
+          // TODO créer une action NGRX
           this.cellarService.deleteLocker(locker);
         }
       }
