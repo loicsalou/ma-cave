@@ -18,6 +18,7 @@ import {FirebaseWithdrawalsService} from './firebase/firebase-withdrawals.servic
 import {FirebaseBottlesService} from './firebase/firebase-bottles.service';
 import {FirebaseLockersService} from './firebase/firebase-lockers.service';
 import {FirebaseImagesService} from './firebase/firebase-images.service';
+import {of} from 'rxjs';
 import {map, take, tap} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../app/state/app.state';
@@ -114,17 +115,19 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
   }
 
   deleteAccountData(): Observable<boolean> {
-    let sub = new Subject<boolean>();
-    this.notificationService.ask('question', 'app.keep-or-delete-data').pipe(take(1)).subscribe(
-      resp => {
-        if (resp) {
-          this.dataConnection.deleteAccount().pipe(take(1)).subscribe(
-            result => sub.next(result)
-          );
-        }
-      }
-    );
-    return sub.asObservable();
+    this.notificationService.error('Opération bloquée');
+    return of(false);
+    //let sub = new Subject<boolean>();
+    //this.notificationService.ask('question', 'app.keep-or-delete-data').pipe(take(1)).subscribe(
+    //  resp => {
+    //    if (resp) {
+    //      this.dataConnection.deleteAccount().pipe(take(1)).subscribe(
+    //        result => sub.next(result)
+    //      );
+    //    }
+    //  }
+    //);
+    //return sub.asObservable();
   }
 
   createWithdrawal(bottle: Bottle): Withdrawal {
