@@ -29,7 +29,7 @@ export class RecordOutputPage {
       this.viewCtrl.dismiss(notes);
     } else {
       if (this.validateNotes(notes)) {
-        this.bottleService.recordBottleNotation(bottle, notes);
+        this.bottleService.saveBottleNotation(bottle, notes);
         this.viewCtrl.dismiss(notes);
       }
     }

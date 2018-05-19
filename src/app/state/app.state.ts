@@ -24,7 +24,7 @@ export const META_REDUCERS: MetaReducer<any>[] = environment.production
 
 export function logReducer(reducer) {
   return (state, action) => {
-    console.log(action.type);
+    //console.log(action.type);
     const newState = reducer(state, action);
     return newState;
   };

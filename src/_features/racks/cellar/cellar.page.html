@@ -15,18 +15,18 @@
 <ion-content padding class="cellar-page page">
   <ion-row>
     <ng-container *ngIf="lockers$ | async as lockers">
-      <ng-container *ngIf="bottles$ | async as bottles">
+      <ng-container *ngIf="bottlesPerRack$ | async as bottlesPerRack">
         <ion-col *ngFor="let locker of lockers" [scrollAnchor]="locker.name" col-sm-12 col-md-12 col-lg-4 col-xl-3>
           <ion-card>
             <ion-card-content [dimensionOf]="locker">
               <span><h1>{{locker.name}}</h1></span>
               <div>
-                <locker [locker]="locker" [content]="bottles" *ngIf="!locker.isFridge()"
+                <locker [locker]="locker" [content]="bottlesPerRack[locker.id]" *ngIf="!locker.isFridge()"
                         [editing]="false" [containerDimension$]="getContainerDimension$(locker)"
                         [highlighted]="selectedBottles$ | async" (onCellSelected)="cellSelected($event)">
                 </locker>
                 
-                <fridge-locker [fridge]="locker" [content]="bottles" *ngIf="locker.isFridge()"
+                <fridge-locker [fridge]="locker" [content]="bottlesPerRack[locker.id]" *ngIf="locker.isFridge()"
                                [editing]="false"
                                [highlighted]="selectedBottles$ | async"
                                (onCellSelected)="cellSelected($event)">

@@ -51,7 +51,6 @@
     <feature name="StatusBar">
         <param name="ios-package" onload="true" value="CDVStatusBar" />
     </feature>
-    <plugin name="com.megster.cordova.FileChooser" spec="https://github.com/loicsalou/cordova-filechooser.git" />
     <plugin name="cordova-plugin-android-permissions" spec="1.0.0" />
     <plugin name="cordova-plugin-camera" spec="4.0.2" />
     <plugin name="cordova-plugin-console" spec="1.1.0" />
@@ -77,4 +76,5 @@
         <variable name="CAMERA_USAGE_DESCRIPTION" value=" " />
     </plugin>
     <engine name="android" spec="7.1.0" />
+    <plugin name="com.megster.cordova.FileChooser" spec="https://github.com/loicsalou/cordova-filechooser.git" />
 </widget>
