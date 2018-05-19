@@ -81,7 +81,6 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
               private modalCtrl: ModalController,
               private params: NavParams,
               private store: Store<ApplicationState>) {
-    this.store.dispatch(new LoadCellarAction());
   }
 
   getContainerDimension$(locker: Locker): Observable<Dimension> {

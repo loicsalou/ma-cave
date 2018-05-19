@@ -15,7 +15,12 @@ import {VERSION} from '../../admin/version';
 import {ApplicationState} from '../../../app/state/app.state';
 import {Store} from '@ngrx/store';
 import {BottlesQuery} from '../../../app/state/bottles.state';
-import {RemoveFilterAction, ResetFilterAction, UpdateFilterAction} from '../../../app/state/bottles.actions';
+import {
+  LoadCellarAction,
+  RemoveFilterAction,
+  ResetFilterAction,
+  UpdateFilterAction
+} from '../../../app/state/bottles.actions';
 import {Observable, of} from 'rxjs';
 import {catchError, map, switchMap, tap} from 'rxjs/operators';
 import {WithdrawalsQuery} from '../../../app/state/withdrawals.state';
@@ -111,6 +116,7 @@ export class DashboardPage implements OnInit, OnDestroy {
       )
     );
     this.store.dispatch(new LoadSharedAction());
+    this.store.dispatch(new LoadCellarAction());
   }
 
   ngOnDestroy() {

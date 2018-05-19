@@ -43,10 +43,7 @@ export function sharedStateReducer(state: SharedState = INITIAL_STATE, action: S
     }
 
     case SharedActionTypes.LogoutActionType: {
-        return {
-          ...state,
-          user: undefined
-        };
+        return INITIAL_STATE;
     }
 
     default:

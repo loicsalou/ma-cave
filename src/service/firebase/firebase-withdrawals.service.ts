@@ -7,8 +7,9 @@ import {Withdrawal} from '../../model/withdrawal';
 import {BottleNoting} from '../../components/bottle-noting/bottle-noting.component';
 import * as schema from './firebase-schema';
 import * as tools from '../../utils/index';
+import {logInfo} from '../../utils/index';
 import {AngularFireDatabase, SnapshotAction} from 'angularfire2/database';
-import {map} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 import Reference = firebase.database.Reference;
 import * as firebase from 'firebase';
 
@@ -44,24 +45,32 @@ export class FirebaseWithdrawalsService {
   fetchAllWithdrawals(nb: number = 10): Observable<Withdrawal[]> {
     return this.angularFirebase
       .list<Withdrawal>(this.WITHDRAW_ROOT).snapshotChanges().pipe(
-        map((changes: SnapshotAction<Withdrawal>[]) =>
-              changes.sort((change1,change2) => {
-                return change2.payload.val().lastUpdated-change1.payload.val().lastUpdated
-              }).slice(0,nb)
-        ),
-        map((changes: SnapshotAction<Withdrawal>[]) =>
-              changes.map(
+        map((changes: SnapshotAction<Withdrawal>[]) => {
+              let ret = changes.map(
                 // ATTENTION l'ordre de ...c.payload.val() et id est important. Dans l'autre sens l'id est écrasé !
                 c => this.withdrawalFactory.create({
                                                      ...c.payload.val(), id: c.payload.key
                                                    })
-              )
-        )
+              );
+              return ret;
+            }
+        ),
+        map((withdrawals: Withdrawal[]) => {
+              let ret = withdrawals.sort((w1, w2) => {
+                return w2.lastUpdated - w1.lastUpdated;
+              }).slice(0, nb);
+              return ret;
+            }
+        ),
+        tap(withdrawals => {
+          logInfo('[firebase] ===> réception des retraits ' + withdrawals.length);
+        })
       );
   }
 
   // sauvegarde d'un retrait
   saveWithdrawal(withdrawal: Withdrawal): Observable<Withdrawal> {
+    logInfo('[firebase] ===> sauvegarde d\'un retrait');
     this.withdrawRootRef.push(tools.sanitizeBeforeSave(withdrawal), (
       err => {
         if (err !== null) {
@@ -75,6 +84,7 @@ export class FirebaseWithdrawalsService {
   }
 
   saveNotation(withdrawal: Withdrawal, notes: BottleNoting) {
+    logInfo('[firebase] ===> sauvegarde d\'une notation');
     this.withdrawRootRef.child(withdrawal.id).update(
       {notation: notes},
       err => {
