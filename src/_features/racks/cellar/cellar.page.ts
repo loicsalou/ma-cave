@@ -19,7 +19,6 @@ import {LogoutAction} from '../../../app/state/shared.actions';
 import {
   BottlesActionTypes,
   EditLockerAction,
-  LoadCellarAction,
   ResetBottleSelectionAction,
   UpdateBottlesAction,
   WithdrawBottleAction
@@ -29,6 +28,7 @@ import {ScrollAnchorDirective} from '../../../components/scroll-anchor.directive
 import {filter, map, shareReplay, tap} from 'rxjs/operators';
 import {DimensionOfDirective} from '../../../components/dimension-of.directive';
 import {SimpleLockerComponent} from '../../../components/locker/simple-locker.component';
+import {logDebug, logInfo} from '../../../utils';
 
 function shortenBottle(btl: Bottle) {
   return {
@@ -120,7 +120,8 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
             }
             return bottle;
           });
-        })
+        }),
+        tap(bottles => logInfo('[cellar.page.ts] received selected bottles:' + bottles.length))
       );
     }
     // observable sur les lockers pour le template
@@ -130,6 +131,7 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
         this.lockerNames = lockers.map(locker => locker.name);
         this.mustInitScale = true;
       }),
+      tap(lockers => logInfo('[cellar.page.ts] received lockers:' + lockers.length)),
       shareReplay()
     );
     // observable sur les bouteilles pour le template
@@ -152,6 +154,11 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
                         }
         );
         return bottlesPerRack;
+      }),
+      tap(perRack => {
+        for (let perRackKey in perRack) {
+          logInfo('[cellar.page.ts] received bottles for ' + perRackKey + ': ' + perRack[ perRackKey ].length);
+        }
       }),
       shareReplay()
     )
@@ -307,9 +314,9 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
   private traceSavedReceived(bottles: Bottle[]) {
     if (this.lastUpdated) {
       let lastupdatedReceived = bottles.filter((btl: Bottle) => btl.id === this.lastUpdated.id);
-      //console.info('saved:' + JSON.stringify(shortenBottle(this.lastUpdated)));
-      //console.info('retrieved:' + JSON.stringify(shortenBottle(lastupdatedReceived[ 0 ])));
-      //console.info('===============================================');
+      logDebug('saved:' + JSON.stringify(shortenBottle(this.lastUpdated)));
+      logDebug('retrieved:' + JSON.stringify(shortenBottle(lastupdatedReceived[ 0 ])));
+      logDebug('===============================================');
     }
   }
 

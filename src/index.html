@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!--suppress ALL -->
 <html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8">
@@ -7,6 +8,7 @@
         content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="format-detection" content="telephone=no">
   <meta name="msapplication-tap-highlight" content="no">
+  <meta name="Description" content="une gestion de cave librement inspirée de cavusvinifera youcellar">
   
   <link rel="icon" type="image/x-icon" href="assets/icon/favicon.ico">
   <link rel="manifest" href="manifest.json">
@@ -15,14 +17,84 @@
   <!-- cordova.js required for cordova apps -->
   <script src="cordova.js"></script>
   
-  <!-- un-comment this code to enable service worker
+  <!-- un-comment this code to enable service worker -->
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
-        .then(() => console.log('service worker installed'))
-        .catch(err => console.log('Error', err));
+        .then(function (resp) {
+            console.log('service worker installed');
+            addInstallListener();
+            addFetchListener();
+          }
+        )
+        .catch(function (err) {
+            console.log('Error', err)
+          }
+        )
     }
-  </script>-->
+    
+    function addInstallListener() {
+      self.addEventListener('install', function (event) {
+        // only happens once for this version of the service worker
+        // wait until the install event has resolved
+        event.waitUntil(
+          // then create our named cached
+          caches
+            .open('ma-cave-cache')
+            .then(function (cache) {
+              // once created, lets add some local resouces
+              return cache.addAll([
+                './build/main.js',
+                './build/polyfills.js',
+                './build/sw-toolbox.js',
+                './build/vendor.js',
+                './build/main.css'
+              ]);
+            })
+            .then(function (resp) {
+              console.log('Le service worker a mis en cache les css et js');
+            }))
+      })
+    }
+    
+    function addFetchListener() {
+      self.addEventListener('fetch', function (event) {
+        // If the request in GET, let the network handle things,
+        if (event.request.method !== 'GET') {
+          return;
+        }
+        // here we block the request and handle it our selves
+        event.respondWith(
+          // Returns a promise of the cache entry that matches the request
+          caches
+            .match(event.request)
+            .then(function (response) {
+              
+              // here we can hanlde the request how ever we want.
+              // We can reutrn the cache right away if it exisit,
+              // or go to network to fetch it.
+              // There are more intricate examples below.
+              // https://ponyfoo.com/articles/progressive-networking-serviceworker
+              
+              if (response) {
+                // our responce is in the cache, let's return that instead
+                return response;
+              }
+              // if the responce is not in the cache, let's fetch it
+              return fetch(event.request)
+                .then(function (response) {
+                  // we have a responce from the network
+                  return response;
+                }).catch(function (error) {
+                  // Something happened
+                  console.error('Fetching failed:', error);
+                  throw error;
+                });
+            })
+        );
+      });
+    }
+  </script>
   
   <link href="build/main.css" rel="stylesheet">
   <!-- Font-awesome -->
