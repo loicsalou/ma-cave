@@ -118,21 +118,6 @@ export class NotificationService {
     return popup;
   }
 
-  traceInfo(trace: string) {
-    // à remplacer par un log si nécessaire
-    logInfo(new Date().getTime() + ' ' + trace);
-  }
-
-  traceDebug(trace: string) {
-    // à remplacer par un log si nécessaire
-    logDebug(new Date().getTime() + ' ' + trace);
-  }
-
-  traceWarn(trace: string) {
-    // à remplacer par un log si nécessaire
-    logWarn(new Date().getTime() + ' ' + trace);
-  }
-
   receiving(s: string) {
 // voir si on peut afficher un signal visuel discret
   }

@@ -38,8 +38,6 @@ export class BottleDetailPage implements OnInit {
     this.wholeSelection = bottleEvent.bottles;
     this.bottle = bottleEvent.bottle;
     this.originalIndex = this.wholeSelection.findIndex((btl: Bottle) => {
-      logInfo(JSON.stringify(this.bottle));
-      logInfo(JSON.stringify(btl));
       return btl.id === this.bottle.id;
     });
   }

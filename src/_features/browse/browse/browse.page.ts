@@ -1,26 +1,26 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {FabButton, FabList, MenuController, NavController} from 'ionic-angular';
+import {FabButton, MenuController, NavController} from 'ionic-angular';
 import {Bottle, BottleState} from '../../../model/bottle';
 import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
 import {FilterSet} from '../../../components/distribution/filterset';
-import {BottleItemComponent} from '../../../components/list/bottle-item.component';
 import {NativeProvider} from '../../../providers/native/native';
-import {Observable} from 'rxjs';
+import {combineLatest, Observable} from 'rxjs';
 import {ApplicationState} from '../../../app/state/app.state';
 import {Store} from '@ngrx/store';
 import {BottlesQuery} from '../../../app/state/bottles.state';
 import {
   HightlightBottleSelectionAction,
-  PlaceBottleSelectionAction,
+  PlaceBottleSelectionAction, ResetBottleSelectionAction,
   ResetFilterAction,
-  SetSelectedBottleAction,
+  SetSelectedBottleAction, UpdateBottlesAction,
   UpdateFilterAction
 } from '../../../app/state/bottles.actions';
-import {combineLatest, map, shareReplay, take, tap} from 'rxjs/operators';
+import {map, shareReplay, take, tap} from 'rxjs/operators';
 import {SortOption} from '../../../components/distribution/distribution';
 import {NotificationService} from '../../../service/notification.service';
 import {CellarPage} from '../../racks/cellar/cellar.page';
 import * as _ from 'lodash';
+import {logInfo} from '../../../utils';
 
 function sliceAround(currentBottles: Bottle[], bottle: Bottle, slice: number) {
   const ix = currentBottles.findIndex(btl => btl.id === bottle.id);
@@ -57,15 +57,16 @@ export class BrowsePage implements OnInit, OnDestroy {
   ngOnInit() {
     this.nativeProvider.feedBack();
     this.filterSet$ = this.store.select(BottlesQuery.getFilter).pipe(
-      tap((filterSet: FilterSet) => this.sortOption = filterSet.sortOption)
+      tap((filterSet: FilterSet) => this.sortOption = filterSet.sortOption),
+      tap(filterSet => logInfo('[browse.page.ts] received filterSet' + JSON.stringify(filterSet)))
     );
     let bottles$ = this.store.select(BottlesQuery.getFilteredBottles).pipe(
-      map((bottles: Bottle[]) => this.getPrepareDisplayedList(bottles))
+      map((bottles: Bottle[]) => this.getPrepareDisplayedList(bottles)),
+      tap(bottles => logInfo('[browse.page.ts] received bottles' + bottles.length))
     );
     let selection$ = this.store.select(BottlesQuery.getSelectedBottles);
 
-    this.bottleStates$ = selection$.pipe(
-      combineLatest(bottles$),
+    this.bottleStates$ = combineLatest(selection$, bottles$).pipe(
       map((result: [ Bottle[], Bottle[] ]) => {
         let ret = {selected: result[ 0 ], bottles: result[ 1 ]};
         this.nbSelected = ret.selected.length;
@@ -80,6 +81,7 @@ export class BrowsePage implements OnInit, OnDestroy {
           };
         });
       }),
+      tap(bottles => logInfo('[browse.page.ts] received combined selection+bottles')),
       shareReplay(1)
     );
   }
@@ -101,7 +103,8 @@ export class BrowsePage implements OnInit, OnDestroy {
       take(1),
       map((bottles: Bottle[]) => bottles.filter(
         (bottle: Bottle) => bottle.positions.length < bottle.quantite_courante)
-      )
+      ),
+      tap(bottles => logInfo('[browse.page.ts](place) received selected bottles:' + bottles.length))
     ).subscribe(
       (bottles: Bottle[]) => {
         if (bottles.length > 0) {
@@ -112,17 +115,14 @@ export class BrowsePage implements OnInit, OnDestroy {
         }
       }
     );
-    if (this.ionFAB) {
-      // TODO ne permet appremment pas de refermer les FAB boutons...
-      //this.ionFAB.setActiveClose(true);
-    }
   }
 
   locateSelection() {
     // TODO ionic4: avec le router Angular l'action pourra déclencher une navigation dans l'Effect ngrx
     this.store.select(BottlesQuery.getSelectedBottles).pipe(
       take(1),
-      map((bottles: Bottle[]) => bottles.filter((bottle: Bottle) => bottle.positions.length > 0))
+      map((bottles: Bottle[]) => bottles.filter((bottle: Bottle) => bottle.positions.length > 0)),
+      tap(bottles => logInfo('[browse.page.ts](locate) received selected bottles:' + bottles.length))
     ).subscribe(
       (bottles: Bottle[]) => {
         if (bottles.length > 0) {
@@ -133,26 +133,29 @@ export class BrowsePage implements OnInit, OnDestroy {
         }
       }
     );
-    if (this.ionFAB) {
-      // TODO ne permet appremment pas de refermer les FAB boutons...
-      //this.ionFAB.setActiveClose(true);
-    }
   }
 
   registerSelectionAsFavorite() {
-    this.notificationService.error('registerSelectionAsFavorite est à réimplémenter');
-    // règle: si une seule n'est pas favorite on les met toutes en favorite, sinon on les sort des favorites
-    //const atLeastOneNonFavorite = this.selectedBottles.filter(btl => !btl.favorite).length > 0;
-    //const updatedBottles = this.selectedBottles.map(
-    //  btl => {
-    //    const updated = new Bottle(btl);
-    //    updated.favorite = atLeastOneNonFavorite;
-    //    return updated;
-    //  }
-    //);
-    //
-    //this.store.dispatch(new UpdateBottlesAction(updatedBottles));
-    //this.resetSelection();
+    //règle: si une seule n'est pas favorite on les met toutes en favorite, sinon on les sort des favorites
+    this.store.select(BottlesQuery.getSelectedBottles).pipe(
+      take(1),
+      map((bottles: Bottle[]) => bottles.filter((bottle: Bottle) => bottle.positions.length > 0)),
+      tap(bottles => logInfo('[browse.page.ts](favorite) received selected bottles:' + bottles.length))
+    ).subscribe(
+      (bottles: Bottle[]) => {
+        const atLeastOneNonFavorite = bottles.filter(btl => !btl.favorite).length > 0;
+        const updatedBottles = bottles.map(
+          btl => {
+            const updated = new Bottle(btl);
+            updated.favorite = atLeastOneNonFavorite;
+            return updated;
+          }
+        );
+        this.store.dispatch(new ResetBottleSelectionAction());
+        this.store.dispatch(new UpdateBottlesAction(updatedBottles));
+      }
+    );
+
   }
 
   /**

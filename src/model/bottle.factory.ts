@@ -82,7 +82,6 @@ export class BottleFactory {
       (result: { bottle: Bottle, unsupportedAttrs: string[] }) => result.unsupportedAttrs.length > 0
     );
 
-    logInfo('');
     return ret;
   }
 

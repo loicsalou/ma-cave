@@ -104,13 +104,7 @@ export class UpdatePage implements OnInit {
   ngOnInit(): void {
     this.loadRegionAreas();
     this.image$ = this.imageService.getList(this.bottle).pipe(
-      tap(images => {
-        logInfo('images reçues: ' + images.length);
-      }),
       map((images: Image[]) => images.filter((image: Image) => image.nomCru === this.bottle.nomCru)),
-      tap(images => {
-        logInfo('images retenues: ' + images.length);
-      }),
       map((images: Image[]) =>
             images.map(image => {
                          return {src: image.URL};

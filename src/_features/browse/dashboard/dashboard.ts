@@ -15,13 +15,19 @@ import {VERSION} from '../../admin/version';
 import {ApplicationState} from '../../../app/state/app.state';
 import {Store} from '@ngrx/store';
 import {BottlesQuery} from '../../../app/state/bottles.state';
-import {RemoveFilterAction, ResetFilterAction, UpdateFilterAction} from '../../../app/state/bottles.actions';
+import {
+  LoadCellarAction,
+  RemoveFilterAction,
+  ResetFilterAction,
+  UpdateFilterAction
+} from '../../../app/state/bottles.actions';
 import {Observable, of} from 'rxjs';
-import {catchError, map, switchMap, tap} from 'rxjs/operators';
+import {catchError, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
 import {WithdrawalsQuery} from '../../../app/state/withdrawals.state';
 import {LoadWithdrawalsAction} from '../../../app/state/withdrawals.actions';
 import {SharedQuery, SharedState} from '../../../app/state/shared.state';
 import {LoadSharedAction, LogoutAction} from '../../../app/state/shared.actions';
+import {logInfo} from '../../../utils';
 
 @Component({
              selector: 'page-dashboard',
@@ -67,12 +73,14 @@ export class DashboardPage implements OnInit, OnDestroy {
     this.nativeProvider.feedBack();
     this.version = VERSION;
     this.bottles$ = this.store.select(BottlesQuery.getBottles).pipe(
+      distinctUntilChanged(),
       tap((bottles: Bottle[]) => {
             if (bottles && bottles.length > 0) {
               this.totalNumberOfBottles = bottles.reduce((tot: number, btl: Bottle) => tot + +btl.quantite_courante, 0);
             }
-          }
+          },
       ),
+      tap(bottles => logInfo('[dashboard.ts] received bottles: '+bottles.length)),
       catchError(err => {
         this.notificationService.error('Erreur lors de la récupération de la liste de bouteilles: ' + err);
         this.totalNumberOfBottles = 0;
@@ -90,6 +98,7 @@ export class DashboardPage implements OnInit, OnDestroy {
         let height = 30 + Math.min(3, withdrawals.length) * 92;
         this._withdrawalCardStyle = {'min-height': '120px', 'height': height + 'px'};
       }),
+      tap(withdrawals => logInfo('[dashboard.ts] received withdrawals: '+withdrawals.length)),
       catchError((err) => {
         this.notificationService.error('messages.withdrawals-load-error');
         return of([]);
@@ -99,6 +108,7 @@ export class DashboardPage implements OnInit, OnDestroy {
 
     this.mostUsedQueries$ = this.store.select(SharedQuery.getSharedState).pipe(
       map((state: SharedState) => state.mostUsedQueries),
+      tap(queries => logInfo('[dashboard.ts] received most used queries: '+queries.length)),
       catchError((err) => {
                    this.notificationService.error('messages.most-used-queries-failed');
                    return of([]);
@@ -111,6 +121,7 @@ export class DashboardPage implements OnInit, OnDestroy {
       )
     );
     this.store.dispatch(new LoadSharedAction());
+    this.store.dispatch(new LoadCellarAction());
   }
 
   ngOnDestroy() {
