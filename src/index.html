@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!--suppress ALL -->
 <html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8">
@@ -7,6 +8,7 @@
         content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="format-detection" content="telephone=no">
   <meta name="msapplication-tap-highlight" content="no">
+  <meta name="Description" content="une gestion de cave librement inspirée de cavusvinifera youcellar">
   
   <link rel="icon" type="image/x-icon" href="assets/icon/favicon.ico">
   <link rel="manifest" href="manifest.json">
@@ -15,14 +17,20 @@
   <!-- cordova.js required for cordova apps -->
   <script src="cordova.js"></script>
   
-  <!-- un-comment this code to enable service worker
+  <!-- un-comment this code to enable service worker -->
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
-        .then(() => console.log('service worker installed'))
-        .catch(err => console.log('Error', err));
+        .then(function (resp) {
+            console.log('service worker installed');
+          }
+        )
+        .catch(function (err) {
+            console.log('Error', err)
+          }
+        )
     }
-  </script>-->
+  </script>
   
   <link href="build/main.css" rel="stylesheet">
   <!-- Font-awesome -->

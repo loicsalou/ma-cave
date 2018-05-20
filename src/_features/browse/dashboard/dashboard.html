@@ -43,17 +43,19 @@
       </ion-card>
     </ng-container>
     
-    <ion-card class="card-background by-label" *ngIf="bottles$">
-      <ion-title>{{'statistics.repartition-par-type'| translate}}</ion-title>
-      <statistics [bottles$]="bottles$" [type]="'bar'" [axis]="'label'" [topMost]="10" [legend]="'none'"
-                  (filterApplied)="showFiltered($event)"></statistics>
-    </ion-card>
-    
-    <ion-card class="card-background by-region" *ngIf="bottles$">
-      <ion-title>{{'statistics.repartition-par-region'| translate}}</ion-title>
-      <statistics [bottles$]="bottles$" [type]="'bar'" [axis]="'subregion_label'" [topMost]="7" [legend]="'none'"
-                  (filterApplied)="showFiltered($event)"></statistics>
-    </ion-card>
+    <ng-container *ngIf="bottles$ | async as bottles">
+      <ion-card class="card-background by-label" *ngIf="bottles && bottles.length!=0">
+        <ion-title>{{'statistics.repartition-par-type'| translate}}</ion-title>
+        <statistics [bottles]="bottles" [type]="'bar'" [axis]="'label'" [topMost]="10" [legend]="'none'"
+                    (filterApplied)="showFiltered($event)"></statistics>
+      </ion-card>
+      
+      <ion-card class="card-background by-region" *ngIf="bottles && bottles.length!=0">
+        <ion-title>{{'statistics.repartition-par-region'| translate}}</ion-title>
+        <statistics [bottles]="bottles" [type]="'bar'" [axis]="'subregion_label'" [topMost]="7" [legend]="'none'"
+                    (filterApplied)="showFiltered($event)"></statistics>
+      </ion-card>
+    </ng-container>
   </responsive-wrapper>
 </ion-content>
 

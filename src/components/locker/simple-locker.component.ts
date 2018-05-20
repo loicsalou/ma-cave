@@ -144,6 +144,9 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
     for (let i = 0; i < this.locker.dimension.y; i++) {
       this.rows[ i ] = this.initRow(this.locker.dimension.x, i);
     }
+    if (!this.content) {
+      return;
+    }
     this.content.forEach(
       bottle => {
         if (bottle.positions) {

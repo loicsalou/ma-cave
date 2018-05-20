@@ -1,7 +1,7 @@
 import {AlertController, Loading, LoadingController, ToastController} from 'ionic-angular';
 import {TranslateService} from '@ngx-translate/core';
 import {Observable, Subject} from 'rxjs';
-import {logDebug, logInfo, logWarn} from '../utils';
+import {logDebug} from '../utils';
 
 /**
  * Created by loicsalou on 13.06.17.
@@ -116,21 +116,6 @@ export class NotificationService {
                                                  });
     popup.present();
     return popup;
-  }
-
-  traceInfo(trace: string) {
-    // à remplacer par un log si nécessaire
-    logInfo(new Date().getTime() + ' ' + trace);
-  }
-
-  traceDebug(trace: string) {
-    // à remplacer par un log si nécessaire
-    logDebug(new Date().getTime() + ' ' + trace);
-  }
-
-  traceWarn(trace: string) {
-    // à remplacer par un log si nécessaire
-    logWarn(new Date().getTime() + ' ' + trace);
   }
 
   receiving(s: string) {

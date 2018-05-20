@@ -7,14 +7,14 @@ import * as schema from './firebase-schema';
 
 import {Injectable} from '@angular/core';
 import {Bottle} from '../../model/bottle';
-import {Observable, from as fromPromise, throwError as _throw, of} from 'rxjs';
+import {from as fromPromise, Observable, of, throwError as _throw} from 'rxjs';
 import {AngularFireDatabase, SnapshotAction} from 'angularfire2/database';
 import {Image} from '../../model/image';
 import {NotificationService} from '../notification.service';
 import {BottleFactory} from '../../model/bottle.factory';
 import {User} from '../../model/user';
 import {Locker} from '../../model/locker';
-import {sanitizeBeforeSave} from '../../utils/index';
+import {logInfo, sanitizeBeforeSave} from '../../utils/index';
 import {map, take, tap} from 'rxjs/operators';
 import Reference = firebase.database.Reference;
 
@@ -82,7 +82,9 @@ export class FirebaseBottlesService {
    * @returns {Observable<Image[]>}
    */
   public listBottleImages(bottle: Bottle): Observable<Image[]> {
-    return this.angularFirebase.list<Image>(this.XREF_ROOT).valueChanges();
+    return this.angularFirebase.list<Image>(this.XREF_ROOT).valueChanges().pipe(
+      tap(images => logInfo('[firebase] ==> réception d\'images de bouteille' + images.length))
+    );
   }
 
   // ======================== Gestion des bouteilles
@@ -93,6 +95,7 @@ export class FirebaseBottlesService {
    * @returns {Promise<any>}
    */
   public update(bottles: Bottle[]): Observable<Bottle[]> {
+    logInfo('[firebase] ==> mise à jour de bouteilles' + bottles.length);
     let updates = {};
     bottles.forEach(bottle => {
       bottle[ 'lastUpdated' ] = new Date().getTime();
@@ -112,6 +115,7 @@ export class FirebaseBottlesService {
    * @returns {Promise<any>}
    */
   public updateLockerAndBottles(bottles: Bottle[], locker: Locker): Observable<{ bottles: Bottle[], locker: Locker }> {
+    logInfo('[firebase] ==> mise à jour de bouteilles et locker:' + bottles.length);
     let updates = {};
     bottles.forEach(bottle => {
       bottle[ 'lastUpdated' ] = new Date().getTime();
@@ -131,6 +135,7 @@ export class FirebaseBottlesService {
   }
 
   public saveBottles(bottles: Bottle[]): Observable<Bottle[]> {
+    logInfo('[firebase] ==> sauvegarde de bouteilles:' + bottles.length);
     bottles.forEach(bottle => {
       bottle[ 'lastUpdated' ] = new Date().getTime();
       this.bottlesRootRef.push(sanitizeBeforeSave(bottle), (
@@ -147,6 +152,7 @@ export class FirebaseBottlesService {
   }
 
   public replaceBottle(bottle: Bottle): Observable<Bottle> {
+    logInfo('[firebase] ==> rempmlacement de la bouteille:' + JSON.stringify(bottle));
     bottle[ 'lastUpdated' ] = new Date().getTime();
     return fromPromise(
       this.bottlesRootRef.child(bottle.id).set(sanitizeBeforeSave(bottle))
@@ -156,6 +162,7 @@ export class FirebaseBottlesService {
   }
 
   public deleteBottles(): Observable<boolean> {
+    logInfo('[firebase] ==> suppression des bouteilles');
     return fromPromise(
       this.bottlesRootRef.remove()
         .then(() => true)
@@ -175,7 +182,7 @@ export class FirebaseBottlesService {
                          popup = undefined
     );
     return this.angularFirebase.list<Bottle>(this.BOTTLES_ROOT).snapshotChanges().pipe(
-      take(1),
+      //take(1),
       map(
         (snaps: SnapshotAction<Bottle>[]) => snaps.map(snap => this.bottleFactory.create({id: snap.payload.key, ...snap.payload.val()}))
       ),
@@ -184,7 +191,8 @@ export class FirebaseBottlesService {
               popup.dismiss();
             }
           }
-      )
+      ),
+      tap(bottles => logInfo('[firebase] ==> réception de bouteilles:' + bottles.length))
     );
   }
 

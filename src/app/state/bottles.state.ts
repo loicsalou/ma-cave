@@ -6,6 +6,7 @@ import {FilterSet} from '../../components/distribution/filterset';
 import {createSelector} from '@ngrx/store';
 import {match} from '../../components/distribution/filter-matcher';
 import {Locker} from '../../model/locker';
+import {LogoutAction, SharedActionTypes} from './shared.actions';
 
 export interface BottlesState {
   allBottles: {
@@ -94,7 +95,7 @@ export namespace BottlesQuery {
   );
 }
 
-export function bottlesStateReducer(state: BottlesState = INITIAL_STATE, action: BottlesActions): BottlesState {
+export function bottlesStateReducer(state: BottlesState = INITIAL_STATE, action: BottlesActions | LogoutAction): BottlesState {
   switch (action.type) {
 
     case BottlesActionTypes.CreateBottleActionType: {
@@ -220,6 +221,10 @@ export function bottlesStateReducer(state: BottlesState = INITIAL_STATE, action:
         ...state,
         filters: action.newFilter
       };
+    }
+
+    case SharedActionTypes.LogoutActionType: {
+      return INITIAL_STATE;
     }
 
     default:

@@ -10,6 +10,7 @@ import {Platform} from 'ionic-angular';
 import {auth} from 'firebase';
 import {GooglePlus} from '@ionic-native/google-plus'; //needed for the GoogleAuthProvider
 import * as firebase from 'firebase/app';
+import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
 
 /**
  * Services related to the bottles in the cellar.
@@ -49,7 +50,7 @@ export class GoogleLoginService extends AbstractLoginService {
   }
 
   protected delegatedLogin(authObs: Observable<User>): Observable<User> {
-    let provider = new firebase.auth.GoogleAuthProvider();
+    let provider = new GoogleAuthProvider();
     let self = this;
     firebase.auth().useDeviceLanguage();
     let popup = this.notificationService.createLoadingPopup('app.checking-login');

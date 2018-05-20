@@ -4,6 +4,7 @@ import {Withdrawal} from '../../model/withdrawal';
 import {WithdrawalsActions, WithdrawalsActionTypes} from './withdrawals.actions';
 import {createSelector} from '@ngrx/store';
 import {Bottle} from '../../model/bottle';
+import {LogoutAction, SharedActionTypes} from './shared.actions';
 
 export interface WithdrawalsState {
   withdrawals: { [ key: string ]: Withdrawal };
@@ -25,7 +26,7 @@ export namespace WithdrawalsQuery {
   ;
 }
 
-export function withdrawalsStateReducer(state: WithdrawalsState = INITIAL_STATE, action: WithdrawalsActions): WithdrawalsState {
+export function withdrawalsStateReducer(state: WithdrawalsState = INITIAL_STATE, action: WithdrawalsActions | LogoutAction): WithdrawalsState {
   switch (action.type) {
 
     case WithdrawalsActionTypes.LoadWithdrawalsActionType: {
@@ -58,6 +59,10 @@ export function withdrawalsStateReducer(state: WithdrawalsState = INITIAL_STATE,
         ...state,
         withdrawals: updateWithdrawals(state.withdrawals, action.withdrawal)
       };
+    }
+
+    case SharedActionTypes.LogoutActionType: {
+      return INITIAL_STATE;
     }
 
     default:

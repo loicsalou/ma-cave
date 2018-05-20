@@ -1,8 +1,9 @@
 {
   "rules": {
     "no-duplicate-variable": true,
+    "no-unnecessary-class": false,
     "no-unused-variable": [
-      true
+      false
     ]
   },
   "rulesDirectory": [

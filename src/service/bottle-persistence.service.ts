@@ -1,9 +1,9 @@
 /**
  * Created by loicsalou on 28.02.17.
  */
-import {Injectable, OnDestroy, OnInit} from '@angular/core';
+import {Injectable, OnDestroy} from '@angular/core';
 import {Bottle, Position} from '../model/bottle';
-import {Observable, BehaviorSubject, Subscription, Subject} from 'rxjs';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 import {FilterSet} from '../components/distribution/filterset';
 import {AbstractPersistenceService} from './abstract-persistence.service';
 import {NotificationService} from './notification.service';
@@ -18,8 +18,7 @@ import {FirebaseWithdrawalsService} from './firebase/firebase-withdrawals.servic
 import {FirebaseBottlesService} from './firebase/firebase-bottles.service';
 import {FirebaseLockersService} from './firebase/firebase-lockers.service';
 import {FirebaseImagesService} from './firebase/firebase-images.service';
-import {of} from 'rxjs';
-import {map, take, tap} from 'rxjs/operators';
+import {map, take} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../app/state/app.state';
 import {LockerFactory} from '../model/locker.factory';
@@ -96,7 +95,7 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
   getBottlesInLocker(locker: Locker): Observable<Bottle[]> {
     return this.store.select(BottlesQuery.getBottles).pipe(
       take(1),
-      tap((allBottlesArray: Bottle[]) => allBottlesArray.filter(
+      map((allBottlesArray: Bottle[]) => allBottlesArray.filter(
         bottle => bottle.positions.filter(pos => pos.lockerId === locker.id).length > 0)
       ));
   }
@@ -135,8 +134,8 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
   }
 
   removeBottleFrom(bottle: Bottle, position: Position): Bottle {
-    let updatedBottle=new Bottle(bottle);
-    updatedBottle.positions=bottle.positions.filter(pos => !pos.equals(position));
+    let updatedBottle = new Bottle(bottle);
+    updatedBottle.positions = bottle.positions.filter(pos => !pos.equals(position));
     updatedBottle.quantite_courante--;
     return updatedBottle;
   }

@@ -1,5 +1,4 @@
-
-import {map} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 /**
  * Created by loicsalou on 28.02.17.
  */
@@ -10,12 +9,11 @@ import {NotificationService} from '../notification.service';
 import {User} from '../../model/user';
 import {SimpleLocker} from '../../model/simple-locker';
 import {Locker} from '../../model/locker';
-import {sanitizeBeforeSave} from '../../utils/index';
-
-import * as firebase from 'firebase/app';
+import {logInfo, sanitizeBeforeSave} from '../../utils/index';
 import * as schema from './firebase-schema';
 import * as moment from 'moment';
 import Reference = firebase.database.Reference;
+import * as firebase from 'firebase';
 
 /**
  * Services related to the lockers in the cellar.
@@ -66,14 +64,16 @@ export class FirebaseLockersService {
   public fetchAllLockers(): Observable<Locker[]> {
     return this.angularFirebase
       .list<Locker>(this.CELLAR_ROOT).snapshotChanges().pipe(
-      map(
-        (changes: SnapshotAction<any>[]) => {
-          return changes.map(c => ({id: c.payload.key, ...c.payload.val()}));
-        }
-      ));
+        map(
+          (changes: SnapshotAction<any>[]) => {
+            return changes.map(c => ({id: c.payload.key, ...c.payload.val()}));
+          }
+        ),
+        tap(lockers => logInfo('[firebase] ==> réception de lockers: ' + lockers.length)));
   }
 
   public createLocker(locker: Locker): void {
+    logInfo('[firebase] ==> création de locker: ' + JSON.stringify(locker));
     this.cellarRootRef.push(sanitizeBeforeSave(locker), (
       err => {
         if (err !== null) {
@@ -84,6 +84,7 @@ export class FirebaseLockersService {
   }
 
   public replaceLocker(locker: SimpleLocker) {
+    logInfo('[firebase] ==> remplacement de locker: ' + JSON.stringify(locker));
     this.cellarRootRef.child(locker.id)
       .set(sanitizeBeforeSave(locker),
            err => {
@@ -94,6 +95,7 @@ export class FirebaseLockersService {
   }
 
   public deleteLocker(locker: Locker) {
+    logInfo('[firebase] ==> suppression de locker: ' + JSON.stringify(locker));
     this.cellarRootRef.child(locker.id).remove(
       error => {
         if (error !== null) {

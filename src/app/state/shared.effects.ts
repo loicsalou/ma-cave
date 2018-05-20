@@ -6,6 +6,7 @@ import {
   DeleteAccountAction,
   LoadSharedAction,
   LoadSharedSuccessAction,
+  LoginSuccessAction,
   SharedActionTypes,
   UpdateMostUsedQueriesAction,
   UpdateThemeAction
@@ -13,9 +14,21 @@ import {
 import {SharedPersistenceService} from '../../service/shared-persistence.service';
 import {UserPreferences} from '../../model/user-preferences';
 import {LoginService} from '../../service/login/login.service';
+import {environment} from '../../environments/environment';
+import {setLogLevel} from '../../utils';
 
 @Injectable()
 export class SharedEffectsService {
+
+  @Effect({dispatch: false}) loginSuccess$ = this.actions$
+    .ofType(SharedActionTypes.LoginActionSuccessType).pipe(
+      tap((action: LoginSuccessAction) => {
+            if (!environment.production) {
+              setLogLevel('INFO');
+            }
+          }
+      )
+    );
 
   @Effect() getShared$ = this.actions$
     .ofType(SharedActionTypes.LoadSharedActionType).pipe(

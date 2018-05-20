@@ -14,11 +14,17 @@ export class CaveErrorHandler extends ErrorHandler {
    * @param {?} err
    * @return {?}
    */
-  handleError(err) {
+  handleError(err:Error) {
     super.handleError(err);
     if (this.count++ < 30) {
+      let stack='no stack';
       try {
-        this.dataConnection.logError(err);
+        stack=err.stack;
+      }
+      catch (e) {
+      }
+      try {
+        this.dataConnection.logError(err+': '+stack);
       }
       catch (e) {
       }
