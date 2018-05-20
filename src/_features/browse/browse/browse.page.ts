@@ -62,7 +62,7 @@ export class BrowsePage implements OnInit, OnDestroy {
     );
     let bottles$ = this.store.select(BottlesQuery.getFilteredBottles).pipe(
       map((bottles: Bottle[]) => this.getPrepareDisplayedList(bottles)),
-      tap(bottles => logInfo('[browse.page.ts] received bottles' + bottles.length))
+      tap(bottles => logInfo('[browse.page.ts] received bottles: ' + bottles.length))
     );
     let selection$ = this.store.select(BottlesQuery.getSelectedBottles);
 

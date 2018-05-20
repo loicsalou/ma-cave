@@ -73,14 +73,15 @@ export class DashboardPage implements OnInit, OnDestroy {
     this.nativeProvider.feedBack();
     this.version = VERSION;
     this.bottles$ = this.store.select(BottlesQuery.getBottles).pipe(
-      distinctUntilChanged(),
       tap((bottles: Bottle[]) => {
             if (bottles && bottles.length > 0) {
               this.totalNumberOfBottles = bottles.reduce((tot: number, btl: Bottle) => tot + +btl.quantite_courante, 0);
             }
-          },
+          }
       ),
-      tap(bottles => logInfo('[dashboard.ts] received bottles: '+bottles.length)),
+      tap(bottles => {
+        logInfo('[dashboard.ts] received bottles: '+bottles.length);
+      }),
       catchError(err => {
         this.notificationService.error('Erreur lors de la récupération de la liste de bouteilles: ' + err);
         this.totalNumberOfBottles = 0;

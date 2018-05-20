@@ -182,7 +182,7 @@ export class FirebaseBottlesService {
                          popup = undefined
     );
     return this.angularFirebase.list<Bottle>(this.BOTTLES_ROOT).snapshotChanges().pipe(
-      take(1),
+      //take(1),
       map(
         (snaps: SnapshotAction<Bottle>[]) => snaps.map(snap => this.bottleFactory.create({id: snap.payload.key, ...snap.payload.val()}))
       ),

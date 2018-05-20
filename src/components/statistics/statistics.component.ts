@@ -5,8 +5,7 @@ import * as _ from 'lodash';
 import {FilterSet} from '../distribution/filterset';
 import {ChartEvent} from '../chart/chart.component';
 import {TranslateService} from '@ngx-translate/core';
-import {switchMap, tap} from 'rxjs/operators';
-import {Observable, of} from 'rxjs';
+import {Observable} from 'rxjs';
 
 /**
  * Generated class for the StatisticsComponent component.
@@ -30,7 +29,7 @@ export class StatisticsComponent implements OnInit {
   @Input()
   type: string = 'bar';
   @Input()
-  bottles$: Observable<Bottle[]>;
+  bottles: Bottle[];
   @Output()
   filterApplied: EventEmitter<FilterSet> = new EventEmitter<FilterSet>();
 
@@ -50,20 +49,13 @@ export class StatisticsComponent implements OnInit {
 
   private totalNumberOfLots: number;
   private others: KeyValue[];
-  private actualBottles$: Observable<Bottle[]>;
 
   constructor(private distributionService: DistributeService,
               private translateService: TranslateService, @Inject('GLOBAL_CONFIG') private config) {
   }
 
   ngOnInit(): void {
-    this.actualBottles$ = this.bottles$.pipe(
-      switchMap((bottles: Bottle[]) => of(
-        bottles.filter(btl => btl.quantite_courante > 0)
-      )),
-      tap((bottles: Bottle[]) =>
-            this.createChart(bottles))
-    );
+    this.createChart(this.bottles.filter(bottle => bottle.quantite_courante > 0));
   }
 
   createLabelColorChart(distribution: Distribution) {
