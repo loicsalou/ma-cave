@@ -14,6 +14,7 @@ import {SharedQuery, SharedState} from '../../app/state/shared.state';
 import {Observable} from 'rxjs';
 import {User} from '../../model/user';
 import {take} from 'rxjs/operators';
+import {HomePage} from '../../app/home/home';
 
 /**
  * Generated class for the UploadBottles page.
@@ -59,7 +60,13 @@ export class AdminPage {
 
   logout() {
     this.store.dispatch(new LogoutAction());
+    this.navCtrl.setRoot(HomePage);
     this.navCtrl.popToRoot();
+    setTimeout(() => {
+                 window.history.pushState({}, '', '/');
+                 window.location.reload();
+               }
+      , 100);
   }
 
   public platformIsCordova(): boolean {

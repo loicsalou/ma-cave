@@ -9,17 +9,17 @@
         <legend><h2>{{'app.please-login' | translate}}</h2></legend>
         <div d-flex>
           <button ion-button badge [class.clicked]="fbidentifying" (click)="facebookLogin()">
-            <img icon-only src="assets/icon/social_facebook_box_blue.png" alt="facebook_login"/>
+            <img icon-only src="assets/icon/social_facebook_box_blue-120.png" alt="facebook_login"/>
           </button>
           <button ion-button badge [class.clicked]="mailidentifying" (click)="emailLogin()">
             <ion-icon name="mail" style="font-size: 2.4em;"></ion-icon>
           </button>
           <button ion-button badge [class.clicked]="anoidentifying" (click)="anonymousLogin()">
-            <img icon-only src="assets/icon/anonymous.png" alt="anonymous_login"/>
+            <img icon-only src="assets/icon/anonymous-120.png" alt="anonymous_login"/>
           </button>
           <button ion-button badge [class.clicked]="anoidentifying" (click)="googleLogin()"
                   *ngIf="isGoogleLoginEnabled()">
-            <img icon-only src="assets/icon/google-login.png" alt="google_login"/>
+            <img icon-only src="assets/icon/google-login-120.png" alt="google_login"/>
           </button>
         </div>
       </fieldset>

@@ -77,9 +77,12 @@ export class FirebaseAdminService implements AdminService {
     return this.angularFirebase.object(this.PROFILE_ROOT).valueChanges().pipe(
       map(
         (data: UserPreferences) => {
+          if (data == null) {
+            data = {} as UserPreferences;
+          }
           return {
             ...data,
-            mostUsedQueries: Object.keys(data.mostUsedQueries || {})
+            mostUsedQueries: Object.keys(data.mostUsedQueries == null ? {} : data.mostUsedQueries)
               .map(key => data.mostUsedQueries[ key ])
           };
         }

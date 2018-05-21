@@ -9,11 +9,19 @@ ion-header.home {
   }
 }
 
+.webp ion-content.home div.login {
+  background-image: url('../../assets/img/background/splash-background.webp');
+}
+
+.no-webp ion-content.home div.login {
+  background-image: url('../../assets/img/background/splash-background-120.png');
+}
+
 ion-content.home {
   height: 90vh;
 
   div.login {
-    background-image: url('../../assets/img/background/splash-background.png');
+    //background-image: url('../../assets/img/background/splash-background-120.png');
     background-size: cover;
     background-repeat: no-repeat;
     height: 90vh;

@@ -72,10 +72,8 @@
     </ion-fab-list>
   </ion-fab>
   
-  <div *ngIf="bottlesToPlaceLocker; else nothingtoplace" bottom left>
+  <div bottom left *ngIf="showPlaceLocker">
     <locker #placedLockerComponent [locker]="bottlesToPlaceLocker" [content]="selectedBottles$ | async"
             (onCellSelected)="cellSelected($event)"></locker>
   </div>
-  <ng-template #nothingtoplace>rien à placer</ng-template>
-  <span>fin</span>
 </ion-content>

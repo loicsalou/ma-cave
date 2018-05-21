@@ -1,6 +1,5 @@
 import {
   AfterViewChecked,
-  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   OnInit,
@@ -32,12 +31,13 @@ import {
   UpdateBottlesAction,
   WithdrawBottleAction
 } from '../../app/state/bottles.actions';
-import {Observable, Subject} from 'rxjs';
+import {Observable, of, Subject} from 'rxjs';
 import {ScrollAnchorDirective} from '../../components/scroll-anchor.directive';
 import {filter, map, shareReplay, tap} from 'rxjs/operators';
 import {DimensionOfDirective} from '../../components/dimension-of.directive';
 import {SimpleLockerComponent} from '../../components/locker/simple-locker.component';
 import {logDebug, logInfo} from '../../utils/index';
+import {HomePage} from '../../app/home/home';
 
 function shortenBottle(btl: Bottle) {
   return {
@@ -54,9 +54,10 @@ function shortenBottle(btl: Bottle) {
  * on Ionic pages and navigation.
  */
 @IonicPage()
+// TODO strategy onpush ne fonctionne pas pour le moment voir pouquoi
 @Component({
-             templateUrl: './cellar-page.html',
-             changeDetection: ChangeDetectionStrategy.OnPush
+             templateUrl: './cellar-page.html'
+             //changeDetection: ChangeDetectionStrategy.OnPush
              // styleUrls:[ 'cellar-page.scss' ]
            })
 export class CellarPage implements OnInit, AfterViewChecked {
@@ -73,6 +74,7 @@ export class CellarPage implements OnInit, AfterViewChecked {
   dimensionsSubjects: { [ lockerId: string ]: Subject<Dimension> } = {};
   lockers$: Observable<Locker[]>;
   bottlesPerRack$: Observable<{ [ lockerId: string ]: Bottle[] }>;
+  showPlaceLocker = false;
 
   @ViewChild('placedLockerComponent') private placedLockerComponent: SimpleLockerComponent;
   @ViewChildren(ScrollAnchorDirective) private lockerRows: QueryList<ScrollAnchorDirective>;
@@ -213,7 +215,13 @@ export class CellarPage implements OnInit, AfterViewChecked {
 
   logout() {
     this.store.dispatch(new LogoutAction());
+    this.navCtrl.setRoot(HomePage);
     this.navCtrl.popToRoot();
+    setTimeout(() => {
+                 window.history.pushState({}, '', '/');
+                 window.location.reload();
+               }
+      , 100);
   }
 
   zoomOnBottle(pendingCell: Cell) {
@@ -342,16 +350,7 @@ export class CellarPage implements OnInit, AfterViewChecked {
   }
 
   private isBottleToHighlight(bottle: Bottle) {
-    if (this.selectedBottles) {
-      let ret = this.selectedBottles.find(btl => btl.id === bottle.id) !== undefined;
-      if (ret) {
-        this.notificationService.debugAlert('highlighted: ' + bottle.nomCru);
-      }
-      return ret;
-    }
-    else {
-      return false;
-    }
+    return (this.selectedBottles && this.selectedBottles.find(btl => btl.id === bottle.id) !== undefined)
   }
 
   /**
@@ -370,21 +369,7 @@ export class CellarPage implements OnInit, AfterViewChecked {
         x: nbToBePlaced,
         y: 1
       }, false);
+      this.showPlaceLocker = true;
     }
   }
-
-  // creéer des positions dans le placedLocker pour qu'elles y apparaissent
-  //private fillPlacedLocker() {
-  //  this.selectedBottles.forEach((btl: Bottle) => {
-  //    let bottle=new Bottle(btl);
-  //    bottle.positions=[...btl.positions];
-  //    let ix = 0;
-  //    let nbBottles = bottle.quantite_courante - bottle.positions.length;
-  //    for (let i = 0; i < nbBottles; i++) {
-  //      let pos=new Position(this.bottlesToPlaceLocker.id, ix++, 0);
-  //      bottle.positions.push(pos);
-  //      this.placedLockerComponent.placeBottle(bottle, pos);
-  //    }
-  //  });
-  //}
 }

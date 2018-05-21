@@ -22,14 +22,13 @@ import {map, tap} from 'rxjs/operators';
              // styleUrls:[ 'home.scss' ]
            })
 export class HomePage implements OnInit, AfterViewInit {
-
+  public static loggedIn = false;
   version: any;
   currentTheme$: Observable<string>;
 
   private loginPage: Modal;
 
   private loginSubscription: Subscription;
-  private loggedIn = false;
 
   constructor(public navCtrl: NavController, public loginService: LoginService,
               private modalController: ModalController,
@@ -90,22 +89,36 @@ export class HomePage implements OnInit, AfterViewInit {
 
   logout() {
     this.store.dispatch(new LogoutAction());
+    this.navCtrl.setRoot(HomePage);
     this.navCtrl.popToRoot();
+    setTimeout(() => {
+                 window.history.pushState({}, '', '/');
+                 window.location.reload();
+               }
+      , 100);
   }
 
   private handleLoginEvent(user: User) {
     if (user !== undefined) {
-      this.loggedIn = true;
+      HomePage.loggedIn = true;
       this.store.dispatch(new LoadBottlesAction());
       this.navCtrl.setRoot(TabsPage);
       this.loginSubscription.unsubscribe();
     }
     else {
       // logout ==> retour à la page de login
-      if (this.loggedIn) {
+      if (HomePage.loggedIn) {
+        HomePage.loggedIn = false;
+        if (this.loginSubscription) {
+          this.loginSubscription.unsubscribe();
+        }
         this.navCtrl.setRoot(HomePage);
         this.navCtrl.popToRoot();
-        this.loginSubscription.unsubscribe();
+        setTimeout(() => {
+                     window.history.pushState({}, '', '/');
+                     window.location.reload();
+                   }
+          , 100);
       }
     }
   }
