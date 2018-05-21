@@ -1,7 +1,6 @@
 /**
  * Created by loicsalou on 28.02.17.
  */
-import * as firebase from 'firebase/app';
 import * as moment from 'moment';
 import * as schema from './firebase-schema';
 
