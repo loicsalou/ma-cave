@@ -1,13 +1,13 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {Modal, ModalController, NavController, Platform} from 'ionic-angular';
 import {LoginService} from '../../service/login/login.service';
-import {EmailLoginPage} from '../../_features/admin/login/email-login.page';
+import {EmailLoginPage} from '../login/email-login.page';
 import {User} from '../../model/user';
 import {TabsPage} from '../tabs/tabs';
-import {Subscription, Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {NotificationService} from '../../service/notification.service';
 import {NativeProvider} from '../../providers/native/native';
-import {VERSION} from '../../_features/admin/version';
+import {VERSION} from '../version';
 import {ApplicationState} from '../state/app.state';
 import {Store} from '@ngrx/store';
 import {LoadBottlesAction} from '../state/bottles.actions';
@@ -90,6 +90,7 @@ export class HomePage implements OnInit, AfterViewInit {
 
   logout() {
     this.store.dispatch(new LogoutAction());
+    this.navCtrl.popToRoot();
   }
 
   private handleLoginEvent(user: User) {
@@ -97,11 +98,13 @@ export class HomePage implements OnInit, AfterViewInit {
       this.loggedIn = true;
       this.store.dispatch(new LoadBottlesAction());
       this.navCtrl.setRoot(TabsPage);
+      this.loginSubscription.unsubscribe();
     }
     else {
       // logout ==> retour à la page de login
       if (this.loggedIn) {
         this.navCtrl.setRoot(HomePage);
+        this.navCtrl.popToRoot();
         this.loginSubscription.unsubscribe();
       }
     }

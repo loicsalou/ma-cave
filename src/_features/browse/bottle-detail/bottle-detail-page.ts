@@ -1,8 +1,8 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import {NavController, NavParams, Slides} from 'ionic-angular';
+import {IonicPage, NavController, NavParams, Slides} from 'ionic-angular';
 import {Bottle} from '../../../model/bottle';
 import {BottleEvent} from '../../../components/list/bottle-event';
-import {UpdatePage} from '../update/update.page';
+import {UpdatePage} from '../update/update-page';
 import * as _ from 'lodash';
 import {logInfo} from '../../../utils';
 
@@ -12,9 +12,10 @@ import {logInfo} from '../../../utils';
  See http://ionicframework.com/docs/v2/components/#navigation for more info on
  Ionic pages and navigation.
  */
+@IonicPage()
 @Component({
-             templateUrl: 'page-bottle-detail.html',
-             // styleUrls:[ 'page-bottle-detail.scss' ]
+             templateUrl: 'bottle-detail-page.html',
+             // styleUrls:[ 'bottle-detail-page.scss' ]
            })
 export class BottleDetailPage implements OnInit {
   private static SLIDES_BEFORE = 15;
@@ -47,7 +48,7 @@ export class BottleDetailPage implements OnInit {
   }
 
   update() {
-    this.navCtrl.push(UpdatePage, {bottle: this.bottle});
+    this.navCtrl.push('UpdatePage', {bottle: this.bottle});
   }
 
   ionViewDidEnter(): void {

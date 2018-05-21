@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {NavController, NavParams} from 'ionic-angular';
+import {IonicPage, NavController, NavParams} from 'ionic-angular';
 import {BottleSize, Locker} from '../../../model/locker';
 import {Bottle} from '../../../model/bottle';
 import {NotificationService} from '../../../service/notification.service';
@@ -20,10 +20,10 @@ import {Observable} from 'rxjs';
  * See https://angular.io/docs/ts/latest/api/core/index/ComponentMetadata-class.html
  * for more info on Angular Components.
  */
+@IonicPage()
 @Component({
-             selector: 'locker-editor2',
-             templateUrl: 'update-locker.page.html'
-             // styleUrls:[ 'update-locker.page.scss' ]
+             templateUrl: 'update-locker-page.html'
+             // styleUrls:[ 'update-locker-page.scss' ]
            })
 export class UpdateLockerPage implements OnInit {
 

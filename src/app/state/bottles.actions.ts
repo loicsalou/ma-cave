@@ -6,7 +6,6 @@ import {Withdrawal} from '../../model/withdrawal';
 
 export enum BottlesActionTypes {
   CreateBottleActionType = '[bottles] - create bottle',
-  DrawBottlesActionType = '[bottles] - draw bottles',
   LoadBottlesActionType = '[bottles] - loading',
   LoadBottlesSuccessActionType = '[bottles] - loading success',
   LoadBottlesFailedActionType = '[bottles] - loading failed',

@@ -1,5 +1,5 @@
 import {Component, ViewChild} from '@angular/core';
-import {NavController, NavParams} from 'ionic-angular';
+import {IonicPage, NavController, NavParams} from 'ionic-angular';
 import {BottleSize, Dimension, Locker, LockerType} from '../../../model/locker';
 import {NgForm} from '@angular/forms';
 import {FridgeLocker} from '../../../model/fridge-locker';
@@ -12,10 +12,10 @@ import {SimpleLocker} from '../../../model/simple-locker';
  * See https://angular.io/docs/ts/latest/api/core/index/ComponentMetadata-class.html
  * for more info on Angular Components.
  */
+@IonicPage()
 @Component({
-             selector: 'locker-editor',
-             templateUrl: './create-locker.page.html',
-             // styleUrls:[ 'create-locker.page.scss' ]
+             templateUrl: './create-locker-page.html'
+             // styleUrls:[ 'create-locker-page.scss' ]
            })
 export class CreateLockerPage {
 

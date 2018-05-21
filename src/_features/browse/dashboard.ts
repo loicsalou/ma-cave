@@ -1,36 +1,37 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {ModalController, NavController, Platform, PopoverController, VirtualScroll} from 'ionic-angular';
-import {BrowsePage} from '../browse/browse.page';
-import {Bottle} from '../../../model/bottle';
-import {FilterSet} from '../../../components/distribution/filterset';
-import {NativeProvider} from '../../../providers/native/native';
-import {NotificationService} from '../../../service/notification.service';
-import {PopoverPage} from '../popover/popover.page';
-import {Action} from '../../../model/action';
-import {BottleItemComponent} from '../../../components/list/bottle-item.component';
-import {Withdrawal} from '../../../model/withdrawal';
-import {RecordOutputPage} from '../record-output/record-output';
-import {SearchCriteria} from '../../../model/search-criteria';
-import {VERSION} from '../../admin/version';
-import {ApplicationState} from '../../../app/state/app.state';
+import {IonicPage, ModalController, NavController, Platform, PopoverController, VirtualScroll} from 'ionic-angular';
+import {BrowsePage} from './browse/browse-page';
+import {Bottle} from '../../model/bottle';
+import {FilterSet} from '../../components/distribution/filterset';
+import {NativeProvider} from '../../providers/native/native';
+import {NotificationService} from '../../service/notification.service';
+import {PopoverPage} from './popover/popover.page';
+import {Action} from '../../model/action';
+import {BottleItemComponent} from '../../components/list/bottle-item.component';
+import {Withdrawal} from '../../model/withdrawal';
+import {RecordOutputPage} from './record-output/record-output';
+import {SearchCriteria} from '../../model/search-criteria';
+import {VERSION} from '../../app/version';
+import {ApplicationState} from '../../app/state/app.state';
 import {Store} from '@ngrx/store';
-import {BottlesQuery} from '../../../app/state/bottles.state';
+import {BottlesQuery} from '../../app/state/bottles.state';
 import {
   LoadCellarAction,
   RemoveFilterAction,
   ResetFilterAction,
   UpdateFilterAction
-} from '../../../app/state/bottles.actions';
+} from '../../app/state/bottles.actions';
 import {Observable, of} from 'rxjs';
 import {catchError, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
-import {WithdrawalsQuery} from '../../../app/state/withdrawals.state';
-import {LoadWithdrawalsAction} from '../../../app/state/withdrawals.actions';
-import {SharedQuery, SharedState} from '../../../app/state/shared.state';
-import {LoadSharedAction, LogoutAction} from '../../../app/state/shared.actions';
-import {logInfo} from '../../../utils';
+import {WithdrawalsQuery} from '../../app/state/withdrawals.state';
+import {LoadWithdrawalsAction} from '../../app/state/withdrawals.actions';
+import {SharedQuery, SharedState} from '../../app/state/shared.state';
+import {LoadSharedAction, LogoutAction} from '../../app/state/shared.actions';
+import {logInfo} from '../../utils/index';
+import {HomePage} from '../../app/home/home';
 
+@IonicPage()
 @Component({
-             selector: 'page-dashboard',
              templateUrl: 'dashboard.html',
              changeDetection: ChangeDetectionStrategy.OnPush
              // styleUrls:[ 'dashboard.scss' ]
@@ -129,7 +130,7 @@ export class DashboardPage implements OnInit, OnDestroy {
   }
 
   triggerNotation(bottle) {
-    let modal = this.modalCtrl.create(RecordOutputPage, {bottle: bottle});
+    let modal = this.modalCtrl.create('RecordOutputPage', {bottle: bottle});
     modal.present();
   }
 
@@ -161,29 +162,30 @@ export class DashboardPage implements OnInit, OnDestroy {
     let fs: FilterSet = new FilterSet();
     fs.overdueOnly = true;
     this.store.dispatch(new UpdateFilterAction(fs));
-    this.navCtrl.push(BrowsePage);
+    this.navCtrl.push('BrowsePage');
   }
 
   showFiltered(chosenFilter: FilterSet) {
     this.store.dispatch(new UpdateFilterAction(chosenFilter));
-    this.navCtrl.push(BrowsePage);
+    this.navCtrl.push('BrowsePage');
   }
 
   showAll() {
     this.store.dispatch(new ResetFilterAction());
-    this.navCtrl.push(BrowsePage);
+    this.navCtrl.push('BrowsePage');
   }
 
   logout() {
     this.store.dispatch(new LogoutAction());
-    this.navCtrl.popToRoot();
+    //this.navCtrl.popToRoot();
+    this.navCtrl.push(HomePage);
   }
 
   showFavorites() {
     let fs: FilterSet = new FilterSet();
     fs.favoriteOnly = true;
     this.store.dispatch(new UpdateFilterAction(fs));
-    this.navCtrl.push(BrowsePage);
+    this.navCtrl.push('BrowsePage');
   }
 
   private filterOnTextAndNavigate(texts: string[]) {
@@ -191,7 +193,7 @@ export class DashboardPage implements OnInit, OnDestroy {
     if (texts != undefined && texts.length != 0) {
       fs.text = texts;
       this.store.dispatch(new UpdateFilterAction(fs));
-      this.navCtrl.push(BrowsePage);
+      this.navCtrl.push('BrowsePage');
     }
   }
 }

@@ -1,8 +1,8 @@
-import {map, tap} from 'rxjs/operators';
+import {map, tap, throttleTime} from 'rxjs/operators';
 /**
  * Created by loicsalou on 28.02.17.
  */
-import {Injectable} from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {AngularFireDatabase, SnapshotAction} from 'angularfire2/database';
 import {NotificationService} from '../notification.service';
@@ -26,7 +26,7 @@ export class FirebaseLockersService {
   private errorRootRef: Reference;
 
   constructor(private angularFirebase: AngularFireDatabase,
-              private notificationService: NotificationService) {
+              private notificationService: NotificationService, @Inject('GLOBAL_CONFIG') private config) {
   }
 
   public initialize(user: User) {
@@ -64,6 +64,7 @@ export class FirebaseLockersService {
   public fetchAllLockers(): Observable<Locker[]> {
     return this.angularFirebase
       .list<Locker>(this.CELLAR_ROOT).snapshotChanges().pipe(
+        throttleTime(this.config.throttleTime),
         map(
           (changes: SnapshotAction<any>[]) => {
             return changes.map(c => ({id: c.payload.key, ...c.payload.val()}));

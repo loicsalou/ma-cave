@@ -1,34 +1,43 @@
-import {AfterViewChecked, AfterViewInit, Component, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
-import {Content, ModalController, NavController, NavParams} from 'ionic-angular';
-import {CellarPersistenceService} from '../../../service/cellar-persistence.service';
-import {Bottle, Position} from '../../../model/bottle';
-import {Dimension, Locker, LockerType} from '../../../model/locker';
-import {NotificationService} from '../../../service/notification.service';
-import {SimpleLocker} from '../../../model/simple-locker';
-import {BottlePersistenceService} from '../../../service/bottle-persistence.service';
-import {Cell} from '../../../components/locker/cell';
+import {
+  AfterViewChecked,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  QueryList,
+  ViewChild,
+  ViewChildren
+} from '@angular/core';
+import {Content, IonicPage, ModalController, NavController, NavParams} from 'ionic-angular';
+import {CellarPersistenceService} from '../../service/cellar-persistence.service';
+import {Bottle, Position} from '../../model/bottle';
+import {Dimension, Locker, LockerType} from '../../model/locker';
+import {NotificationService} from '../../service/notification.service';
+import {SimpleLocker} from '../../model/simple-locker';
+import {BottlePersistenceService} from '../../service/bottle-persistence.service';
+import {Cell} from '../../components/locker/cell';
 import * as _ from 'lodash';
-import {NativeProvider} from '../../../providers/native/native';
-import {BottleDetailPage} from '../../browse/bottle-detail/page-bottle-detail';
-import {UpdateLockerPage} from '../update-locker/update-locker.page';
-import {CreateLockerPage} from '../create-locker/create-locker.page';
-import {ApplicationState} from '../../../app/state/app.state';
+import {NativeProvider} from '../../providers/native/native';
+import {BottleDetailPage} from '../browse/bottle-detail/bottle-detail-page';
+import {UpdateLockerPage} from './update-locker/update-locker-page';
+import {CreateLockerPage} from './create-locker/create-locker-page';
+import {ApplicationState} from '../../app/state/app.state';
 import {Store} from '@ngrx/store';
-import {BottlesQuery} from '../../../app/state/bottles.state';
-import {LogoutAction} from '../../../app/state/shared.actions';
+import {BottlesQuery} from '../../app/state/bottles.state';
+import {LogoutAction} from '../../app/state/shared.actions';
 import {
   BottlesActionTypes,
   EditLockerAction,
   ResetBottleSelectionAction,
   UpdateBottlesAction,
   WithdrawBottleAction
-} from '../../../app/state/bottles.actions';
+} from '../../app/state/bottles.actions';
 import {Observable, Subject} from 'rxjs';
-import {ScrollAnchorDirective} from '../../../components/scroll-anchor.directive';
+import {ScrollAnchorDirective} from '../../components/scroll-anchor.directive';
 import {filter, map, shareReplay, tap} from 'rxjs/operators';
-import {DimensionOfDirective} from '../../../components/dimension-of.directive';
-import {SimpleLockerComponent} from '../../../components/locker/simple-locker.component';
-import {logDebug, logInfo} from '../../../utils';
+import {DimensionOfDirective} from '../../components/dimension-of.directive';
+import {SimpleLockerComponent} from '../../components/locker/simple-locker.component';
+import {logDebug, logInfo} from '../../utils/index';
 
 function shortenBottle(btl: Bottle) {
   return {
@@ -44,15 +53,17 @@ function shortenBottle(btl: Bottle) {
  * See http://ionicframework.com/docs/components/#navigation for more info
  * on Ionic pages and navigation.
  */
+@IonicPage()
 @Component({
-             templateUrl: './cellar.page.html'
-             // styleUrls:[ 'cellar.page.scss' ]
+             templateUrl: './cellar-page.html',
+             changeDetection: ChangeDetectionStrategy.OnPush
+             // styleUrls:[ 'cellar-page.scss' ]
            })
 export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
 
   @ViewChild(Content) content: Content;
+
   lockerNames: string[];
-  lockersAndBottles$: Observable<{ lockers: Locker[], bottles: Bottle[] }>;
   selectedBottles$: Observable<Bottle[]>;
   pendingBottleTipVisible: boolean = false;
   selectedCell: Cell;
@@ -121,7 +132,7 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
             return bottle;
           });
         }),
-        tap(bottles => logInfo('[cellar.page.ts] received selected bottles:' + bottles.length))
+        tap(bottles => logInfo('[cellar-page.ts] received selected bottles:' + bottles.length))
       );
     }
     // observable sur les lockers pour le template
@@ -131,7 +142,7 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
         this.lockerNames = lockers.map(locker => locker.name);
         this.mustInitScale = true;
       }),
-      tap(lockers => logInfo('[cellar.page.ts] received lockers:' + lockers.length)),
+      tap(lockers => logInfo('[cellar-page.ts] received lockers:' + lockers.length)),
       shareReplay()
     );
     // observable sur les bouteilles pour le template
@@ -157,7 +168,7 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
       }),
       tap(perRack => {
         for (let perRackKey in perRack) {
-          logInfo('[cellar.page.ts] received bottles for ' + perRackKey + ': ' + perRack[ perRackKey ].length);
+          logInfo('[cellar-page.ts] received bottles for ' + perRackKey + ': ' + perRack[ perRackKey ].length);
         }
       }),
       shareReplay()
@@ -213,8 +224,8 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
   zoomOnBottle(pendingCell: Cell) {
     let bottle = this.pendingCell.bottle;
     //let zoomedBottles = this.getBottlesInRowOf(this._pendingCell);
-    //this.navCtrl.push(BottleDetailPage, {bottleEvent: {bottles: zoomedBottles, bottle: bottle}});
-    this.navCtrl.push(BottleDetailPage, {bottleEvent: {bottles: [ bottle ], bottle: bottle}});
+    //this.navCtrl.push('BottleDetailPage', {bottleEvent: {bottles: zoomedBottles, bottle: bottle}});
+    this.navCtrl.push('BottleDetailPage', {bottleEvent: {bottles: [ bottle ], bottle: bottle}});
     this.somethingWasUpdated = true;
   }
 
@@ -231,7 +242,7 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
   }
 
   createLocker() {
-    let editorModal = this.modalCtrl.create(CreateLockerPage, {}, {showBackdrop: false});
+    let editorModal = this.modalCtrl.create('CreateLockerPage', {}, {showBackdrop: false});
     editorModal.present();
     this.somethingWasUpdated = true;
   }
@@ -239,7 +250,7 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
   updateLocker(locker) {
     this.nativeProvider.feedBack();
     this.store.dispatch(new EditLockerAction(locker));
-    let editorModal = this.modalCtrl.create(UpdateLockerPage, {}, {showBackdrop: true});
+    let editorModal = this.modalCtrl.create('UpdateLockerPage', {}, {showBackdrop: true});
     editorModal.present();
     this.somethingWasUpdated = true;
   }

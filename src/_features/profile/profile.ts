@@ -1,15 +1,17 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
-import {User} from '../../../model/user';
-import {NotificationService} from '../../../service/notification.service';
-import VERSION from '../version';
-import {SharedPersistenceService} from '../../../service/shared-persistence.service';
+import {User} from '../../model/user';
+import {NotificationService} from '../../service/notification.service';
+import VERSION from '../../app/version';
+import {SharedPersistenceService} from '../../service/shared-persistence.service';
 import {Store} from '@ngrx/store';
-import {ApplicationState} from '../../../app/state/app.state';
-import {LogoutAction, UpdateThemeAction} from '../../../app/state/shared.actions';
-import {SharedQuery} from '../../../app/state/shared.state';
+import {ApplicationState} from '../../app/state/app.state';
+import {LogoutAction, UpdateThemeAction} from '../../app/state/shared.actions';
+import {SharedQuery} from '../../app/state/shared.state';
 import {Subscription, Observable} from 'rxjs';
 import {filter, tap} from 'rxjs/operators';
+import {IonicPage, NavController} from 'ionic-angular';
 
+@IonicPage()
 @Component({
              selector: 'page-profile',
              templateUrl: './profile.html'
@@ -26,7 +28,7 @@ export class ProfilePage implements OnInit, OnDestroy {
 
   constructor(private notificationService: NotificationService,
               private sharedServices: SharedPersistenceService, @Inject('GLOBAL_CONFIG') private config,
-              private store: Store<ApplicationState>) {
+              private store: Store<ApplicationState>, private navCtrl: NavController) {
     this.prefsSub = store.select(SharedQuery.getSharedState).subscribe(
       prefs => this._currentTheme = prefs.theme
     );
@@ -73,6 +75,7 @@ export class ProfilePage implements OnInit, OnDestroy {
 
   logout() {
     this.store.dispatch(new LogoutAction());
+    this.navCtrl.popToRoot();
   }
 
   private updateProfile() {

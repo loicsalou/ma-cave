@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {Observable, of, throwError} from 'rxjs';
 import {NotificationService} from '../notification.service';
 import {WithdrawalFactory} from '../../model/withdrawal.factory';
@@ -9,7 +9,7 @@ import * as schema from './firebase-schema';
 import * as tools from '../../utils/index';
 import {logInfo} from '../../utils/index';
 import {AngularFireDatabase, SnapshotAction} from 'angularfire2/database';
-import {map, tap} from 'rxjs/operators';
+import {map, tap, throttleTime} from 'rxjs/operators';
 import Reference = firebase.database.Reference;
 import * as firebase from 'firebase';
 
@@ -26,7 +26,7 @@ export class FirebaseWithdrawalsService {
 
   constructor(private withdrawalFactory: WithdrawalFactory,
               private angularFirebase: AngularFireDatabase,
-              private notificationService: NotificationService) {
+              private notificationService: NotificationService, @Inject('GLOBAL_CONFIG') private config) {
   }
 
   initialize(user: User) {
@@ -45,6 +45,7 @@ export class FirebaseWithdrawalsService {
   fetchAllWithdrawals(nb: number = 10): Observable<Withdrawal[]> {
     return this.angularFirebase
       .list<Withdrawal>(this.WITHDRAW_ROOT).snapshotChanges().pipe(
+        throttleTime(this.config.throttleTime),
         map((changes: SnapshotAction<Withdrawal>[]) => {
               let ret = changes.map(
                 // ATTENTION l'ordre de ...c.payload.val() et id est important. Dans l'autre sens l'id est écrasé !

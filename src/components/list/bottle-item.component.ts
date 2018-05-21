@@ -1,7 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Bottle} from '../../model/bottle';
 import {ItemSliding, NavController} from 'ionic-angular';
-import {CellarPage} from '../../_features/racks/cellar/cellar.page';
 import {NativeProvider} from '../../providers/native/native';
 import {ApplicationState} from '../../app/state/app.state';
 import {Store} from '@ngrx/store';
@@ -64,7 +63,7 @@ export class BottleItemComponent implements OnInit {
       slidingItem.close();
     }
     this.store.dispatch(new SetSelectedBottleAction(bottle, true));
-    this.navCtrl.push(CellarPage, {action: new HightlightBottleSelectionAction()});
+    this.navCtrl.push('CellarPage', {action: new HightlightBottleSelectionAction()});
   }
 
   addToFavorite(event: Event, slidingItem: ItemSliding, bottle: Bottle) {

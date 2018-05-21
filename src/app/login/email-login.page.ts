@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {LoginService} from '../../../service/login/login.service';
+import {LoginService} from '../../service/login/login.service';
 
 @Component({
              selector: 'login-page',

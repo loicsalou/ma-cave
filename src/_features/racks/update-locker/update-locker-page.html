@@ -1,5 +1,5 @@
 <!-- Generated template for the LockerEditorComponent component -->
-<ion-header class="mod-header locker-editor2-page" (click)="test()">
+<ion-header class="mod-header update-locker-page" (click)="test()">
   
   <ion-navbar>
     <ion-title>{{locker.name}}
@@ -10,7 +10,7 @@
 
 </ion-header>
 
-<ion-content padding class="locker-editor2-page page">
+<ion-content padding class="update-locker-page page">
   <ng-container *ngIf="lockerAndBottles$ | async as lockerAndBottles">
     <ion-fab middle center *ngIf="isEditable">
       <button ion-fab mini>

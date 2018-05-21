@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {FabButton, MenuController, NavController} from 'ionic-angular';
+import {FabButton, IonicPage, MenuController, NavController} from 'ionic-angular';
 import {Bottle, BottleState} from '../../../model/bottle';
-import {BottleDetailPage} from '../bottle-detail/page-bottle-detail';
+import {BottleDetailPage} from '../bottle-detail/bottle-detail-page';
 import {FilterSet} from '../../../components/distribution/filterset';
 import {NativeProvider} from '../../../providers/native/native';
 import {combineLatest, Observable} from 'rxjs';
@@ -18,7 +18,6 @@ import {
 import {map, shareReplay, take, tap} from 'rxjs/operators';
 import {SortOption} from '../../../components/distribution/distribution';
 import {NotificationService} from '../../../service/notification.service';
-import {CellarPage} from '../../racks/cellar/cellar.page';
 import * as _ from 'lodash';
 import {logInfo} from '../../../utils';
 
@@ -28,10 +27,10 @@ function sliceAround(currentBottles: Bottle[], bottle: Bottle, slice: number) {
   const to = ix + slice + 1;
   return currentBottles.slice(from < 0 ? 0 : from, to > currentBottles.length ? currentBottles.length : to);
 }
-
+@IonicPage()
 @Component({
              selector: 'page-browse',
-             templateUrl: 'browse.page.html',
+             templateUrl: 'browse-page.html',
              changeDetection: ChangeDetectionStrategy.OnPush
            })
 export class BrowsePage implements OnInit, OnDestroy {
@@ -58,11 +57,11 @@ export class BrowsePage implements OnInit, OnDestroy {
     this.nativeProvider.feedBack();
     this.filterSet$ = this.store.select(BottlesQuery.getFilter).pipe(
       tap((filterSet: FilterSet) => this.sortOption = filterSet.sortOption),
-      tap(filterSet => logInfo('[browse.page.ts] received filterSet' + JSON.stringify(filterSet)))
+      tap(filterSet => logInfo('[browse-page.ts] received filterSet' + JSON.stringify(filterSet)))
     );
     let bottles$ = this.store.select(BottlesQuery.getFilteredBottles).pipe(
       map((bottles: Bottle[]) => this.getPrepareDisplayedList(bottles)),
-      tap(bottles => logInfo('[browse.page.ts] received bottles: ' + bottles.length))
+      tap(bottles => logInfo('[browse-page.ts] received bottles: ' + bottles.length))
     );
     let selection$ = this.store.select(BottlesQuery.getSelectedBottles);
 
@@ -81,7 +80,7 @@ export class BrowsePage implements OnInit, OnDestroy {
           };
         });
       }),
-      tap(bottles => logInfo('[browse.page.ts] received combined selection+bottles')),
+      tap(bottles => logInfo('[browse-page.ts] received combined selection+bottles')),
       shareReplay(1)
     );
   }
@@ -104,11 +103,11 @@ export class BrowsePage implements OnInit, OnDestroy {
       map((bottles: Bottle[]) => bottles.filter(
         (bottle: Bottle) => bottle.positions.length < bottle.quantite_courante)
       ),
-      tap(bottles => logInfo('[browse.page.ts](place) received selected bottles:' + bottles.length))
+      tap(bottles => logInfo('[browse-page.ts](place) received selected bottles:' + bottles.length))
     ).subscribe(
       (bottles: Bottle[]) => {
         if (bottles.length > 0) {
-          this.navCtrl.push(CellarPage, {action: new PlaceBottleSelectionAction()});
+          this.navCtrl.push('CellarPage', {action: new PlaceBottleSelectionAction()});
         }
         else {
           this.notificationService.information('app.no-bottles-to-place');
@@ -122,11 +121,11 @@ export class BrowsePage implements OnInit, OnDestroy {
     this.store.select(BottlesQuery.getSelectedBottles).pipe(
       take(1),
       map((bottles: Bottle[]) => bottles.filter((bottle: Bottle) => bottle.positions.length > 0)),
-      tap(bottles => logInfo('[browse.page.ts](locate) received selected bottles:' + bottles.length))
+      tap(bottles => logInfo('[browse-page.ts](locate) received selected bottles:' + bottles.length))
     ).subscribe(
       (bottles: Bottle[]) => {
         if (bottles.length > 0) {
-          this.navCtrl.push(CellarPage, {action: new HightlightBottleSelectionAction()});
+          this.navCtrl.push('CellarPage', {action: new HightlightBottleSelectionAction()});
         }
         else {
           this.notificationService.information('app.no-bottles-placed');
@@ -140,7 +139,7 @@ export class BrowsePage implements OnInit, OnDestroy {
     this.store.select(BottlesQuery.getSelectedBottles).pipe(
       take(1),
       map((bottles: Bottle[]) => bottles.filter((bottle: Bottle) => bottle.positions.length > 0)),
-      tap(bottles => logInfo('[browse.page.ts](favorite) received selected bottles:' + bottles.length))
+      tap(bottles => logInfo('[browse-page.ts](favorite) received selected bottles:' + bottles.length))
     ).subscribe(
       (bottles: Bottle[]) => {
         const atLeastOneNonFavorite = bottles.filter(btl => !btl.favorite).length > 0;
@@ -184,7 +183,7 @@ export class BrowsePage implements OnInit, OnDestroy {
   }
 
   triggerDetail(bottle: Bottle) {
-    this.navCtrl.push(BottleDetailPage,
+    this.navCtrl.push('BottleDetailPage',
                       {
                         bottleEvent: {
                           bottles: sliceAround(this.currentBottles, bottle, 10),

@@ -20,7 +20,6 @@ import {NotificationService} from '../service/notification.service';
 import {LockerFactory} from '../model/locker.factory';
 import {FirebaseAdminService} from '../service/firebase/firebase-admin.service';
 import {NativeStorage} from '@ionic-native/native-storage';
-import {AndroidPermissions} from '@ionic-native/android-permissions';
 import {HttpClient} from '@angular/common/http';
 import {GoogleLoginService} from '../service/login/google-login.service';
 import {GooglePlus} from '@ionic-native/google-plus';
@@ -33,6 +32,9 @@ import {appConfig} from './app.conf';
 import {SharedPersistenceService} from '../service/shared-persistence.service';
 import {ApplicationState} from './state/app.state';
 import {Store} from '@ngrx/store';
+import {BrowserModule} from '@angular/platform-browser';
+import {CellarPersistenceService} from '../service/cellar-persistence.service';
+import {AndroidPermissions} from '@ionic-native/android-permissions';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -45,6 +47,7 @@ export const fireConfig = {
 
 @NgModule({
             imports: [
+              BrowserModule,
               AngularFireModule.initializeApp(fireConfig),
               AngularFireAuthModule,
               AngularFireDatabaseModule
@@ -56,6 +59,7 @@ export const fireConfig = {
               WithdrawalFactory,
               BottlePersistenceService,
               AndroidPermissions,
+              CellarPersistenceService,
               DistributeService,
               EmailLoginService,
               Facebook,

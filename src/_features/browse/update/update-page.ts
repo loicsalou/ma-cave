@@ -1,16 +1,17 @@
 import {Component, Inject, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {Bottle, BottleMetadata} from '../../../model/bottle';
-import {NavController, NavParams} from 'ionic-angular';
-import {BottlePersistenceService} from '../../../service/bottle-persistence.service';
+import {IonicPage, NavController, NavParams} from 'ionic-angular';
 import {ImagePersistenceService} from '../../../service/image-persistence.service';
 import {NotificationService} from '../../../service/notification.service';
 import * as _ from 'lodash';
 import {NgForm} from '@angular/forms';
 import {AocInfo} from '../../../config/aoc-info';
-import {map, tap} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {Image} from '../../../model/image';
-import {logInfo} from '../../../utils';
+import {ApplicationState} from '../../../app/state/app.state';
+import {Store} from '@ngrx/store';
+import {UpdateBottlesAction} from '../../../app/state/bottles.actions';
 
 /*
  Generated class for the Update component.
@@ -18,10 +19,11 @@ import {logInfo} from '../../../utils';
  See https://angular.io/docs/ts/latest/api/core/index/ComponentMetadata-class.html
  for more info on Angular 2 Components.
  */
+@IonicPage()
 @Component({
              selector: 'update',
-             templateUrl: 'update.page.html',
-             // styleUrls:[ 'update.page.scss' ],
+             templateUrl: 'update-page.html',
+             // styleUrls:[ 'update-page.scss' ],
              // warning: few browsers support shadow DOM encapsulation at this time
              encapsulation: ViewEncapsulation.Emulated
            })
@@ -41,7 +43,7 @@ export class UpdatePage implements OnInit {
   private forceLeave: boolean = true;
   private metadata: BottleMetadata;
 
-  constructor(private navCtrl: NavController, navParams: NavParams, private bottleService: BottlePersistenceService,
+  constructor(private navCtrl: NavController, navParams: NavParams, private store: Store<ApplicationState>,
               private notificationService: NotificationService, private imageService: ImagePersistenceService,
               @Inject('GLOBAL_CONFIG') public config) {
     //don't clone to keep firebase '$key' which is necessary to update
@@ -152,7 +154,7 @@ export class UpdatePage implements OnInit {
   // =============================
 
   save() {
-    this.bottleService.update([ this.bottle ]);
+    this.store.dispatch(new UpdateBottlesAction([ this.bottle ]));
     this.notificationService.information('update.saved');
     this.navCtrl.pop();
   }

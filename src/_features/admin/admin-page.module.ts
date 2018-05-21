@@ -1,35 +1,33 @@
 import {NgModule} from '@angular/core';
 import {IonicPageModule} from 'ionic-angular';
-import {ProfilePage} from './profile/profile';
-import {BrowserModule} from '@angular/platform-browser';
 import {FormsModule} from '@angular/forms';
 import {SharedModule} from '../../components/shared.module';
-import {UploadBottlesPage} from './upload-bottles/upload-bottles.page';
+import {AdminPage} from './admin-page';
 import {Transfer, TransferObject} from '@ionic-native/transfer';
 import {Camera} from '@ionic-native/camera';
 import {FilePath} from '@ionic-native/file-path';
 import {File} from '@ionic-native/file';
 import {BarcodeScanner} from '@ionic-native/barcode-scanner';
 import {FileChooser} from '@ionic-native/file-chooser';
+import {CommonModule} from '@angular/common';
+import {TranslateModule} from '@ngx-translate/core';
 
 @NgModule({
             imports: [
-              BrowserModule,
+              CommonModule,
               FormsModule,
               SharedModule,
-              IonicPageModule.forChild(ProfilePage),
+              IonicPageModule.forChild(AdminPage),
+              TranslateModule.forChild()
             ],
             declarations: [
-              ProfilePage,
-              UploadBottlesPage
+              AdminPage
             ],
             entryComponents: [
-              ProfilePage,
-              UploadBottlesPage
+              AdminPage
             ],
             exports: [
-              ProfilePage,
-              UploadBottlesPage
+              AdminPage
             ],
             providers: [
               Transfer,
@@ -41,5 +39,5 @@ import {FileChooser} from '@ionic-native/file-chooser';
               BarcodeScanner
             ]
           })
-export class AdminFeatureModule {
+export class AdminPageModule {
 }

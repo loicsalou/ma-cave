@@ -1,20 +1,14 @@
 import {NgModule} from '@angular/core';
 import {IonicApp, IonicModule, NavController} from 'ionic-angular';
 import {MyCaveApp} from './app.component';
-import {ContactPage} from '../_features/admin/contact/contact';
 import {HomePage} from './home/home';
 import {TabsPage} from './tabs/tabs';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
-import {BrowserModule} from '@angular/platform-browser';
 import {ChartsModule} from 'ng2-charts';
 import 'chart.js/dist/Chart.bundle.min.js';
-import {EmailLoginPage} from '../_features/admin/login/email-login.page';
-import {AdminFeatureModule} from '../_features/admin/admin-feature.module';
+import {EmailLoginPage} from './login/email-login.page';
 import {SharedModule} from '../components/shared.module';
-import {BrowseFeatureModule} from '../_features/browse/browse-feature.module';
-import {CellarPage} from '../_features/racks/cellar/cellar.page';
-import {CellarFeatureModule} from '../_features/racks/cellar-feature.module';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {CoreModule} from './core.module';
 import {StoreModule} from '@ngrx/store';
@@ -37,14 +31,10 @@ export const fireConfig = {
 
 @NgModule({
             imports: [
-              BrowserModule,
               IonicModule.forRoot(MyCaveApp),
               CoreModule,
-              BrowseFeatureModule,
-              CellarFeatureModule,
               ChartsModule,
               HttpClientModule,
-              AdminFeatureModule,
               SharedModule,
               TranslateModule.forRoot({
                                         loader: {
@@ -61,14 +51,11 @@ export const fireConfig = {
             ],
             declarations: [
               MyCaveApp,
-              ContactPage,
               EmailLoginPage,
               HomePage,
               TabsPage
             ],
             entryComponents: [
-              CellarPage,
-              ContactPage,
               EmailLoginPage,
               HomePage,
               MyCaveApp,

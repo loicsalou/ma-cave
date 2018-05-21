@@ -1,18 +1,18 @@
 
 import {Component} from '@angular/core';
-import {Loading, LoadingController, NavController, Platform} from 'ionic-angular';
+import {IonicPage, Loading, LoadingController, NavController, Platform} from 'ionic-angular';
 import {FileChooser} from '@ionic-native/file-chooser';
 import {FilePath} from '@ionic-native/file-path';
-import {BottlePersistenceService} from '../../../service/bottle-persistence.service';
-import {NotificationService} from '../../../service/notification.service';
-import {ImportProvider} from '../../../providers/import/import';
-import {ApplicationState} from '../../../app/state/app.state';
+import {BottlePersistenceService} from '../../service/bottle-persistence.service';
+import {NotificationService} from '../../service/notification.service';
+import {ImportProvider} from '../../providers/import/import';
+import {ApplicationState} from '../../app/state/app.state';
 import {Store} from '@ngrx/store';
-import {BottlesQuery} from '../../../app/state/bottles.state';
-import {DeleteAccountAction, LogoutAction} from '../../../app/state/shared.actions';
-import {SharedQuery, SharedState} from '../../../app/state/shared.state';
+import {BottlesQuery} from '../../app/state/bottles.state';
+import {DeleteAccountAction, LogoutAction} from '../../app/state/shared.actions';
+import {SharedQuery, SharedState} from '../../app/state/shared.state';
 import {Observable} from 'rxjs';
-import {User} from '../../../model/user';
+import {User} from '../../model/user';
 import {take} from 'rxjs/operators';
 
 /**
@@ -21,11 +21,11 @@ import {take} from 'rxjs/operators';
  * See http://ionicframework.com/docs/components/#navigation for more info
  * on Ionic pages and navigation.
  */
+@IonicPage()
 @Component({
-             selector: 'page-upload-bottles',
-             templateUrl: 'upload-bottles.page.html'
+             templateUrl: 'admin-page.html'
            })
-export class UploadBottlesPage {
+export class AdminPage {
   from: number = 0;
   nbRead: number = 999;
   encoding: string; // forcer l'encoding
