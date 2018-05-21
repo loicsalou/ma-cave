@@ -10,6 +10,7 @@ import {Store} from '@ngrx/store';
 import {ApplicationState} from '../../app/state/app.state';
 import {LoginSuccessAction, LogoutAction} from '../../app/state/shared.actions';
 import {NavController} from 'ionic-angular';
+import {HomePage} from '../../app/home/home';
 
 /**
  * Created by loicsalou on 13.06.17.

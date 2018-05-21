@@ -16,6 +16,14 @@ module.exports = {
     src: ['{{ROOT}}/src/app/scss/icons/css/*'],
     dest: '{{WWW}}/assets/css'
   },
+  copyRobots: {
+    src: ['{{ROOT}}/src/app/robots.txt'],
+    dest: '{{WWW}}'
+  },
+   copyModernizr: {
+    src: ['{{ROOT}}/src/app/modernizr.js'],
+    dest: '{{WWW}}'
+  },
   copyWorkbox: {
     src: ['./node_modules/workbox-sw/build/workbox-sw.js',
       './node_modules/workbox-core/build/workbox-core.prod.js',

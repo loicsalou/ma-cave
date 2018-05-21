@@ -22,7 +22,7 @@ import {
   UpdateFilterAction
 } from '../../app/state/bottles.actions';
 import {Observable, of} from 'rxjs';
-import {catchError, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
+import {catchError, map, switchMap, tap} from 'rxjs/operators';
 import {WithdrawalsQuery} from '../../app/state/withdrawals.state';
 import {LoadWithdrawalsAction} from '../../app/state/withdrawals.actions';
 import {SharedQuery, SharedState} from '../../app/state/shared.state';
@@ -55,6 +55,7 @@ export class DashboardPage implements OnInit, OnDestroy {
               private platform: Platform,
               private popoverCtrl: PopoverController, private modalCtrl: ModalController,
               private store: Store<ApplicationState>) {
+
     platform.ready().then(() => {
       platform.registerBackButtonAction(() => {
         if (navCtrl.canGoBack()) {
@@ -70,6 +71,18 @@ export class DashboardPage implements OnInit, OnDestroy {
     return this._withdrawalCardStyle;
   }
 
+  ionViewCanEnter() {
+    if (!HomePage.loggedIn) {
+      this.navCtrl.setRoot(HomePage);
+      this.navCtrl.popToRoot();
+      setTimeout(() => {
+                   window.history.pushState({}, '', '/');
+                   window.location.reload();
+                 }
+        , 100);
+    }
+  }
+
   ngOnInit(): void {
     this.nativeProvider.feedBack();
     this.version = VERSION;
@@ -81,7 +94,7 @@ export class DashboardPage implements OnInit, OnDestroy {
           }
       ),
       tap(bottles => {
-        logInfo('[dashboard.ts] received bottles: '+bottles.length);
+        logInfo('[dashboard.ts] received bottles: ' + bottles.length);
       }),
       catchError(err => {
         this.notificationService.error('Erreur lors de la récupération de la liste de bouteilles: ' + err);
@@ -100,7 +113,7 @@ export class DashboardPage implements OnInit, OnDestroy {
         let height = 30 + Math.min(3, withdrawals.length) * 92;
         this._withdrawalCardStyle = {'min-height': '120px', 'height': height + 'px'};
       }),
-      tap(withdrawals => logInfo('[dashboard.ts] received withdrawals: '+withdrawals.length)),
+      tap(withdrawals => logInfo('[dashboard.ts] received withdrawals: ' + withdrawals.length)),
       catchError((err) => {
         this.notificationService.error('messages.withdrawals-load-error');
         return of([]);
@@ -110,7 +123,7 @@ export class DashboardPage implements OnInit, OnDestroy {
 
     this.mostUsedQueries$ = this.store.select(SharedQuery.getSharedState).pipe(
       map((state: SharedState) => state.mostUsedQueries),
-      tap(queries => logInfo('[dashboard.ts] received most used queries: '+queries.length)),
+      tap(queries => logInfo('[dashboard.ts] received most used queries: ' + queries.length)),
       catchError((err) => {
                    this.notificationService.error('messages.most-used-queries-failed');
                    return of([]);
@@ -177,8 +190,13 @@ export class DashboardPage implements OnInit, OnDestroy {
 
   logout() {
     this.store.dispatch(new LogoutAction());
-    //this.navCtrl.popToRoot();
-    this.navCtrl.push(HomePage);
+    this.navCtrl.setRoot(HomePage);
+    this.navCtrl.popToRoot();
+    setTimeout(() => {
+                 window.history.pushState({}, '', '/');
+                 window.location.reload();
+               }
+      , 100);
   }
 
   showFavorites() {

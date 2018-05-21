@@ -7,9 +7,10 @@ import {Store} from '@ngrx/store';
 import {ApplicationState} from '../../app/state/app.state';
 import {LogoutAction, UpdateThemeAction} from '../../app/state/shared.actions';
 import {SharedQuery} from '../../app/state/shared.state';
-import {Subscription, Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {filter, tap} from 'rxjs/operators';
 import {IonicPage, NavController} from 'ionic-angular';
+import {HomePage} from '../../app/home/home';
 
 @IonicPage()
 @Component({
@@ -50,7 +51,7 @@ export class ProfilePage implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.version = VERSION;
     this.user$ = this.store.select(SharedQuery.getLoginUser).pipe(
-      filter(user => user!==undefined),
+      filter(user => user !== undefined),
       tap(user => {
         this.userDataKeys = Object.keys(user);
         this.userDataValues = [];
@@ -75,7 +76,13 @@ export class ProfilePage implements OnInit, OnDestroy {
 
   logout() {
     this.store.dispatch(new LogoutAction());
+    this.navCtrl.setRoot(HomePage);
     this.navCtrl.popToRoot();
+    setTimeout(() => {
+                 window.history.pushState({}, '', '/');
+                 window.location.reload();
+               }
+      , 100);
   }
 
   private updateProfile() {
