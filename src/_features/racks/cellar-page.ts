@@ -59,7 +59,7 @@ function shortenBottle(btl: Bottle) {
              changeDetection: ChangeDetectionStrategy.OnPush
              // styleUrls:[ 'cellar-page.scss' ]
            })
-export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
+export class CellarPage implements OnInit, AfterViewChecked {
 
   @ViewChild(Content) content: Content;
 
@@ -70,7 +70,6 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
   bottlesToPlaceLocker: SimpleLocker;
   selectedBottles: Bottle[];
   pendingCell: Cell;
-  dimensions$: { [ lockerId: string ]: Observable<Dimension> };
   dimensionsSubjects: { [ lockerId: string ]: Subject<Dimension> } = {};
   lockers$: Observable<Locker[]>;
   bottlesPerRack$: Observable<{ [ lockerId: string ]: Bottle[] }>;
@@ -111,7 +110,8 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
       this.selectedBottles$ = this.store.select(BottlesQuery.getSelectedBottles).pipe(
         tap((bottles: Bottle[]) => {
           this.selectedBottles = bottles;
-        })
+        }),
+        shareReplay(1)
       );
     }
     if (this.doWithAction == BottlesActionTypes.PlaceBottleSelectionActionType) {
@@ -132,7 +132,8 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
             return bottle;
           });
         }),
-        tap(bottles => logInfo('[cellar-page.ts] received selected bottles:' + bottles.length))
+        tap(bottles => logInfo('[cellar-page.ts] received selected bottles:' + bottles.length)),
+        shareReplay(1)
       );
     }
     // observable sur les lockers pour le template
@@ -176,12 +177,6 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
     ;
   }
 
-  ngAfterViewInit() {
-    if (this.doWithAction === BottlesActionTypes.PlaceBottleSelectionActionType) {
-      //this.showBottlesToPlace();
-    }
-  }
-
   ngAfterViewChecked() {
     if (this.mustInitScale && this.containers && this.containers.length > 0) {
       this.containers.forEach(
@@ -223,8 +218,6 @@ export class CellarPage implements OnInit, AfterViewInit, AfterViewChecked {
 
   zoomOnBottle(pendingCell: Cell) {
     let bottle = this.pendingCell.bottle;
-    //let zoomedBottles = this.getBottlesInRowOf(this._pendingCell);
-    //this.navCtrl.push('BottleDetailPage', {bottleEvent: {bottles: zoomedBottles, bottle: bottle}});
     this.navCtrl.push('BottleDetailPage', {bottleEvent: {bottles: [ bottle ], bottle: bottle}});
     this.somethingWasUpdated = true;
   }
