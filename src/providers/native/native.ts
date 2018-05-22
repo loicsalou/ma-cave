@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 
 import {AndroidPermissions} from '@ionic-native/android-permissions';
 import {NavController, Platform} from 'ionic-angular';
-import {SplashScreen} from '@ionic-native/splash-screen';
 import {DeviceFeedback} from '@ionic-native/device-feedback';
 import {Network} from '@ionic-native/network';
 import {Subscription} from 'rxjs';
@@ -19,7 +18,7 @@ export class NativeProvider {
   private disconnectSubscription: Subscription;
   private connectSubscription: Subscription;
 
-  constructor(public platform: Platform, private splashScreen: SplashScreen, private deviceFeedBack: DeviceFeedback,
+  constructor(public platform: Platform, private deviceFeedBack: DeviceFeedback,
               private androidPermissions: AndroidPermissions, private network: Network,
               private notificationService: NotificationService) {
     this.checkPermissions();
@@ -66,7 +65,6 @@ export class NativeProvider {
 
   public initNativeFeatures(navCtrl: NavController) {
     this.platform.ready().then(() => {
-      this.splashScreen.hide();
       this.platform.registerBackButtonAction(() => {
         if (navCtrl.canGoBack()) {
           navCtrl.pop();
@@ -74,10 +72,10 @@ export class NativeProvider {
           this.notificationService.ask('app.exit-title', 'app.exit-message').subscribe(
             response => {
               if (response) {
-                this.platform.exitApp()
+                this.platform.exitApp();
               }
             }
-          )
+          );
         }
       });
     });

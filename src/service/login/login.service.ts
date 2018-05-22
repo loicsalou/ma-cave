@@ -3,14 +3,13 @@ import {User} from '../../model/user';
 import {AnonymousLoginService} from './anonymous-login.service';
 import {EmailLoginService} from './email-login.service';
 import {FacebookLoginService} from './facebook-login.service';
-import {NotificationService} from '../notification.service';
 import {AbstractLoginService} from './abstract-login.service';
 import {GoogleLoginService} from './google-login.service';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../../app/state/app.state';
 import {LoginSuccessAction, LogoutAction} from '../../app/state/shared.actions';
-import {NavController} from 'ionic-angular';
-import {HomePage} from '../../app/home/home';
+import {TranslateService} from '@ngx-translate/core';
+import {AlertController} from 'ionic-angular';
 
 /**
  * Created by loicsalou on 13.06.17.
@@ -26,7 +25,8 @@ export class LoginService {
               private mailLogin: EmailLoginService,
               private fbLogin: FacebookLoginService,
               private gglLogin: GoogleLoginService,
-              private notificationService: NotificationService,
+              private translateService: TranslateService,
+              private alertController: AlertController,
               private store: Store<ApplicationState>) {
   }
 
@@ -59,7 +59,7 @@ export class LoginService {
         this.initUser(user);
       },
       err => {
-        this.notificationService.failed('L\'authentification a échoué, veuillez vérifier votre saisie ' + err);
+        this.failed('L\'authentification a échoué, veuillez vérifier votre saisie ' + err);
       }
     );
   }
@@ -71,7 +71,7 @@ export class LoginService {
         this.initUser(user);
       },
       err => {
-        this.notificationService.failed('L\'authentification a échoué, veuillez vérifier votre saisie ' + err);
+        this.failed('L\'authentification a échoué, veuillez vérifier votre saisie ' + err);
       }
     );
   }
@@ -85,7 +85,7 @@ export class LoginService {
         this.initUser(user);
       },
       error => {
-        this.notificationService.failed('L\'authentification a échoué, veuillez vérifier votre saisie ' + error);
+        this.failed('L\'authentification a échoué, veuillez vérifier votre saisie ' + error);
       }
     );
   }
@@ -95,7 +95,7 @@ export class LoginService {
     this.loginSub = this.fbLogin.login().subscribe(
       (user: User) => this.initUser(user),
       error =>
-        this.notificationService.failed('L\'authentification Facebook a échoué, veuillez vérifier votre compte ' + error)
+        this.failed('L\'authentification Facebook a échoué, veuillez vérifier votre compte ' + error)
     );
   }
 
@@ -117,4 +117,15 @@ export class LoginService {
       this.logout();
     }
   }
+
+  private failed(message: string, error?: any) {
+    let msg = this.translateService.instant(message);
+    this.alertController.create({
+                                  title: this.translateService.instant('app.failed'),
+                                  subTitle: msg + (error ? error : ''),
+                                  buttons: [ 'Ok' ]
+                                })
+      .present();
+  }
+
 }

@@ -2,6 +2,7 @@ import {Observable, Subject} from 'rxjs';
 import {User} from '../../model/user';
 import {NotificationService} from '../notification.service';
 import * as firebase from 'firebase/app';
+import {Loading} from 'ionic-angular';
 
 /**
  * Created by loicsalou on 13.06.17.
@@ -10,12 +11,11 @@ export abstract class AbstractLoginService {
   protected notificationService: NotificationService;
   private authentified: Subject<User> = new Subject();
   private authentifiedObservable: Observable<User> = this.authentified.asObservable();
+  private _user: User;
 
   constructor(notificationService: NotificationService) {
     this.notificationService = notificationService;
   }
-
-  private _user: User;
 
   get user(): User {
     return this._user;
@@ -36,7 +36,7 @@ export abstract class AbstractLoginService {
   }
 
   createAccount(user: any, pass: any) {
-    this.notificationService.error('La création de ce type de compte n\'est pas activée')
+    this.notificationService.error('La création de ce type de compte n\'est pas activée');
   }
 
   deleteAccount() {
@@ -59,7 +59,7 @@ export abstract class AbstractLoginService {
   }
 
   resetPassword(user: string) {
-    this.notificationService.error('La réinitialisation du mot de passe pour ce type de compte n\'est pas activée')
+    this.notificationService.error('La réinitialisation du mot de passe pour ce type de compte n\'est pas activée');
   }
 
   public logout() {

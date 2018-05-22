@@ -33,7 +33,7 @@ export class HomePage implements OnInit, AfterViewInit {
   constructor(public navCtrl: NavController, public loginService: LoginService,
               private modalController: ModalController,
               private notificationService: NotificationService,
-              private nativeProvider: NativeProvider, private platform: Platform,
+              private platform: Platform,
               private store: Store<ApplicationState>) {
     this.loginSubscription = this.store.select(SharedQuery.getLoginUser).pipe(
       tap(() => {
@@ -55,27 +55,22 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.nativeProvider.initNativeFeatures(this.navCtrl);
   }
 
   facebookLogin() {
-    this.nativeProvider.feedBack();
     this.loginService.facebookLogin();
   }
 
   emailLogin() {
-    this.nativeProvider.feedBack();
     this.loginPage = this.modalController.create(EmailLoginPage);
     this.loginPage.present();
   }
 
   googleLogin() {
-    this.nativeProvider.feedBack();
     this.loginService.googleLogin();
   }
 
   anonymousLogin() {
-    this.nativeProvider.feedBack();
     this.loginService.anonymousLogin();
   }
 

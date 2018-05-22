@@ -2,14 +2,14 @@ import {NgModule} from '@angular/core';
 import {IonicPageModule} from 'ionic-angular';
 import {FormsModule} from '@angular/forms';
 import {AdminPage} from './admin-page';
-import {Transfer, TransferObject} from '@ionic-native/transfer';
 import {Camera} from '@ionic-native/camera';
-import {FileChooser} from '@ionic-native/file-chooser';
 import {CommonModule} from '@angular/common';
 import {RecordOutputPage} from './record-output';
 import {UpdatePage} from './update-page';
 import {SharedModule} from '../../../components/shared.module';
 import {TranslateModule} from '@ngx-translate/core';
+import {ImageAttacherComponent} from '../../../components/image-attacher/image-attacher';
+import {ImagePersistenceService} from '../../../service/image-persistence.service';
 
 @NgModule({
             imports: [
@@ -20,18 +20,18 @@ import {TranslateModule} from '@ngx-translate/core';
               TranslateModule.forChild()
             ],
             declarations: [
+              ImageAttacherComponent,
               UpdatePage
             ],
             entryComponents: [
               UpdatePage
             ],
             exports: [
+              ImageAttacherComponent,
               UpdatePage
             ],
             providers: [
-              Transfer,
-              TransferObject,
-              FileChooser,
+              ImagePersistenceService,
               Camera
             ]
           })

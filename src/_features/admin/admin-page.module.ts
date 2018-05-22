@@ -11,6 +11,7 @@ import {BarcodeScanner} from '@ionic-native/barcode-scanner';
 import {FileChooser} from '@ionic-native/file-chooser';
 import {CommonModule} from '@angular/common';
 import {TranslateModule} from '@ngx-translate/core';
+import {ImportProvider} from '../../providers/import/import';
 
 @NgModule({
             imports: [
@@ -36,6 +37,7 @@ import {TranslateModule} from '@ngx-translate/core';
               Camera,
               File,
               FilePath,
+              ImportProvider,
               BarcodeScanner
             ]
           })

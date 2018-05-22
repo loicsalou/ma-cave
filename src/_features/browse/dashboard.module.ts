@@ -1,18 +1,19 @@
 import {CUSTOM_ELEMENTS_SCHEMA, NgModule} from '@angular/core';
 import {IonicModule, IonicPageModule} from 'ionic-angular';
-import {BrowsePage} from './browse/browse-page';
 import {SharedModule} from '../../components/shared.module';
 import {TranslateModule} from '@ngx-translate/core';
-import {BottleDetailPage} from './bottle-detail/bottle-detail-page';
-import {SlideBottleDetail} from './bottle-detail/slide-bottle-detail';
 import {DashboardPage} from './dashboard';
-import {FilterPage} from './filters/filter.page';
 import {PopoverPage} from './popover/popover.page';
 import {CommonModule} from '@angular/common';
+import {ChartsModule} from 'ng2-charts';
+import {ChartComponent} from '../../components/chart/chart.component';
+import {StatisticsComponent} from '../../components/statistics/statistics.component';
 
 const pages = [
   DashboardPage,
-  PopoverPage
+  PopoverPage,
+  ChartComponent,
+  StatisticsComponent
 ];
 
 @NgModule({
@@ -20,6 +21,7 @@ const pages = [
               IonicModule,
               IonicPageModule.forChild(DashboardPage),
               CommonModule,
+              ChartsModule,
               SharedModule,
               TranslateModule
             ],
