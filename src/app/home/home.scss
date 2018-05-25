@@ -1,5 +1,57 @@
 //@_import '../../theme/variables';
 
+.webp {
+  .login-block span {
+    max-width: 30px;
+    max-height: 30px;
+    min-width: 30px;
+    min-height: 30px;
+    overflow: visible;
+
+    &.login-anonymous {
+      background: url('../../assets/icon/anonymous-120.webp');
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    &.login-google {
+      background: url('../../assets/icon/google-login-120.webp');
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    &.login-facebook {
+      background: url('../../assets/icon/social_facebook_box_blue-120.webp');
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+  }
+}
+
+.no-webp {
+  .login-block span {
+    max-width: 30px;
+    max-height: 30px;
+    min-width: 30px;
+    min-height: 30px;
+    overflow: visible;
+
+    &.login-anonymous {
+      background: url('../../assets/icon/anonymous-120.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    &.login-google {
+      background: url('../../assets/icon/google-login-120.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    &.login-facebook {
+      background: url('../../assets/icon/social_facebook_box_blue-120.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+  }
+}
+
 ion-header.home {
   background-color: #FFFFFF;
   border: thin solid map-get($colors, light);
@@ -10,47 +62,43 @@ ion-header.home {
 }
 
 .webp ion-content.home div.login {
-  background-image: url('../../assets/img/background/splash-background.webp');
+  background-image: url('../../assets/img/background/winecellar-gallery-2.webp');
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .no-webp ion-content.home div.login {
-  background-image: url('../../assets/img/background/splash-background-120.png');
+  background-image: url('../../assets/img/background/winecellar-gallery-2.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
-ion-content.home {
-  height: 90vh;
+ion-content.home div.login {
+  height: 100vh;
+  width: 100vw;
 
-  div.login {
-    //background-image: url('../../assets/img/background/splash-background-120.png');
-    background-size: cover;
-    background-repeat: no-repeat;
-    height: 90vh;
-    padding-top: 10vh;
-    width: 100%;
+  fieldset {
+    background: rgba(255, 255, 255, 0.5);
+    position: relative;
+    top: 60%;
   }
+}
 
-  legend {
-    color: map-get($colors, light);
-    font-size: 2em;
-    background: transparent;
+button[badge] {
+  height: 60px;
+  width: 60px;
+  border-radius: 50%;
+  background-color: map-get($colors, light);
+  color: map-get($colors, primary);
+  transition: transform 1s, scale .5s;
+
+  &.clicked {
+    transform: rotate(360deg) scale(1.2, 1.2);
   }
+}
 
-  button[badge] {
-    height: 60px;
-    width: 60px;
-    border-radius: 50%;
-    background-color: map-get($colors, light);
-    color: map-get($colors, primary);
-    transition: transform 1s, scale .5s;
-
-    &.clicked {
-      transform: rotate(360deg) scale(1.2, 1.2);
-    }
-  }
-
-  div[d-flex] {
-    align-self: center;
-    display: flex;
-    justify-content: space-around;
-  }
+div[d-flex] {
+  align-self: center;
+  display: flex;
+  justify-content: space-around;
 }

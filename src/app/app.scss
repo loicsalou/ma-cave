@@ -31,17 +31,44 @@ $favorite-color: #ff0;
 $even-rows-background-color: lighten(#ebebeb, 4%);
 $odd-rows-background-color: #fff;
 $background-page-image: url('../assets/img/background/background2.jpeg');
+$background-page-image-webp: url('../assets/img/background/background2.webp');
 $white-transparency: .88;
+$tabs-background: #f8f8f8 !default;
+
 
 // mise en forme
-.page {
-//ion-content.page {
+.webp .page {
+  background: $background-page-image-webp;
+}
+
+.no-webp .page {
   background: $background-page-image;
-  //min-width: 500px;
+}
+
+ion-content.card-background-page ion-col {
+  padding: 0;
 }
 
 ion-navbar button.back-button {
   z-index: 300; // pour éviter que le search result ne gêne le clic
+}
+
+ion-content.page.content div.scroll-content {
+  margin-top: 40px !important;
+  margin-bottom: 9px !important;
+}
+
+ion-footer {
+  background-color: rgba(255, 255, 255, 0.9);
+  min-height: 46px;
+  padding: 15px;
+  z-index: 999;
+}
+
+ion-tabs > div.tabbar {
+  background: $tabs-background;
+  border-top: thin solid lightgray;
+  min-height: 48px;
 }
 
 .header {
@@ -64,7 +91,7 @@ ion-sliding > ion-item {
 
 .attention {
   height: 50px;
-  width:50px;
+  width: 50px;
 }
 
 .app-root ion-list > *:nth-child(2n+1) ion-item-sliding ion-item {

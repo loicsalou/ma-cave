@@ -5,7 +5,7 @@ import {Bottle} from '../../model/bottle';
 import {FilterSet} from '../../components/distribution/filterset';
 import {NativeProvider} from '../../providers/native/native';
 import {NotificationService} from '../../service/notification.service';
-import {PopoverPage} from './popover/popover.page';
+import {PopoverPage} from './popover/popover-page';
 import {Action} from '../../model/action';
 import {BottleItemComponent} from '../../components/list/bottle-item.component';
 import {Withdrawal} from '../../model/withdrawal';
@@ -148,7 +148,7 @@ export class DashboardPage implements OnInit, OnDestroy {
   }
 
   showPopover(myEvent) {
-    let popover = this.popoverCtrl.create(PopoverPage, this.mostUsedQueries$, {cssClass: 'shadowed-grey'});
+    let popover = this.popoverCtrl.create('PopoverPage', this.mostUsedQueries$, {cssClass: 'shadowed-grey'});
     popover.onDidDismiss((action: Action) => {
       if (action != null) {
         let keywords = action.param;

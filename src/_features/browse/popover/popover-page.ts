@@ -1,11 +1,10 @@
 import {Component} from '@angular/core';
-import {ViewController} from 'ionic-angular';
+import {IonicPage, ViewController} from 'ionic-angular';
 import {SearchCriteria} from '../../../model/search-criteria';
 import {Observable} from 'rxjs';
-import {take} from 'rxjs/operators';
 
+@IonicPage()
 @Component({
-             selector: 'items-page',
              template: `
                <div class="inner">
                  <ion-list>
@@ -19,8 +18,8 @@ import {take} from 'rxjs/operators';
                      <ion-icon name="trash" (click)="removeSearch($event, item)" style="padding:5px"></ion-icon>
                    </div>
                  </ion-list>
-               </div>`,
-             // styleUrls:[ 'popover.page.scss' ]
+               </div>`
+             // styleUrls:[ 'popover-page.scss' ]
            })
 export class PopoverPage {
 
@@ -41,9 +40,9 @@ export class PopoverPage {
 
   present(itemKeywords: string[]): string {
     if (itemKeywords) {
-      return itemKeywords.join(' ')
+      return itemKeywords.join(' ');
     } else {
-      return ''
+      return '';
     }
   }
 }

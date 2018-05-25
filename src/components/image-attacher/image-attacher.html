@@ -17,6 +17,9 @@
   </ion-col>
   
   <ion-col hideWhen="cordova">
-    <input type="file" id="input" (change)="readBrowserFile($event)">
+    <input type="file" id="input" (change)="readBrowserFile($event)"/>
+    <ion-icon name="camera">
+      <input type="button" accept="image/*" capture="camera" style="border:thin solid red"/>
+    </ion-icon>
   </ion-col>
 </ion-row>

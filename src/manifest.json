@@ -2,14 +2,39 @@
   "name": "Ma-cave",
   "short_name": "cave à vins",
   "start_url": "index.html",
+  "theme_color": "#008080",
+  "background_color": "#008B8B",
   "display": "standalone",
   "icons": [
     {
-      "src": "assets/icon/wine-list.png",
+      "src": "assets/pwa-icon/tchin-16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/pwa-icon/tchin-32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/pwa-icon/tchin-150.png",
+      "sizes": "150x150",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/pwa-icon/tchin-180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/pwa-icon/tchin-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/pwa-icon/tchin-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
-  ],
-  "background_color": "#4e8ef7",
-  "theme_color": "#4e8ef7"
+  ]
 }
