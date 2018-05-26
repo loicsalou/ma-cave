@@ -26,7 +26,10 @@ export const fireConfig = {
 
 @NgModule({
             imports: [
-              IonicModule.forRoot(MyCaveApp),
+              IonicModule.forRoot(MyCaveApp, {
+                                    mode: 'md'
+                                  }
+              ),
               CoreModule,
               HttpClientModule,
               SharedCoreModule,

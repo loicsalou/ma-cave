@@ -106,6 +106,7 @@
     "jasmine-core": "3.1.0",
     "jasmine-spec-reporter": "4.2.1",
     "promise-polyfill": "7.1.2",
+    "purify-css": "1.2.5",
     "rev-hash": "2.0.0",
     "typescript": "2.6.2",
     "webpack-manifest-plugin": "2.0.2",
