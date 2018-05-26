@@ -1,6 +1,6 @@
 {
   "name": "assistant-caviste",
-  "version": "5.40.0",
+  "version": "5.41.0",
   "author": "Loic Salou",
   "homepage": "http://ionicframework.com/",
   "private": true,
@@ -20,9 +20,6 @@
     "ios": "ionic cordova build ios --prod",
     "postbuild": "workbox injectManifest ./config/workbox-config.js",
     "postbuild:prod": "workbox injectManifest ./config/workbox-config.js",
-    "//postserve": "workbox injectManifest ./config/workbox-config.js",
-    "//prestart": "workbox injectManifest ./config/workbox-config.js",
-    "//postserve:prod": "workbox injectManifest ./config/workbox-config.js",
     "compress": "bread-compressor -a gzip www",
     "build:prod": "npm run build:aot && node ./cache-busting.js && npm run postbuild && npm run compress"
   },

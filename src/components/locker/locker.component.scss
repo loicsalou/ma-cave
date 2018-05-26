@@ -9,9 +9,16 @@
     background-color: red;
   }
 
+  .no-webp .locker .container {
+    background: url("../assets/img/background/tex-bois.jpeg");
+  }
+
+  .webp .locker .container {
+    background: url("../assets/img/background/tex-bois.webp");
+  }
+
   .locker {
     .container {
-      background: url("../assets/img/background/tex-bois.jpeg");
       display: inline-flex;
       flex-direction: column;
       flex-shrink: 1;

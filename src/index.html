@@ -14,8 +14,13 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#4e8ef7">
   
+  <script>
+    function isMobileDevice() {
+      return (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
+    };
+  </script>
   <!-- cordova.js required for cordova apps -->
-  <script src="cordova.js"></script>
+  <script [src]="isMobileDevice() ? 'cordova.js' : ''" defer="true"></script>
   
   <!-- un-comment this code to enable service worker -->
   <script>
@@ -32,7 +37,16 @@
     }
   </script>
   
-  <link href="build/main.css" rel="stylesheet">
+  <script type="text/javascript">
+    var giftofspeed = document.createElement('link');
+    giftofspeed.rel = 'stylesheet';
+    giftofspeed.href = 'build/main.css';
+    giftofspeed.type = 'text/css';
+    var godefer = document.getElementsByTagName('link')[0];
+    godefer.parentNode.insertBefore(giftofspeed, godefer);
+  </script>
+  
+  <!--<link href="build/main.css" rel="stylesheet">-->
   <!-- cavus icons -->
   <link href="assets/css/cavus.css" rel="stylesheet"/>
 </head>
