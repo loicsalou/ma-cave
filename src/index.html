@@ -26,12 +26,16 @@
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
-        .then(function (resp) {
-            console.log('service worker installed');
+        .then(function (serviceRegistration) {
+            console.log('service worker installé');
+            serviceRegistration.onupdatefound = (update) => {
+              console.log('une mise à jour est disponible');
+              console.log(JSON.stringify(update));
+            }
           }
         )
         .catch(function (err) {
-            console.log('Error', err)
+            console.log('Error lors de l\'installation du service worker', err)
           }
         )
     }

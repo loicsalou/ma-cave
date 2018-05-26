@@ -1,7 +1,7 @@
 {
   "name": "Ma-cave",
   "short_name": "cave à vins",
-  "start_url": "index.html",
+  "start_url": "/index.html",
   "theme_color": "#008080",
   "background_color": "#008B8B",
   "display": "standalone",
