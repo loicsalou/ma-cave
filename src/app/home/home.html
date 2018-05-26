@@ -29,4 +29,7 @@
   </responsive-wrapper>
 </ion-content>
 
-<ion-footer text-right padding-horizontal [ngClass]="currentTheme" style="bottom:0;">version {{version}}</ion-footer>
+<ion-footer text-right padding-horizontal [ngClass]="currentTheme" style="bottom:0;">
+  <span>version {{version}}</span>
+  <span>{{isMobile ? 'Mobile' : 'Browser'}}</span>
+</ion-footer>

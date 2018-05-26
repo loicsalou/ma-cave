@@ -3,6 +3,7 @@ module.exports = {
   "globPatterns": [
     "assets/fonts/*.woff2",
     "assets/css/*.css",
+    "assets/img/*.webp",
     "assets/img/*.png",
     "assets/img/*.jpg",
     "assets/i18n/*.json",

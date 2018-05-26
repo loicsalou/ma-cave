@@ -6,7 +6,6 @@ import {User} from '../../model/user';
 import {TabsPage} from '../tabs/tabs';
 import {Observable, Subscription} from 'rxjs';
 import {NotificationService} from '../../service/notification.service';
-import {NativeProvider} from '../../providers/native/native';
 import {VERSION} from '../version';
 import {ApplicationState} from '../state/app.state';
 import {Store} from '@ngrx/store';
@@ -29,6 +28,7 @@ export class HomePage implements OnInit, AfterViewInit {
   private loginPage: Modal;
 
   private loginSubscription: Subscription;
+  private isMobile: boolean = false;
 
   constructor(public navCtrl: NavController, public loginService: LoginService,
               private modalController: ModalController,
@@ -52,6 +52,7 @@ export class HomePage implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.version = VERSION;
+    this.isMobile=isMobileDevice();
   }
 
   ngAfterViewInit(): void {
@@ -118,3 +119,7 @@ export class HomePage implements OnInit, AfterViewInit {
     }
   }
 }
+
+function isMobileDevice() {
+  return (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
+};
