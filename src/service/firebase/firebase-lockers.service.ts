@@ -13,7 +13,7 @@ import {logInfo, sanitizeBeforeSave} from '../../utils/index';
 import * as schema from './firebase-schema';
 import * as moment from 'moment';
 import Reference = firebase.database.Reference;
-import * as firebase from 'firebase';
+import * as firebase from 'firebase/app';
 
 /**
  * Services related to the lockers in the cellar.

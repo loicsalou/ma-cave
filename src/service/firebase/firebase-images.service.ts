@@ -14,7 +14,7 @@ import {FileItem} from '../../model/file-item';
 import {UploadMetadata} from '../image-persistence.service';
 import {NotificationService} from '../notification.service';
 import {User} from '../../model/user';
-import {Reference as FbStorageTypesReference} from '@firebase/storage-types';
+import {AngularFireStorage, AngularFireStorageReference, AngularFireUploadTask} from 'angularfire2/storage';
 import Reference = firebase.database.Reference;
 import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
 
@@ -26,7 +26,7 @@ export class FirebaseImagesService {
   public XREF_ROOT: string;
   public IMAGES_ROOT: string;
   private xRefRootRef: Reference;
-  private imageStorageRef: FbStorageTypesReference;
+  private imageStorageRef: AngularFireStorageReference;
 
   private ERROR_ROOT: string;
   private errorRootRef: Reference;
@@ -34,12 +34,13 @@ export class FirebaseImagesService {
   private _uploadProgressEvent: Subject<number> = new Subject<number>();
 
   constructor(private angularFirebase: AngularFireDatabase,
+              private angularStorage: AngularFireStorage,
               private notificationService: NotificationService) {
   }
 
-  private static getUploadImageMeta(snap): UploadMetadata {
+  private static getUploadImageMeta(snap, url): UploadMetadata {
     return {
-      downloadURL: snap.downloadURL,
+      downloadURL: url,
       imageName: snap.metadata.name,
       contentType: snap.metadata.contentType,
       totalBytes: snap.totalBytes,
@@ -53,10 +54,10 @@ export class FirebaseImagesService {
     let userRoot = user.user;
 
     this.IMAGES_ROOT = schema.IMAGES_FOLDER;
-    this.imageStorageRef = this.angularFirebase.database.app.storage().ref(this.IMAGES_ROOT);
+    this.imageStorageRef = this.angularStorage.ref(this.IMAGES_ROOT);
 
     this.XREF_ROOT = schema.XREF_FOLDER;
-    this.xRefRootRef = firebase.database().ref(this.XREF_ROOT);
+    this.xRefRootRef = this.angularFirebase.database.ref(this.XREF_ROOT);
 
     this.ERROR_ROOT = schema.USERS_FOLDER + '/' + userRoot + '/' + schema.ERROR_CONTENT_FOLDER;
     this.errorRootRef = this.angularFirebase.database.ref(this.ERROR_ROOT);
@@ -151,19 +152,19 @@ export class FirebaseImagesService {
 
     return new Promise<UploadTaskSnapshot>((resolve, reject) => {
 
-      let fileRef = this.imageStorageRef.child(fileName);
-      let uploadTask = fileRef.put(imageBlob);
+      let fileRef:AngularFireStorageReference = this.imageStorageRef.child(fileName);
+      let uploadTask: AngularFireUploadTask = fileRef.put(imageBlob);
 
-      uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
+      uploadTask.task.on(firebase.storage.TaskEvent.STATE_CHANGED,
                     (snapshot) => {
-                      let progress = (uploadTask.snapshot.bytesTransferred / uploadTask.snapshot.totalBytes) * 100;
+                      let progress = (uploadTask.task.snapshot.bytesTransferred / uploadTask.task.snapshot.totalBytes) * 100;
                       this._uploadProgressEvent.next(Math.round(progress));
                     },
                     (error) => {
                       reject(error);
                     },
                     () => {
-                      resolve(uploadTask.snapshot as any);
+                      resolve(uploadTask.task.snapshot as any);
                     });
     });
   }
@@ -190,7 +191,7 @@ export class FirebaseImagesService {
               reject(response);
             } else {
               //la réponse est null, donc on renvoie ce qui nous intéresse
-              resolve(FirebaseImagesService.getUploadImageMeta(uploadSnapshot));
+              resolve(FirebaseImagesService.getUploadImageMeta(uploadSnapshot, url));
             }
           });
         }

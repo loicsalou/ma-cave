@@ -1,3 +1,11 @@
+.no-webp .locker .container {
+  background: url("../../assets/img/background/tex-bois.jpeg");
+}
+
+.webp .locker .container {
+  background: url("../../assets/img/background/tex-bois.webp");
+}
+
 .locker-component {
   .locker .container {
     border: thin solid transparent;
@@ -7,14 +15,6 @@
   &.selected .locker .container {
     border: thin solid red;
     background-color: red;
-  }
-
-  .no-webp .locker .container {
-    background: url("../assets/img/background/tex-bois.jpeg");
-  }
-
-  .webp .locker .container {
-    background: url("../assets/img/background/tex-bois.webp");
   }
 
   .locker {

@@ -12,6 +12,7 @@ import {Image} from '../../../model/image';
 import {ApplicationState} from '../../../app/state/app.state';
 import {Store} from '@ngrx/store';
 import {UpdateBottlesAction} from '../../../app/state/bottles.actions';
+import {isMobileDevice} from '../../../utils';
 
 /*
  Generated class for the Update component.
@@ -42,6 +43,7 @@ export class UpdatePage implements OnInit {
   private missingImages: string[] = [];
   private forceLeave: boolean = true;
   private metadata: BottleMetadata;
+  private mobile: boolean = false;
 
   constructor(private navCtrl: NavController, navParams: NavParams, private store: Store<ApplicationState>,
               private notificationService: NotificationService, private imageService: ImagePersistenceService,
@@ -56,6 +58,7 @@ export class UpdatePage implements OnInit {
     // input bottle is immutable ==> clone
     this.bottle = new Bottle(navParams.data[ 'bottle' ]);
     this.metadata = UpdatePage.getMetadata(this.bottle);
+    this.mobile = isMobileDevice();
   }
 
   /**

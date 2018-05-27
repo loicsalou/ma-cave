@@ -6,16 +6,16 @@ import {NotificationService} from '../../service/notification.service';
 import {Subscription} from 'rxjs';
 
 /**
- * Generated class for the ImageAttacherComponent component.
+ * Generated class for the CordovaImageAttacherComponent component.
  *
  * See https://angular.io/docs/ts/latest/api/core/index/ComponentMetadata-class.html
  * for more info on Angular Components.
  */
 @Component({
-             selector: 'image-attacher',
-             templateUrl: 'image-attacher.html'
+             selector: 'cordova-image-attacher',
+             templateUrl: 'cordova-image-attacher.html'
            })
-export class ImageAttacherComponent {
+export class CordovaImageAttacherComponent {
   progress: number;
   progressSubscription: Subscription;
   @Input()
@@ -88,22 +88,4 @@ export class ImageAttacherComponent {
         this.error.emit(error);
       });
   }
-
-  readBrowserFile(event: any) {
-    //let textType = /text.*/;
-    let file = event.currentTarget.files[ 0 ];
-    this.loadingInProgress = true;
-    this.imageService.uploadImage(file, this.metadata)
-      .then((meta: UploadMetadata) => {
-        this.notificationService.information('L\'image ' + meta.imageName + ' a été correctement enregistrée');
-        this.loadingInProgress = false;
-        this.imageUrl.emit(meta.downloadURL);
-      })
-      .catch(error => {
-               this.loadingInProgress = false;
-               this.error.emit(error);
-             }
-      );
-  }
-
 }

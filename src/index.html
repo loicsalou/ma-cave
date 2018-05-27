@@ -19,8 +19,6 @@
       return (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
     };
   </script>
-  <!-- cordova.js required for cordova apps -->
-  <script [src]="isMobileDevice() ? 'cordova.js' : ''" defer="true"></script>
   
   <!-- un-comment this code to enable service worker -->
   <script>
@@ -42,17 +40,20 @@
   </script>
   
   <script type="text/javascript">
-    var giftofspeed = document.createElement('link');
+    let giftofspeed = document.createElement('link');
     giftofspeed.rel = 'stylesheet';
     giftofspeed.href = 'build/main.css';
     giftofspeed.type = 'text/css';
-    var godefer = document.getElementsByTagName('link')[0];
+    let godefer = document.getElementsByTagName('link')[0];
     godefer.parentNode.insertBefore(giftofspeed, godefer);
+    
+    let giftofspeed2 = document.createElement('link');
+    giftofspeed2.rel = 'stylesheet';
+    giftofspeed2.href = 'assets/css/cavus.css';
+    giftofspeed2.type = 'text/css';
+    let godefer2 = document.getElementsByTagName('link')[1];
+    godefer2.parentNode.insertBefore(giftofspeed2, godefer2);
   </script>
-  
-  <!--<link href="build/main.css" rel="stylesheet">-->
-  <!-- cavus icons -->
-  <link href="assets/css/cavus.css" rel="stylesheet"/>
 </head>
 <body>
 

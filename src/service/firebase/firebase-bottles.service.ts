@@ -16,7 +16,7 @@ import {Locker} from '../../model/locker';
 import {logInfo, sanitizeBeforeSave} from '../../utils/index';
 import {map, tap, throttleTime} from 'rxjs/operators';
 import Reference = firebase.database.Reference;
-import * as firebase from 'firebase';
+import * as firebase from 'firebase/app';
 
 /**
  * Services related to the bottles in the cellar.

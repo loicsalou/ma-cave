@@ -4,7 +4,6 @@ import {FormsModule} from '@angular/forms';
 import {SharedModule} from '../../components/shared.module';
 import {AdminPage} from './admin-page';
 import {Transfer, TransferObject} from '@ionic-native/transfer';
-import {Camera} from '@ionic-native/camera';
 import {FilePath} from '@ionic-native/file-path';
 import {File} from '@ionic-native/file';
 import {BarcodeScanner} from '@ionic-native/barcode-scanner';
@@ -34,7 +33,6 @@ import {ImportProvider} from '../../providers/import/import';
               Transfer,
               TransferObject,
               FileChooser,
-              Camera,
               File,
               FilePath,
               ImportProvider,

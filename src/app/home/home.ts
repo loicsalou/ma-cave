@@ -13,6 +13,7 @@ import {LoadBottlesAction} from '../state/bottles.actions';
 import {LogoutAction} from '../state/shared.actions';
 import {SharedQuery} from '../state/shared.state';
 import {map, tap} from 'rxjs/operators';
+import {isMobileDevice} from '../../utils';
 
 @Component({
              selector: 'page-home',
@@ -119,7 +120,3 @@ export class HomePage implements OnInit, AfterViewInit {
     }
   }
 }
-
-function isMobileDevice() {
-  return (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
-};

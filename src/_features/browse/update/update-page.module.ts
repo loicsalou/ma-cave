@@ -8,8 +8,9 @@ import {RecordOutputPage} from './record-output';
 import {UpdatePage} from './update-page';
 import {SharedModule} from '../../../components/shared.module';
 import {TranslateModule} from '@ngx-translate/core';
-import {ImageAttacherComponent} from '../../../components/image-attacher/image-attacher';
+import {CordovaImageAttacherComponent} from '../../../components/image-attacher-cordova/cordova-image-attacher';
 import {ImagePersistenceService} from '../../../service/image-persistence.service';
+import {PwaImageAttacherComponent} from '../../../components/image-attacher-pwa/pwa-image-attacher';
 
 @NgModule({
             imports: [
@@ -20,14 +21,16 @@ import {ImagePersistenceService} from '../../../service/image-persistence.servic
               TranslateModule.forChild()
             ],
             declarations: [
-              ImageAttacherComponent,
+              CordovaImageAttacherComponent,
+              PwaImageAttacherComponent,
               UpdatePage
             ],
             entryComponents: [
               UpdatePage
             ],
             exports: [
-              ImageAttacherComponent,
+              CordovaImageAttacherComponent,
+              PwaImageAttacherComponent,
               UpdatePage
             ],
             providers: [

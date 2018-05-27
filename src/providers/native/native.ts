@@ -19,9 +19,10 @@ export class NativeProvider {
   private connectSubscription: Subscription;
 
   constructor(public platform: Platform, private deviceFeedBack: DeviceFeedback,
-              private androidPermissions: AndroidPermissions, private network: Network,
+              private androidPermissions: AndroidPermissions,
+              private network: Network,
               private notificationService: NotificationService) {
-    this.checkPermissions();
+    //this.checkPermissions();
     this.initNetworkWatching();
   }
 

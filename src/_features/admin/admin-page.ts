@@ -1,4 +1,3 @@
-
 import {Component} from '@angular/core';
 import {IonicPage, Loading, LoadingController, NavController, Platform} from 'ionic-angular';
 import {FileChooser} from '@ionic-native/file-chooser';

@@ -36,6 +36,7 @@ import {BottlePersistenceService} from '../service/bottle-persistence.service';
 import {FirebaseAdminService} from '../service/firebase/firebase-admin.service';
 import {WithdrawalFactory} from '../model/withdrawal.factory';
 import {FirebaseWithdrawalsService} from '../service/firebase/firebase-withdrawals.service';
+import {AngularFireStorageModule} from 'angularfire2/storage';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -52,6 +53,7 @@ export const fireConfig = {
               AngularFireModule.initializeApp(fireConfig),
               AngularFireAuthModule,
               AngularFireDatabaseModule,
+              AngularFireStorageModule,
               StoreModule.forRoot(ROOT_REDUCERS, {
                 metaReducers: META_REDUCERS
               }),

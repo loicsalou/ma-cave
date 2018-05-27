@@ -3,7 +3,7 @@
     <button ion-button icon-only (click)="cancel()">
       <ion-icon name="arrow-back"></ion-icon>
     </button>
-    <ion-title>Mise à jour</ion-title>
+    <ion-title>{{bottle.nomCru}}</ion-title>
   </span>
 </ion-header>
 
@@ -46,8 +46,10 @@
       </ion-col>
     </ion-row>
     
-    <image-attacher (imageUrl)="setProfileImage($event)" (error)="error($event)"
-                    [metadata]="metadata"></image-attacher>
+    <!--<cordova-image-attacher (imageUrl)="setProfileImage($event)" (error)="error($event)" *ngIf="mobile"-->
+                            <!--[metadata]="metadata"></cordova-image-attacher>-->
+    <pwa-image-attacher (imageUrl)="setProfileImage($event)" (error)="error($event)"
+                            [metadata]="metadata"></pwa-image-attacher>
     
     <ion-row class="form-group">
       <ion-item>

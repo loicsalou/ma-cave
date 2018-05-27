@@ -11,22 +11,21 @@
     <ion-card *ngIf="user.photoURL" class="profile-box">
       <div class="profile-image">
         <img [src]="user.photoURL" [defaultImage]="'/assets/icon/anonymous.png'">
-        <span>{{user.photoURL}}</span>
       </div>
       <div class="profile-info">
-        <h2>Bienvenue
+        <h2>{{'welcome' | translate}}
           <ion-badge>{{user.displayName}}</ion-badge>
         </h2>
         <ion-item>
-          <label for="user">Votre nom d'utilisateur:</label>
+          <label for="user">{{ 'user-name-text' | translate}}</label>
           <h3 id="user">{{user.user}}</h3>
         </ion-item>
         <ion-item>
-          <label for="email">e-mail</label>
+          <label for="email">{{ 'email' | translate}}</label>
           <h4 id="email">{{user.email}}</h4>
         </ion-item>
         <ion-item>
-          <label for="tel">tél</label>
+          <label for="tel">{{'phone' | translate}}</label>
           <h4 id="tel">{{user.phoneNumber}}</h4>
         </ion-item>
       </div>

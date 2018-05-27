@@ -11,7 +11,7 @@ import {logInfo} from '../../utils/index';
 import {AngularFireDatabase, SnapshotAction} from 'angularfire2/database';
 import {map, tap, throttleTime} from 'rxjs/operators';
 import Reference = firebase.database.Reference;
-import * as firebase from 'firebase';
+import * as firebase from 'firebase/app';
 
 /**
  * Services related to the withdrawals in the cellar.
