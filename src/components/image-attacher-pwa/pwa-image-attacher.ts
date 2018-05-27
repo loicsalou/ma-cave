@@ -3,6 +3,7 @@ import {BottleMetadata} from '../../model/bottle';
 import {ImagePersistenceService, UploadMetadata} from '../../service/image-persistence.service';
 import {NotificationService} from '../../service/notification.service';
 import {Subscription} from 'rxjs';
+import {logInfo} from '../../utils';
 
 /**
  * Generated class for the CordovaImageAttacherComponent component.
@@ -27,6 +28,7 @@ export class PwaImageAttacherComponent implements OnInit {
 
   @ViewChild('canvas') canvas: ElementRef;
   @ViewChild('video') video: ElementRef;
+  @ViewChild('fileSelector') fileSelector: ElementRef;
 
   private loadingInProgress: boolean = false;
   private constraints: MediaStreamConstraints = {

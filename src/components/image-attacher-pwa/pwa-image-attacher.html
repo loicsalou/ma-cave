@@ -5,17 +5,22 @@
 
 <ion-row *ngIf="!loadingInProgress">
   <ion-col col-sm-4 col-lg-2 offset-lg-1>
-    <ion-icon name="camera" (click)="toggleCapture()">
-      <input type="file" id="cameraSelector" accept="image/*" capture="camera" style="display:none"/>
-    </ion-icon>
-    <span>photo</span>
+    <button ion-button round icon-only (click)="toggleCapture()">
+      <ion-icon name="camera">
+        <input type="file" id="cameraSelector" accept="image/*" capture="camera" style="display:none"/>
+      </ion-icon>
+    </button>
   </ion-col>
   
   <ion-col col-sm-4 col-lg-2 offset-lg-1>
-    <input type="file" id="fileSelector" (change)="readBrowserFile($event)" style="display:none">
+    <input type="file" #fileSelector id="fileSelector" accept="image/*" (change)="readBrowserFile($event)"
+           style="display:none">
     <label for="fileSelector">
-      <ion-icon name="folder"></ion-icon>
-      <span>choisir</span>
+      <span>
+        <button ion-button round icon-only (click)="fileSelector.click()">
+          <ion-icon name="folder"></ion-icon>
+        </button>
+      </span>
     </label>
   </ion-col>
   
