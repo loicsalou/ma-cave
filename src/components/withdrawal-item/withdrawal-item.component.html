@@ -1,24 +1,26 @@
 <ion-item-sliding (click)="triggerDetail(withdrawal)" class="withdrawal-item" #item>
   <ion-item>
     <ion-row>
-      <ion-col col-2>
+      <ion-col bottle col-2>
         <ion-avatar item-start>
           <img src="{{ withdrawal | bottleIcon }}" class="overridable logo">
           <img src="assets/icon/starred.png" *ngIf="isBottleFavorite(withdrawal)"
-                   class="overridable logo">
+               class="overridable logo">
           <img src="assets/icon/alert-status.png" *ngIf="withdrawal.overdue" class="overridable logo">
         </ion-avatar>
         <span>{{fromNow}}</span>
       </ion-col>
-      <ion-col col-10 text-wrap>
-        <h4 class="label">{{ withdrawal.nomCru }}</h4>
-        <ion-note>{{withdrawal.area_label}} ({{withdrawal.millesime}})</ion-note>
+      <ion-col col-10 text-wrap align-items-start>
+        <span>
+          <h4 class="label">{{ withdrawal.nomCru }}</h4>
+          <ion-note>{{withdrawal.area_label}} ({{withdrawal.millesime}})</ion-note>
+        </span>
         <div *ngIf="withdrawal.notation">
           <ion-badge item-right class="compact">
             <rating [rating]="withdrawal.notation.quality"></rating>
           </ion-badge>
-          <span>{{withdrawal.notation.maturity.label}}, {{withdrawal.notation.pleasurePrice.label}}</span>
         </div>
+        <span *ngIf="withdrawal.notation">{{withdrawal.notation.maturity.label}}, {{withdrawal.notation.pleasurePrice.label}}</span>
       </ion-col>
     </ion-row>
   </ion-item>

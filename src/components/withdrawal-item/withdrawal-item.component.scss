@@ -26,8 +26,12 @@
   }
 
   ion-col {
-    align-items: center;
+    align-items: left;
     display: flex;
     flex-direction: column;
+
+    &[bottle] {
+      align-items: center;
+    }
   }
 }
