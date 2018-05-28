@@ -27,8 +27,10 @@
         .then(function (serviceRegistration) {
             console.log('service worker installé');
             serviceRegistration.onupdatefound = (update) => {
-              console.log('une mise à jour est disponible');
-              console.log(JSON.stringify(update));
+              alert('Une mise à jour est disponible. Rafraichir');
+              serviceRegistration.update()
+                .then(() => alert('L\'application a été mise à jour'))
+                .catch((err) => alert('échec de la mise à jour de l\'application:' + err);
             }
           }
         )
