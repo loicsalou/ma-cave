@@ -10,6 +10,7 @@ import {ApplicationState} from '../../app/state/app.state';
 import {LoginSuccessAction, LogoutAction} from '../../app/state/shared.actions';
 import {TranslateService} from '@ngx-translate/core';
 import {AlertController} from 'ionic-angular';
+import {FacebookLoginNativeService} from './facebook-login-native.service';
 
 /**
  * Created by loicsalou on 13.06.17.
@@ -24,6 +25,7 @@ export class LoginService {
   constructor(private anoLogin: AnonymousLoginService,
               private mailLogin: EmailLoginService,
               private fbLogin: FacebookLoginService,
+              private fbLoginNative: FacebookLoginNativeService,
               private gglLogin: GoogleLoginService,
               private translateService: TranslateService,
               private alertController: AlertController,
@@ -96,6 +98,15 @@ export class LoginService {
       (user: User) => this.initUser(user),
       error =>
         this.failed('L\'authentification Facebook a échoué, veuillez vérifier votre compte ' + error)
+    );
+  }
+
+  public facebookNativeLogin() {
+    this.currentLoginService = this.fbLoginNative;
+    this.loginSub = this.fbLoginNative.login().subscribe(
+      (user: User) => this.initUser(user),
+      error =>
+        this.failed('L\'authentification native Facebook a échoué, veuillez vérifier votre compte ' + error)
     );
   }
 

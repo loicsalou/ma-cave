@@ -37,6 +37,8 @@ import {FirebaseAdminService} from '../service/firebase/firebase-admin.service';
 import {WithdrawalFactory} from '../model/withdrawal.factory';
 import {FirebaseWithdrawalsService} from '../service/firebase/firebase-withdrawals.service';
 import {AngularFireStorageModule} from 'angularfire2/storage';
+import {AuthServiceConfig, FacebookLoginProvider, GoogleLoginProvider, SocialLoginModule} from 'angularx-social-login';
+import {FacebookLoginNativeService} from '../service/login/facebook-login-native.service';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -47,6 +49,13 @@ export const fireConfig = {
   messagingSenderId: '58435015061'
 };
 
+let config = new AuthServiceConfig([
+                                     {
+                                       id: FacebookLoginProvider.PROVIDER_ID,
+                                       provider: new FacebookLoginProvider("253712085111353")
+                                     }
+                                   ]);
+
 @NgModule({
             imports: [
               BrowserModule,
@@ -54,6 +63,7 @@ export const fireConfig = {
               AngularFireAuthModule,
               AngularFireDatabaseModule,
               AngularFireStorageModule,
+              SocialLoginModule.initialize(config),
               StoreModule.forRoot(ROOT_REDUCERS, {
                 metaReducers: META_REDUCERS
               }),
@@ -69,13 +79,14 @@ export const fireConfig = {
               EmailLoginService,
               Facebook,
               FacebookLoginService,
+              FacebookLoginNativeService,
               GoogleLoginService,
               GooglePlus,
               {
                 provide: LoginService,
                 useFactory: (createLoginFactory),
-                deps: [ AnonymousLoginService, EmailLoginService, FacebookLoginService, GoogleLoginService,
-                  TranslateService, NotificationService, Store ]
+                deps: [ AnonymousLoginService, EmailLoginService, FacebookLoginService, FacebookLoginNativeService,
+                  GoogleLoginService, TranslateService, NotificationService, Store ]
               },
               {
                 provide: NotificationService,
@@ -106,9 +117,9 @@ export class CoreModule {
 }
 
 export function createLoginFactory(ano: AnonymousLoginService, ema: EmailLoginService, fac: FacebookLoginService,
-                                   ggl: GoogleLoginService, ts: TranslateService, ac: AlertController,
-                                   store: Store<ApplicationState>) {
-  return new LoginService(ano, ema, fac, ggl, ts, ac, store);
+                                   facn: FacebookLoginNativeService, ggl: GoogleLoginService, ts: TranslateService,
+                                   ac: AlertController, store: Store<ApplicationState>) {
+  return new LoginService(ano, ema, fac, facn, ggl, ts, ac, store);
 }
 
 export function createNotificationFactory(alrt: AlertController, toast: ToastController, translate: TranslateService,

@@ -3,48 +3,57 @@
  */
 import {Injectable} from '@angular/core';
 import {AbstractLoginService} from './abstract-login.service';
-import {Facebook} from '@ionic-native/facebook';
 import {User} from '../../model/user';
 import {Observable} from 'rxjs';
 import {NotificationService} from '../notification.service';
-import * as firebase from 'firebase/app';
+import {AuthService, FacebookLoginProvider, SocialUser} from 'angularx-social-login';
+import {map} from 'rxjs/operators';
 
 @Injectable()
 export class FacebookLoginService extends AbstractLoginService {
   userString: string;
 
-  constructor(notificationService: NotificationService, private facebook: Facebook) {
+  constructor(notificationService: NotificationService, private authService: AuthService) {
     super(notificationService);
   }
 
   protected delegatedLogin(authObs: Observable<User>): Observable<User> {
-    let self = this;
-    let popup = this.notificationService.createLoadingPopup('app.checking-login');
-    self.facebook.login([ 'email' ]).then((response) => {
-      const facebookCredential = firebase.auth.FacebookAuthProvider
-        .credential(response.authResponse.accessToken);
-
-      firebase.auth().signInWithCredential(facebookCredential)
-        .then((success) => {
-          let user: User = new FacebookUser(success.user, success.email, success.photoURL,
-                                            success.displayName, success.uid, success.phoneNumber);
-          self.success(user);
-          popup.dismiss();
-        })
-        .catch(error => {
-          popup.dismiss();
-          self.logout();
-          self.notificationService.failed('l\'authentification a échoué (Promise.catch)', error);
-        })
-    }).catch(
-      error => {
-        popup.dismiss();
-        self.logout();
-        self.notificationService.failed('l\'authentification a échoué (catch)', error);
-      }
+    this.authService.signIn(FacebookLoginProvider.PROVIDER_ID);
+    return this.authService.authState.pipe(
+      map((user: SocialUser) => {
+        return new FacebookUser(user.firstName + ' ' + user.lastName, user.email, user.photoUrl, user.name, user.id, '');
+      })
     );
+    //let popup = this.notificationService.createLoadingPopup('app.checking-login');
+    //self.facebook.login([ 'email' ]).then((response) => {
+    //  const facebookCredential = firebase.auth.FacebookAuthProvider
+    //    .credential(response.authResponse.accessToken);
+    //
+    //  firebase.auth().signInWithCredential(facebookCredential)
+    //    .then((success) => {
+    //      let user: User = new FacebookUser(success.user, success.email, success.photoURL,
+    //                                        success.displayName, success.uid, success.phoneNumber);
+    //      self.success(user);
+    //      popup.dismiss();
+    //    })
+    //    .catch(error => {
+    //      popup.dismiss();
+    //      self.logout();
+    //      self.notificationService.failed('l\'authentification a échoué (Promise.catch)', error);
+    //    });
+    //}).catch(
+    //  error => {
+    //    popup.dismiss();
+    //    self.logout();
+    //    self.notificationService.failed('l\'authentification a échoué (catch)', error);
+    //  }
+    //);
+    //
+    //return authObs;
+  }
 
-    return authObs;
+  private delegatedSignout() {
+    this.authService.signOut();
   }
 }
 
