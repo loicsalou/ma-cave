@@ -1,0 +1,92 @@
+<!-- Generated template for the LockerEditorComponent component -->
+<ion-header class="mod-header update-locker-page" (click)="test()">
+  
+  <ion-navbar>
+    <ion-title>{{locker.name}}
+      <span *ngIf="isEditable">{{'update.edit-locker' | translate}}</span>
+      <span *ngIf="!isEditable">{{'update.edit-racks' | translate}}</span>
+    </ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content padding class="update-locker-page page">
+  <ng-container *ngIf="lockerAndBottles$ | async as lockerAndBottles">
+    <ion-fab middle center *ngIf="isEditable">
+      <button ion-fab mini>
+        <ion-icon name="create"></ion-icon>
+      </button>
+      <ion-fab-list side="top">
+        <button ion-fab (click)="lockerComponent.removeTopRow()">
+          <ion-icon name="remove"></ion-icon>
+        </button>
+        <button ion-fab (click)="lockerComponent.addTopRow()">
+          <ion-icon name="add"></ion-icon>
+        </button>
+      </ion-fab-list>
+      <ion-fab-list side="right">
+        <button ion-fab (click)="lockerComponent.removeRightColumn()">
+          <ion-icon name="remove"></ion-icon>
+        </button>
+        <button ion-fab (click)="lockerComponent.addRightColumn()">
+          <ion-icon name="add"></ion-icon>
+        </button>
+      </ion-fab-list>
+      <ion-fab-list side="bottom">
+        <button ion-fab (click)="lockerComponent.removeBottomRow()">
+          <ion-icon name="remove"></ion-icon>
+        </button>
+        <button ion-fab (click)="lockerComponent.addBottomRow()">
+          <ion-icon name="add"></ion-icon>
+        </button>
+      </ion-fab-list>
+      <ion-fab-list side="left">
+        <button ion-fab (click)="lockerComponent.removeLeftColumn()">
+          <ion-icon name="remove"></ion-icon>
+        </button>
+        <button ion-fab (click)="lockerComponent.addLeftColumn()">
+          <ion-icon name="add"></ion-icon>
+        </button>
+      </ion-fab-list>
+    </ion-fab>
+    
+    <ion-fab middle center *ngIf="!isEditable">
+      <button ion-fab mini>
+        <ion-icon name="create"></ion-icon>
+      </button>
+      <ion-fab-list side="top">
+        <button ion-fab (click)="lockerComponent.removeTopRack()">
+          <ion-icon name="remove-circle"></ion-icon>
+        </button>
+        <button ion-fab (click)="lockerComponent.addTopRack()">
+          <ion-icon name="add-circle"></ion-icon>
+        </button>
+      </ion-fab-list>
+      <ion-fab-list side="bottom">
+        <button ion-fab (click)="lockerComponent.removeBottomRack()">
+          <ion-icon name="remove-circle"></ion-icon>
+        </button>
+        <button ion-fab (click)="lockerComponent.addBottomRack()">
+          <ion-icon name="add-circle"></ion-icon>
+        </button>
+      </ion-fab-list>
+    </ion-fab>
+    
+    <ion-row *ngIf="!lockerAndBottles.locker.isFridge()">
+      <locker #lockerCmp [locker]="lockerAndBottles.locker" [content]="lockerAndBottles.lockerContent" [editing]="true">
+      </locker>
+    </ion-row>
+    
+    <ion-row *ngIf="lockerAndBottles.locker.isFridge()">
+      <fridge-locker #lockerCmp [fridge]="lockerAndBottles.locker" [content]="lockerAndBottles.lockerContent"
+                     [selectable]="true" [editing]="true"
+                     (onRacksSelected)="racksSelected($event)">
+      </fridge-locker>
+    </ion-row>
+  </ng-container>
+</ion-content>
+
+<ion-footer text-right padding-horizontal>
+  <button ion-button (click)="cancel()">{{'cancel'|translate}}</button>
+  <button ion-button (click)="saveLocker()">{{'save'|translate}}</button>
+</ion-footer>

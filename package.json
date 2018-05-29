@@ -1,6 +1,6 @@
 {
   "name": "assistant-caviste",
-  "version": "5.35.0",
+  "version": "5.48.0",
   "author": "Loic Salou",
   "homepage": "http://ionicframework.com/",
   "private": true,
@@ -10,19 +10,18 @@
     "build": "ionic-app-scripts build",
     "start": "ionic-app-scripts serve",
     "serve": "ionic-app-scripts serve",
-    "build:prod": "ionic-app-scripts build --aot --minifyjs --minifycss --release",
+    "build:aot": "ionic-app-scripts build --aot --minifyjs --minifycss --release",
     "serve:prod": "ionic-app-scripts serve --prod",
     "run:android": "ionic cordova run android --device",
     "apk": "ionic cordova build android",
     "apk:prod": "ionic cordova build android --aot --minifyjs --minifycss --release",
-    "open": "http-server www -o -a localhost -p 1234",
-    "-------": "HOOKS",
+    "open": "http-server www -o -g -c31536000 -a localhost -p 1234",
+    "-------": "BUILD POUR WORKER",
     "ios": "ionic cordova build ios --prod",
     "postbuild": "workbox injectManifest ./config/workbox-config.js",
     "postbuild:prod": "workbox injectManifest ./config/workbox-config.js",
-    "//postserve": "workbox injectManifest ./config/workbox-config.js",
-    "//prestart": "workbox injectManifest ./config/workbox-config.js",
-    "//postserve:prod": "workbox injectManifest ./config/workbox-config.js"
+    "compress": "bread-compressor -a gzip www",
+    "build:prod": "npm run build:aot && node ./cache-busting.js && npm run postbuild && npm run compress"
   },
   "dependencies": {
     "@angular/common": "5.2.10",
@@ -80,7 +79,6 @@
     "cordova-plugin-velda-devicefeedback": "0.0.2",
     "cordova-plugin-whitelist": "1.3.3",
     "firebase": "5.0.3",
-    "font-awesome": "4.7.0",
     "ionic-angular": "3.9.2",
     "ionic-plugin-keyboard": "2.2.1",
     "ionicons": "4.1.1",
@@ -102,11 +100,16 @@
     "@types/jasmine": "2.8.7",
     "@types/karma": "1.7.3",
     "@types/node": "10.0.10",
+    "bread-compressor-cli": "1.0.0",
+    "http-server": "0.11.1",
     "ionic": "3.20.0",
     "jasmine-core": "3.1.0",
     "jasmine-spec-reporter": "4.2.1",
     "promise-polyfill": "7.1.2",
+    "purify-css": "1.2.5",
+    "rev-hash": "2.0.0",
     "typescript": "2.6.2",
+    "webpack-manifest-plugin": "2.0.2",
     "workbox-cli": "3.2.0"
   },
   "cordovaPlugins": [
@@ -125,7 +128,8 @@
   ],
   "config": {
     "ionic_copy": "./config/copy.config.js",
-    "ionic_sass": "./config/sass.config.js"
+    "ionic_sass": "./config/sass.config.js",
+    "ionic_webpack": "./config/webpack.config.js"
   },
   "cordovaPlatforms": [
     "ios",

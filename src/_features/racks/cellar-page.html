@@ -1,0 +1,81 @@
+<ion-header class="mod-header cellar-page" style="display: block;">
+  <div>
+    <ion-navbar>
+      <ion-title>{{'lockers' | translate}}<span *ngIf="scale">{{scale}}</span></ion-title>
+    </ion-navbar>
+    <img src="assets/icon/primary-logout.png" icon-only (click)="logout()"/>
+  </div>
+  <div class="nav-anchor">
+    <ion-badge *ngFor="let lockerName of lockerNames" (click)="scrollTo(lockerName)">
+      {{lockerName}}
+    </ion-badge>
+  </div>
+</ion-header>
+
+<ion-content padding class="cellar-page page">
+  <responsive-wrapper>
+    <ion-row>
+      <ng-container *ngIf="lockers$ | async as lockers">
+        <ng-container *ngIf="bottlesPerRack$ | async as bottlesPerRack">
+          <ion-col *ngFor="let locker of lockers" [scrollAnchor]="locker.name" col-sm-12 col-lg-6>
+            <ion-card>
+              <ion-card-content [dimensionOf]="locker">
+                <span><h1>{{locker.name}}</h1></span>
+                <div>
+                  <locker [locker]="locker" [content]="bottlesPerRack[locker.id]" *ngIf="!locker.isFridge()"
+                          [editing]="false" [containerDimension$]="getContainerDimension$(locker)"
+                          [highlighted]="selectedBottles$ | async" (onCellSelected)="cellSelected($event)">
+                  </locker>
+                  
+                  <fridge-locker [fridge]="locker" [content]="bottlesPerRack[locker.id]" *ngIf="locker.isFridge()"
+                                 [editing]="false"
+                                 [highlighted]="selectedBottles$ | async"
+                                 (onCellSelected)="cellSelected($event)">
+                  </fridge-locker>
+                  
+                  <ion-buttons>
+                    <button ion-button outline icon-only (click)="updateLocker(locker)">
+                      <ion-icon name="create"></ion-icon>
+                    </button>
+                    <button ion-button outline icon-only (click)="deleteLocker(locker)">
+                      <ion-icon name="trash"></ion-icon>
+                    </button>
+                  </ion-buttons>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ng-container>
+      </ng-container>
+    
+    </ion-row>
+  </responsive-wrapper>
+  
+  <ion-fab bottom right>
+    <button ion-fab (click)="createLocker()">
+      <ion-icon name="add-circle"></ion-icon>
+    </button>
+  </ion-fab>
+  
+  <ion-fab top right *ngIf="pendingCell">
+    <button ion-fab class="pending-bottle">
+      <img src="{{ pendingCell.bottle | bottleIcon }}" (click)="showTip()">
+    </button>
+    <ion-badge class="tip" *ngIf="pendingCell">{{pendingCell.bottle.nomCru}} -
+      {{pendingCell.bottle.millesime}}
+    </ion-badge>
+    <ion-fab-list side="left">
+      <button ion-fab style="border: thin solid black" (click)="withdraw(pendingCell)">
+        <span class="cavus-corkscrew"></span>
+      </button>
+      <button ion-fab style="border: thin solid black" (click)="zoomOnBottle(pendingCell)">
+        <ion-icon name="search"></ion-icon>
+      </button>
+    </ion-fab-list>
+  </ion-fab>
+  
+  <div bottom left *ngIf="showPlaceLocker">
+    <locker #placedLockerComponent [locker]="bottlesToPlaceLocker" [content]="selectedBottles$ | async"
+            (onCellSelected)="cellSelected($event)"></locker>
+  </div>
+</ion-content>

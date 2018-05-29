@@ -8,7 +8,7 @@ import {Bottle} from '../../../model/bottle';
              changeDetection: ChangeDetectionStrategy.OnPush
              // styleUrls:[ 'slide-bottle-detail.scss' ]
            })
-export class BottleDetailSlide {
+export class SlideBottleDetail {
 
   //bouteille à afficher
   @Input()

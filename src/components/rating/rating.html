@@ -3,7 +3,7 @@
   
   <div class="stars form-group">
     <span *ngFor="let x of labels;let ix=index" [class.lighten]="ix <= note" (click)="rate(ix)">
-      <i class="fa fa-star" aria-hidden="true"></i>
+      <ion-icon name="star"></ion-icon>
     </span>
   </div>
 </div>
@@ -12,7 +12,7 @@
   <div class="stars">
     <span>{{rating.label}}:</span>
     <span *ngFor="let x of noteArray;let ix=index" [class.lighten]="ix <= note">
-      <i class="fa fa-star" aria-hidden="true"></i>
+      <ion-icon name="star"></ion-icon>
     </span>
   </div>
 </div>

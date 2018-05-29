@@ -1,19 +1,19 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {Modal, ModalController, NavController, Platform} from 'ionic-angular';
 import {LoginService} from '../../service/login/login.service';
-import {EmailLoginPage} from '../../_features/admin/login/email-login.page';
+import {EmailLoginPage} from '../login/email-login.page';
 import {User} from '../../model/user';
 import {TabsPage} from '../tabs/tabs';
-import {Subscription, Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {NotificationService} from '../../service/notification.service';
-import {NativeProvider} from '../../providers/native/native';
-import {VERSION} from '../../_features/admin/version';
+import {VERSION} from '../version';
 import {ApplicationState} from '../state/app.state';
 import {Store} from '@ngrx/store';
 import {LoadBottlesAction} from '../state/bottles.actions';
 import {LogoutAction} from '../state/shared.actions';
 import {SharedQuery} from '../state/shared.state';
 import {map, tap} from 'rxjs/operators';
+import {isMobileDevice} from '../../utils';
 
 @Component({
              selector: 'page-home',
@@ -22,19 +22,19 @@ import {map, tap} from 'rxjs/operators';
              // styleUrls:[ 'home.scss' ]
            })
 export class HomePage implements OnInit, AfterViewInit {
-
+  public static loggedIn = false;
   version: any;
   currentTheme$: Observable<string>;
 
   private loginPage: Modal;
 
   private loginSubscription: Subscription;
-  private loggedIn = false;
+  private isMobile: boolean = false;
 
   constructor(public navCtrl: NavController, public loginService: LoginService,
               private modalController: ModalController,
               private notificationService: NotificationService,
-              private nativeProvider: NativeProvider, private platform: Platform,
+              private platform: Platform,
               private store: Store<ApplicationState>) {
     this.loginSubscription = this.store.select(SharedQuery.getLoginUser).pipe(
       tap(() => {
@@ -53,30 +53,26 @@ export class HomePage implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.version = VERSION;
+    this.isMobile=isMobileDevice();
   }
 
   ngAfterViewInit(): void {
-    this.nativeProvider.initNativeFeatures(this.navCtrl);
   }
 
   facebookLogin() {
-    this.nativeProvider.feedBack();
     this.loginService.facebookLogin();
   }
 
   emailLogin() {
-    this.nativeProvider.feedBack();
     this.loginPage = this.modalController.create(EmailLoginPage);
     this.loginPage.present();
   }
 
   googleLogin() {
-    this.nativeProvider.feedBack();
     this.loginService.googleLogin();
   }
 
   anonymousLogin() {
-    this.nativeProvider.feedBack();
     this.loginService.anonymousLogin();
   }
 
@@ -90,19 +86,36 @@ export class HomePage implements OnInit, AfterViewInit {
 
   logout() {
     this.store.dispatch(new LogoutAction());
+    this.navCtrl.setRoot(HomePage);
+    this.navCtrl.popToRoot();
+    setTimeout(() => {
+                 window.history.pushState({}, '', '/');
+                 window.location.reload();
+               }
+      , 100);
   }
 
   private handleLoginEvent(user: User) {
     if (user !== undefined) {
-      this.loggedIn = true;
+      HomePage.loggedIn = true;
       this.store.dispatch(new LoadBottlesAction());
       this.navCtrl.setRoot(TabsPage);
+      this.loginSubscription.unsubscribe();
     }
     else {
       // logout ==> retour à la page de login
-      if (this.loggedIn) {
+      if (HomePage.loggedIn) {
+        HomePage.loggedIn = false;
+        if (this.loginSubscription) {
+          this.loginSubscription.unsubscribe();
+        }
         this.navCtrl.setRoot(HomePage);
-        this.loginSubscription.unsubscribe();
+        this.navCtrl.popToRoot();
+        setTimeout(() => {
+                     window.history.pushState({}, '', '/');
+                     window.location.reload();
+                   }
+          , 100);
       }
     }
   }

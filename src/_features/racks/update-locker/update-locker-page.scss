@@ -1,0 +1,14 @@
+.update-locker-page {
+
+  ion-row {
+    justify-content: center;
+  }
+
+  ion-col > ion-icon {
+    text-align: center;
+  }
+
+  ion-fab[middle] {
+    top: 75%;
+  }
+}

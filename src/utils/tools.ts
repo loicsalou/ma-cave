@@ -7,3 +7,8 @@ export function sanitizeBeforeSave(object: any): any {
     return v;
   }));
 }
+
+export function isMobileDevice() {
+  return (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
+};
+

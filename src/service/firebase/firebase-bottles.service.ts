@@ -1,11 +1,10 @@
 /**
  * Created by loicsalou on 28.02.17.
  */
-import * as firebase from 'firebase/app';
 import * as moment from 'moment';
 import * as schema from './firebase-schema';
 
-import {Injectable} from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {Bottle} from '../../model/bottle';
 import {from as fromPromise, Observable, of, throwError as _throw} from 'rxjs';
 import {AngularFireDatabase, SnapshotAction} from 'angularfire2/database';
@@ -15,8 +14,9 @@ import {BottleFactory} from '../../model/bottle.factory';
 import {User} from '../../model/user';
 import {Locker} from '../../model/locker';
 import {logInfo, sanitizeBeforeSave} from '../../utils/index';
-import {map, take, tap} from 'rxjs/operators';
+import {map, tap, throttleTime} from 'rxjs/operators';
 import Reference = firebase.database.Reference;
+import * as firebase from 'firebase/app';
 
 /**
  * Services related to the bottles in the cellar.
@@ -36,7 +36,7 @@ export class FirebaseBottlesService {
 
   constructor(private bottleFactory: BottleFactory,
               private angularFirebase: AngularFireDatabase,
-              private notificationService: NotificationService) {
+              private notificationService: NotificationService, @Inject('GLOBAL_CONFIG') private config) {
   }
 
   public initialize(user: User) {
@@ -95,7 +95,7 @@ export class FirebaseBottlesService {
    * @returns {Promise<any>}
    */
   public update(bottles: Bottle[]): Observable<Bottle[]> {
-    logInfo('[firebase] ==> mise à jour de bouteilles' + bottles.length);
+    logInfo('[firebase] ==> mise à jour de bouteilles: ' + bottles.length);
     let updates = {};
     bottles.forEach(bottle => {
       bottle[ 'lastUpdated' ] = new Date().getTime();
@@ -115,7 +115,7 @@ export class FirebaseBottlesService {
    * @returns {Promise<any>}
    */
   public updateLockerAndBottles(bottles: Bottle[], locker: Locker): Observable<{ bottles: Bottle[], locker: Locker }> {
-    logInfo('[firebase] ==> mise à jour de bouteilles et locker:' + bottles.length);
+    logInfo('[firebase] ==> mise à jour de bouteilles et locker: ' + bottles.length);
     let updates = {};
     bottles.forEach(bottle => {
       bottle[ 'lastUpdated' ] = new Date().getTime();
@@ -183,6 +183,7 @@ export class FirebaseBottlesService {
     );
     return this.angularFirebase.list<Bottle>(this.BOTTLES_ROOT).snapshotChanges().pipe(
       //take(1),
+      throttleTime(this.config.throttleTime),
       map(
         (snaps: SnapshotAction<Bottle>[]) => snaps.map(snap => this.bottleFactory.create({id: snap.payload.key, ...snap.payload.val()}))
       ),

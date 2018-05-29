@@ -1,0 +1,37 @@
+<ion-row *ngIf="loadingInProgress">
+  <progress-bar *ngIf="loadingInProgress" [progress]="progress" [thickness]="'1px'"
+                [showPercentage]="false" class="flex-grow"></progress-bar>
+</ion-row>
+
+<ion-row *ngIf="!loadingInProgress">
+  <ion-col col-sm-4 col-lg-2 offset-lg-1>
+    <button ion-button round icon-only (click)="toggleCapture()">
+      <ion-icon name="camera">
+        <input type="file" id="cameraSelector" accept="image/*" capture="camera" style="display:none"/>
+      </ion-icon>
+    </button>
+  </ion-col>
+  
+  <ion-col col-sm-4 col-lg-2 offset-lg-1>
+    <input type="file" #fileSelector id="fileSelector" accept="image/*" (change)="readBrowserFile($event)"
+           style="display:none">
+    <label for="fileSelector">
+      <span>
+        <button ion-button round icon-only (click)="fileSelector.click()">
+          <ion-icon name="folder"></ion-icon>
+        </button>
+      </span>
+    </label>
+  </ion-col>
+  
+  <ion-col col-sm-4 col-lg-2 offset-lg-1>
+    <button ion-button round icon-only (click)="removeProfileImage()">
+      <ion-icon name="trash"></ion-icon>
+    </button>
+  </ion-col>
+</ion-row>
+
+<ion-row [ngStyle]="capturing ? {} : {'display': 'none'}">
+  <video #video autoplay (click)="snapshot()"></video>
+  <canvas #canvas></canvas>
+</ion-row>

@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {NavController, NavParams, ViewController} from 'ionic-angular';
+import {IonicPage, NavController, NavParams, ViewController} from 'ionic-angular';
 import {Bottle} from '../../../model/bottle';
 import {BottleNoting} from '../../../components/bottle-noting/bottle-noting.component';
 import {BottlePersistenceService} from '../../../service/bottle-persistence.service';
@@ -10,7 +10,7 @@ import {BottlePersistenceService} from '../../../service/bottle-persistence.serv
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
  */
-
+@IonicPage()
 @Component({
              templateUrl: './record-output.html',
              // styleUrls:[ 'record-output.scss' ]

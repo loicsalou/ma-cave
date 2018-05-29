@@ -8,6 +8,8 @@ export const appConfig = {
     }
   },
 
+  throttleTime: 200,
+
   settings: {
     defaultTheme: 'default-theme',
     themes: [

@@ -4,6 +4,19 @@
  */
 'use strict';
 importScripts('workbox-3.2.0/workbox-sw.js');
+
+self.addEventListener('install', (event) => {
+  console.log('install:' + event);
+})
+
+self.addEventListener('fetch', (event) => {
+  console.log('fetch:' + event);
+})
+
+self.addEventListener('activate', (event) => {
+  console.log('activate:' + event);
+})
+
 workbox.setConfig({
   debug: false,
   modulePathPrefix: 'workbox-3.2.0/'

@@ -2,29 +2,34 @@
   <ion-title><h2>{{'app.title' | translate}}</h2></ion-title>
 </ion-header>
 
-<ion-content align-items-center class="home card-background-page page" [ngClass]="currentTheme$ | async">
+<ion-content align-items-center class="home card-background-page page"
+             [ngClass]="currentTheme$ | async">
   <responsive-wrapper>
     <div class="login">
       <fieldset>
-        <legend><h2>{{'app.please-login' | translate}}</h2></legend>
-        <div d-flex>
-          <button ion-button badge [class.clicked]="fbidentifying" (click)="facebookLogin()">
-            <img icon-only src="assets/icon/social_facebook_box_blue.png" alt="facebook_login"/>
+        <div d-flex class="login-block">
+          <button ion-button badge [class.clicked]="fbidentifying" (click)="facebookLogin()"
+                  aria-label="Login Facebook">
+            <span class="login-facebook"></span>
           </button>
-          <button ion-button badge [class.clicked]="mailidentifying" (click)="emailLogin()">
+          <button ion-button badge [class.clicked]="mailidentifying" (click)="emailLogin()" aria-label="Login e-mail">
             <ion-icon name="mail" style="font-size: 2.4em;"></ion-icon>
           </button>
-          <button ion-button badge [class.clicked]="anoidentifying" (click)="anonymousLogin()">
-            <img icon-only src="assets/icon/anonymous.png" alt="anonymous_login"/>
+          <button ion-button badge [class.clicked]="anoidentifying" (click)="anonymousLogin()"
+                  aria-label="Login Anonyme">
+            <span class="login-anonymous"></span>
           </button>
-          <button ion-button badge [class.clicked]="anoidentifying" (click)="googleLogin()"
+          <button ion-button badge [class.clicked]="gglidentifying" (click)="googleLogin()" aria-label="Login Google"
                   *ngIf="isGoogleLoginEnabled()">
-            <img icon-only src="assets/icon/google-login.png" alt="google_login"/>
+            <span class="login-google"></span>
           </button>
         </div>
       </fieldset>
-     </div>
+    </div>
   </responsive-wrapper>
 </ion-content>
 
-<ion-footer text-right padding-horizontal [ngClass]="currentTheme">version {{version}}</ion-footer>
+<ion-footer text-right padding-horizontal [ngClass]="currentTheme" style="bottom:0;">
+  <span>version {{version}}</span>
+  <span>{{isMobile ? 'Mobile' : 'Browser'}}</span>
+</ion-footer>

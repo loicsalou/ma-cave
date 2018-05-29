@@ -7,7 +7,7 @@ import {User} from '../../model/user';
 import {Observable} from 'rxjs';
 import {NotificationService} from '../notification.service';
 import {Platform} from 'ionic-angular';
-import {auth} from 'firebase';
+import {auth} from 'firebase/app';
 import {GooglePlus} from '@ionic-native/google-plus'; //needed for the GoogleAuthProvider
 import * as firebase from 'firebase/app';
 import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;

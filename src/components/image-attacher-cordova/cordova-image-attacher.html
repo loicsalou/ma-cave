@@ -1,0 +1,18 @@
+<ion-row *ngIf="loadingInProgress">
+  <progress-bar *ngIf="loadingInProgress" [progress]="progress" [thickness]="'1px'"
+                [showPercentage]="false" class="flex-grow"></progress-bar>
+</ion-row>
+
+<ion-row *ngIf="!loadingInProgress">
+  <ion-col hideWhen="!cordova" d-flex style="justify-content: space-between">
+    <button ion-button round icon-only padding-vertical (click)="captureProfileImage()">
+      <ion-icon name="camera"></ion-icon>
+    </button>
+    <button ion-button round icon-only padding-vertical (click)="chooseProfileImage()">
+      <ion-icon name="folder"></ion-icon>
+    </button>
+    <button ion-button round icon-only padding-vertical (click)="removeProfileImage()">
+      <ion-icon name="trash"></ion-icon>
+    </button>
+  </ion-col>
+</ion-row>

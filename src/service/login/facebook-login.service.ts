@@ -7,7 +7,7 @@ import {Facebook} from '@ionic-native/facebook';
 import {User} from '../../model/user';
 import {Observable} from 'rxjs';
 import {NotificationService} from '../notification.service';
-import * as firebase from 'firebase';
+import * as firebase from 'firebase/app';
 
 @Injectable()
 export class FacebookLoginService extends AbstractLoginService {

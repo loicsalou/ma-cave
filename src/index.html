@@ -4,8 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Ionic App</title>
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">-->
   <meta name="format-detection" content="telephone=no">
   <meta name="msapplication-tap-highlight" content="no">
   <meta name="Description" content="une gestion de cave librement inspirée de cavusvinifera youcellar">
@@ -14,31 +14,57 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#4e8ef7">
   
-  <!-- cordova.js required for cordova apps -->
-  <script src="cordova.js"></script>
+  <script>
+    function isMobileDevice() {
+      return (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
+    };
+  </script>
   
   <!-- un-comment this code to enable service worker -->
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
-        .then(function (resp) {
-            console.log('service worker installed');
+        .then(function (serviceRegistration) {
+            console.log('service worker installé');
+            serviceRegistration.onupdatefound = (update) => {
+              alert('Une mise à jour est disponible. Rafraichir');
+              serviceRegistration.update()
+                .then(() => alert('L\'application a été mise à jour'))
+                .catch((err) => alert('échec de la mise à jour de l\'application:' + err);
+            }
           }
         )
         .catch(function (err) {
-            console.log('Error', err)
+            console.log('Error lors de l\'installation du service worker', err)
           }
         )
     }
   </script>
   
-  <link href="build/main.css" rel="stylesheet">
-  <!-- Font-awesome -->
-  <link href="assets/css/font-awesome.min.css" rel="stylesheet"/>
-  <!-- cavus icons -->
-  <link href="assets/css/cavus.css" rel="stylesheet"/>
+  <script type="text/javascript">
+    let giftofspeed = document.createElement('link');
+    giftofspeed.rel = 'stylesheet';
+    giftofspeed.href = 'build/main.css';
+    giftofspeed.type = 'text/css';
+    let godefer = document.getElementsByTagName('link')[0];
+    godefer.parentNode.insertBefore(giftofspeed, godefer);
+    
+    let giftofspeed2 = document.createElement('link');
+    giftofspeed2.rel = 'stylesheet';
+    giftofspeed2.href = 'assets/css/cavus.css';
+    giftofspeed2.type = 'text/css';
+    let godefer2 = document.getElementsByTagName('link')[1];
+    godefer2.parentNode.insertBefore(giftofspeed2, godefer2);
+  </script>
 </head>
 <body>
+
+<noscript>
+  <div>
+    <h2>Ce site nécessite que Javascript soit activé !</h2>
+    <h2>This site requires Javascript !</h2>
+  </div>
+</noscript>
 
 <!-- Ionic's root component and where the app will load -->
 <ion-app></ion-app>
@@ -51,6 +77,9 @@
 
 <!-- The bundle js is generated during the build process -->
 <script src="build/main.js"></script>
+
+<!-- Modernizr auto-detection -->
+<script src="modernizr.js"></script>
 
 </body>
 </html>

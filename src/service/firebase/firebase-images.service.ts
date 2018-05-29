@@ -14,7 +14,7 @@ import {FileItem} from '../../model/file-item';
 import {UploadMetadata} from '../image-persistence.service';
 import {NotificationService} from '../notification.service';
 import {User} from '../../model/user';
-import {Reference as FbStorageTypesReference} from '@firebase/storage-types';
+import {AngularFireStorage, AngularFireStorageReference, AngularFireUploadTask} from 'angularfire2/storage';
 import Reference = firebase.database.Reference;
 import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
 
@@ -23,20 +23,24 @@ import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
  */
 @Injectable()
 export class FirebaseImagesService {
-  public IMAGES_ROOT: string;
   public XREF_ROOT: string;
-  private imageStorageRef: FbStorageTypesReference;
+  public IMAGES_ROOT: string;
+  private xRefRootRef: Reference;
+  private imageStorageRef: AngularFireStorageReference;
+
   private ERROR_ROOT: string;
   private errorRootRef: Reference;
+
   private _uploadProgressEvent: Subject<number> = new Subject<number>();
 
   constructor(private angularFirebase: AngularFireDatabase,
+              private angularStorage: AngularFireStorage,
               private notificationService: NotificationService) {
   }
 
-  private static getUploadImageMeta(snap): UploadMetadata {
+  private static getUploadImageMeta(snap, url): UploadMetadata {
     return {
-      downloadURL: snap.downloadURL,
+      downloadURL: url,
       imageName: snap.metadata.name,
       contentType: snap.metadata.contentType,
       totalBytes: snap.totalBytes,
@@ -50,11 +54,13 @@ export class FirebaseImagesService {
     let userRoot = user.user;
 
     this.IMAGES_ROOT = schema.IMAGES_FOLDER;
-    this.XREF_ROOT = schema.XREF_FOLDER;
-    this.ERROR_ROOT = schema.USERS_FOLDER + '/' + userRoot + '/' + schema.ERROR_CONTENT_FOLDER;
+    this.imageStorageRef = this.angularStorage.ref(this.IMAGES_ROOT);
 
+    this.XREF_ROOT = schema.XREF_FOLDER;
+    this.xRefRootRef = this.angularFirebase.database.ref(this.XREF_ROOT);
+
+    this.ERROR_ROOT = schema.USERS_FOLDER + '/' + userRoot + '/' + schema.ERROR_CONTENT_FOLDER;
     this.errorRootRef = this.angularFirebase.database.ref(this.ERROR_ROOT);
-    this.angularFirebase.database.app.storage().ref(this.IMAGES_ROOT);
 
     this.initLogging();
   }
@@ -88,6 +94,7 @@ export class FirebaseImagesService {
   progress(): Observable<number> {
     return this._uploadProgressEvent.asObservable();
   }
+
   /**
    * Delete an image in Firebase storage
    * @param {File} file
@@ -145,45 +152,51 @@ export class FirebaseImagesService {
 
     return new Promise<UploadTaskSnapshot>((resolve, reject) => {
 
-      let fileRef = this.imageStorageRef.child(fileName);
-      let uploadTask = fileRef.put(imageBlob);
+      let fileRef:AngularFireStorageReference = this.imageStorageRef.child(fileName);
+      let uploadTask: AngularFireUploadTask = fileRef.put(imageBlob);
 
-      uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
+      uploadTask.task.on(firebase.storage.TaskEvent.STATE_CHANGED,
                     (snapshot) => {
-                      let progress = (uploadTask.snapshot.bytesTransferred / uploadTask.snapshot.totalBytes) * 100;
+                      let progress = (uploadTask.task.snapshot.bytesTransferred / uploadTask.task.snapshot.totalBytes) * 100;
                       this._uploadProgressEvent.next(Math.round(progress));
                     },
                     (error) => {
                       reject(error);
                     },
                     () => {
-                      resolve(uploadTask.snapshot as any);
+                      resolve(uploadTask.task.snapshot as any);
                     });
     });
   }
 
   private saveToDatabaseAssetList(uploadSnapshot, meta: BottleMetadata): Promise<UploadMetadata> {
-    let ref = firebase.database().ref(this.XREF_ROOT);
-
     return new Promise((resolve, reject) => {
+      return uploadSnapshot.ref.getDownloadURL().then(
+        url => {
+          // we will save meta data of image in database
+          let dataToSave = {
+            'URL': url, // url to access file
+            'name': uploadSnapshot.metadata.name, // name of the file
+            'owner': firebase.auth().currentUser.uid,
+            'email': firebase.auth().currentUser.email,
+            'lastUpdated': new Date().getTime(),
+            'keywords': meta.keywords,
+            'subregion_label': meta.subregion_label,
+            'area_label': meta.area_label,
+            'nomCru': meta.nomCru
+          };
 
-      // we will save meta data of image in database
-      let dataToSave = {
-        'URL': uploadSnapshot.downloadURL, // url to access file
-        'name': uploadSnapshot.metadata.name, // name of the file
-        'owner': firebase.auth().currentUser.uid,
-        'email': firebase.auth().currentUser.email,
-        'lastUpdated': new Date().getTime(),
-        'keywords': meta.keywords,
-        'subregion_label': meta.subregion_label,
-        'area_label': meta.area_label,
-        'nomCru': meta.nomCru
-      };
+          this.xRefRootRef.push(dataToSave, (response) => {
+            if (response != null) {
+              reject(response);
+            } else {
+              //la réponse est null, donc on renvoie ce qui nous intéresse
+              resolve(FirebaseImagesService.getUploadImageMeta(uploadSnapshot, url));
+            }
+          });
+        }
+      );
 
-      ref.push(dataToSave, (response) => {
-        //la réponse est null, donc on renvoie ce qui nous intéresse
-        resolve(FirebaseImagesService.getUploadImageMeta(uploadSnapshot));
-      });
     });
   }
 }

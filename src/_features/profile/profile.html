@@ -1,0 +1,44 @@
+<ion-header class="mod-header">
+  <ion-searchbar [placeholder]="Chercher" [autocomplete]="on" [autocorrect]="on" [animated]="true"
+                 (search)="filterOnText($event)">
+  </ion-searchbar>
+  <img src="assets/icon/primary-logout.png" icon-only (click)="logout()" style=" width: 35px; height: 35px; margin:
+  8px 8px 8px 0; align-self: center;"/>
+</ion-header>
+
+<ion-content align-items-center *ngIf="user$ | async as user" class="page profile-page">
+  <responsive-wrapper>
+    <ion-card *ngIf="user.photoURL" class="profile-box">
+      <div class="profile-image">
+        <img [src]="user.photoURL" [defaultImage]="'/assets/icon/anonymous.png'">
+      </div>
+      <div class="profile-info">
+        <h2>{{'welcome' | translate}}
+          <ion-badge>{{user.displayName}}</ion-badge>
+        </h2>
+        <ion-item>
+          <label for="user">{{ 'user-name-text' | translate}}</label>
+          <h3 id="user">{{user.user}}</h3>
+        </ion-item>
+        <ion-item>
+          <label for="email">{{ 'email' | translate}}</label>
+          <h4 id="email">{{user.email}}</h4>
+        </ion-item>
+        <ion-item>
+          <label for="tel">{{'phone' | translate}}</label>
+          <h4 id="tel">{{user.phoneNumber}}</h4>
+        </ion-item>
+      </div>
+    </ion-card>
+    
+    <ion-card>
+      <h2>Thème</h2>
+      <ion-select [(ngModel)]="currentTheme" name="type" required interface="popover">
+        <ion-option *ngFor="let theme of themes" [value]="theme.class" [selected]="theme.class===currentTheme">
+          {{theme.name}}
+        </ion-option>
+      </ion-select>
+    </ion-card>
+  
+  </responsive-wrapper>
+</ion-content>
