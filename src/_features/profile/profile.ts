@@ -1,7 +1,7 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {User} from '../../model/user';
 import {NotificationService} from '../../service/notification.service';
-import VERSION from '../../app/version';
+import * as VERSION from '../../app/version';
 import {SharedPersistenceService} from '../../service/shared-persistence.service';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../../app/state/app.state';

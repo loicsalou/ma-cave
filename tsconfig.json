@@ -13,6 +13,9 @@
     "sourceMap": true,
     "target": "es5"
   },
+  "angularCompilerOptions": {
+    "preserveWhitespaces": "off"
+  },
   "include": [
     "src/**/*.ts",
     "plugins/cordova-plugin-camera/types/index.d.ts"
