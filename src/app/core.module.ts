@@ -56,6 +56,10 @@ let config = new AuthServiceConfig([
                                      }
                                    ]);
 
+export function authServiceConfig() {
+  return config;
+}
+
 @NgModule({
             imports: [
               BrowserModule,
@@ -63,7 +67,7 @@ let config = new AuthServiceConfig([
               AngularFireAuthModule,
               AngularFireDatabaseModule,
               AngularFireStorageModule,
-              SocialLoginModule.initialize(config),
+              SocialLoginModule,
               StoreModule.forRoot(ROOT_REDUCERS, {
                 metaReducers: META_REDUCERS
               }),
@@ -72,6 +76,10 @@ let config = new AuthServiceConfig([
             ],
             providers: [
               {provide: 'GLOBAL_CONFIG', useValue: appConfig},
+              {
+                provide: AuthServiceConfig,
+                useFactory: authServiceConfig
+              },
               HttpClient,
               TranslateService,
 
