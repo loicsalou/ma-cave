@@ -7,53 +7,37 @@ import {User} from '../../model/user';
 import {Observable} from 'rxjs';
 import {NotificationService} from '../notification.service';
 import {AuthService, FacebookLoginProvider, SocialUser} from 'angularx-social-login';
-import {map} from 'rxjs/operators';
+import {filter, flatMap, map, take} from 'rxjs/operators';
+import * as firebase from 'firebase/app';
+import {AngularFireAuth} from 'angularfire2/auth';
 
 @Injectable()
 export class FacebookLoginService extends AbstractLoginService {
   userString: string;
 
-  constructor(notificationService: NotificationService, private authService: AuthService) {
-    super(notificationService);
+  constructor(notificationService: NotificationService, private authService: AuthService, firebaseAuth: AngularFireAuth) {
+    super(notificationService, firebaseAuth);
   }
 
-  protected delegatedLogin(authObs: Observable<User>): Observable<User> {
+  protected delegatedLogin(): Observable<User> {
     this.authService.signIn(FacebookLoginProvider.PROVIDER_ID);
     return this.authService.authState.pipe(
-      map((user: SocialUser) => {
-        return new FacebookUser(user.firstName + ' ' + user.lastName, user.email, user.photoUrl, user.name, user.id, '');
+      filter(u => u != null),
+      take(1),
+      flatMap((socialUser: SocialUser) => {
+        const facebookCredential = firebase.auth.FacebookAuthProvider.credential(socialUser.authToken);
+        return firebase.auth().signInAndRetrieveDataWithCredential(facebookCredential)
+          .then((success) => {
+            return socialUser;
+          });
+      }),
+      map((socialUser: SocialUser) => {
+        let user: User = new FacebookUser(socialUser.name, socialUser.email, socialUser.photoUrl,
+          socialUser.firstName + ' ' + socialUser.lastName, socialUser.id, '');
+        this.success(user);
+        return user;
       })
     );
-    //let popup = this.notificationService.createLoadingPopup('app.checking-login');
-    //self.facebook.login([ 'email' ]).then((response) => {
-    //  const facebookCredential = firebase.auth.FacebookAuthProvider
-    //    .credential(response.authResponse.accessToken);
-    //
-    //  firebase.auth().signInWithCredential(facebookCredential)
-    //    .then((success) => {
-    //      let user: User = new FacebookUser(success.user, success.email, success.photoURL,
-    //                                        success.displayName, success.uid, success.phoneNumber);
-    //      self.success(user);
-    //      popup.dismiss();
-    //    })
-    //    .catch(error => {
-    //      popup.dismiss();
-    //      self.logout();
-    //      self.notificationService.failed('l\'authentification a échoué (Promise.catch)', error);
-    //    });
-    //}).catch(
-    //  error => {
-    //    popup.dismiss();
-    //    self.logout();
-    //    self.notificationService.failed('l\'authentification a échoué (catch)', error);
-    //  }
-    //);
-    //
-    //return authObs;
-  }
-
-  private delegatedSignout() {
-    this.authService.signOut();
   }
 }
 

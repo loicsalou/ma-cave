@@ -19,8 +19,7 @@
                   aria-label="Login Anonyme">
             <span class="login-anonymous"></span>
           </button>
-          <button ion-button badge [class.clicked]="gglidentifying" (click)="googleLogin()" aria-label="Login Google"
-                  *ngIf="isGoogleLoginEnabled()">
+          <button ion-button badge [class.clicked]="gglidentifying" (click)="googleLogin()" aria-label="Login Google">
             <span class="login-google"></span>
           </button>
         </div>
@@ -31,5 +30,4 @@
 
 <ion-footer text-right padding-horizontal [ngClass]="currentTheme" style="bottom:0;">
   <span>version {{version}}</span>
-  <span>{{isMobile ? 'Mobile' : 'Browser'}}</span>
 </ion-footer>

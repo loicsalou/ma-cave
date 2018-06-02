@@ -1,19 +1,19 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {Modal, ModalController, NavController, Platform} from 'ionic-angular';
-import {LoginService} from '../../service/login/login.service';
 import {EmailLoginPage} from '../login/email-login.page';
 import {User} from '../../model/user';
 import {TabsPage} from '../tabs/tabs';
-import {Observable, Subscription} from 'rxjs';
+import {Observable} from 'rxjs';
 import {NotificationService} from '../../service/notification.service';
 import {VERSION} from '../version';
 import {ApplicationState} from '../state/app.state';
 import {Store} from '@ngrx/store';
 import {LoadBottlesAction} from '../state/bottles.actions';
-import {LogoutAction} from '../state/shared.actions';
 import {SharedQuery} from '../state/shared.state';
-import {map, tap} from 'rxjs/operators';
-import {isMobileDevice} from '../../utils';
+import {filter, map, take, tap} from 'rxjs/operators';
+import {isMobileDevice, logInfo} from '../../utils';
+import {LoginAction} from '../state/shared.actions';
+import {traced} from '../../utils/decorators';
 
 @Component({
              selector: 'page-home',
@@ -21,102 +21,77 @@ import {isMobileDevice} from '../../utils';
              changeDetection: ChangeDetectionStrategy.OnPush
              // styleUrls:[ 'home.scss' ]
            })
-export class HomePage implements OnInit, AfterViewInit {
+export class HomePage implements OnInit {
   public static loggedIn = false;
   version: any;
   currentTheme$: Observable<string>;
 
   private loginPage: Modal;
-
-  private loginSubscription: Subscription;
   private isMobile: boolean = false;
 
-  constructor(public navCtrl: NavController, public loginService: LoginService,
+  constructor(public navCtrl: NavController,
               private modalController: ModalController,
               private notificationService: NotificationService,
               private platform: Platform,
               private store: Store<ApplicationState>) {
-    this.loginSubscription = this.store.select(SharedQuery.getLoginUser).pipe(
-      tap(() => {
-        if (this.loginPage) {
-          this.loginPage.dismiss();
-        }
-      })
-    ).subscribe((user: User) =>
-                  this.handleLoginEvent(user)
-    );
+  }
+
+  ngOnInit(): void {
+    this.version = VERSION;
+    this.isMobile = isMobileDevice();
     this.currentTheme$ = this.store.select(SharedQuery.getSharedState).pipe(
       map(state =>
             state.theme ? state.theme : 'cavus-theme')
     );
   }
 
-  ngOnInit(): void {
-    this.version = VERSION;
-    this.isMobile=isMobileDevice();
-  }
-
-  ngAfterViewInit(): void {
-  }
-
+  @traced
   facebookLogin() {
-    this.loginService.facebookLogin();
+    this.store.dispatch(new LoginAction('FACEBOOK'));
+    this.waitForLogin();
   }
 
+  @traced
   emailLogin() {
     this.loginPage = this.modalController.create(EmailLoginPage);
+    // la page dispatche l'action de login
     this.loginPage.present();
+    this.waitForLogin();
   }
 
+  @traced
   googleLogin() {
-    this.loginService.googleLogin();
+    this.store.dispatch(new LoginAction('GOOGLE'));
+    this.waitForLogin();
   }
 
+  @traced
   anonymousLogin() {
-    this.loginService.anonymousLogin();
+    this.store.dispatch(new LoginAction('ANONYMOUS'));
+    this.waitForLogin();
   }
 
-  setDebugMode(b: boolean) {
-    this.notificationService.debugMode = b;
-  }
-
-  isGoogleLoginEnabled(): boolean {
-    return !this.platform.is('cordova');
-  }
-
-  logout() {
-    this.store.dispatch(new LogoutAction());
-    this.navCtrl.setRoot(HomePage);
-    this.navCtrl.popToRoot();
-    setTimeout(() => {
-                 window.history.pushState({}, '', '/');
-                 window.location.reload();
-               }
-      , 100);
-  }
-
+  @traced
   private handleLoginEvent(user: User) {
     if (user !== undefined) {
       HomePage.loggedIn = true;
       this.store.dispatch(new LoadBottlesAction());
       this.navCtrl.setRoot(TabsPage);
-      this.loginSubscription.unsubscribe();
     }
-    else {
-      // logout ==> retour à la page de login
-      if (HomePage.loggedIn) {
-        HomePage.loggedIn = false;
-        if (this.loginSubscription) {
-          this.loginSubscription.unsubscribe();
+  }
+
+  @traced
+  private waitForLogin() {
+    this.store.select(SharedQuery.getLoginUser).pipe(
+      filter(user => user !== undefined),
+      tap(() => {
+        if (this.loginPage) {
+          this.loginPage.dismiss();
         }
-        this.navCtrl.setRoot(HomePage);
-        this.navCtrl.popToRoot();
-        setTimeout(() => {
-                     window.history.pushState({}, '', '/');
-                     window.location.reload();
-                   }
-          , 100);
-      }
-    }
+      }),
+      take(1)
+    ).subscribe(
+      (user: User) => this.handleLoginEvent(user)
+    );
   }
 }

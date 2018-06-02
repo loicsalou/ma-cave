@@ -1,6 +1,7 @@
 import {Action} from '@ngrx/store';
 import {UserPreferences} from '../../model/user-preferences';
 import {User} from '../../model/user';
+import {LOGINTYPE} from '../../service/login/login.service';
 
 export enum SharedActionTypes {
   LoadSharedActionType = '[shared] - load',
@@ -64,6 +65,10 @@ export class UpdateMostUsedQueriesAction implements Action {
 /* LOGIN actions */
 export class LoginAction implements Action {
   readonly type = SharedActionTypes.LoginActionType;
+
+  constructor(public loginType: LOGINTYPE, public user = '', public password = '') {
+    this.loginType = loginType;
+  }
 }
 
 export class LoginFailAction implements Action {
@@ -73,7 +78,8 @@ export class LoginFailAction implements Action {
 export class LoginSuccessAction implements Action {
   readonly type = SharedActionTypes.LoginActionSuccessType;
 
-  constructor(public user: User) {}
+  constructor(public user: User) {
+  }
 }
 
 export class LogoutAction implements Action {

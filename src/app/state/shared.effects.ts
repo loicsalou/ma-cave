@@ -6,7 +6,9 @@ import {
   DeleteAccountAction,
   LoadSharedAction,
   LoadSharedSuccessAction,
+  LoginAction,
   LoginSuccessAction,
+  LogoutAction,
   SharedActionTypes,
   UpdateMostUsedQueriesAction,
   UpdateThemeAction
@@ -14,18 +16,30 @@ import {
 import {SharedPersistenceService} from '../../service/shared-persistence.service';
 import {UserPreferences} from '../../model/user-preferences';
 import {LoginService} from '../../service/login/login.service';
-import {environment} from '../../environments/environment';
-import {setLogLevel} from '../../utils';
+import {User} from '../../model/user';
 
 @Injectable()
 export class SharedEffectsService {
 
+  @Effect() login$ = this.actions$
+    .ofType(SharedActionTypes.LoginActionType).pipe(
+      switchMap((action: LoginAction) =>
+            this.loginService.login(action.loginType, action.user, action.password)
+      ),
+      map((user: User) => new LoginSuccessAction(user))
+    );
+
   @Effect({dispatch: false}) loginSuccess$ = this.actions$
     .ofType(SharedActionTypes.LoginActionSuccessType).pipe(
       tap((action: LoginSuccessAction) => {
-            if (!environment.production) {
-              setLogLevel('INFO');
-            }
+          }
+      )
+    );
+
+  @Effect({dispatch: false}) logoutAction$ = this.actions$
+    .ofType(SharedActionTypes.LogoutActionType).pipe(
+      tap((action: LogoutAction) => {
+            this.loginService.logout();
           }
       )
     );

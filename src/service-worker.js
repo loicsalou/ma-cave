@@ -10,7 +10,6 @@ self.addEventListener('install', (event) => {
 })
 
 self.addEventListener('fetch', (event) => {
-  console.log('fetch:' + event);
 })
 
 self.addEventListener('activate', (event) => {

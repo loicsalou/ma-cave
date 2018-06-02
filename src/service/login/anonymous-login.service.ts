@@ -5,7 +5,7 @@ import {Injectable} from '@angular/core';
 import {AngularFireAuth} from 'angularfire2/auth';
 import {AbstractLoginService} from './abstract-login.service';
 import {User} from '../../model/user';
-import {Observable} from 'rxjs';
+import {Observable, from} from 'rxjs';
 import {NotificationService} from '../notification.service';
 
 /**
@@ -18,28 +18,28 @@ export class AnonymousLoginService extends AbstractLoginService {
 
   anoUser: User;
 
-  constructor(notificationService: NotificationService, private firebaseAuth: AngularFireAuth) {
-    super(notificationService);
+  constructor(notificationService: NotificationService, firebaseAuth: AngularFireAuth) {
+    super(notificationService, firebaseAuth);
   }
 
-  protected delegatedLogin(authObservable: Observable<User>): Observable<User> {
+  protected delegatedLogin(): Observable<User> {
     let self = this;
     let popup = this.notificationService.createLoadingPopup('app.checking-login');
-    this.firebaseAuth.auth.signInAnonymously()
+    return from(this.firebaseAuth.auth.signInAnonymously()
       .then(
         () => {
           popup.dismiss();
           self.anoUser = new AnonymousUser();
           self.success(this.anoUser);
+          return this.anoUser;
         },
         err => {
           popup.dismiss();
           self.logout();
-          self.notificationService.error('Problème réseau', 'Impossible de s\'authentifier')
+          self.notificationService.error('Problème réseau', 'Impossible de s\'authentifier');
+          return undefined;
         }
-      );
-
-    return authObservable;
+      ));
   }
 }
 

@@ -4,13 +4,14 @@
 import {Injectable} from '@angular/core';
 import {AbstractLoginService} from './abstract-login.service';
 import {User} from '../../model/user';
-import {Observable} from 'rxjs';
+import {Observable, from, of} from 'rxjs';
 import {NotificationService} from '../notification.service';
 import {Platform} from 'ionic-angular';
 import {auth} from 'firebase/app';
 import {GooglePlus} from '@ionic-native/google-plus'; //needed for the GoogleAuthProvider
 import * as firebase from 'firebase/app';
 import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
+import {AngularFireAuth} from 'angularfire2/auth';
 
 /**
  * Services related to the bottles in the cellar.
@@ -21,8 +22,9 @@ import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
 export class GoogleLoginService extends AbstractLoginService {
   userString: string;
 
-  constructor(notificationService: NotificationService, private platform: Platform, private googlePlus: GooglePlus) {
-    super(notificationService);
+  constructor(notificationService: NotificationService, private platform: Platform, private googlePlus: GooglePlus,
+              firebaseAuth: AngularFireAuth) {
+    super(notificationService, firebaseAuth);
   }
 
   loginWithCordova(): Observable<User> {
@@ -35,7 +37,7 @@ export class GoogleLoginService extends AbstractLoginService {
         //alert('login with cordova OK token='+userData.idToken);
         const token = userData.idToken;
         const googleCredential = auth.GoogleAuthProvider.credential(token, null);
-        firebase.auth().signInWithCredential(googleCredential).then((success) => {
+        firebase.auth().signInAndRetrieveDataWithCredential(googleCredential).then((success) => {
           //alert('firebase signin with credential OK');
           let fbUser = firebase.auth().currentUser;
           let ggUser = new GoogleUser(fbUser.email, fbUser.photoURL, fbUser.displayName, fbUser.uid, fbUser.phoneNumber);
@@ -49,44 +51,32 @@ export class GoogleLoginService extends AbstractLoginService {
     });
   }
 
-  protected delegatedLogin(authObs: Observable<User>): Observable<User> {
+  protected delegatedLogin(): Observable<User> {
     let provider = new GoogleAuthProvider();
     let self = this;
     firebase.auth().useDeviceLanguage();
     let popup = this.notificationService.createLoadingPopup('app.checking-login');
     if (this.platform.is('cordova')) {
-      this.loginWithCordova().subscribe();
+      return this.loginWithCordova();
     } else {
-      firebase.auth().signInWithPopup(provider).then(function (result) {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        //let token = result.credential.accessToken;
-        // The signed-in user info.
+      return from(firebase.auth().signInWithPopup(provider).then(function (result) {
         let user = result.user;
         let googleUser = new GoogleUser(user.email, user.photoURL, user.displayName, user.uid, user.phoneNumber);
-        // close popup
         popup.dismiss();
         self.success(googleUser);
+        return googleUser;
       }, (rejectReason: any) => {
         popup.dismiss();
         this.notificationService.error('login failed: ' + rejectReason);
         self.loginFailed();
+        return undefined;
       }).catch(function (error) {
-        // Handle Errors here.
-        //let errorCode = error[ 'code' ];
-        //let errorMessage = error[ 'message' ];
-        // The email of the user's account used.
-        //let email = error[ 'email' ];
-        // The firebase.auth.AuthCredential type that was used.
-        //let credential = error[ 'credential' ];
-        // close popup
         popup.dismiss();
         self.loginFailed();
         self.logout();
-
-      });
+        return undefined;
+      }));
     }
-
-    return authObs;
   }
 }
 

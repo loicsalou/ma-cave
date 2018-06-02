@@ -1,7 +1,6 @@
 import {Component} from '@angular/core';
 import {Platform} from 'ionic-angular';
 import {TranslateService} from '@ngx-translate/core';
-import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
 import {HomePage} from './home/home';
 
@@ -11,6 +10,9 @@ import {HomePage} from './home/home';
 export class MyCaveApp {
   selectedTheme = 'ionic-theme';
   rootPage = HomePage;
+  showUpdate = false;
+
+  private deferredPrompt;
 
   constructor(platform: Platform, translate: TranslateService,
               splashScreen: SplashScreen) {
@@ -26,6 +28,16 @@ export class MyCaveApp {
 
       // the lang to use, if the lang isn't available, it will use the current loader to get them
       translate.use('fr');
+    });
+    this.initSwHandling();
+  }
+
+  initSwHandling() {
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      this.deferredPrompt = e;
+      // Update UI notify the user they can add to home screen
+      this.showUpdate = true;
     });
   }
 
