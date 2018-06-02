@@ -1,12 +1,13 @@
 import {Injectable} from '@angular/core';
 import {Actions, Effect} from '@ngrx/effects';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
-import {map, switchMap, tap} from 'rxjs/operators';
+import {catchError, map, switchMap, tap} from 'rxjs/operators';
 import {
   DeleteAccountAction,
   LoadSharedAction,
   LoadSharedSuccessAction,
   LoginAction,
+  LoginFailAction,
   LoginSuccessAction,
   LogoutAction,
   SharedActionTypes,
@@ -17,6 +18,7 @@ import {SharedPersistenceService} from '../../service/shared-persistence.service
 import {UserPreferences} from '../../model/user-preferences';
 import {LoginService} from '../../service/login/login.service';
 import {User} from '../../model/user';
+import {logInfo} from '../../utils';
 
 @Injectable()
 export class SharedEffectsService {
@@ -24,7 +26,7 @@ export class SharedEffectsService {
   @Effect() login$ = this.actions$
     .ofType(SharedActionTypes.LoginActionType).pipe(
       switchMap((action: LoginAction) =>
-            this.loginService.login(action.loginType, action.user, action.password)
+                  this.loginService.login(action.loginType, action.user, action.password)
       ),
       map((user: User) => new LoginSuccessAction(user))
     );
@@ -32,6 +34,7 @@ export class SharedEffectsService {
   @Effect({dispatch: false}) loginSuccess$ = this.actions$
     .ofType(SharedActionTypes.LoginActionSuccessType).pipe(
       tap((action: LoginSuccessAction) => {
+            logInfo('LoginSuccessAction');
           }
       )
     );

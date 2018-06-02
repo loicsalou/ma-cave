@@ -1,6 +1,6 @@
 {
   "name": "assistant-caviste",
-  "version": "5.50.0",
+  "version": "5.52.0",
   "author": "Loic Salou",
   "homepage": "http://ionicframework.com/",
   "private": true,
@@ -11,6 +11,7 @@
     "start": "ionic-app-scripts serve",
     "serve": "ionic-app-scripts serve",
     "build:aot": "ionic-app-scripts build --aot --minifyjs --minifycss --release",
+    "build:aot2": "ionic-app-scripts build --aot --minifyjs --minifycss --release --env=prod",
     "serve:prod": "ionic-app-scripts serve --prod",
     "run:android": "ionic cordova run android --device",
     "apk": "ionic cordova build android",
@@ -21,7 +22,8 @@
     "postbuild": "workbox injectManifest ./config/workbox-config.js",
     "postbuild:prod": "workbox injectManifest ./config/workbox-config.js",
     "compress": "bread-compressor -a gzip www",
-    "build:prod": "npm run build:aot && node ./cache-busting.js && npm run postbuild && npm run compress"
+    "build:prod": "npm run build:aot && node ./cache-busting.js && npm run postbuild && npm run compress",
+    "build:prod2": "npm run build:aot2 && node ./cache-busting.js && npm run postbuild && npm run compress"
   },
   "dependencies": {
     "@angular/cli": "6.0.5",

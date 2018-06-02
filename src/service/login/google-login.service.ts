@@ -12,6 +12,7 @@ import {GooglePlus} from '@ionic-native/google-plus'; //needed for the GoogleAut
 import * as firebase from 'firebase/app';
 import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
 import {AngularFireAuth} from 'angularfire2/auth';
+import FacebookAuthProvider = firebase.auth.FacebookAuthProvider;
 
 /**
  * Services related to the bottles in the cellar.
@@ -84,6 +85,7 @@ export class GoogleUser extends User {
 
   constructor(email: string, photoURL: string, displayName: string, uid: string, phoneNumber: string) {
     super();
+    this.provider = 'google';
     this.user = email.replace(/[\.]/g, '');
     this.user = this.user.replace(/[#.]/g, '');
     this.email = email;

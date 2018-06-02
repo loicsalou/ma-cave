@@ -73,6 +73,9 @@ export class LoginAction implements Action {
 
 export class LoginFailAction implements Action {
   readonly type = SharedActionTypes.LoginActionFailType;
+
+  constructor(public error) {
+  }
 }
 
 export class LoginSuccessAction implements Action {

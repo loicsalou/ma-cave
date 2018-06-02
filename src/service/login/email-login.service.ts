@@ -5,7 +5,7 @@ import {Injectable} from '@angular/core';
 import * as firebase from 'firebase/app';
 import {AbstractLoginService} from './abstract-login.service';
 import {User} from '../../model/user';
-import {Observable, from} from 'rxjs';
+import {from, Observable} from 'rxjs';
 import {NotificationService} from '../notification.service';
 import {AngularFireAuth} from 'angularfire2/auth';
 
@@ -78,23 +78,23 @@ export class EmailLoginService extends AbstractLoginService {
     let self = this;
     let popup = this.notificationService.createLoadingPopup('app.checking-login');
     return from(firebase.auth().signInWithEmailAndPassword(this.username, this.psw)
-      .then(
-        token => {
-          const user=token.user;
-          let displayName = user[ 'displayName' ];
-          let email = user[ 'email' ];
-          const emailUser=new EmailLoginUser(this.username, email, displayName, null);
-          self.success(emailUser);
-          popup.dismiss();
-          return emailUser;
-        }
-      )
-      .catch(function (error) {
-        self.loginFailed();
-        self.logout();
-        popup.dismiss();
-        return undefined;
-      }));
+                  .then(
+                    token => {
+                      const user = token.user;
+                      let displayName = user[ 'displayName' ];
+                      let email = user[ 'email' ];
+                      const emailUser = new EmailLoginUser(this.username, email, displayName, null);
+                      self.success(emailUser);
+                      popup.dismiss();
+                      return emailUser;
+                    }
+                  )
+                  .catch(function (error) {
+                    self.loginFailed();
+                    self.logout();
+                    popup.dismiss();
+                    return undefined;
+                  }));
   }
 }
 
