@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {Modal, ModalController, NavController, Platform} from 'ionic-angular';
+import {Modal, ModalController, NavController, Platform, ToastController} from 'ionic-angular';
 import {EmailLoginPage} from '../login/email-login.page';
 import {User} from '../../model/user';
 import {TabsPage} from '../tabs/tabs';
@@ -27,7 +27,6 @@ export class HomePage implements OnInit {
   public static loggedIn = false;
   version: any;
   currentTheme$: Observable<string>;
-  showUpdate = false;
 
   private loginPage: Modal;
   private isMobile: boolean = false;
@@ -38,31 +37,22 @@ export class HomePage implements OnInit {
               private modalController: ModalController,
               private notificationService: NotificationService,
               private platform: Platform,
+              private toastCtrl: ToastController,
               private store: Store<ApplicationState>) {
-    this.initSwHandling();
-  }
-
-  initSwHandling() {
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      this.deferredPrompt = e;
-      // Update UI notify the user they can add to home screen
-      this.showUpdate = true;
-    });
+    this.install();
   }
 
   install() {
-    // Show the prompt
-    this.deferredPrompt.prompt();
-    // Wait for the user to respond to the prompt
-    this.deferredPrompt.userChoice
-      .then((choiceResult) => {
-        if (choiceResult.outcome === 'accepted') {
-          logInfo('User accepted the A2HS prompt');
-        } else {
-          logInfo('User dismissed the A2HS prompt');
+    window['isUpdateAvailable']
+      .then(isAvailable => {
+        if (isAvailable) {
+          const toast = this.toastCtrl.create({
+                                                message: 'New Update available! Reload the webapp to see the latest juicy changes.',
+                                                position: 'bottom',
+                                                showCloseButton: true,
+                                              });
+          toast.present();
         }
-        this.deferredPrompt = null;
       });
   }
 

@@ -13,6 +13,9 @@ import * as firebase from 'firebase/app';
 import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
 import {AngularFireAuth} from 'angularfire2/auth';
 import FacebookAuthProvider = firebase.auth.FacebookAuthProvider;
+import {switchMap, take} from 'rxjs/operators';
+import {AuthService, FacebookLoginProvider, GoogleLoginProvider, SocialUser} from 'angularx-social-login';
+import {FacebookUser} from './facebook-login.service';
 
 /**
  * Services related to the bottles in the cellar.
@@ -22,62 +25,49 @@ import FacebookAuthProvider = firebase.auth.FacebookAuthProvider;
 @Injectable()
 export class GoogleLoginService extends AbstractLoginService {
   userString: string;
+  private socialUser: SocialUser;
 
-  constructor(notificationService: NotificationService, private platform: Platform, private googlePlus: GooglePlus,
+  constructor(notificationService: NotificationService, private platform: Platform, private authService: AuthService,
               firebaseAuth: AngularFireAuth) {
     super(notificationService, firebaseAuth);
   }
 
-  loginWithCordova(): Observable<User> {
-    return Observable.create(observer => {
-      //alert('login with cordova 1');
-      return this.googlePlus.login({
-                                     //your Android reverse client id
-                                     'webClientId': '58435015061-8bnsnki77q4ffi25ph5plr6m694866vd.apps.googleusercontent.com'
-                                   }).then(userData => {
-        //alert('login with cordova OK token='+userData.idToken);
-        const token = userData.idToken;
-        const googleCredential = auth.GoogleAuthProvider.credential(token, null);
-        firebase.auth().signInAndRetrieveDataWithCredential(googleCredential).then((success) => {
-          //alert('firebase signin with credential OK');
-          let fbUser = firebase.auth().currentUser;
-          let ggUser = new GoogleUser(fbUser.email, fbUser.photoURL, fbUser.displayName, fbUser.uid, fbUser.phoneNumber);
-          observer.next(ggUser);
-        }).catch(error => {
-          observer.error(error);
-        });
-      }).catch(error => {
-        observer.error(error);
-      });
-    });
+  protected delegatedLogin(): Observable<User> {
+    const gglLogin = from(this.authService.signIn(GoogleLoginProvider.PROVIDER_ID)
+                           .then(user => {
+                             this.socialUser = user;
+                             return new GoogleUser(user.email, user.photoUrl,
+                               user.firstName + ' ' + user.lastName, user.id, '');
+                           })
+                           .catch(err => {
+                             return null;
+                           }));
+    return gglLogin.pipe(
+      switchMap((user: GoogleUser) => this.loginToFirebase(user)),
+      take(1)
+    );
   }
 
-  protected delegatedLogin(): Observable<User> {
+  protected loginToFirebase(gglUser: GoogleUser): Observable<User> {
     let provider = new GoogleAuthProvider();
-    let self = this;
+    const gglCredential = firebase.auth.GoogleAuthProvider.credential(this.socialUser.authToken);
     firebase.auth().useDeviceLanguage();
     let popup = this.notificationService.createLoadingPopup('app.checking-login');
-    if (this.platform.is('cordova')) {
-      return this.loginWithCordova();
-    } else {
-      return from(firebase.auth().signInWithPopup(provider).then(function (result) {
-        let user = result.user;
-        let googleUser = new GoogleUser(user.email, user.photoURL, user.displayName, user.uid, user.phoneNumber);
-        popup.dismiss();
-        self.success(googleUser);
-        return googleUser;
-      }, (rejectReason: any) => {
-        popup.dismiss();
-        this.notificationService.error('login failed: ' + rejectReason);
-        self.loginFailed();
-        return undefined;
-      }).catch(function (error) {
-        popup.dismiss();
-        self.loginFailed();
-        self.logout();
-        return undefined;
-      }));
-    }
+    return from(firebase.auth().signInAndRetrieveDataWithCredential(gglCredential).then((result) => {
+      popup.dismiss();
+      this.success(gglUser);
+      return gglUser;
+    }, (rejectReason: any) => {
+      popup.dismiss();
+      this.notificationService.error('login failed: ' + rejectReason);
+      this.loginFailed();
+      return undefined;
+    }).catch(function (error) {
+      popup.dismiss();
+      this.loginFailed();
+      this.logout();
+      return undefined;
+    }));
   }
 }
 
@@ -85,7 +75,6 @@ export class GoogleUser extends User {
 
   constructor(email: string, photoURL: string, displayName: string, uid: string, phoneNumber: string) {
     super();
-    this.provider = 'google';
     this.user = email.replace(/[\.]/g, '');
     this.user = this.user.replace(/[#.]/g, '');
     this.email = email;

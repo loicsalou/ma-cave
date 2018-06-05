@@ -35,6 +35,13 @@ $background-page-image-webp: url('../assets/img/background/background2.webp');
 $white-transparency: .88;
 $tabs-background: #f8f8f8 !default;
 
+@font-face {
+  font-family: Ionicons;
+  font-display: swap;
+  src: url(../assets/fonts/ionicons.eot?v=4.1.1), url(../assets/fonts/ionicons.eot?v=4.1.1#iefix) format("embedded-opentype"), url(../assets/fonts/ionicons.woff2?v=4.1.1) format("woff2"), url(../assets/fonts/ionicons.woff?v=4.1.1) format("woff"), url(../assets/fonts/ionicons.ttf?v=4.1.1) format("truetype"), url(../assets/fonts/ionicons.svg?v=4.1.1#Ionicons) format("svg");
+  font-weight: 400;
+  font-style: normal
+}
 
 // mise en forme
 .webp .page {

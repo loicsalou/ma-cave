@@ -30,6 +30,6 @@
 
 <ion-footer text-right padding-horizontal [ngClass]="currentTheme" style="bottom:0;">
   <span style="margin-right: 20px;">version {{version}}</span>
-  <ion-note *ngIf="!showUpdate">(à jour)</ion-note>
-  <button ion-button *ngIf="showUpdate">Installer la mise à jour</button>
+  <ion-note *ngIf="!deferredPrompt">(à jour)</ion-note>
+  <button ion-button *ngIf="deferredPrompt">Installer la mise à jour</button>
 </ion-footer>
