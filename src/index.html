@@ -14,8 +14,6 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#4e8ef7">
   
-  <link rel=preload as=font href="assets/fonts/ionicons.eot?v=4.1.1">
-  <link rel=preload as=font href="assets/fonts/ionicons.woff2?v=4.1.1">
   
   <link rel="preconnect" href="https://accounts.google.com">
   <link rel="preconnect" href="https://connect.facebook.net">
@@ -75,6 +73,27 @@
     giftofspeed2.type = 'text/css';
     let godefer2 = document.getElementsByTagName('link')[1];
     godefer2.parentNode.insertBefore(giftofspeed2, godefer2);
+
+    let giftofspeed3 = document.createElement('link');
+    giftofspeed3.rel = 'stylesheet';
+    giftofspeed3.href = 'assets/css/cav-icons.css';
+    giftofspeed3.type = 'text/css';
+    let godefer3 = document.getElementsByTagName('link')[2];
+    godefer3.parentNode.insertBefore(giftofspeed3, godefer3);
+   
+    let giftofspeed4 = document.createElement('link');
+    giftofspeed4.rel = 'preload';
+    giftofspeed4.href = 'assets/fonts/ionicons.eot?v=4.1.1';
+    giftofspeed4.as = 'font';
+    let godefer4 = document.getElementsByTagName('link')[3];
+    godefer4.parentNode.insertBefore(giftofspeed4, godefer4);
+   
+    let giftofspeed5 = document.createElement('link');
+    giftofspeed5.rel = 'preload';
+    giftofspeed5.href = 'assets/fonts/ionicons.woff2?v=4.1.1';
+    giftofspeed5.as = 'font';
+    let godefer5 = document.getElementsByTagName('link')[4];
+    godefer5.parentNode.insertBefore(giftofspeed5, godefer5);
   </script>
 </head>
 <body>

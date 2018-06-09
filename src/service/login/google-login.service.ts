@@ -4,18 +4,14 @@
 import {Injectable} from '@angular/core';
 import {AbstractLoginService} from './abstract-login.service';
 import {User} from '../../model/user';
-import {Observable, from, of} from 'rxjs';
+import {from, Observable, of} from 'rxjs';
 import {NotificationService} from '../notification.service';
 import {Platform} from 'ionic-angular';
-import {auth} from 'firebase/app';
-import {GooglePlus} from '@ionic-native/google-plus'; //needed for the GoogleAuthProvider
 import * as firebase from 'firebase/app';
-import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
 import {AngularFireAuth} from 'angularfire2/auth';
-import FacebookAuthProvider = firebase.auth.FacebookAuthProvider;
-import {switchMap, take} from 'rxjs/operators';
-import {AuthService, FacebookLoginProvider, GoogleLoginProvider, SocialUser} from 'angularx-social-login';
-import {FacebookUser} from './facebook-login.service';
+import {AuthService, GoogleLoginProvider} from 'angularx-social-login';
+import {logInfo} from '../../utils';
+import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
 
 /**
  * Services related to the bottles in the cellar.
@@ -25,48 +21,71 @@ import {FacebookUser} from './facebook-login.service';
 @Injectable()
 export class GoogleLoginService extends AbstractLoginService {
   userString: string;
-  private socialUser: SocialUser;
 
   constructor(notificationService: NotificationService, private platform: Platform, private authService: AuthService,
               firebaseAuth: AngularFireAuth) {
     super(notificationService, firebaseAuth);
   }
 
-  protected delegatedLogin(): Observable<User> {
-    const gglLogin = from(this.authService.signIn(GoogleLoginProvider.PROVIDER_ID)
-                           .then(user => {
-                             this.socialUser = user;
-                             return new GoogleUser(user.email, user.photoUrl,
-                               user.firstName + ' ' + user.lastName, user.id, '');
-                           })
-                           .catch(err => {
-                             return null;
-                           }));
-    return gglLogin.pipe(
-      switchMap((user: GoogleUser) => this.loginToFirebase(user)),
-      take(1)
-    );
+  /**
+   * Experimental: en mode PWA ce login ne fonctionne pas ou mal (le popup ne se ferme jamais)
+   */
+  public socialLogin() {
+    this.authService.signIn(GoogleLoginProvider.PROVIDER_ID)
+      .then(user => {
+        alert('gglologin success ! ' + JSON.stringify(user));
+      })
+      .catch(err => {
+        this.authService.authState
+        //.pipe(
+        //  filter(user => user !== undefined)
+        //)
+          .subscribe(
+            user => {
+              alert('gglologin success via obs ! ' + JSON.stringify(user));
+              firebase.auth().signInAndRetrieveDataWithCustomToken(user.idToken).then(function (result) {
+                let user = result.user;
+                let googleUser = new GoogleUser(user.email, user.photoURL, user.displayName, user.uid, user.phoneNumber);
+                // close popup
+                alert('firebase login OK ' + JSON.stringify(user));
+                return googleUser;
+              }, (rejectReason: any) => {
+                this.notificationService.error('firebase login failed: ' + rejectReason);
+                return null;
+              });
+            }
+          );
+        //alert('gglologin failed ! ' + JSON.stringify(err));
+      });
   }
 
-  protected loginToFirebase(gglUser: GoogleUser): Observable<User> {
+  protected delegatedLoginExperiment(): Observable<User> {
+    openPopup();
+    return of(null);
+  }
+
+  protected delegatedLogin(): Observable<User> {
     let provider = new GoogleAuthProvider();
-    const gglCredential = firebase.auth.GoogleAuthProvider.credential(this.socialUser.authToken);
+    let self = this;
     firebase.auth().useDeviceLanguage();
     let popup = this.notificationService.createLoadingPopup('app.checking-login');
-    return from(firebase.auth().signInAndRetrieveDataWithCredential(gglCredential).then((result) => {
+    return from(firebase.auth().signInWithPopup(provider).then(function (result) {
+      let user = result.user;
+      let googleUser = new GoogleUser(user.email, user.photoURL, user.displayName, user.uid, user.phoneNumber);
+      // close popup
       popup.dismiss();
-      this.success(gglUser);
-      return gglUser;
+      self.success(googleUser);
+      return googleUser;
     }, (rejectReason: any) => {
       popup.dismiss();
       this.notificationService.error('login failed: ' + rejectReason);
-      this.loginFailed();
-      return undefined;
+      self.loginFailed();
+      return null;
     }).catch(function (error) {
       popup.dismiss();
-      this.loginFailed();
-      this.logout();
-      return undefined;
+      self.loginFailed();
+      self.logout();
+      return null;
     }));
   }
 }
@@ -85,4 +104,22 @@ export class GoogleUser extends User {
     this.loginType = 'google';
   }
 
+}
+
+let popup;
+
+// 3. update html when event is detected
+function updateAuthInfo(e) {
+  logInfo((JSON.stringify(e)));
+
+  // 4. close popup
+  popup.close();
+}
+
+function openPopup() {
+  // 1. open popup window
+  popup = window.open('popup.html', 'mywindow', 'width=350,height=250');
+
+// 2. listen for message from popup
+  window.addEventListener('message', updateAuthInfo);
 }

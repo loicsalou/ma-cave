@@ -13,6 +13,11 @@
       background-size: contain;
       background-repeat: no-repeat;
     }
+    &.login-email {
+      background: url('../../assets/icon/email-login-120.webp');
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
     &.login-google {
       background: url('../../assets/icon/google-login-120.webp');
       background-size: contain;
@@ -36,6 +41,11 @@
 
     &.login-anonymous {
       background: url('../../assets/icon/anonymous-120.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    &.login-email {
+      background: url('../../assets/icon/email-login-120.png');
       background-size: contain;
       background-repeat: no-repeat;
     }

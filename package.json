@@ -1,6 +1,6 @@
 {
   "name": "assistant-caviste",
-  "version": "5.52.22",
+  "version": "5.52.34",
   "author": "Loic Salou",
   "homepage": "http://ionicframework.com/",
   "private": true,
@@ -21,7 +21,8 @@
     "postbuild": "workbox injectManifest ./config/workbox-config.js",
     "postbuild:prod": "workbox injectManifest ./config/workbox-config.js",
     "compress": "bread-compressor -a gzip www",
-    "build:prod": "npm run build:aot && node ./cache-busting.js && npm run postbuild && npm run compress"
+    "build:prod": "npm run build:aot && node ./cache-busting.js && npm run postbuild && npm run compress",
+    "deploy": "firebase deploy --project ma-cave-15a66"
   },
   "dependencies": {
     "@angular/cli": "6.0.5",
@@ -58,7 +59,7 @@
     "@ngx-translate/http-loader": "3.0.1",
     "angular2-uuid": "1.1.1",
     "angularfire2": "5.0.0-rc.10",
-    "angularx-social-login": "1.1.8",
+    "angularx-social-login": "1.2.0",
     "bootstrap": "4.1.1",
     "chart.js": "2.7.2",
     "cordova-android": "7.1.0",

@@ -8,7 +8,8 @@
 
   <p (click)="switchDistribution(dimension)">
     <button *ngIf="isOpen(dimension.axis)" ion-button color="light" icon-only>
-      <ion-icon name='arrow-dropdown'></ion-icon>
+      <!--<ion-icon name='arrow-dropdown'></ion-icon>-->
+      <cav-icon name="down-open"></cav-icon>
     </button>
     <button *ngIf="!isOpen(dimension.axis)" ion-button color="light" icon-only>
       <ion-icon name='arrow-dropright'></ion-icon>

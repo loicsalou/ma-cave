@@ -1,0 +1,89 @@
+@font-face {
+  font-family: 'cav-icons';
+  font-display: swap;
+  src: url('../fonts/cav-icons.eot?85344748');
+  src: url('../fonts/cav-icons.woff2?85344748') format('woff2'),
+       url('../fonts/cav-icons.woff?85344748') format('woff'),
+       url('../fonts/cav-icons.ttf?85344748') format('truetype'),
+       url('../fonts/cav-icons.svg?85344748#cav-icons') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'cav-icons';
+    src: url('../fonts/cav-icons.svg?85344748#cav-icons') format('svg');
+  }
+}
+*/
+
+ [class^="cav-"]:before, [class*=" cav-"]:before {
+  font-family: "cav-icons";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  margin-right: .2em;
+  text-align: center;
+  /* opacity: .8; */
+
+  /* For safety - reset parent styles, that can break glyph codes*/
+  font-variant: normal;
+  text-transform: none;
+
+  /* fix buttons height, for twitter bootstrap */
+  line-height: 1em;
+
+  /* Animation center compensation - margins should be symmetric */
+  /* remove if not needed */
+  margin-left: .2em;
+
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
+
+  /* Font smoothing. That was taken from TWBS */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Uncomment for 3D effect */
+  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+}
+
+.cav-mail:before { content: '\e800'; } /* '' */
+.cav-heart:before { content: '\e801'; } /* '' */
+.cav-heart-empty:before { content: '\e802'; } /* '' */
+.cav-star:before { content: '\e803'; } /* '' */
+.cav-star-empty:before { content: '\e804'; } /* '' */
+.cav-search:before { content: '\e805'; } /* '' */
+.cav-home:before { content: '\e806'; } /* '' */
+.cav-camera:before { content: '\e807'; } /* '' */
+.cav-trash-empty:before { content: '\e808'; } /* '' */
+.cav-zoom-in:before { content: '\e809'; } /* '' */
+.cav-zoom-out:before { content: '\e80a'; } /* '' */
+.cav-clock:before { content: '\e80b'; } /* '' */
+.cav-refresh:before { content: '\e80c'; } /* '' */
+.cav-down-open:before { content: '\e80d'; } /* '' */
+.cav-left-open:before { content: '\e80e'; } /* '' */
+.cav-right-open:before { content: '\e80f'; } /* '' */
+.cav-up-open:before { content: '\e810'; } /* '' */
+.cav-apps:before { content: '\e811'; } /* '' */
+.cav-mail-alt:before { content: '\f0e0'; } /* '' */
+.cav-smile:before { content: '\f118'; } /* '' */
+.cav-sad:before { content: '\f119'; } /* '' */
+.cav-neutral:before { content: '\f11a'; } /* '' */
+.cav-sort-alt-up:before { content: '\f160'; } /* '' */
+.cav-sort-alt-down:before { content: '\f161'; } /* '' */
+.cav-history:before { content: '\f1da'; } /* '' */
+.cav-sliders:before { content: '\f1de'; } /* '' */
+.cav-trash:before { content: '\f1f8'; } /* '' */
+.cav-hourglass-2:before { content: '\f252'; } /* '' */
+.cav-hourglass-3:before { content: '\f253'; } /* '' */
+.cav-hourglass:before { content: '\f254'; } /* '' */
+.cav-facebook-rect:before { content: '\f301'; } /* '' */
+.icon-twitter-bird:before { content: '\f303'; } /* '' */

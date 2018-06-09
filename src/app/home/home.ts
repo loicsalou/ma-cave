@@ -3,19 +3,18 @@ import {Modal, ModalController, NavController, Platform, ToastController} from '
 import {EmailLoginPage} from '../login/email-login.page';
 import {User} from '../../model/user';
 import {TabsPage} from '../tabs/tabs';
-import {Observable, of} from 'rxjs';
+import {Observable} from 'rxjs';
 import {NotificationService} from '../../service/notification.service';
 import {VERSION} from '../version';
 import {ApplicationState} from '../state/app.state';
 import {Store} from '@ngrx/store';
 import {LoadBottlesAction} from '../state/bottles.actions';
 import {SharedQuery} from '../state/shared.state';
-import {catchError, filter, map, take, tap} from 'rxjs/operators';
-import {isMobileDevice, logInfo} from '../../utils';
+import {filter, map, take, tap} from 'rxjs/operators';
+import {isMobileDevice} from '../../utils';
 import {LoginAction} from '../state/shared.actions';
 import {traced} from '../../utils/decorators';
 import {Subscription} from 'rxjs/Subscription';
-import * as firebase from 'firebase';
 
 @Component({
              selector: 'page-home',
@@ -30,7 +29,6 @@ export class HomePage implements OnInit {
 
   private loginPage: Modal;
   private isMobile: boolean = false;
-  private deferredPrompt;
   private loginSub: Subscription;
 
   constructor(public navCtrl: NavController,
@@ -43,15 +41,23 @@ export class HomePage implements OnInit {
   }
 
   install() {
-    window['isUpdateAvailable']
+    window[ 'isUpdateAvailable' ]
       .then(isAvailable => {
         if (isAvailable) {
-          const toast = this.toastCtrl.create({
-                                                message: 'New Update available! Reload the webapp to see the latest juicy changes.',
-                                                position: 'bottom',
-                                                showCloseButton: true,
-                                              });
-          toast.present();
+          this.notificationService.ask('Mise à jour',
+                                       'Une mise à jour est disponible ! installer maintenant ?')
+            .pipe(
+              take(1),
+              tap(accepted => {
+                if (accepted) {
+                  setTimeout(() => {
+                               window.history.pushState({}, '', '/');
+                               window.location.reload();
+                             }
+                    , 100);
+                }
+              })
+            );
         }
       });
   }
@@ -94,9 +100,9 @@ export class HomePage implements OnInit {
   @traced
   private handleLoginEvent(user: User) {
     if (user !== undefined) {
-          HomePage.loggedIn = true;
-          this.store.dispatch(new LoadBottlesAction());
-          this.navCtrl.setRoot(TabsPage);
+      HomePage.loggedIn = true;
+      this.store.dispatch(new LoadBottlesAction());
+      this.navCtrl.setRoot(TabsPage);
     }
   }
 
