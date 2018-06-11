@@ -9,23 +9,23 @@
   <responsive-wrapper>
     <ion-card class="card-background">
       <button ion-button outline small round icon-left (click)="showAll()">
-        <ion-icon name="search"></ion-icon>
+        <cav-icon name="search"></cav-icon>
         {{'dashboard.see-all' | translate: {nb: totalNumberOfBottles} }}
       </button>
       
       <button ion-button outline small round icon-left (click)="showFavorites()">
-        <ion-icon name="star"></ion-icon>
+        <cav-icon name="star-empty"></cav-icon>
         {{'filter.favorite-only' | translate}}
       </button>
       
       <button ion-button outline small round icon-left (click)="showOverdue()">
-        <ion-icon name="alert"></ion-icon>
+        <cav-icon name="attention"></cav-icon>
         {{'filter.overdue-only' | translate}}
       </button>
       
       <!--<button ion-button outline small round (click)="showPopover()" *ngIf="popOverVisible$ | async">-->
       <button ion-button outline small round (click)="showPopover()">
-        <ion-icon name="refresh" style="margin:7px"></ion-icon>
+        <cav-icon name="refresh" style="margin:7px"></cav-icon>
         Fréquentes
       </button>
       <!--<ion-segment-button></ion-segment-button>-->

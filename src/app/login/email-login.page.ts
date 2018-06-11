@@ -1,10 +1,8 @@
 import {Component} from '@angular/core';
 import {LoginService} from '../../service/login/login.service';
-import {User} from '../../model/user';
 import {ApplicationState} from '../state/app.state';
 import {Store} from '@ngrx/store';
 import {LoginAction} from '../state/shared.actions';
-import {tap} from 'rxjs/operators';
 
 @Component({
              selector: 'login-page',

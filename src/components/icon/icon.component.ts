@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Directive, ElementRef, Input, Renderer2} from '@angular/core';
 
 /**
  * Generated class for the IconComponent component.
@@ -6,22 +6,51 @@ import {Component, Input} from '@angular/core';
  * See https://angular.io/api/core/Component for more info on Angular
  * Components.
  */
-@Component({
+export enum CavIcon {
+  mail = 'mail', heart = 'heart', heartEmpty = 'heart-empty', star = 'star', starEmpty = 'star-empty',
+  search = 'search', home = 'home', trashEmpty = 'trash-empty', zoomIn = 'zoom-in', zoomOut = 'zoom-out',
+  clock = 'clock', refresh = 'refresh', downOpen = 'down-open', leftOpen = 'left-open', rightOpen = 'right-open',
+  upOpen = 'up-open', apps = 'apps', mailAlt = 'mail-alt', smile = 'smile', sad = 'sad', neutral = 'neutral',
+  sortAltUp = 'sort-alt-up', sortAltDown = 'sort-alt-down', history = 'history', cliders = 'sliders',
+  trash = 'trash', hourglass2 = 'hourglass-2', hourglass3 = 'hourglass-3', hourglass = 'hourglass',
+  facebook = 'facebook-rect', twitter = 'twitter-bird'
+}
+
+@Directive({
              selector: 'cav-icon',
-             templateUrl: 'icon.component.html'
+             host: {
+               'role': 'img'
+             }
            })
 export class IconComponent {
 
-  @Input() name: 'mail' | 'heart' | 'heart-empty' |    'star' |'star-empty' |'search' | 'home' |'trash-empty' |
-    'zoom-in' | 'zoom-out' | 'clock' | 'refresh' | 'down-open' | 'left-open' | 'right-open' | 'up-open' |
-    'apps' | 'mail-alt' | 'smile' | 'sad' | 'neutral' | 'sort-alt-up' | 'sort-alt-down' | 'history' | 'sliders' |
-    'trash' | 'hourglass-2' | 'hourglass-3' | 'hourglass' | 'facebook-rect' | 'twitter-bird';
+  _name: CavIcon;
+  _css: string;
 
-  constructor() {
+  constructor(private renderer: Renderer2, private elementRef: ElementRef) {
+  }
+
+  /**
+   * @input {string} Specifies which icon to use. The appropriate icon will be used based on the mode.
+   * For more information, see [Ionicons](/docs/ionicons/).
+   */
+  @Input()
+  get name(): CavIcon {
+    return this._name;
+  }
+
+  set name(val: CavIcon) {
+    this._css = 'cav-' + val;
+    this.setElementClass(this._css);
   }
 
   iconClass() {
-    return 'icon-'+this.name;
+    return 'cav-' + this.name;
+  }
+
+  private setElementClass(className: string) {
+    this.renderer.removeClass(this.elementRef.nativeElement, className);
+    this.renderer.addClass(this.elementRef.nativeElement, className);
   }
 
 }

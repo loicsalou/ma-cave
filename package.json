@@ -1,6 +1,6 @@
 {
   "name": "assistant-caviste",
-  "version": "5.52.34",
+  "version": "5.53.0",
   "author": "Loic Salou",
   "homepage": "http://ionicframework.com/",
   "private": true,
@@ -19,7 +19,6 @@
     "-------": "BUILD POUR WORKER",
     "ios": "ionic cordova build ios --prod",
     "postbuild": "workbox injectManifest ./config/workbox-config.js",
-    "postbuild:prod": "workbox injectManifest ./config/workbox-config.js",
     "compress": "bread-compressor -a gzip www",
     "build:prod": "npm run build:aot && node ./cache-busting.js && npm run postbuild && npm run compress",
     "deploy": "firebase deploy --project ma-cave-15a66"

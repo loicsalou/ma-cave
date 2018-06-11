@@ -15,7 +15,6 @@ import {SharedEffectsService} from './state/shared.effects';
 import {SharedCoreModule} from '../components/shared-core.module';
 import {SplashScreen} from '@ionic-native/splash-screen';
 
-
 @NgModule({
             imports: [
               IonicModule.forRoot(MyCaveApp, {

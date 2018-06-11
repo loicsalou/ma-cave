@@ -1,0 +1,191 @@
+//la compilation sass transforme les caractères "\...." et du coup ls CSS n'est pas bon
+@font-face {
+  font-family: "cav-icons";
+  src: url("/assets/fonts/cav-icons.eot?64734162");
+  src: url("/assets/fonts/cav-icons.eot?64734162#iefix") format("embedded-opentype"),
+  url("/assets/fonts/cav-icons.woff2?64734162") format("woff2"),
+  url("/assets/fonts/cav-icons.woff?64734162") format("woff"),
+  url("/assets/fonts/cav-icons.ttf?64734162") format("truetype"),
+  url("/assets/fonts/cav-icons.svg?64734162#cav-icons") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "cav-icons";
+    src: url("../font/cav-icons.svg?64734162#cav-icons") format("svg");
+  }
+}
+*/
+@mixin makeIcon($arg, $val) {
+  .cav-#{$arg}:before,
+  .ion-ios-cav-#{$arg}:before,
+  .ion-ios-cav-#{$arg}-outline:before,
+  .ion-md-cav-#{$arg}:before,
+  .ion-md-cav-#{$arg}-outline:before {
+    content: $val;
+    font-size: 26px;
+  }
+}
+
+[class^="cav-"]:before, [class*=" cav-"]:before,
+[class^="ion-ios-cav-"]:before, [class*=" ion-ios-cav-"]:before,
+[class^="ion-md-cav-"]:before, [class*=" ion-md-cav-"]:before {
+  font-family: "cav-icons";
+  font-size: 1.2em;
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  margin-right: .2em;
+  text-align: center;
+  padding: 0.6em 0;
+  /* opacity: .8; */
+
+  /* For safety - reset parent styles, that can break glyph codes*/
+  font-variant: normal;
+  text-transform: none;
+
+  /* fix buttons height, for twitter bootstrap */
+  line-height: 1em;
+
+  /* Animation center compensation - margins should be symmetric */
+  /* remove if not needed */
+  margin-left: .2em;
+
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
+
+  /* Font smoothing. That was taken from TWBS */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Uncomment for 3D effect */
+  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+}
+
+@include makeIcon(mail, "\E800")
+
+@include makeIcon(heart, "\E801")
+
+@include makeIcon(heart-empty, "\E802")
+
+@include makeIcon(star, "\E803")
+
+@include makeIcon(star-empty, "\E804")
+
+@include makeIcon(search, "\E805")
+
+@include makeIcon(home, "\E806")
+
+@include makeIcon(camera, "\E807")
+
+@include makeIcon(trash-empty, "\E808")
+
+@include makeIcon(zoom-in, "\E809")
+
+@include makeIcon(zoom-out, "\E80A")
+
+@include makeIcon(clock, "\E80B")
+
+@include makeIcon(refresh, "\E80C")
+
+@include makeIcon(down-open, "\E80D")
+
+@include makeIcon(left-open, "\E80E")
+
+@include makeIcon(right-open, "\E80F")
+
+@include makeIcon(up-open, "\E810")
+
+@include makeIcon(apps, "\E811")
+
+@include makeIcon(upload, "\E812")
+
+@include makeIcon(download, "\E813")
+
+@include makeIcon(attention-circled, "\E814")
+
+@include makeIcon(attention, "\E815")
+
+@include makeIcon(edit, "\E816")
+
+@include makeIcon(plus, "\E817")
+
+@include makeIcon(plus-circled, "\E818")
+
+@include makeIcon(minus-circled, "\E819")
+
+@include makeIcon(minus, "\E81A")
+
+@include makeIcon(off, "\E81B")
+
+@include makeIcon(location, "\E81C")
+
+@include makeIcon(ok, "\E81D")
+
+@include makeIcon(cancel, "\E81E")
+
+@include makeIcon(cancel-circled, "\E81F")
+
+@include makeIcon(key, "\E820")
+
+@include makeIcon(folder-open, "\E821")
+
+@include makeIcon(menu, "\F0C9")
+
+@include makeIcon(magic, "\F0D0")
+
+@include makeIcon(mail-alt, "\F0E0")
+
+@include makeIcon(spinner, "\F110")
+
+@include makeIcon(smile, "\F118")
+
+@include makeIcon(sad, "\F119")
+
+@include makeIcon(neutral, "\F11A")
+
+@include makeIcon(attention-alt, "\F12A")
+
+@include makeIcon(sort-alt-up, "\F160")
+
+@include makeIcon(sort-alt-down, "\F161")
+
+@include makeIcon(down, "\F175")
+
+@include makeIcon(up, "\F176")
+
+@include makeIcon(left, "\F177")
+
+@include makeIcon(right, "\F178")
+
+@include makeIcon(history, "\F1DA")
+
+@include makeIcon(sliders, "\F1DE")
+
+@include makeIcon(trash, "\F1F8")
+
+@include makeIcon(chart-pie, "\F200")
+
+@include makeIcon(hourglass-o, "\F250")
+
+@include makeIcon(hourglass-1, "\F251")
+
+@include makeIcon(hourglass-2, "\F252")
+
+@include makeIcon(hourglass-3, "\F253")
+
+@include makeIcon(hourglass, "\F254")
+
+@include makeIcon(facebook-rect, "\F301")
+
+@include makeIcon(twitter-bird, "\F303")
+

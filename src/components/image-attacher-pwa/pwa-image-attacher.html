@@ -6,9 +6,9 @@
 <ion-row *ngIf="!loadingInProgress">
   <ion-col col-sm-4 col-lg-2 offset-lg-1>
     <button ion-button round icon-only (click)="toggleCapture()">
-      <ion-icon name="camera">
+      <cav-icon name="camera">
         <input type="file" id="cameraSelector" accept="image/*" capture="camera" style="display:none"/>
-      </ion-icon>
+      </cav-icon>
     </button>
   </ion-col>
   
@@ -18,7 +18,7 @@
     <label for="fileSelector">
       <span>
         <button ion-button round icon-only (click)="fileSelector.click()">
-          <ion-icon name="folder"></ion-icon>
+          <cav-icon name="folder-open"></cav-icon>
         </button>
       </span>
     </label>
@@ -26,7 +26,7 @@
   
   <ion-col col-sm-4 col-lg-2 offset-lg-1>
     <button ion-button round icon-only (click)="removeProfileImage()">
-      <ion-icon name="trash"></ion-icon>
+      <cav-icon name="trash"></cav-icon>
     </button>
   </ion-col>
 </ion-row>
