@@ -19,7 +19,8 @@ export enum CavIcon {
 @Directive({
              selector: 'cav-icon',
              host: {
-               'role': 'img'
+               'role': 'img',
+               'class': 'cav-icon'
              }
            })
 export class IconComponent {
@@ -44,6 +45,7 @@ export class IconComponent {
     this.setElementClass(this._css);
   }
 
+  @Input()
   iconClass() {
     return 'cav-' + this.name;
   }

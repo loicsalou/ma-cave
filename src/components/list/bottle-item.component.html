@@ -3,7 +3,7 @@
     <ion-row>
       <ion-col col-2 class="icons" style="padding-right:7px;">
         <ion-avatar item-start (click)="switchSelected($event, bottle)">
-          <cav-icon *ngIf="selected" name="ok" style="font-size: 2.4em;"></cav-icon>
+          <cav-icon *ngIf="selected" name="ok" style="font-size: 2em;"></cav-icon>
           <div class="icon" *ngIf="!selected" [ngClass]="(bottle | bottleClass)">
             <img src="assets/icon/starred.png" *ngIf="isBottleFavorite(bottle) && !selected">
             <img src="assets/icon/alert-status.png" *ngIf="bottle.overdue && !selected">
@@ -27,7 +27,7 @@
   
   <ion-item-options side="right">
     <bottle-action [bottle]="bottle" (locate)="locateBottle($event, item, bottle)"
-                   (favorite)="addToFavorite($event, item, bottle)">
+                   (favorite)="addToFavorite($event, item, bottle)" [isFavorite]="isBottleFavorite(bottle)">
     </bottle-action>
   </ion-item-options>
 

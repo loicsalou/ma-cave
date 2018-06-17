@@ -1,8 +1,9 @@
 <button ion-button (click)="locateBottle($event)"
         *ngIf="bottle.positions.length > 0">
-  <cav-icon name="location"></cav-icon>
+  <cav-icon name="location" [ngStyle]="{color: 'white', 'font-size': '27px'}"></cav-icon>
 </button>
 
 <button ion-button (click)="favoriteBottle($event)">
-  <cav-icon name="star-empty" [ngClass]="bottle.favorite ? 'favorite':''"></cav-icon>
+  <cav-icon name="star" [ngClass]="bottle.favorite ? 'favorite':''"
+            [ngStyle]="{color: bottle.favorite ? '#FFC125' : 'white'}"></cav-icon>
 </button>

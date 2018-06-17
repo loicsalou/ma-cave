@@ -138,7 +138,6 @@ export class BrowsePage implements OnInit, OnDestroy {
     //règle: si une seule n'est pas favorite on les met toutes en favorite, sinon on les sort des favorites
     this.store.select(BottlesQuery.getSelectedBottles).pipe(
       take(1),
-      map((bottles: Bottle[]) => bottles.filter((bottle: Bottle) => bottle.positions.length > 0)),
       tap(bottles => logInfo('[browse-page.ts](favorite) received selected bottles:' + bottles.length))
     ).subscribe(
       (bottles: Bottle[]) => {

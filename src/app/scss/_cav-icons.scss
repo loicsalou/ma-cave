@@ -2,8 +2,7 @@
 @font-face {
   font-family: "cav-icons";
   src: url("/assets/fonts/cav-icons.eot?64734162");
-  src: url("/assets/fonts/cav-icons.eot?64734162#iefix") format("embedded-opentype"),
-  url("/assets/fonts/cav-icons.woff2?64734162") format("woff2"),
+  src: url("/assets/fonts/cav-icons.woff2?64734162") format("woff2"),
   url("/assets/fonts/cav-icons.woff?64734162") format("woff"),
   url("/assets/fonts/cav-icons.ttf?64734162") format("truetype"),
   url("/assets/fonts/cav-icons.svg?64734162#cav-icons") format("svg");
@@ -28,7 +27,6 @@
   .ion-md-cav-#{$arg}:before,
   .ion-md-cav-#{$arg}-outline:before {
     content: $val;
-    font-size: 26px;
   }
 }
 
@@ -36,7 +34,6 @@
 [class^="ion-ios-cav-"]:before, [class*=" ion-ios-cav-"]:before,
 [class^="ion-md-cav-"]:before, [class*=" ion-md-cav-"]:before {
   font-family: "cav-icons";
-  font-size: 1.2em;
   font-style: normal;
   font-weight: normal;
   speak: none;
@@ -46,7 +43,7 @@
   width: 1em;
   margin-right: .2em;
   text-align: center;
-  padding: 0.6em 0;
+  padding: 0;
   /* opacity: .8; */
 
   /* For safety - reset parent styles, that can break glyph codes*/
@@ -188,4 +185,6 @@
 @include makeIcon(facebook-rect, "\F301")
 
 @include makeIcon(twitter-bird, "\F303")
+
+@include makeIcon(user, "\E822")
 

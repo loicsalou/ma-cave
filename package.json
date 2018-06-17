@@ -1,6 +1,6 @@
 {
   "name": "assistant-caviste",
-  "version": "5.53.0",
+  "version": "5.54.0",
   "author": "Loic Salou",
   "homepage": "http://ionicframework.com/",
   "private": true,
@@ -75,7 +75,6 @@
     "firebase": "5.0.4",
     "ionic-angular": "3.9.2",
     "ionic-plugin-keyboard": "2.2.1",
-    "ionicons": "4.1.2",
     "lodash": "4.17.10",
     "loglevel": "1.6.1",
     "ng2-charts": "1.6.0",

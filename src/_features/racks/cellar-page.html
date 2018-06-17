@@ -53,7 +53,7 @@
   
   <ion-fab bottom right>
     <button ion-fab (click)="createLocker()">
-      <cav-icon name="plus-circled"></cav-icon>
+      <cav-icon name="plus-circled" [ngStyle]="{'font-size': '27px'}"></cav-icon>
     </button>
   </ion-fab>
   
@@ -69,7 +69,7 @@
         <span class="cavus-corkscrew"></span>
       </button>
       <button ion-fab style="border: thin solid black" (click)="zoomOnBottle(pendingCell)">
-        <cav-icon name="search"></cav-icon>
+        <cav-icon name="search" [ngStyle]="{'font-size': '27px'}"></cav-icon>
       </button>
     </ion-fab-list>
   </ion-fab>

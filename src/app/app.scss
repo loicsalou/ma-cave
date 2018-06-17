@@ -53,6 +53,18 @@ $tabs-background: #f8f8f8 !default;
   background: $background-page-image;
 }
 
+.cav-icon[medium] {
+  font-size: 1.2em !important;
+}
+
+.cav-icon[role='img'] {
+  font-size: 1.5em !important;
+}
+
+.cav-icon[x-large] {
+  font-size: 1.8em !important;
+}
+
 ion-content.card-background-page ion-col {
   padding: 0;
 }
@@ -159,10 +171,6 @@ div.icon {
 .checkbox-checked {
   border-color: map-get($colors, primary);
   background-color: map-get($colors, primary);
-}
-
-ion-avatar ion-icon {
-  color: map-get($colors, primary);
 }
 
 // Selon le vin de la bouteille on a les couleurs (classe color) ou l'icône (classe icon)
