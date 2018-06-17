@@ -1,19 +1,18 @@
-import {Observable, Subject} from 'rxjs';
+import {Observable} from 'rxjs';
 import {User} from '../../model/user';
 import {NotificationService} from '../notification.service';
 import * as firebase from 'firebase/app';
-import {Loading} from 'ionic-angular';
+import {AngularFireAuth} from 'angularfire2/auth';
+import {traced} from '../../utils/decorators';
 
 /**
  * Created by loicsalou on 13.06.17.
  */
 export abstract class AbstractLoginService {
   protected notificationService: NotificationService;
-  private authentified: Subject<User> = new Subject();
-  private authentifiedObservable: Observable<User> = this.authentified.asObservable();
   private _user: User;
 
-  constructor(notificationService: NotificationService) {
+  constructor(notificationService: NotificationService, protected firebaseAuth: AngularFireAuth) {
     this.notificationService = notificationService;
   }
 
@@ -30,15 +29,14 @@ export abstract class AbstractLoginService {
    * @returns {Observable<User>}
    */
   public login(): Observable<User> {
-    this.authentified = new Subject();
-    this.authentifiedObservable = this.authentified.asObservable();
-    return this.delegatedLogin(this.authentifiedObservable);
+    return this.delegatedLogin();
   }
 
   createAccount(user: any, pass: any) {
     this.notificationService.error('La création de ce type de compte n\'est pas activée');
   }
 
+  @traced
   deleteAccount() {
     //"resetting-password": "Demande de réinitialisation en cours...",
     //  "deleting-account": "Suppression du compte en cours...",
@@ -62,20 +60,27 @@ export abstract class AbstractLoginService {
     this.notificationService.error('La réinitialisation du mot de passe pour ce type de compte n\'est pas activée');
   }
 
+  @traced
   public logout() {
-    this.authentified.next(undefined);
+    this.delegatedLogout();
+    this.firebaseAuth.auth.signOut();
   }
 
+  @traced
   public loginFailed() {
     this.notificationService.error('app.login-failed');
   }
 
+  @traced
   public success(user: User) {
     if (user) {
       this.user = user;
-      this.authentified.next(user);
     }
   }
 
-  protected abstract delegatedLogin(authObs: Observable<User>);
+  protected abstract delegatedLogin(): Observable<User>;
+
+  protected delegatedLogout() {
+
+  }
 }

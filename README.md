@@ -88,7 +88,7 @@ cordova plugin add cordova-plugin-facebook4 --save --variable APP_ID="2537120851
 J'utilise le plugin Chrome "Lighthouse" de Google pour analyser la home page et dégager les principaux problèmes. Grâce 
 à ce plugin j'ai déjà changé:
 - modularisation du code: un module par page en lazy load
-- mise en place d'un service worker avec toutes la chaine de build (voir copy.config.js, webpacl.config.js et 
+- mise en place d'un service worker avec toutes la chaine de build (voir copy.config.js, webpack.config.js et 
 workbox-config.js). Voir l'article https://golb.hplar.ch/2017/12/Workbox-in-Ionic-and-Lazy-Loading-Modules.html
 - mise en place de modernizr: pour modifier la config aller dans config/modernizr-config.json, ajouter les checks à 
 faire (voir la liste des possibilités sur https://github.com/Modernizr/Modernizr/blob/master/lib/config-all.json. 

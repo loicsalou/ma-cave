@@ -15,7 +15,7 @@
     </ion-item>
 
     <button ion-button icon-start margin-top align-items-center (click)="signin()">
-      <ion-icon name="key" margin-right></ion-icon>
+      <!--<cav-icon name="key" margin-right></cav-icon>-->
       Pousser la porte...
     </button>
   </ion-row>
@@ -29,11 +29,11 @@
   <ion-footer style="background-color: white">
     <ion-segment [(ngModel)]="icons" color="primary">
       <ion-segment-button value="create" (click)="createAccount()">
-        <ion-icon name="person-add"></ion-icon>
+        <!--<cav-icon name="plus-circled"></cav-icon>-->
         Créer un compte
       </ion-segment-button>
       <ion-segment-button value="reset" (click)="resetPassword()">
-        <ion-icon name="unlock"></ion-icon>
+        <!--<cav-icon name="key"></cav-icon>-->
         Réinit mot de passe
       </ion-segment-button>
     </ion-segment>

@@ -1,4 +1,4 @@
-import {Observable, Subject, Subscription} from 'rxjs';
+import {Subscription} from 'rxjs';
 import {User} from '../../model/user';
 import {AnonymousLoginService} from './anonymous-login.service';
 import {EmailLoginService} from './email-login.service';
@@ -7,16 +7,23 @@ import {AbstractLoginService} from './abstract-login.service';
 import {GoogleLoginService} from './google-login.service';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../../app/state/app.state';
-import {LoginSuccessAction, LogoutAction} from '../../app/state/shared.actions';
+import {LoginSuccessAction} from '../../app/state/shared.actions';
 import {TranslateService} from '@ngx-translate/core';
 import {AlertController} from 'ionic-angular';
+import {FacebookLoginNativeService} from './facebook-login-native.service';
+import {logInfo} from '../../utils';
+import {OnDestroy} from '@angular/core';
+import * as firebase from 'firebase/app';
+import {tap} from 'rxjs/operators';
+import {Observable} from 'rxjs/Observable';
+import {traced} from '../../utils/decorators';
+
+export type LOGINTYPE = 'FACEBOOK' | 'EMAIL' | 'ANONYMOUS' | 'FACEBOOK_NATIVE' | 'GOOGLE';
 
 /**
  * Created by loicsalou on 13.06.17.
  */
-export class LoginService {
-  private authentified: Subject<User> = new Subject();
-  public authentifiedObservable: Observable<User> = this.authentified.asObservable();
+export class LoginService implements OnDestroy {
   private loginSub: Subscription;
   private currentLoginService: AbstractLoginService;
   private _user: User;
@@ -24,6 +31,7 @@ export class LoginService {
   constructor(private anoLogin: AnonymousLoginService,
               private mailLogin: EmailLoginService,
               private fbLogin: FacebookLoginService,
+              private fbLoginNative: FacebookLoginNativeService,
               private gglLogin: GoogleLoginService,
               private translateService: TranslateService,
               private alertController: AlertController,
@@ -38,86 +46,87 @@ export class LoginService {
     this._user = value;
   }
 
+  ngOnDestroy() {
+    if (this.loginSub) {
+      this.loginSub.unsubscribe();
+    }
+  }
+
+  @traced
   createAccount(user: string, psw: string) {
     this.currentLoginService = this.mailLogin;
     this.currentLoginService.createAccount(user, psw);
   }
 
+  @traced
   deleteAccount() {
     this.currentLoginService.deleteAccount();
   }
 
+  @traced
   resetEmailPassword(user: string) {
     this.currentLoginService = this.mailLogin;
     this.currentLoginService.resetPassword(user);
   }
 
-  public anonymousLogin() {
+  @traced
+  anonymousLogin(): Observable<User> {
     this.currentLoginService = this.anoLogin;
-    this.loginSub = this.anoLogin.login().subscribe(
-      (user: User) => {
-        this.initUser(user);
-      },
-      err => {
-        this.failed('L\'authentification a échoué, veuillez vérifier votre saisie ' + err);
-      }
-    );
+    return this.anoLogin.login();
   }
 
-  public googleLogin() {
+  @traced
+  googleLogin(): Observable<User> {
     this.currentLoginService = this.gglLogin;
-    this.loginSub = this.gglLogin.login().subscribe(
-      (user: User) => {
-        this.initUser(user);
-      },
-      err => {
-        this.failed('L\'authentification a échoué, veuillez vérifier votre saisie ' + err);
-      }
-    );
+    return this.gglLogin.login();
   }
 
-  public emailLogin(login: string, psw: string) {
+  @traced
+  emailLogin(login: string, psw: string): Observable<User> {
     this.currentLoginService = this.mailLogin;
     this.mailLogin.username = login;
     this.mailLogin.psw = psw;
-    this.loginSub = this.mailLogin.login().subscribe(
-      (user: User) => {
-        this.initUser(user);
-      },
-      error => {
-        this.failed('L\'authentification a échoué, veuillez vérifier votre saisie ' + error);
-      }
-    );
+    return this.mailLogin.login();
   }
 
-  public facebookLogin() {
+  @traced
+  facebookLogin(): Observable<User> {
     this.currentLoginService = this.fbLogin;
-    this.loginSub = this.fbLogin.login().subscribe(
-      (user: User) => this.initUser(user),
-      error =>
-        this.failed('L\'authentification Facebook a échoué, veuillez vérifier votre compte ' + error)
-    );
+    return this.fbLogin.login();
   }
 
-  public logout() {
-    this.loginSub.unsubscribe();
-    this.store.dispatch(new LogoutAction());
-    this.loginSub = undefined;
-    this.user = undefined;
-    this.authentified.next(this.user);
+  @traced
+  facebookNativeLogin(): Observable<User> {
+    this.currentLoginService = this.fbLoginNative;
+    return this.fbLoginNative.login();
   }
 
-  private initUser(user: User) {
-    if (user) {
-      this.store.dispatch(new LoginSuccessAction(user));
-      this.user = user;
-      this.authentified.next(user);
+  @traced
+  login(type: LOGINTYPE, user?: string, password?: string):Observable<User> {
+    switch (type) {
+      case 'ANONYMOUS':
+        return this.anonymousLogin();
+      case 'FACEBOOK':
+        return this.facebookLogin();
+      case 'FACEBOOK_NATIVE':
+        return this.facebookNativeLogin();
+      case 'GOOGLE':
+        return this.googleLogin();
+      case 'EMAIL':
+        return this.emailLogin(user, password);
+
+      default:
+        throw new Error('Type de login non supporté');
     }
-    else {
-      this.logout();
-    }
   }
 
+  @traced
+  logout() {
+    firebase.auth().signOut();
+    this.currentLoginService.logout();
+  }
+
+  @traced
   private failed(message: string, error?: any) {
     let msg = this.translateService.instant(message);
     this.alertController.create({

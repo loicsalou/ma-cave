@@ -8,8 +8,8 @@
 
 <ion-content align-items-center *ngIf="user$ | async as user" class="page profile-page">
   <responsive-wrapper>
-    <ion-card *ngIf="user.photoURL" class="profile-box">
-      <div class="profile-image">
+    <ion-card class="profile-box">
+      <div class="profile-image" *ngIf="user.photoURL">
         <img [src]="user.photoURL" [defaultImage]="'/assets/icon/anonymous.png'">
       </div>
       <div class="profile-info">

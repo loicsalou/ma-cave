@@ -11,6 +11,7 @@ import {Bottle} from '../../model/bottle';
 export class BottleActionComponent {
 
   @Input() bottle: Bottle;
+  @Input() isFavorite = false;
   @Output() locate: EventEmitter<MouseEvent> = new EventEmitter();
   @Output() favorite: EventEmitter<MouseEvent> = new EventEmitter();
 

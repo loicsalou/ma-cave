@@ -1,9 +1,9 @@
 import {Component} from '@angular/core';
 import {Platform} from 'ionic-angular';
 import {TranslateService} from '@ngx-translate/core';
-import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
 import {HomePage} from './home/home';
+import {logInfo} from '../utils';
 
 @Component({
              templateUrl: 'app.html'
@@ -28,5 +28,4 @@ export class MyCaveApp {
       translate.use('fr');
     });
   }
-
 }

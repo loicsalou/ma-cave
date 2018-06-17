@@ -14,60 +14,60 @@
   <ng-container *ngIf="lockerAndBottles$ | async as lockerAndBottles">
     <ion-fab middle center *ngIf="isEditable">
       <button ion-fab mini>
-        <ion-icon name="create"></ion-icon>
+        <cav-icon name="plus"></cav-icon>
       </button>
       <ion-fab-list side="top">
         <button ion-fab (click)="lockerComponent.removeTopRow()">
-          <ion-icon name="remove"></ion-icon>
+          <cav-icon name="minus"></cav-icon>
         </button>
         <button ion-fab (click)="lockerComponent.addTopRow()">
-          <ion-icon name="add"></ion-icon>
+          <cav-icon name="plus"></cav-icon>
         </button>
       </ion-fab-list>
       <ion-fab-list side="right">
         <button ion-fab (click)="lockerComponent.removeRightColumn()">
-          <ion-icon name="remove"></ion-icon>
+          <cav-icon name="minus"></cav-icon>
         </button>
         <button ion-fab (click)="lockerComponent.addRightColumn()">
-          <ion-icon name="add"></ion-icon>
+          <cav-icon name="plus"></cav-icon>
         </button>
       </ion-fab-list>
       <ion-fab-list side="bottom">
         <button ion-fab (click)="lockerComponent.removeBottomRow()">
-          <ion-icon name="remove"></ion-icon>
+          <cav-icon name="minus"></cav-icon>
         </button>
         <button ion-fab (click)="lockerComponent.addBottomRow()">
-          <ion-icon name="add"></ion-icon>
+          <cav-icon name="plus"></cav-icon>
         </button>
       </ion-fab-list>
       <ion-fab-list side="left">
         <button ion-fab (click)="lockerComponent.removeLeftColumn()">
-          <ion-icon name="remove"></ion-icon>
+          <cav-icon name="minus"></cav-icon>
         </button>
         <button ion-fab (click)="lockerComponent.addLeftColumn()">
-          <ion-icon name="add"></ion-icon>
+          <cav-icon name="plus"></cav-icon>
         </button>
       </ion-fab-list>
     </ion-fab>
     
     <ion-fab middle center *ngIf="!isEditable">
       <button ion-fab mini>
-        <ion-icon name="create"></ion-icon>
+        <cav-icon name="plus"></cav-icon>
       </button>
       <ion-fab-list side="top">
         <button ion-fab (click)="lockerComponent.removeTopRack()">
-          <ion-icon name="remove-circle"></ion-icon>
+          <cav-icon name="remove-circled"></cav-icon>
         </button>
         <button ion-fab (click)="lockerComponent.addTopRack()">
-          <ion-icon name="add-circle"></ion-icon>
+          <cav-icon name="plus-circled"></cav-icon>
         </button>
       </ion-fab-list>
       <ion-fab-list side="bottom">
         <button ion-fab (click)="lockerComponent.removeBottomRack()">
-          <ion-icon name="remove-circle"></ion-icon>
+          <cav-icon name="remove-circled"></cav-icon>
         </button>
         <button ion-fab (click)="lockerComponent.addBottomRack()">
-          <ion-icon name="add-circle"></ion-icon>
+          <cav-icon name="plus-circled"></cav-icon>
         </button>
       </ion-fab-list>
     </ion-fab>

@@ -1,7 +1,8 @@
 @font-face {
   font-family: 'cavus';
-  src: url('../fonts/cavus.eot?66538271');
-  src: url('../fonts/cavus.eot?66538271#iefix') format('embedded-opentype'),
+  font-display: swap;
+  src: local('cavus'), url('../fonts/cavus.eot?66538271');
+  src: local('cavus'), url('../fonts/cavus.eot?66538271#iefix') format('embedded-opentype'),
   url('../fonts/cavus.woff2?66538271') format('woff2'),
   url('../fonts/cavus.woff?66538271') format('woff'),
   url('../fonts/cavus.ttf?66538271') format('truetype'),
@@ -9,17 +10,6 @@
   font-weight: normal;
   font-style: normal;
 }
-
-/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
-/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
-/*
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-  @font-face {
-    font-family: 'cavus';
-    src: url('../fonts/cavus.svg?66538271#cavus') format('svg');
-  }
-}
-*/
 
 [class^="cavus-"]:before, [class*=" cavus-"]:before {
   font-family: "cavus";

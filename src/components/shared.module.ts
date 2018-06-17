@@ -32,6 +32,7 @@ import {StatusBar} from '@ionic-native/status-bar';
 import {Network} from '@ionic-native/network';
 import {NativeProvider} from '../providers/native/native';
 import {NotificationService} from '../service/notification.service';
+import {IconComponent} from './icon/icon.component';
 
 @NgModule({
             imports: [
@@ -52,6 +53,7 @@ import {NotificationService} from '../service/notification.service';
               DefaultImageDirective,
               DistributionComponent,
               FridgeLockerComponent,
+              IconComponent,
               ProgressBarComponent,
               RatingComponent,
               ScrollAnchorDirective,
@@ -72,6 +74,7 @@ import {NotificationService} from '../service/notification.service';
               DefaultImageDirective,
               DistributionComponent,
               FridgeLockerComponent,
+              IconComponent,
               ProgressBarComponent,
               RatingComponent,
               ScrollAnchorDirective,

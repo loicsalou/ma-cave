@@ -114,7 +114,7 @@ export class PwaImageAttacherComponent implements OnInit {
       .then(stream => {
         this.video.nativeElement.srcObject = stream;
       })
-      .catch(err => alert(err));
+      .catch(err => this.notificationService.error('problème au démarrage de la vidéo', err));
   }
 
   private stopVideo() {

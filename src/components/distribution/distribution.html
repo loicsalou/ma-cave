@@ -1,17 +1,11 @@
-<!--
-  Generated template for the Distribution component.
-
-  See https://angular.io/docs/ts/latest/api/core/index/ComponentMetadata-class.html
-  for more info on Angular 2 Components.
--->
 <ion-card *ngFor="let dimension of distribution" class="distribution">
 
   <p (click)="switchDistribution(dimension)">
     <button *ngIf="isOpen(dimension.axis)" ion-button color="light" icon-only>
-      <ion-icon name='arrow-dropdown'></ion-icon>
+      <cav-icon name="down-open"></cav-icon>
     </button>
     <button *ngIf="!isOpen(dimension.axis)" ion-button color="light" icon-only>
-      <ion-icon name='arrow-dropright'></ion-icon>
+      <cav-icon name='right-open'></cav-icon>
     </button>
     {{'bottle.'+dimension.axis| translate}}
   </p>

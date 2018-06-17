@@ -15,15 +15,6 @@ import {SharedEffectsService} from './state/shared.effects';
 import {SharedCoreModule} from '../components/shared-core.module';
 import {SplashScreen} from '@ionic-native/splash-screen';
 
-export const fireConfig = {
-  apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
-  authDomain: 'ma-cave-15a66.firebaseapp.com',
-  databaseURL: 'https://ma-cave-15a66.firebaseio.com',
-  projectId: 'ma-cave-15a66',
-  storageBucket: 'ma-cave-15a66.appspot.com',
-  messagingSenderId: '58435015061'
-};
-
 @NgModule({
             imports: [
               IonicModule.forRoot(MyCaveApp, {

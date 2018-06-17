@@ -5,8 +5,9 @@ import {Injectable} from '@angular/core';
 import * as firebase from 'firebase/app';
 import {AbstractLoginService} from './abstract-login.service';
 import {User} from '../../model/user';
-import {Observable} from 'rxjs';
+import {from, Observable} from 'rxjs';
 import {NotificationService} from '../notification.service';
+import {AngularFireAuth} from 'angularfire2/auth';
 
 @Injectable()
 export class EmailLoginService extends AbstractLoginService {
@@ -14,8 +15,8 @@ export class EmailLoginService extends AbstractLoginService {
   private _username: string;
   private _psw: string;
 
-  constructor(notificationService: NotificationService) {
-    super(notificationService);
+  constructor(notificationService: NotificationService, firebaseAuth: AngularFireAuth) {
+    super(notificationService, firebaseAuth);
   }
 
   get username(): string {
@@ -73,25 +74,27 @@ export class EmailLoginService extends AbstractLoginService {
     });
   }
 
-  protected delegatedLogin(authObs: Observable<User>): Observable<User> {
+  protected delegatedLogin(): Observable<User> {
     let self = this;
     let popup = this.notificationService.createLoadingPopup('app.checking-login');
-    firebase.auth().signInWithEmailAndPassword(this.username, this.psw)
-      .then(
-        token => {
-          let displayName = token[ 'displayName' ];
-          let email = token[ 'email' ];
-          self.success(new EmailLoginUser(this.username, email, displayName, null));
-          popup.dismiss();
-        }
-      )
-      .catch(function (error) {
-        self.loginFailed();
-        self.logout();
-        popup.dismiss();
-      });
-
-    return authObs;
+    return from(firebase.auth().signInWithEmailAndPassword(this.username, this.psw)
+                  .then(
+                    token => {
+                      const user = token.user;
+                      let displayName = user[ 'displayName' ];
+                      let email = user[ 'email' ];
+                      const emailUser = new EmailLoginUser(this.username, email, displayName, null);
+                      self.success(emailUser);
+                      popup.dismiss();
+                      return emailUser;
+                    }
+                  )
+                  .catch(function (error) {
+                    self.loginFailed();
+                    self.logout();
+                    popup.dismiss();
+                    return undefined;
+                  }));
   }
 }
 

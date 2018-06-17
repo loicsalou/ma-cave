@@ -1,5 +1,9 @@
 // New copy task for font files
 module.exports = {
+  copyHosting: {
+    src: ['{{ROOT}}/firebase.json'],
+    dest: '{{WWW}}'
+  },
   copyCavus: {
     src: ['{{ROOT}}/src/app/scss/icons/fonts/*'],
     dest: '{{WWW}}/assets/fonts'

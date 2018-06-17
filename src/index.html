@@ -14,6 +14,13 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#4e8ef7">
   
+  
+  <link rel="preconnect" href="https://accounts.google.com">
+  <link rel="preconnect" href="https://connect.facebook.net">
+  <link rel="preconnect" href="https://www.facebook.com">
+  <link rel="preconnect" href="https://apis.google.com">
+  <link rel="preconnect" href="https://staticxx.facebook.com">
+  
   <script>
     function isMobileDevice() {
       return (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
@@ -22,23 +29,34 @@
   
   <!-- un-comment this code to enable service worker -->
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js')
-        .then(function (serviceRegistration) {
-            console.log('service worker installé');
-            serviceRegistration.onupdatefound = (update) => {
-              alert('Une mise à jour est disponible. Rafraichir');
-              serviceRegistration.update()
-                .then(() => alert('L\'application a été mise à jour'))
-                .catch((err) => alert('échec de la mise à jour de l\'application:' + err);
-            }
-          }
-        )
-        .catch(function (err) {
-            console.log('Error lors de l\'installation du service worker', err)
-          }
-        )
-    }
+    // make the whole serviceworker process into a promise so later on we can
+    // listen to it and in case new content is available a toast will be shown
+    window.isUpdateAvailable = new Promise(function(resolve, reject) {
+      // lazy way of disabling service workers while developing
+      if ('serviceWorker' in navigator) {
+        // register service worker file
+        navigator.serviceWorker.register('service-worker.js')
+          .then(reg => {
+            reg.onupdatefound = () => {
+              const installingWorker = reg.installing;
+              installingWorker.onstatechange = () => {
+                switch (installingWorker.state) {
+                  case 'installed':
+                    if (navigator.serviceWorker.controller) {
+                      // new update available
+                      resolve(true);
+                    } else {
+                      // no update available
+                      resolve(false);
+                    }
+                    break;
+                }
+              };
+            };
+          })
+          .catch(err => console.error('[SW ERROR]', err));
+      }
+    });
   </script>
   
   <script type="text/javascript">
@@ -55,6 +73,20 @@
     giftofspeed2.type = 'text/css';
     let godefer2 = document.getElementsByTagName('link')[1];
     godefer2.parentNode.insertBefore(giftofspeed2, godefer2);
+   
+    let giftofspeed5 = document.createElement('link');
+    giftofspeed5.rel = 'preload';
+    giftofspeed5.href = '/assets/fonts/cav-icons.eot';
+    giftofspeed5.as = 'font';
+    let godefer5 = document.getElementsByTagName('link')[2];
+    godefer5.parentNode.insertBefore(giftofspeed5, godefer5);
+   
+    let giftofspeed6 = document.createElement('link');
+    giftofspeed6.rel = 'preload';
+    giftofspeed6.href = '/assets/fonts/cav-icons.woff2';
+    giftofspeed6.as = 'font';
+    let godefer6 = document.getElementsByTagName('link')[3];
+    godefer6.parentNode.insertBefore(giftofspeed6, godefer6);
   </script>
 </head>
 <body>

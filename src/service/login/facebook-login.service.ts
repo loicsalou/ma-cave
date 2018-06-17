@@ -3,53 +3,66 @@
  */
 import {Injectable} from '@angular/core';
 import {AbstractLoginService} from './abstract-login.service';
-import {Facebook} from '@ionic-native/facebook';
 import {User} from '../../model/user';
-import {Observable} from 'rxjs';
+import {from, Observable} from 'rxjs';
 import {NotificationService} from '../notification.service';
+import {AuthService, FacebookLoginProvider, SocialUser} from 'angularx-social-login';
 import * as firebase from 'firebase/app';
+import {AngularFireAuth} from 'angularfire2/auth';
+import {switchMap, take, tap} from 'rxjs/operators';
+import FacebookAuthProvider = firebase.auth.FacebookAuthProvider;
 
 @Injectable()
 export class FacebookLoginService extends AbstractLoginService {
   userString: string;
+  private socialUser: SocialUser;
 
-  constructor(notificationService: NotificationService, private facebook: Facebook) {
-    super(notificationService);
+  constructor(notificationService: NotificationService, private authService: AuthService, firebaseAuth: AngularFireAuth) {
+    super(notificationService, firebaseAuth);
   }
 
-  protected delegatedLogin(authObs: Observable<User>): Observable<User> {
-    let self = this;
-    let popup = this.notificationService.createLoadingPopup('app.checking-login');
-    self.facebook.login([ 'email' ]).then((response) => {
-      const facebookCredential = firebase.auth.FacebookAuthProvider
-        .credential(response.authResponse.accessToken);
-
-      firebase.auth().signInWithCredential(facebookCredential)
-        .then((success) => {
-          let user: User = new FacebookUser(success.user, success.email, success.photoURL,
-                                            success.displayName, success.uid, success.phoneNumber);
-          self.success(user);
-          popup.dismiss();
-        })
-        .catch(error => {
-          popup.dismiss();
-          self.logout();
-          self.notificationService.failed('l\'authentification a échoué (Promise.catch)', error);
-        })
-    }).catch(
-      error => {
-        popup.dismiss();
-        self.logout();
-        self.notificationService.failed('l\'authentification a échoué (catch)', error);
-      }
+  protected delegatedLogin(): Observable<User> {
+    const fbLogin = from(this.authService.signIn(FacebookLoginProvider.PROVIDER_ID)
+                           .then(user => {
+                             //alert('User authentifié: ' + user.email);
+                             this.socialUser = user;
+                             return new FacebookUser(user.name, user.email, user.photoUrl,
+                               user.firstName + ' ' + user.lastName, user.id, '');
+                           })
+                           .catch(err => {
+                             //alert('erreur d\'authentification ' + err);
+                             return null;
+                           }));
+    return fbLogin.pipe(
+      switchMap((user: FacebookUser) => this.loginToFirebase(user)),
+      take(1)
     );
+  }
 
-    return authObs;
+  protected loginToFirebase(fbUser: FacebookUser): Observable<User> {
+    let provider = new FacebookAuthProvider();
+    const facebookCredential = firebase.auth.FacebookAuthProvider.credential(this.socialUser.authToken);
+    firebase.auth().useDeviceLanguage();
+    let popup = this.notificationService.createLoadingPopup('app.checking-login');
+    return from(firebase.auth().signInAndRetrieveDataWithCredential(facebookCredential).then((result) => {
+      popup.dismiss();
+      this.success(fbUser);
+      return fbUser;
+    }, (rejectReason: any) => {
+      popup.dismiss();
+      this.notificationService.error('login failed: ' + rejectReason);
+      this.loginFailed();
+      return undefined;
+    }).catch(function (error) {
+      popup.dismiss();
+      this.loginFailed();
+      this.logout();
+      return undefined;
+    }));
   }
 }
 
 export class FacebookUser extends User {
-
   constructor(user: string, email: string, photoURL: string, displayName: string, uid: string, phoneNumber: string) {
     super();
     this.user = email.replace(/[\.]/g, '');
@@ -61,5 +74,16 @@ export class FacebookUser extends User {
     this.displayName = displayName;
     this.loginType = 'facebook';
   }
+  //constructor(email: string, photoURL: string, displayName: string, uid: string, phoneNumber: string) {
+  //  super();
+  //  this.user = email.replace(/[\.]/g, '');
+  //  this.user = this.user.replace(/[#.]/g, '');
+  //  this.email = email;
+  //  this.photoURL = photoURL;
+  //  this.uid = uid;
+  //  this.phoneNumber = phoneNumber;
+  //  this.displayName = displayName;
+  //  this.loginType = 'google';
+  //}
 
 }
