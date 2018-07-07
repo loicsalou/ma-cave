@@ -13,7 +13,10 @@ import * as schema from './firebase-schema';
 import {MOSTUSED_ROOT_FOLDER} from './firebase-schema';
 import {AdminService} from '../admin.service';
 import {UserPreferences} from '../../model/user-preferences';
-import {map} from 'rxjs/operators';
+import {filter, map, take} from 'rxjs/operators';
+import {ApplicationState} from '../../app/state/app.state';
+import {Store} from '@ngrx/store';
+import {SharedQuery} from '../../app/state/shared.state';
 import Reference = firebase.database.Reference;
 
 /**
@@ -34,7 +37,14 @@ export class FirebaseAdminService implements AdminService {
   private errorRootRef: Reference;
 
   constructor(private angularFirebase: AngularFireDatabase,
-              private notificationService: NotificationService) {
+              private notificationService: NotificationService,
+              private store: Store<ApplicationState>) {
+    store.select(SharedQuery.getLoginUser).pipe(
+      filter(user => user != null),
+      take(1)
+    ).subscribe(
+      (user: User) => this.initialize(user)
+    );
   }
 
   public initialize(user: User) {

@@ -16,6 +16,10 @@ module.exports = {
     src: ['{{ROOT}}/src/app/robots.txt'],
     dest: '{{WWW}}'
   },
+  copyFirebaseUI: {
+    src: ['{{ROOT}}/node_modules/firebaseui/dist/firebaseui.css'],
+    dest: '{{WWW}}/assets/css'
+  },
    copyModernizr: {
     src: ['{{ROOT}}/src/app/modernizr.js'],
     dest: '{{WWW}}'

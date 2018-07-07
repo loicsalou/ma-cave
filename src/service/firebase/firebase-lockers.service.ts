@@ -1,4 +1,4 @@
-import {map, tap, throttleTime} from 'rxjs/operators';
+import {filter, map, take, tap, throttleTime} from 'rxjs/operators';
 /**
  * Created by loicsalou on 28.02.17.
  */
@@ -12,8 +12,11 @@ import {Locker} from '../../model/locker';
 import {logInfo, sanitizeBeforeSave} from '../../utils/index';
 import * as schema from './firebase-schema';
 import * as moment from 'moment';
+import {SharedQuery} from '../../app/state/shared.state';
+import {ApplicationState} from '../../app/state/app.state';
+import {Store} from '@ngrx/store';
 import Reference = firebase.database.Reference;
-import * as firebase from 'firebase/app';
+import * as firebase from 'firebase';
 
 /**
  * Services related to the lockers in the cellar.
@@ -26,7 +29,14 @@ export class FirebaseLockersService {
   private errorRootRef: Reference;
 
   constructor(private angularFirebase: AngularFireDatabase,
-              private notificationService: NotificationService, @Inject('GLOBAL_CONFIG') private config) {
+              private notificationService: NotificationService, @Inject('GLOBAL_CONFIG') private config,
+              private store: Store<ApplicationState>) {
+    store.select(SharedQuery.getLoginUser).pipe(
+      filter(user => user != null),
+      take(1)
+    ).subscribe(
+      (user: User) => this.initialize(user)
+    );
   }
 
   public initialize(user: User) {

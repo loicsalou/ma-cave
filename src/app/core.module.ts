@@ -6,15 +6,9 @@ import {AngularFireAuthModule} from 'angularfire2/auth';
 import {AngularFireDatabaseModule} from 'angularfire2/database';
 import '../../node_modules/chart.js/dist/Chart.bundle.min.js';
 import {AnonymousLoginService} from '../service/login/anonymous-login.service';
-import {EmailLoginService} from '../service/login/email-login.service';
-import {Facebook} from '@ionic-native/facebook';
-import {LoginService} from '../service/login/login.service';
-import {FacebookLoginService} from '../service/login/facebook-login.service';
 import {NotificationService} from '../service/notification.service';
 import {LockerFactory} from '../model/locker.factory';
 import {HttpClient} from '@angular/common/http';
-import {GoogleLoginService} from '../service/login/google-login.service';
-import {GooglePlus} from '@ionic-native/google-plus';
 import {appConfig} from './app.conf';
 import {ApplicationState, META_REDUCERS, ROOT_REDUCERS} from './state/app.state';
 import {Store, StoreModule} from '@ngrx/store';
@@ -38,7 +32,7 @@ import {WithdrawalFactory} from '../model/withdrawal.factory';
 import {FirebaseWithdrawalsService} from '../service/firebase/firebase-withdrawals.service';
 import {AngularFireStorageModule} from 'angularfire2/storage';
 import {AuthServiceConfig, FacebookLoginProvider, GoogleLoginProvider, SocialLoginModule} from 'angularx-social-login';
-import {FacebookLoginNativeService} from '../service/login/facebook-login-native.service';
+import {LoginService} from '../service/login/login.service';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -52,11 +46,11 @@ export const fireConfig = {
 let config = new AuthServiceConfig([
                                      {
                                        id: FacebookLoginProvider.PROVIDER_ID,
-                                       provider: new FacebookLoginProvider("253712085111353")
+                                       provider: new FacebookLoginProvider('253712085111353')
                                      },
                                      {
                                        id: GoogleLoginProvider.PROVIDER_ID,
-                                       provider: new GoogleLoginProvider("58435015061-ailcis9set5np4lu2qm6u46rb6r1gt8r.apps.googleusercontent.com")
+                                       provider: new GoogleLoginProvider('58435015061-ailcis9set5np4lu2qm6u46rb6r1gt8r.apps.googleusercontent.com')
                                      }
                                    ]);
 
@@ -88,17 +82,10 @@ export function authServiceConfig() {
               TranslateService,
 
               AnonymousLoginService,
-              EmailLoginService,
-              Facebook,
-              FacebookLoginService,
-              FacebookLoginNativeService,
-              GoogleLoginService,
-              GooglePlus,
               {
                 provide: LoginService,
                 useFactory: (createLoginFactory),
-                deps: [ AnonymousLoginService, EmailLoginService, FacebookLoginService, FacebookLoginNativeService,
-                  GoogleLoginService, TranslateService, NotificationService, Store ]
+                deps: [ AnonymousLoginService, TranslateService, NotificationService, Store ]
               },
               {
                 provide: NotificationService,
@@ -128,10 +115,9 @@ export class CoreModule {
   }
 }
 
-export function createLoginFactory(ano: AnonymousLoginService, ema: EmailLoginService, fac: FacebookLoginService,
-                                   facn: FacebookLoginNativeService, ggl: GoogleLoginService, ts: TranslateService,
+export function createLoginFactory(ano: AnonymousLoginService, ts: TranslateService,
                                    ac: AlertController, store: Store<ApplicationState>) {
-  return new LoginService(ano, ema, fac, facn, ggl, ts, ac, store);
+  return new LoginService(ano, ts, ac, store);
 }
 
 export function createNotificationFactory(alrt: AlertController, toast: ToastController, translate: TranslateService,

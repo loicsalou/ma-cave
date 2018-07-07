@@ -9,9 +9,12 @@ import * as schema from './firebase-schema';
 import * as tools from '../../utils/index';
 import {logInfo} from '../../utils/index';
 import {AngularFireDatabase, SnapshotAction} from 'angularfire2/database';
-import {map, tap, throttleTime} from 'rxjs/operators';
+import {filter, map, take, tap, throttleTime} from 'rxjs/operators';
 import Reference = firebase.database.Reference;
 import * as firebase from 'firebase/app';
+import {SharedQuery} from '../../app/state/shared.state';
+import {ApplicationState} from '../../app/state/app.state';
+import {Store} from '@ngrx/store';
 
 /**
  * Services related to the withdrawals in the cellar.
@@ -26,7 +29,14 @@ export class FirebaseWithdrawalsService {
 
   constructor(private withdrawalFactory: WithdrawalFactory,
               private angularFirebase: AngularFireDatabase,
-              private notificationService: NotificationService, @Inject('GLOBAL_CONFIG') private config) {
+              private notificationService: NotificationService, @Inject('GLOBAL_CONFIG') private config,
+              private store: Store<ApplicationState>) {
+    store.select(SharedQuery.getLoginUser).pipe(
+      filter(user => user != null),
+      take(1)
+    ).subscribe(
+      (user: User) => this.initialize(user)
+    );
   }
 
   initialize(user: User) {

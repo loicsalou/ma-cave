@@ -17,6 +17,10 @@ import {User} from '../../model/user';
 import {AngularFireStorage, AngularFireStorageReference, AngularFireUploadTask} from 'angularfire2/storage';
 import Reference = firebase.database.Reference;
 import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
+import {filter, take} from 'rxjs/operators';
+import {SharedQuery} from '../../app/state/shared.state';
+import {Store} from '@ngrx/store';
+import {ApplicationState} from '../../app/state/app.state';
 
 /**
  * Services related to the images in the cellar.
@@ -35,7 +39,14 @@ export class FirebaseImagesService {
 
   constructor(private angularFirebase: AngularFireDatabase,
               private angularStorage: AngularFireStorage,
-              private notificationService: NotificationService) {
+              private notificationService: NotificationService,
+              private store: Store<ApplicationState>) {
+    store.select(SharedQuery.getLoginUser).pipe(
+      filter(user => user != null),
+      take(1)
+    ).subscribe(
+      (user: User) => this.initialize(user)
+    );
   }
 
   private static getUploadImageMeta(snap, url): UploadMetadata {

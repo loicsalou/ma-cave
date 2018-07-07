@@ -5,26 +5,9 @@
 <ion-content align-items-center class="home card-background-page page"
              [ngClass]="currentTheme$ | async">
   <responsive-wrapper>
-    <div class="login">
-      <fieldset>
-        <div d-flex class="login-block">
-          <button ion-button badge [class.clicked]="fbidentifying" (click)="facebookLogin()"
-                  aria-label="Login Facebook">
-            <span class="login-facebook"></span>
-          </button>
-          <button ion-button badge [class.clicked]="mailidentifying" (click)="emailLogin()" aria-label="Login e-mail">
-            <span class="login-email"></span>
-          </button>
-          <button ion-button badge [class.clicked]="anoidentifying" (click)="anonymousLogin()"
-                  aria-label="Login Anonyme">
-            <span class="login-anonymous"></span>
-          </button>
-          <button ion-button badge [class.clicked]="gglidentifying" (click)="googleLogin()" aria-label="Login Google">
-            <span class="login-google"></span>
-          </button>
-        </div>
-      </fieldset>
-    </div>
+    <firebase-ui
+      (signInSuccessWithAuthResult)="successCallback($event)"
+      (signInFailure)="errorCallback($event)"></firebase-ui>
   </responsive-wrapper>
 </ion-content>
 

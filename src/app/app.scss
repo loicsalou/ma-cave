@@ -1,6 +1,5 @@
 // http://ionicframework.com/docs/v2/theming/
 //@import "../theme/variables.scss";
-@import "../../node_modules/ionicons/dist/scss/ionicons.scss";
 @import "scss/base";
 @import "scss/layout";
 @import "scss/module";
@@ -35,14 +34,6 @@ $background-page-image: url('../assets/img/background/background2.jpeg');
 $background-page-image-webp: url('../assets/img/background/background2.webp');
 $white-transparency: .88;
 $tabs-background: #f8f8f8 !default;
-
-@font-face {
-  font-family: Ionicons;
-  font-display: swap;
-  src: url(../assets/fonts/ionicons.eot?v=4.1.1), url(../assets/fonts/ionicons.eot?v=4.1.1#iefix) format("embedded-opentype"), url(../assets/fonts/ionicons.woff2?v=4.1.1) format("woff2"), url(../assets/fonts/ionicons.woff?v=4.1.1) format("woff"), url(../assets/fonts/ionicons.ttf?v=4.1.1) format("truetype"), url(../assets/fonts/ionicons.svg?v=4.1.1#Ionicons) format("svg");
-  font-weight: 400;
-  font-style: normal
-}
 
 // mise en forme
 .webp .page {

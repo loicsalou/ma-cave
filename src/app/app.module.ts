@@ -6,7 +6,6 @@ import {TabsPage} from './tabs/tabs';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import 'chart.js/dist/Chart.bundle.min.js';
-import {EmailLoginPage} from './login/email-login.page';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {CoreModule} from './core.module';
 import {BottlesEffectsService} from './state/bottle.effects';
@@ -14,6 +13,46 @@ import {WithdrawalsEffectsService} from './state/withdrawals.effects';
 import {SharedEffectsService} from './state/shared.effects';
 import {SharedCoreModule} from '../components/shared-core.module';
 import {SplashScreen} from '@ionic-native/splash-screen';
+import {
+  AuthMethods,
+  AuthProvider,
+  AuthProviderWithCustomConfig,
+  CredentialHelper,
+  FirebaseUIAuthConfig,
+  FirebaseUIModule
+} from 'firebaseui-angular';
+
+const facebookCustomConfig: AuthProviderWithCustomConfig = {
+  provider: AuthProvider.Facebook,
+  customConfig: {
+    scopes: [
+      'public_profile',
+      'email',
+      'user_likes',
+      'user_friends'
+    ],
+    customParameters: {
+      // Forces password re-entry.
+      auth_type: 'reauthenticate'
+    }
+  }
+};
+
+const firebaseUiAuthConfig: FirebaseUIAuthConfig = {
+  providers: [
+    AuthProvider.Google,
+    facebookCustomConfig,
+    AuthProvider.Twitter,
+    AuthProvider.Github,
+    AuthProvider.Password,
+    AuthProvider.Phone
+  ],
+  method: AuthMethods.Popup,
+  tos: '<your-tos-link>',
+  credentialHelper: CredentialHelper.AccountChooser,
+  autoUpgradeAnonymousUsers: true,
+  disableSignInSuccessCallback: true
+};
 
 @NgModule({
             imports: [
@@ -24,6 +63,7 @@ import {SplashScreen} from '@ionic-native/splash-screen';
               CoreModule,
               HttpClientModule,
               SharedCoreModule,
+              FirebaseUIModule.forRoot(firebaseUiAuthConfig),
               TranslateModule.forRoot({
                                         loader: {
                                           provide: TranslateLoader,
@@ -34,12 +74,10 @@ import {SplashScreen} from '@ionic-native/splash-screen';
             ],
             declarations: [
               MyCaveApp,
-              EmailLoginPage,
               HomePage,
               TabsPage
             ],
             entryComponents: [
-              EmailLoginPage,
               HomePage,
               MyCaveApp,
               TabsPage
