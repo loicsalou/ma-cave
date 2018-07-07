@@ -33,7 +33,7 @@ const facebookCustomConfig: AuthProviderWithCustomConfig = {
     ],
     customParameters: {
       // Forces password re-entry.
-      auth_type: 'reauthenticate'
+      // auth_type: 'reauthenticate'
     }
   }
 };
@@ -42,13 +42,13 @@ const firebaseUiAuthConfig: FirebaseUIAuthConfig = {
   providers: [
     AuthProvider.Google,
     facebookCustomConfig,
-    AuthProvider.Twitter,
-    AuthProvider.Github,
-    AuthProvider.Password,
+    //AuthProvider.Twitter,
+    //AuthProvider.Github,
+    //AuthProvider.Password,
     AuthProvider.Phone
   ],
-  method: AuthMethods.Popup,
-  tos: '<your-tos-link>',
+  method: AuthMethods.Redirect,
+  //tos: '<your-tos-link>',  terms of service
   credentialHelper: CredentialHelper.AccountChooser,
   autoUpgradeAnonymousUsers: true,
   disableSignInSuccessCallback: true
