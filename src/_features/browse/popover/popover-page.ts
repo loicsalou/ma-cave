@@ -15,7 +15,8 @@ import {Observable} from 'rxjs';
                      <button ion-item (click)="choose(item)" class="flex-grow">
                        <span class="flex-grow">{{present(item.keywords)}}</span>
                      </button>
-                     <ion-icon name="trash" (click)="removeSearch($event, item)" style="padding:5px"></ion-icon>
+                     <cav-icon name="trash" (click)="removeSearch($event, item)"></cav-icon>
+                     <!--<ion-icon name="trash" (click)="removeSearch($event, item)" style="padding:5px"></ion-icon>-->
                    </div>
                  </ion-list>
                </div>`

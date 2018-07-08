@@ -31,6 +31,7 @@ export class HomePage implements OnInit {
 
   private isMobile: boolean = false;
   private loginSub: Subscription;
+  private loginStateSub: Subscription;
 
   constructor(public navCtrl: NavController,
               private notificationService: NotificationService,
@@ -39,14 +40,6 @@ export class HomePage implements OnInit {
               private loginService: LoginService,
               private angularFireAuth: AngularFireAuth) {
     this.install();
-    this.store.select(SharedQuery.getLoginUser).pipe(
-      filter(user => user != null),
-      take(1)
-    ).subscribe(
-      user => {
-        this.navigateToDashboard();
-      }
-    );
   }
 
   install() {
@@ -78,23 +71,39 @@ export class HomePage implements OnInit {
       map(state =>
             state.theme ? state.theme : 'cavus-theme')
     );
-    this.loginSub = this.angularFireAuth.authState.subscribe((firebaseUser: firebase.User) => {
-      if (firebaseUser) {
-        if (firebaseUser.email != null) {
-          const user = new FirebaseUser(firebaseUser);
-          this.store.dispatch(new LoginSuccessAction(user));
-        } else {
-          const user = new AnonymousUser();
-          this.store.dispatch(new LoginSuccessAction(user));
+    this.loginSub = this.angularFireAuth.authState
+    //.pipe(
+    //  take(1)
+    //)
+      .subscribe((firebaseUser: firebase.User) => {
+        if (firebaseUser != null) {
+          if (firebaseUser.email != null) {
+            const user = new FirebaseUser(firebaseUser);
+            this.store.dispatch(new LoginSuccessAction(user));
+          } else {
+            const user = new AnonymousUser();
+            this.store.dispatch(new LoginSuccessAction(user));
+          }
         }
-      } else {
-        console.log('Logged out :(');
-      }
-    });
+      });
+    this.loginStateSub = this.store.select(SharedQuery.getLoginUser)
+      .pipe(
+        filter(state => state != null)
+      )
+      .subscribe(
+        user => {
+          if (user) {
+            this.navigateToDashboard();
+          } else {
+            console.log('Logged out !');
+          }
+        }
+      );
   }
 
   ngOnDestroy() {
     this.loginSub.unsubscribe();
+    this.loginStateSub.unsubscribe();
   }
 
   successCallback(event: firebase.User): boolean {

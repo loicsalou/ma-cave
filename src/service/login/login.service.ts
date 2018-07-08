@@ -2,8 +2,6 @@ import {Subscription} from 'rxjs';
 import {User} from '../../model/user';
 import {AnonymousLoginService} from './anonymous-login.service';
 import {AbstractLoginService} from './abstract-login.service';
-import {Store} from '@ngrx/store';
-import {ApplicationState} from '../../app/state/app.state';
 import {TranslateService} from '@ngx-translate/core';
 import {AlertController} from 'ionic-angular';
 import {OnDestroy} from '@angular/core';
@@ -23,8 +21,7 @@ export class LoginService implements OnDestroy {
 
   constructor(private anoLogin: AnonymousLoginService,
               private translateService: TranslateService,
-              private alertController: AlertController,
-              private store: Store<ApplicationState>) {
+              private alertController: AlertController) {
   }
 
   get user(): User {
@@ -61,7 +58,6 @@ export class LoginService implements OnDestroy {
   @traced
   logout() {
     firebase.auth().signOut();
-    this.currentLoginService.logout();
   }
 
   @traced

@@ -16,7 +16,7 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  console.info('service worker fetched '+JSON.stringify(event));
+  // console.info('service worker fetched '+JSON.stringify(event));
 });
 
 self.addEventListener('activate', (event) => {

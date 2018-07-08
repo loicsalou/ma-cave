@@ -31,7 +31,6 @@ import {FirebaseAdminService} from '../service/firebase/firebase-admin.service';
 import {WithdrawalFactory} from '../model/withdrawal.factory';
 import {FirebaseWithdrawalsService} from '../service/firebase/firebase-withdrawals.service';
 import {AngularFireStorageModule} from 'angularfire2/storage';
-import {AuthServiceConfig, FacebookLoginProvider, GoogleLoginProvider, SocialLoginModule} from 'angularx-social-login';
 import {LoginService} from '../service/login/login.service';
 
 export const fireConfig = {
@@ -43,21 +42,6 @@ export const fireConfig = {
   messagingSenderId: '58435015061'
 };
 
-let config = new AuthServiceConfig([
-                                     {
-                                       id: FacebookLoginProvider.PROVIDER_ID,
-                                       provider: new FacebookLoginProvider('253712085111353')
-                                     },
-                                     {
-                                       id: GoogleLoginProvider.PROVIDER_ID,
-                                       provider: new GoogleLoginProvider('58435015061-ailcis9set5np4lu2qm6u46rb6r1gt8r.apps.googleusercontent.com')
-                                     }
-                                   ]);
-
-export function authServiceConfig() {
-  return config;
-}
-
 @NgModule({
             imports: [
               BrowserModule,
@@ -65,7 +49,6 @@ export function authServiceConfig() {
               AngularFireAuthModule,
               AngularFireDatabaseModule,
               AngularFireStorageModule,
-              SocialLoginModule,
               StoreModule.forRoot(ROOT_REDUCERS, {
                 metaReducers: META_REDUCERS
               }),
@@ -74,10 +57,6 @@ export function authServiceConfig() {
             ],
             providers: [
               {provide: 'GLOBAL_CONFIG', useValue: appConfig},
-              {
-                provide: AuthServiceConfig,
-                useFactory: authServiceConfig
-              },
               HttpClient,
               TranslateService,
 
@@ -85,7 +64,7 @@ export function authServiceConfig() {
               {
                 provide: LoginService,
                 useFactory: (createLoginFactory),
-                deps: [ AnonymousLoginService, TranslateService, NotificationService, Store ]
+                deps: [ AnonymousLoginService, TranslateService, NotificationService ]
               },
               {
                 provide: NotificationService,
@@ -116,8 +95,8 @@ export class CoreModule {
 }
 
 export function createLoginFactory(ano: AnonymousLoginService, ts: TranslateService,
-                                   ac: AlertController, store: Store<ApplicationState>) {
-  return new LoginService(ano, ts, ac, store);
+                                   ac: AlertController) {
+  return new LoginService(ano, ts, ac);
 }
 
 export function createNotificationFactory(alrt: AlertController, toast: ToastController, translate: TranslateService,

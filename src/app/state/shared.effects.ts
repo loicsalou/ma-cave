@@ -19,6 +19,7 @@ import {LoginService} from '../../service/login/login.service';
 import {User} from '../../model/user';
 import {logInfo} from '../../utils';
 import {throwError} from 'rxjs';
+import {NavController} from 'ionic-angular';
 
 @Injectable()
 export class SharedEffectsService {
@@ -43,7 +44,16 @@ export class SharedEffectsService {
     .ofType(SharedActionTypes.LogoutActionType).pipe(
       tap((action: LogoutAction) => {
             this.loginService.logout();
-          }
+            //if (!HomePage.loggedIn) {
+            //  this.navCtrl.setRoot(HomePage);
+            //  this.navCtrl.popToRoot();
+              setTimeout(() => {
+                           window.history.pushState({}, '', '/');
+                           window.location.reload();
+                         }
+                , 100);
+            }
+          //}
       )
     );
 
