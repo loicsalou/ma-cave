@@ -30,6 +30,17 @@
   }
 }
 
+@mixin makeIonIcon($arg, $val) {
+  .ion-#{$arg}:before,
+  .ion-ios-#{$arg}:before,
+  .ion-ios-#{$arg}-outline:before,
+  .ion-md-#{$arg}:before,
+  .ion-md-#{$arg}-outline:before {
+    content: $val;
+  }
+}
+
+ion-icon,
 [class^="cav-"]:before, [class*=" cav-"]:before,
 [class^="ion-ios-cav-"]:before, [class*=" ion-ios-cav-"]:before,
 [class^="ion-md-cav-"]:before, [class*=" ion-md-cav-"]:before {
@@ -161,6 +172,8 @@
 @include makeIcon(up, "\F176")
 
 @include makeIcon(left, "\F177")
+
+@include makeIonIcon(arrow-back, "\F177")
 
 @include makeIcon(right, "\F178")
 
