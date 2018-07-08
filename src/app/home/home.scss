@@ -2,7 +2,6 @@
 
 .webp {
   .login-block span {
-    max-width: 30px;
     max-height: 30px;
     min-width: 30px;
     min-height: 30px;
@@ -13,27 +12,11 @@
       background-size: contain;
       background-repeat: no-repeat;
     }
-    &.login-email {
-      background: url('../../assets/icon/email-login-120.webp');
-      background-size: contain;
-      background-repeat: no-repeat;
-    }
-    &.login-google {
-      background: url('../../assets/icon/google-login-120.webp');
-      background-size: contain;
-      background-repeat: no-repeat;
-    }
-    &.login-facebook {
-      background: url('../../assets/icon/social_facebook_box_blue-120.webp');
-      background-size: contain;
-      background-repeat: no-repeat;
-    }
   }
 }
 
 .no-webp {
   .login-block span {
-    max-width: 30px;
     max-height: 30px;
     min-width: 30px;
     min-height: 30px;
@@ -41,21 +24,6 @@
 
     &.login-anonymous {
       background: url('../../assets/icon/anonymous-120.png');
-      background-size: contain;
-      background-repeat: no-repeat;
-    }
-    &.login-email {
-      background: url('../../assets/icon/email-login-120.png');
-      background-size: contain;
-      background-repeat: no-repeat;
-    }
-    &.login-google {
-      background: url('../../assets/icon/google-login-120.png');
-      background-size: contain;
-      background-repeat: no-repeat;
-    }
-    &.login-facebook {
-      background: url('../../assets/icon/social_facebook_box_blue-120.png');
       background-size: contain;
       background-repeat: no-repeat;
     }
@@ -90,25 +58,21 @@ ion-content.home div.login {
   fieldset {
     background: rgba(255, 255, 255, 0.5);
     position: relative;
-    top: 60%;
+    top: 30%;
   }
 }
 
-button[badge] {
-  height: 60px;
-  width: 60px;
-  border-radius: 50%;
+button[data-provider-id="anonymous"],button[data-provider-id="anonymous"]:hover {
   background-color: map-get($colors, light);
-  color: map-get($colors, primary);
-  transition: transform 1s, scale .5s;
 
-  &.clicked {
-    transform: rotate(360deg) scale(1.2, 1.2);
+  > span.firebaseui-idp-text {
+    color: #757575;
   }
 }
 
 div[d-flex] {
   align-self: center;
   display: flex;
+  flex-direction: column;
   justify-content: space-around;
 }

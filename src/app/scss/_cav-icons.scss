@@ -30,6 +30,19 @@
   }
 }
 
+//petit hack pour l'icône back à reporter pour tout changement des icônes
+@mixin makeIonIcon($arg, $val) {
+  .ion-#{$arg}:before,
+  .ion-ios-#{$arg}:before,
+  .ion-ios-#{$arg}-outline:before,
+  .ion-md-#{$arg}:before,
+  .ion-md-#{$arg}-outline:before {
+    content: $val;
+  }
+}
+
+//petit hack pour l'icône back à reporter pour tout changement des icônes
+ion-icon.back-button-icon,
 [class^="cav-"]:before, [class*=" cav-"]:before,
 [class^="ion-ios-cav-"]:before, [class*=" ion-ios-cav-"]:before,
 [class^="ion-md-cav-"]:before, [class*=" ion-md-cav-"]:before {
@@ -97,6 +110,9 @@
 @include makeIcon(down-open, "\E80D")
 
 @include makeIcon(left-open, "\E80E")
+
+//petit hack pour l'icône back à reporter pour tout changement des icônes
+@include makeIonIcon(arrow-back, "\E80E")
 
 @include makeIcon(right-open, "\E80F")
 

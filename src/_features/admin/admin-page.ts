@@ -59,13 +59,13 @@ export class AdminPage {
 
   logout() {
     this.store.dispatch(new LogoutAction());
-    this.navCtrl.setRoot(HomePage);
-    this.navCtrl.popToRoot();
-    setTimeout(() => {
-                 window.history.pushState({}, '', '/');
-                 window.location.reload();
-               }
-      , 100);
+    //this.navCtrl.setRoot(HomePage);
+    //this.navCtrl.popToRoot();
+    //setTimeout(() => {
+    //             window.history.pushState({}, '', '/');
+    //             //window.location.reload();
+    //           }
+    //  , 100);
   }
 
   public platformIsCordova(): boolean {

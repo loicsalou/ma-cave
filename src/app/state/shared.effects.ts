@@ -1,13 +1,12 @@
 import {Injectable} from '@angular/core';
 import {Actions, Effect} from '@ngrx/effects';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
-import {catchError, map, switchMap, tap} from 'rxjs/operators';
+import {map, switchMap, tap} from 'rxjs/operators';
 import {
   DeleteAccountAction,
   LoadSharedAction,
   LoadSharedSuccessAction,
   LoginAction,
-  LoginFailAction,
   LoginSuccessAction,
   LogoutAction,
   SharedActionTypes,
@@ -19,6 +18,8 @@ import {UserPreferences} from '../../model/user-preferences';
 import {LoginService} from '../../service/login/login.service';
 import {User} from '../../model/user';
 import {logInfo} from '../../utils';
+import {throwError} from 'rxjs';
+import {NavController} from 'ionic-angular';
 
 @Injectable()
 export class SharedEffectsService {
@@ -43,7 +44,16 @@ export class SharedEffectsService {
     .ofType(SharedActionTypes.LogoutActionType).pipe(
       tap((action: LogoutAction) => {
             this.loginService.logout();
-          }
+            //if (!HomePage.loggedIn) {
+            //  this.navCtrl.setRoot(HomePage);
+            //  this.navCtrl.popToRoot();
+              setTimeout(() => {
+                           window.history.pushState({}, '', '/');
+                           window.location.reload();
+                         }
+                , 100);
+            }
+          //}
       )
     );
 
@@ -69,7 +79,7 @@ export class SharedEffectsService {
   @Effect({dispatch: false}) deleteAccount$ = this.actions$
     .ofType(SharedActionTypes.DeleteAccountActionType).pipe(
       tap((action: DeleteAccountAction) => this.withdrawalsService.deleteAccountData().subscribe(
-        result => this.loginService.deleteAccount()
+        result => throwError('Delete account not implemented !')
           )
       )
     );

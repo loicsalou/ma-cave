@@ -1,7 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {Modal, ModalController, NavController, Platform, ToastController} from 'ionic-angular';
-import {EmailLoginPage} from '../login/email-login.page';
-import {User} from '../../model/user';
+import {NavController, Platform} from 'ionic-angular';
+import {FirebaseUser} from '../../model/user';
 import {TabsPage} from '../tabs/tabs';
 import {Observable} from 'rxjs';
 import {NotificationService} from '../../service/notification.service';
@@ -11,32 +10,35 @@ import {Store} from '@ngrx/store';
 import {LoadBottlesAction} from '../state/bottles.actions';
 import {SharedQuery} from '../state/shared.state';
 import {filter, map, take, tap} from 'rxjs/operators';
-import {isMobileDevice} from '../../utils';
-import {LoginAction} from '../state/shared.actions';
+import {isMobileDevice, logInfo} from '../../utils';
 import {traced} from '../../utils/decorators';
 import {Subscription} from 'rxjs/Subscription';
+import {AngularFireAuth} from 'angularfire2/auth';
+import {LoginSuccessAction} from '../state/shared.actions';
+import * as firebase from 'firebase';
+import {LoginService} from '../../service/login/login.service';
+import {AnonymousUser} from '../../service/login/anonymous-login.service';
 
 @Component({
              selector: 'page-home',
              templateUrl: 'home.html',
              changeDetection: ChangeDetectionStrategy.OnPush
-             // styleUrls:[ 'home.scss' ]
            })
 export class HomePage implements OnInit {
   public static loggedIn = false;
   version: any;
   currentTheme$: Observable<string>;
 
-  private loginPage: Modal;
   private isMobile: boolean = false;
   private loginSub: Subscription;
+  private loginStateSub: Subscription;
 
   constructor(public navCtrl: NavController,
-              private modalController: ModalController,
               private notificationService: NotificationService,
               private platform: Platform,
-              private toastCtrl: ToastController,
-              private store: Store<ApplicationState>) {
+              private store: Store<ApplicationState>,
+              private loginService: LoginService,
+              private angularFireAuth: AngularFireAuth) {
     this.install();
   }
 
@@ -69,60 +71,54 @@ export class HomePage implements OnInit {
       map(state =>
             state.theme ? state.theme : 'cavus-theme')
     );
-  }
-
-  @traced
-  facebookLogin() {
-    this.store.dispatch(new LoginAction('FACEBOOK'));
-    this.waitForLogin();
-  }
-
-  @traced
-  emailLogin() {
-    this.loginPage = this.modalController.create(EmailLoginPage);
-    // la page dispatche l'action de login
-    this.loginPage.present();
-    this.waitForLogin();
-  }
-
-  @traced
-  googleLogin() {
-    this.store.dispatch(new LoginAction('GOOGLE'));
-    this.waitForLogin();
-  }
-
-  @traced
-  anonymousLogin() {
-    this.store.dispatch(new LoginAction('ANONYMOUS'));
-    this.waitForLogin();
-  }
-
-  @traced
-  private handleLoginEvent(user: User) {
-    if (user !== undefined) {
-      HomePage.loggedIn = true;
-      this.store.dispatch(new LoadBottlesAction());
-      this.navCtrl.setRoot(TabsPage);
-    }
-  }
-
-  @traced
-  private waitForLogin() {
-    this.store.select(SharedQuery.getLoginUser).pipe(
-      filter(user => user !== undefined),
-      tap(() => {
-        if (this.loginPage) {
-          this.loginPage.dismiss();
+    this.loginSub = this.angularFireAuth.authState
+    //.pipe(
+    //  take(1)
+    //)
+      .subscribe((firebaseUser: firebase.User) => {
+        if (firebaseUser != null) {
+          if (firebaseUser.email != null) {
+            const user = new FirebaseUser(firebaseUser);
+            this.store.dispatch(new LoginSuccessAction(user));
+          } else {
+            const user = new AnonymousUser();
+            this.store.dispatch(new LoginSuccessAction(user));
+          }
         }
-      }),
-      take(1)
-    ).subscribe(
-      (user: User) => this.handleLoginEvent(user)
-    );
+      });
+    this.loginStateSub = this.store.select(SharedQuery.getLoginUser)
+      .pipe(
+        filter(state => state != null)
+      )
+      .subscribe(
+        user => {
+          if (user) {
+            this.navigateToDashboard();
+          } else {
+            console.log('Logged out !');
+          }
+        }
+      );
   }
 
-  private handleError(err) {
-    this.notificationService.error(err);
+  ngOnDestroy() {
     this.loginSub.unsubscribe();
+    this.loginStateSub.unsubscribe();
+  }
+
+  successCallback(event: firebase.User): boolean {
+    logInfo('login success ' + event);
+    return true;
+  }
+
+  loginAnonymous() {
+    this.loginService.anonymousLogin();
+  }
+
+  @traced
+  private navigateToDashboard() {
+    HomePage.loggedIn = true;
+    this.store.dispatch(new LoadBottlesAction());
+    this.navCtrl.setRoot(TabsPage);
   }
 }

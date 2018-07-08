@@ -14,9 +14,13 @@ import {BottleFactory} from '../../model/bottle.factory';
 import {User} from '../../model/user';
 import {Locker} from '../../model/locker';
 import {logInfo, sanitizeBeforeSave} from '../../utils/index';
-import {map, tap, throttleTime} from 'rxjs/operators';
+import {filter, map, take, tap, throttleTime} from 'rxjs/operators';
 import Reference = firebase.database.Reference;
 import * as firebase from 'firebase/app';
+import {SharedQuery} from '../../app/state/shared.state';
+import {store} from '@angular/core/src/render3/instructions';
+import {Store} from '@ngrx/store';
+import {ApplicationState} from '../../app/state/app.state';
 
 /**
  * Services related to the bottles in the cellar.
@@ -36,7 +40,14 @@ export class FirebaseBottlesService {
 
   constructor(private bottleFactory: BottleFactory,
               private angularFirebase: AngularFireDatabase,
-              private notificationService: NotificationService, @Inject('GLOBAL_CONFIG') private config) {
+              private notificationService: NotificationService, @Inject('GLOBAL_CONFIG') private config,
+              private store: Store<ApplicationState>) {
+    store.select(SharedQuery.getLoginUser).pipe(
+      filter(user => user != null),
+      take(1)
+    ).subscribe(
+      (user: User) => this.initialize(user)
+    );
   }
 
   public initialize(user: User) {

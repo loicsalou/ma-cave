@@ -7,21 +7,21 @@
   <responsive-wrapper>
     <div class="login">
       <fieldset>
-        <div d-flex class="login-block">
-          <button ion-button badge [class.clicked]="fbidentifying" (click)="facebookLogin()"
-                  aria-label="Login Facebook">
-            <span class="login-facebook"></span>
-          </button>
-          <button ion-button badge [class.clicked]="mailidentifying" (click)="emailLogin()" aria-label="Login e-mail">
-            <span class="login-email"></span>
-          </button>
-          <button ion-button badge [class.clicked]="anoidentifying" (click)="anonymousLogin()"
-                  aria-label="Login Anonyme">
-            <span class="login-anonymous"></span>
-          </button>
-          <button ion-button badge [class.clicked]="gglidentifying" (click)="googleLogin()" aria-label="Login Google">
-            <span class="login-google"></span>
-          </button>
+        <div d-flex>
+          <div d-flex class="login-block">
+            <firebase-ui
+              (signInSuccessWithAuthResult)="successCallback($event)"
+              (signInFailure)="errorCallback($event)"></firebase-ui>
+            <div class="firebaseui-card-content">
+              <button
+                class="firebaseui-idp-button mdl-button mdl-js-button mdl-button--raised firebaseui-id-idp-button"
+                data-provider-id="anonymous" (click)="loginAnonymous()">
+                <span class="firebaseui-idp-icon-wrapper login-anonymous"></span>
+                <span class="firebaseui-idp-text firebaseui-idp-text-long">Démonstration</span>
+                <span class="firebaseui-idp-text firebaseui-idp-text-short">Démo</span>
+              </button>
+            </div>
+          </div>
         </div>
       </fieldset>
     </div>
