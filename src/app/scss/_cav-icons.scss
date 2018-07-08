@@ -30,6 +30,7 @@
   }
 }
 
+//petit hack pour l'icône back à reporter pour tout changement des icônes
 @mixin makeIonIcon($arg, $val) {
   .ion-#{$arg}:before,
   .ion-ios-#{$arg}:before,
@@ -40,7 +41,8 @@
   }
 }
 
-ion-icon,
+//petit hack pour l'icône back à reporter pour tout changement des icônes
+ion-icon.back-button-icon,
 [class^="cav-"]:before, [class*=" cav-"]:before,
 [class^="ion-ios-cav-"]:before, [class*=" ion-ios-cav-"]:before,
 [class^="ion-md-cav-"]:before, [class*=" ion-md-cav-"]:before {
@@ -109,6 +111,9 @@ ion-icon,
 
 @include makeIcon(left-open, "\E80E")
 
+//petit hack pour l'icône back à reporter pour tout changement des icônes
+@include makeIonIcon(arrow-back, "\E80E")
+
 @include makeIcon(right-open, "\E80F")
 
 @include makeIcon(up-open, "\E810")
@@ -172,8 +177,6 @@ ion-icon,
 @include makeIcon(up, "\F176")
 
 @include makeIcon(left, "\F177")
-
-@include makeIonIcon(arrow-back, "\F177")
 
 @include makeIcon(right, "\F178")
 
