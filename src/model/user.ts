@@ -16,9 +16,16 @@ export class User {
 export class FirebaseUser extends User {
   constructor(user: firebase.User) {
     super();
+    if (user.email==null) {
+      this.email='cave.explorer@gmail.com';
+    }
+    if (user.email==null) {
+      this.email='cave.explorer@gmail.com';
+    }
     this.user = user.email.replace(/[\.]/g, '');
-    this.user = this.user.replace(/[#.]/g, '');
     this.email = user.email;
+    this.user = this.user.replace(/[#.]/g, '');
+
     this.photoURL = user.photoURL;
     this.uid = user.uid;
     this.phoneNumber = user.phoneNumber;

@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {ModalController, NavController, Platform, ToastController} from 'ionic-angular';
-import {FirebaseUser, User} from '../../model/user';
+import {NavController, Platform} from 'ionic-angular';
+import {FirebaseUser} from '../../model/user';
 import {TabsPage} from '../tabs/tabs';
 import {Observable} from 'rxjs';
 import {NotificationService} from '../../service/notification.service';
@@ -16,6 +16,8 @@ import {Subscription} from 'rxjs/Subscription';
 import {AngularFireAuth} from 'angularfire2/auth';
 import {LoginSuccessAction} from '../state/shared.actions';
 import * as firebase from 'firebase';
+import {LoginService} from '../../service/login/login.service';
+import {AnonymousUser} from '../../service/login/anonymous-login.service';
 
 @Component({
              selector: 'page-home',
@@ -31,21 +33,20 @@ export class HomePage implements OnInit {
   private loginSub: Subscription;
 
   constructor(public navCtrl: NavController,
-              private modalController: ModalController,
               private notificationService: NotificationService,
               private platform: Platform,
-              private toastCtrl: ToastController,
               private store: Store<ApplicationState>,
+              private loginService: LoginService,
               private angularFireAuth: AngularFireAuth) {
     this.install();
     this.store.select(SharedQuery.getLoginUser).pipe(
-      filter(user => user!=null),
+      filter(user => user != null),
       take(1)
     ).subscribe(
       user => {
         this.navigateToDashboard();
       }
-    )
+    );
   }
 
   install() {
@@ -79,8 +80,13 @@ export class HomePage implements OnInit {
     );
     this.loginSub = this.angularFireAuth.authState.subscribe((firebaseUser: firebase.User) => {
       if (firebaseUser) {
-        const user = new FirebaseUser(firebaseUser);
-        this.store.dispatch(new LoginSuccessAction(user));
+        if (firebaseUser.email != null) {
+          const user = new FirebaseUser(firebaseUser);
+          this.store.dispatch(new LoginSuccessAction(user));
+        } else {
+          const user = new AnonymousUser();
+          this.store.dispatch(new LoginSuccessAction(user));
+        }
       } else {
         console.log('Logged out :(');
       }
@@ -92,14 +98,18 @@ export class HomePage implements OnInit {
   }
 
   successCallback(event: firebase.User): boolean {
-    logInfo('login success '+event);
+    logInfo('login success ' + event);
     return true;
+  }
+
+  loginAnonymous() {
+    this.loginService.anonymousLogin();
   }
 
   @traced
   private navigateToDashboard() {
-      HomePage.loggedIn = true;
-      this.store.dispatch(new LoadBottlesAction());
-      this.navCtrl.setRoot(TabsPage);
+    HomePage.loggedIn = true;
+    this.store.dispatch(new LoadBottlesAction());
+    this.navCtrl.setRoot(TabsPage);
   }
 }

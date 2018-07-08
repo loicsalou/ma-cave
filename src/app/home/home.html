@@ -5,9 +5,26 @@
 <ion-content align-items-center class="home card-background-page page"
              [ngClass]="currentTheme$ | async">
   <responsive-wrapper>
-    <firebase-ui
-      (signInSuccessWithAuthResult)="successCallback($event)"
-      (signInFailure)="errorCallback($event)"></firebase-ui>
+    <div class="login">
+      <fieldset>
+        <div d-flex>
+          <div d-flex class="login-block">
+            <firebase-ui
+              (signInSuccessWithAuthResult)="successCallback($event)"
+              (signInFailure)="errorCallback($event)"></firebase-ui>
+            <div class="firebaseui-card-content">
+              <button
+                class="firebaseui-idp-button mdl-button mdl-js-button mdl-button--raised firebaseui-id-idp-button"
+                data-provider-id="anonymous" (click)="loginAnonymous()">
+                <span class="firebaseui-idp-icon-wrapper login-anonymous"></span>
+                <span class="firebaseui-idp-text firebaseui-idp-text-long">Démonstration</span>
+                <span class="firebaseui-idp-text firebaseui-idp-text-short">Démo</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </div>
   </responsive-wrapper>
 </ion-content>
 

@@ -44,8 +44,8 @@ const firebaseUiAuthConfig: FirebaseUIAuthConfig = {
     facebookCustomConfig,
     //AuthProvider.Twitter,
     //AuthProvider.Github,
-    //AuthProvider.Password,
-    AuthProvider.Phone
+    AuthProvider.Password,
+    //AuthProvider.Phone
   ],
   method: AuthMethods.Redirect,
   //tos: '<your-tos-link>',  terms of service

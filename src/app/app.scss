@@ -35,6 +35,10 @@ $background-page-image-webp: url('../assets/img/background/background2.webp');
 $white-transparency: .88;
 $tabs-background: #f8f8f8 !default;
 
+.firebaseui-card-content .firebaseui-idp-button:hover {
+  box-shadow: 0px 0px 10px 3px darken(darkgrey, 50%);
+}
+
 // mise en forme
 .webp .page {
   background: $background-page-image-webp;
