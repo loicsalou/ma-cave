@@ -5,19 +5,29 @@
   @import "./md";
 
   .checkbox-checked {
-    border-color: map-get($colors-cavus, buttonBackground);
-    background-color: map-get($colors-cavus, buttonBackground);
+    border-color: map-get($colors-cavus, primary);
+    background-color: map-get($colors-cavus, primary);
   }
 
   ion-avatar ion-icon {
     color: map-get($colors-cavus, primary);
   }
 
+  bottle-action {
+    background-color: map-get($colors-cavus, primary);
+  }
+
   button[ion-fab],
   button[menuToggle],
-  ion-item-sliding button[ion-button] ion-icon {
-    background-color: map-get($colors-cavus, buttonBackground);
+  ion-item-sliding button[ion-button] cav-icon {
+    background-color: map-get($colors-cavus, primary);
     color: map-get($colors-cavus, light);
+    font-size: 27px;
+  }
+
+  ion-item-sliding button[ion-button] cav-icon.favorite {
+    color: map-get($colors-cavus, favorite);
+    font-size: 27px;
   }
 
   ion-item-sliding button[ion-button] {
@@ -31,6 +41,10 @@
     }
     .searchbar-clear-icon {
       background-color: transparent;
+    }
+
+    cav-icon.cav-search {
+      color: white;
     }
   }
 

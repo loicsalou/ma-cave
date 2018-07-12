@@ -1,2 +1,15 @@
+@import "./variables";
+
 .default-theme {
+
+  button[ion-fab],
+  button[menuToggle],
+  ion-item-sliding button[ion-button] cav-icon {
+    font-size: 27px;
+  }
+
+  ion-item-sliding button[ion-button] cav-icon.favorite {
+    color: map-get($colors, favorite);
+    font-size: 27px;
+  }
 }
