@@ -30,7 +30,6 @@ import {SplashScreen} from '@ionic-native/splash-screen';
 import {DeviceFeedback} from '@ionic-native/device-feedback';
 import {StatusBar} from '@ionic-native/status-bar';
 import {Network} from '@ionic-native/network';
-import {NativeProvider} from '../providers/native/native';
 import {NotificationService} from '../service/notification.service';
 import {IconComponent} from './icon/icon.component';
 
@@ -84,12 +83,6 @@ import {IconComponent} from './icon/icon.component';
               ZoomableDirective
             ],
             providers: [
-              NativeProvider,
-              AndroidPermissions,
-              DeviceFeedback,
-              Network,
-              SplashScreen,
-              StatusBar,
               {provide: ErrorHandler, deps: [ FirebaseAdminService ], useClass: CaveErrorHandler}
             ],
             schemas: [

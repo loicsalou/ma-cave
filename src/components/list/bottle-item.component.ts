@@ -1,7 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Bottle} from '../../model/bottle';
 import {ItemSliding, NavController} from 'ionic-angular';
-import {NativeProvider} from '../../providers/native/native';
 import {ApplicationState} from '../../app/state/app.state';
 import {Store} from '@ngrx/store';
 import {
@@ -27,7 +26,7 @@ export class BottleItemComponent implements OnInit {
   onSelected: EventEmitter<{ bottle: Bottle, selected: boolean }> = new EventEmitter();
 
   constructor(private store: Store<ApplicationState>,
-              private navCtrl: NavController, private nativeProvider: NativeProvider) {
+              private navCtrl: NavController) {
   }
 
   ngOnInit() {
@@ -57,7 +56,6 @@ export class BottleItemComponent implements OnInit {
   }
 
   locateBottle(event: Event, slidingItem: ItemSliding, bottle: Bottle) {
-    this.nativeProvider.feedBack();
     event.stopPropagation();
     if (slidingItem) {
       slidingItem.close();
@@ -67,7 +65,6 @@ export class BottleItemComponent implements OnInit {
   }
 
   addToFavorite(event: Event, slidingItem: ItemSliding, bottle: Bottle) {
-    this.nativeProvider.feedBack();
     event.stopPropagation();
     let updatedBottle = new Bottle(bottle);
     updatedBottle.favorite = !bottle.favorite;

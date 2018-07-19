@@ -32,6 +32,7 @@ import {WithdrawalFactory} from '../model/withdrawal.factory';
 import {FirebaseWithdrawalsService} from '../service/firebase/firebase-withdrawals.service';
 import {AngularFireStorageModule} from 'angularfire2/storage';
 import {LoginService} from '../service/login/login.service';
+import {AngularFirestoreModule} from 'angularfire2/firestore';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -49,6 +50,7 @@ export const fireConfig = {
               AngularFireAuthModule,
               AngularFireDatabaseModule,
               AngularFireStorageModule,
+              AngularFirestoreModule.enablePersistence(),
               StoreModule.forRoot(ROOT_REDUCERS, {
                 metaReducers: META_REDUCERS
               }),

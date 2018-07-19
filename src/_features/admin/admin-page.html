@@ -104,14 +104,7 @@
         <label>Vidage de la base avant importation</label>
         <ion-checkbox id="deleteBefore" [(ngModel)]="deleteBefore"></ion-checkbox>
         
-        <div *ngIf="platformIsCordova()">
-          <button ion-button align-items-start round icon-only block (click)="chooseFile()">
-            <cav-icon name="upload"></cav-icon>
-            Importer...
-          </button>
-        </div>
-        
-        <div *ngIf="! platformIsCordova()">
+        <div>
           <input type="file" id="input" (change)="readBrowserFile($event)">
         </div>
         <ng-container *ngIf="user$ | async as user">

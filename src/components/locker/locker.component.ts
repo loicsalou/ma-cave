@@ -2,7 +2,6 @@ import {EventEmitter, Input, OnChanges, Output, ViewChild} from '@angular/core';
 import {Bottle} from '../../model/bottle';
 import {Gesture} from 'ionic-angular';
 import {Dimension} from '../../model/locker';
-import {NativeProvider} from '../../providers/native/native';
 import {SimpleLocker} from '../../model/simple-locker';
 import {ZoomableDirective} from '../zoomable.directive';
 import {Cell} from './cell';
@@ -29,7 +28,7 @@ export abstract class LockerComponent implements OnChanges {
 
   selected: boolean = false;
 
-  constructor(private nativeProvider: NativeProvider) {
+  constructor() {
   }
 
   abstract get dimension(): Dimension;
@@ -76,7 +75,6 @@ export abstract class LockerComponent implements OnChanges {
   }
 
   protected hapticConfirm() {
-    this.nativeProvider.feedBack();
   }
 
   protected setupPinchZoom(elm: HTMLElement, initScale: number = 1): Gesture {
