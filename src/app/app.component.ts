@@ -1,9 +1,7 @@
 import {Component} from '@angular/core';
 import {Platform} from 'ionic-angular';
 import {TranslateService} from '@ngx-translate/core';
-import {SplashScreen} from '@ionic-native/splash-screen';
 import {HomePage} from './home/home';
-import {logInfo} from '../utils';
 
 @Component({
              templateUrl: 'app.html'
