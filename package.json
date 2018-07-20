@@ -53,6 +53,7 @@
     "loglevel": "1.6.1",
     "ng2-charts": "1.6.0",
     "rxjs": "6.2.2",
+    "rxjs-compat": "6.2.2",
     "rxjs-tslint": "0.1.5",
     "text-encoding": "0.6.4",
     "workbox-sw": "3.4.1",

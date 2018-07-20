@@ -6,7 +6,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {AlertController} from 'ionic-angular';
 import {OnDestroy} from '@angular/core';
 import * as firebase from 'firebase/app';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {traced} from '../../utils/decorators';
 
 export type LOGINTYPE = 'FIREBASE' | 'ANONYMOUS';
