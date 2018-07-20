@@ -13,60 +13,60 @@
 <ion-content padding class="update-locker-page page">
   <ng-container *ngIf="lockerAndBottles$ | async as lockerAndBottles">
     <ion-fab middle center *ngIf="isEditable">
-      <button ion-fab mini>
+      <button ion-fab mini class="ripple">
         <cav-icon name="plus"></cav-icon>
       </button>
       <ion-fab-list side="top">
-        <button ion-fab (click)="lockerComponent.removeTopRow()">
+        <button ion-fab (click)="lockerComponent.removeTopRow()" class="ripple">
           <cav-icon name="minus"></cav-icon>
         </button>
-        <button ion-fab (click)="lockerComponent.addTopRow()">
+        <button ion-fab (click)="lockerComponent.addTopRow()" class="ripple">
           <cav-icon name="plus"></cav-icon>
         </button>
       </ion-fab-list>
       <ion-fab-list side="right">
-        <button ion-fab (click)="lockerComponent.removeRightColumn()">
+        <button ion-fab (click)="lockerComponent.removeRightColumn()" class="ripple">
           <cav-icon name="minus"></cav-icon>
         </button>
-        <button ion-fab (click)="lockerComponent.addRightColumn()">
+        <button ion-fab (click)="lockerComponent.addRightColumn()" class="ripple">
           <cav-icon name="plus"></cav-icon>
         </button>
       </ion-fab-list>
       <ion-fab-list side="bottom">
-        <button ion-fab (click)="lockerComponent.removeBottomRow()">
+        <button ion-fab (click)="lockerComponent.removeBottomRow()" class="ripple">
           <cav-icon name="minus"></cav-icon>
         </button>
-        <button ion-fab (click)="lockerComponent.addBottomRow()">
+        <button ion-fab (click)="lockerComponent.addBottomRow()" class="ripple">
           <cav-icon name="plus"></cav-icon>
         </button>
       </ion-fab-list>
       <ion-fab-list side="left">
-        <button ion-fab (click)="lockerComponent.removeLeftColumn()">
+        <button ion-fab (click)="lockerComponent.removeLeftColumn()" class="ripple">
           <cav-icon name="minus"></cav-icon>
         </button>
-        <button ion-fab (click)="lockerComponent.addLeftColumn()">
+        <button ion-fab (click)="lockerComponent.addLeftColumn()" class="ripple">
           <cav-icon name="plus"></cav-icon>
         </button>
       </ion-fab-list>
     </ion-fab>
     
     <ion-fab middle center *ngIf="!isEditable">
-      <button ion-fab mini>
+      <button ion-fab mini class="ripple">
         <cav-icon name="plus"></cav-icon>
       </button>
       <ion-fab-list side="top">
-        <button ion-fab (click)="lockerComponent.removeTopRack()">
+        <button ion-fab (click)="lockerComponent.removeTopRack()" class="ripple">
           <cav-icon name="remove-circled"></cav-icon>
         </button>
-        <button ion-fab (click)="lockerComponent.addTopRack()">
+        <button ion-fab (click)="lockerComponent.addTopRack()" class="ripple">
           <cav-icon name="plus-circled"></cav-icon>
         </button>
       </ion-fab-list>
       <ion-fab-list side="bottom">
-        <button ion-fab (click)="lockerComponent.removeBottomRack()">
+        <button ion-fab (click)="lockerComponent.removeBottomRack()" class="ripple">
           <cav-icon name="remove-circled"></cav-icon>
         </button>
-        <button ion-fab (click)="lockerComponent.addBottomRack()">
+        <button ion-fab (click)="lockerComponent.addBottomRack()" class="ripple">
           <cav-icon name="plus-circled"></cav-icon>
         </button>
       </ion-fab-list>
@@ -87,6 +87,6 @@
 </ion-content>
 
 <ion-footer text-right padding-horizontal>
-  <button ion-button (click)="cancel()">{{'cancel'|translate}}</button>
-  <button ion-button (click)="saveLocker()">{{'save'|translate}}</button>
+  <button ion-button (click)="cancel()" class="ripple">{{'cancel'|translate}}</button>
+  <button ion-button (click)="saveLocker()" class="ripple">{{'save'|translate}}</button>
 </ion-footer>

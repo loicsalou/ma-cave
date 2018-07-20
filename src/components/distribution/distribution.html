@@ -1,10 +1,10 @@
 <ion-card *ngFor="let dimension of distribution" class="distribution">
 
   <p (click)="switchDistribution(dimension)">
-    <button *ngIf="isOpen(dimension.axis)" ion-button color="light" icon-only>
+    <button *ngIf="isOpen(dimension.axis)" ion-button color="light" icon-only class="ripple">
       <cav-icon name="down-open"></cav-icon>
     </button>
-    <button *ngIf="!isOpen(dimension.axis)" ion-button color="light" icon-only>
+    <button *ngIf="!isOpen(dimension.axis)" ion-button color="light" icon-only class="ripple">
       <cav-icon name='right-open'></cav-icon>
     </button>
     {{'bottle.'+dimension.axis| translate}}

@@ -1,8 +1,7 @@
-<button ion-button (click)="locateBottle($event)"
-        *ngIf="bottle.positions.length > 0">
+<button ion-button (click)="locateBottle($event)" *ngIf="bottle.positions.length > 0" class="ripple">
   <cav-icon name="location"></cav-icon>
 </button>
 
-<button ion-button (click)="favoriteBottle($event)">
+<button ion-button (click)="favoriteBottle($event)" class="ripple">
   <cav-icon name="star" [ngClass]="bottle.favorite ? 'favorite' : ''"></cav-icon>
 </button>

@@ -34,10 +34,10 @@
                   </fridge-locker>
                   
                   <ion-buttons>
-                    <button ion-button outline icon-only (click)="updateLocker(locker)">
+                    <button ion-button outline icon-only (click)="updateLocker(locker)" class="ripple">
                       <cav-icon name="plus"></cav-icon>
                     </button>
-                    <button ion-button outline icon-only (click)="deleteLocker(locker)">
+                    <button ion-button outline icon-only (click)="deleteLocker(locker)" class="ripple">
                       <cav-icon name="trash"></cav-icon>
                     </button>
                   </ion-buttons>
@@ -53,7 +53,7 @@
   
   <ion-fab bottom right>
     <button ion-fab (click)="createLocker()">
-      <cav-icon name="plus-circled" [ngStyle]="{'font-size': '27px'}"></cav-icon>
+      <cav-icon name="plus-circled" [ngStyle]="{'font-size': '27px'}" class="ripple"></cav-icon>
     </button>
   </ion-fab>
   
@@ -61,14 +61,14 @@
     <button ion-fab class="pending-bottle">
       <img src="{{ pendingCell.bottle | bottleIcon }}" (click)="showTip()">
     </button>
-    <ion-badge class="tip" *ngIf="pendingCell">{{pendingCell.bottle.nomCru}} -
+    <ion-badge class="tip ripple" *ngIf="pendingCell">{{pendingCell.bottle.nomCru}} -
       {{pendingCell.bottle.millesime}}
     </ion-badge>
     <ion-fab-list side="left">
-      <button ion-fab style="border: thin solid black" (click)="withdraw(pendingCell)">
+      <button ion-fab style="border: thin solid black" (click)="withdraw(pendingCell)" class="ripple">
         <span class="cavus-corkscrew small"></span>
       </button>
-      <button ion-fab style="border: thin solid black" (click)="zoomOnBottle(pendingCell)">
+      <button ion-fab style="border: thin solid black" (click)="zoomOnBottle(pendingCell)" class="ripple">
         <cav-icon name="search" class="small"></cav-icon>
       </button>
     </ion-fab-list>
