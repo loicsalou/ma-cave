@@ -3,7 +3,6 @@ import {FabButton, IonicPage, MenuController, NavController} from 'ionic-angular
 import {Bottle, BottleState} from '../../../model/bottle';
 import {BottleDetailPage} from '../bottle-detail/bottle-detail-page';
 import {FilterSet} from '../../../components/distribution/filterset';
-import {NativeProvider} from '../../../providers/native/native';
 import {combineLatest, Observable} from 'rxjs';
 import {ApplicationState} from '../../../app/state/app.state';
 import {Store} from '@ngrx/store';
@@ -48,13 +47,11 @@ export class BrowsePage implements OnInit, OnDestroy {
 
   constructor(public navCtrl: NavController,
               private menuController: MenuController,
-              private nativeProvider: NativeProvider,
               private store: Store<ApplicationState>,
               private notificationService: NotificationService) {
   }
 
   ngOnInit() {
-    this.nativeProvider.feedBack();
     this.filterSet$ = this.store.select(BottlesQuery.getFilter).pipe(
       tap((filterSet: FilterSet) => this.sortOption = filterSet.sortOption),
       tap(filterSet => logInfo('[browse-page.ts] received filterSet' + JSON.stringify(filterSet)))

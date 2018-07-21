@@ -25,7 +25,6 @@ import {RackDirective} from './rack.directive';
 import {DimensionOfDirective} from './dimension-of.directive';
 import {ZoomableDirective} from './zoomable.directive';
 import {SharedCoreModule} from './shared-core.module';
-import {NativeProvider} from '../providers/native/native';
 import {NotificationService} from '../service/notification.service';
 import {IconComponent} from './icon/icon.component';
 
@@ -79,7 +78,6 @@ import {IconComponent} from './icon/icon.component';
               ZoomableDirective
             ],
             providers: [
-              NativeProvider,
               {provide: ErrorHandler, deps: [ FirebaseAdminService ], useClass: CaveErrorHandler}
             ],
             schemas: [

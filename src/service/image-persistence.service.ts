@@ -77,31 +77,6 @@ export class ImagePersistenceService extends AbstractPersistenceService {
     }
   }
 
-  public createBlobFromPath(imagePath): Promise<Blob> {
-    // REQUIRED PLUGIN - cordova plugin add cordova-plugin-file
-    return new Promise((resolve, reject) => {
-      (<any>window).resolveLocalFileSystemURL(imagePath, (fileEntry) => {
-        fileEntry.file(
-          (resFile) => {
-            let reader = new FileReader();
-            reader.onloadend = (evt: any) => {
-              let imgBlob: any = new Blob([ evt.target.result ], {type: 'image/jpeg'});
-              imgBlob.name = 'blob.jpg';
-              resolve(imgBlob);
-            };
-
-            reader.onerror = (error) => {
-              this.notificationService.error('La création du BLOB à partir du fichier a échoué: ', error);
-              reject(error);
-            };
-
-            reader.readAsArrayBuffer(resFile);
-          },
-          (error) => this.notificationService.error('La résolution du nom local du fichier choisi a échoué', error));
-      });
-    });
-  }
-
   protected initialize(user) {
     super.initialize(user);
   }

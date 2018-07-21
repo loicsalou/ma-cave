@@ -21,6 +21,7 @@
     "postbuild": "workbox injectManifest ./config/workbox-config.js",
     "compress": "bread-compressor -a gzip www",
     "build:prod": "npm run build:aot && node ./cache-busting.js && npm run postbuild && npm run compress",
+    "build:prod2": "ionic-app-scripts build --prod && node ./cache-busting.js && npm run postbuild && npm run compress",
     "deploy": "firebase deploy --project ma-cave-15a66"
   },
   "dependencies": {

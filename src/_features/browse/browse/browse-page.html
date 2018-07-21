@@ -1,5 +1,5 @@
 <ion-header class="mod-header browse-page">
-  <button ion-fab mini menuToggle style="display: inline !important;">
+  <button ion-fab mini menuToggle style="display: inline !important;" class="ripple">
     <cav-icon name="menu"></cav-icon>
   </button>
   <span class="search-container">
@@ -29,17 +29,17 @@
 </ion-content>
 
 <ion-fab #fab class="browse-page" bottom right *ngIf="anyBottleSelected()">
-  <button ion-fab>
+  <button ion-fab class="ripple">
     <cav-icon name="menu"></cav-icon>
   </button>
   <ion-fab-list side="top">
-    <button ion-fab (click)="placeSelection()">
+    <button ion-fab (click)="placeSelection()" class="ripple">
       <cav-icon name="apps" large></cav-icon>
     </button>
-    <button ion-fab (click)="locateSelection()">
+    <button ion-fab (click)="locateSelection()" class="ripple">
       <cav-icon name="location" large></cav-icon>
     </button>
-    <button ion-fab (click)="registerSelectionAsFavorite()">
+    <button ion-fab (click)="registerSelectionAsFavorite()" class="ripple">
       <cav-icon name="star" style="color: #FFC125" large></cav-icon>
     </button>
   </ion-fab-list>

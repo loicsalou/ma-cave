@@ -16,7 +16,6 @@ import {Bottle, Position} from '../../model/bottle';
 import {NotificationService} from '../../service/notification.service';
 import {LockerComponent} from './locker.component';
 import {Gesture} from 'ionic-angular';
-import {NativeProvider} from '../../providers/native/native';
 import {RackDirective} from '../rack.directive';
 import {DimensionOfDirective} from '../dimension-of.directive';
 import {Observable, Subscription} from 'rxjs';
@@ -67,9 +66,9 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   private containerDimensionsSub: Subscription;
   private wrongLocker: boolean;
 
-  constructor(private notificationService: NotificationService, nativeProvider: NativeProvider,
+  constructor(private notificationService: NotificationService,
               @Inject('GLOBAL_CONFIG') private config) {
-    super(nativeProvider);
+    super();
   }
 
   get dimension(): Dimension {
