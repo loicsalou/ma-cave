@@ -2,7 +2,6 @@ import {NgModule} from '@angular/core';
 import {IonicPageModule} from 'ionic-angular';
 import {FormsModule} from '@angular/forms';
 import {AdminPage} from './admin-page';
-import {Camera} from '@ionic-native/camera';
 import {CommonModule} from '@angular/common';
 import {RecordOutputPage} from './record-output';
 import {UpdatePage} from './update-page';
@@ -34,8 +33,7 @@ import {PwaImageAttacherComponent} from '../../../components/image-attacher-pwa/
               UpdatePage
             ],
             providers: [
-              ImagePersistenceService,
-              Camera
+              ImagePersistenceService
             ]
           })
 export class RecordOutputModule {

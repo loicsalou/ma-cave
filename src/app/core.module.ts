@@ -10,8 +10,8 @@ import {NotificationService} from '../service/notification.service';
 import {LockerFactory} from '../model/locker.factory';
 import {HttpClient} from '@angular/common/http';
 import {appConfig} from './app.conf';
-import {ApplicationState, META_REDUCERS, ROOT_REDUCERS} from './state/app.state';
-import {Store, StoreModule} from '@ngrx/store';
+import {META_REDUCERS, ROOT_REDUCERS} from './state/app.state';
+import {StoreModule} from '@ngrx/store';
 import {BrowserModule} from '@angular/platform-browser';
 import {BottlesEffectsService} from './state/bottle.effects';
 import {SharedEffectsService} from './state/shared.effects';
@@ -32,6 +32,7 @@ import {WithdrawalFactory} from '../model/withdrawal.factory';
 import {FirebaseWithdrawalsService} from '../service/firebase/firebase-withdrawals.service';
 import {AngularFireStorageModule} from 'angularfire2/storage';
 import {LoginService} from '../service/login/login.service';
+import {AngularFirestoreModule} from 'angularfire2/firestore';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -49,6 +50,7 @@ export const fireConfig = {
               AngularFireAuthModule,
               AngularFireDatabaseModule,
               AngularFireStorageModule,
+              AngularFirestoreModule.enablePersistence(),
               StoreModule.forRoot(ROOT_REDUCERS, {
                 metaReducers: META_REDUCERS
               }),

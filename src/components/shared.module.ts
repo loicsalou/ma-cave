@@ -25,11 +25,6 @@ import {RackDirective} from './rack.directive';
 import {DimensionOfDirective} from './dimension-of.directive';
 import {ZoomableDirective} from './zoomable.directive';
 import {SharedCoreModule} from './shared-core.module';
-import {AndroidPermissions} from '@ionic-native/android-permissions';
-import {SplashScreen} from '@ionic-native/splash-screen';
-import {DeviceFeedback} from '@ionic-native/device-feedback';
-import {StatusBar} from '@ionic-native/status-bar';
-import {Network} from '@ionic-native/network';
 import {NativeProvider} from '../providers/native/native';
 import {NotificationService} from '../service/notification.service';
 import {IconComponent} from './icon/icon.component';
@@ -85,11 +80,6 @@ import {IconComponent} from './icon/icon.component';
             ],
             providers: [
               NativeProvider,
-              AndroidPermissions,
-              DeviceFeedback,
-              Network,
-              SplashScreen,
-              StatusBar,
               {provide: ErrorHandler, deps: [ FirebaseAdminService ], useClass: CaveErrorHandler}
             ],
             schemas: [

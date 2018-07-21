@@ -12,7 +12,6 @@ import {BottlesEffectsService} from './state/bottle.effects';
 import {WithdrawalsEffectsService} from './state/withdrawals.effects';
 import {SharedEffectsService} from './state/shared.effects';
 import {SharedCoreModule} from '../components/shared-core.module';
-import {SplashScreen} from '@ionic-native/splash-screen';
 import {
   AuthMethods,
   AuthProvider,
@@ -44,7 +43,7 @@ const firebaseUiAuthConfig: FirebaseUIAuthConfig = {
     facebookCustomConfig,
     //AuthProvider.Twitter,
     //AuthProvider.Github,
-    AuthProvider.Password,
+    AuthProvider.Password
     //AuthProvider.Phone
   ],
   method: AuthMethods.Redirect,
@@ -85,7 +84,6 @@ const firebaseUiAuthConfig: FirebaseUIAuthConfig = {
             providers: [
               BottlesEffectsService,
               SharedEffectsService,
-              SplashScreen,
               WithdrawalsEffectsService
             ],
             bootstrap: [ IonicApp ]
