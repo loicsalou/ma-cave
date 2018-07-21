@@ -77,26 +77,10 @@
     "webpack-manifest-plugin": "2.0.3",
     "workbox-cli": "3.4.1"
   },
-  "cordovaPlugins": [
-    "cordova-plugin-device",
-    "cordova-plugin-image-picker",
-    "cordova-plugin-splashscreen",
-    "cordova-plugin-statusbar",
-    "cordova-plugin-whitelist",
-    "ionic-plugin-keyboard"
-  ],
   "config": {
     "ionic_copy": "./config/copy.config.js",
     "ionic_sass": "./config/sass.config.js",
     "ionic_webpack": "./config/webpack.config.js"
   },
-  "cordovaPlatforms": [
-    "ios",
-    {
-      "platform": "ios",
-      "version": "",
-      "locator": "ios"
-    }
-  ],
   "description": "L'assistant caviste: ne perdez plus vos bouteilles !"
 }
