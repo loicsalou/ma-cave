@@ -9,7 +9,7 @@ import {RatingComponent} from './rating/rating';
 import {FormsModule} from '@angular/forms';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {BottleNotingComponent} from './bottle-noting/bottle-noting.component';
-import {BottleItemComponent} from './list/bottle-item.component';
+import {BottleItemComponent} from './list-bottle-item/bottle-item.component';
 import {WithdrawalItemComponent} from './withdrawal-item/withdrawal-item.component';
 import {DistributionComponent} from './distribution/distribution';
 import {SimpleLockerComponent} from './locker/simple-locker.component';
@@ -27,6 +27,7 @@ import {ZoomableDirective} from './zoomable.directive';
 import {SharedCoreModule} from './shared-core.module';
 import {NotificationService} from '../service/notification.service';
 import {IconComponent} from './icon/icon.component';
+import {BottleItemLargeComponent} from './list-bottle-item-large/bottle-item-large';
 
 @NgModule({
             imports: [
@@ -41,6 +42,7 @@ import {IconComponent} from './icon/icon.component';
               BottleIconPipe,
               BottleClassPipe,
               BottleItemComponent,
+              BottleItemLargeComponent,
               BottleNotingComponent,
               DimensionOfDirective,
               CurrentFiltersComponent,
@@ -62,6 +64,7 @@ import {IconComponent} from './icon/icon.component';
               BottleIconPipe,
               BottleClassPipe,
               BottleItemComponent,
+              BottleItemLargeComponent,
               BottleNotingComponent,
               DimensionOfDirective,
               CurrentFiltersComponent,

@@ -2,6 +2,7 @@ import {Action} from '@ngrx/store';
 import {UserPreferences} from '../../model/user-preferences';
 import {User} from '../../model/user';
 import {LOGINTYPE} from '../../service/login/login.service';
+import {BOTTLE_ITEM_TYPE} from './shared.state';
 
 export enum SharedActionTypes {
   LoadSharedActionType = '[shared] - load',
@@ -51,7 +52,7 @@ export class LoadSharedFailedAction implements Action {
 export class UpdateThemeAction implements Action {
   readonly type = SharedActionTypes.UpdateThemeActionType;
 
-  constructor(public theme: string) {
+  constructor(public theme: string, public itemType: BOTTLE_ITEM_TYPE) {
   }
 }
 

@@ -33,9 +33,18 @@
     
     <ion-card>
       <h2>Thème</h2>
-      <ion-select [(ngModel)]="currentTheme" name="type" required interface="popover">
+      <ion-select [(ngModel)]="currentTheme" name="theming" required interface="popover">
         <ion-option *ngFor="let theme of themes" [value]="theme.class" [selected]="theme.class===currentTheme">
           {{theme.name}}
+        </ion-option>
+      </ion-select>
+      <h2>Liste de bouteilles</h2>
+      <ion-select [(ngModel)]="currentItemType" name="type" required interface="popover">
+        <ion-option value="standard" [selected]="currentItemType==='standard'">
+          Standard
+        </ion-option>
+        <ion-option value="large" [selected]="currentItemType==='large'">
+          Large
         </ion-option>
       </ion-select>
     </ion-card>

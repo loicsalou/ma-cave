@@ -6,7 +6,7 @@ import {FilterSet} from '../../components/distribution/filterset';
 import {NotificationService} from '../../service/notification.service';
 import {PopoverPage} from './popover/popover-page';
 import {Action} from '../../model/action';
-import {BottleItemComponent} from '../../components/list/bottle-item.component';
+import {BottleItemComponent} from '../../components/list-bottle-item/bottle-item.component';
 import {Withdrawal} from '../../model/withdrawal';
 import {RecordOutputPage} from './record-output/record-output';
 import {SearchCriteria} from '../../model/search-criteria';

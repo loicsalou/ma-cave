@@ -21,6 +21,8 @@ import {SortOption} from '../../../components/distribution/distribution';
 import {NotificationService} from '../../../service/notification.service';
 import * as _ from 'lodash';
 import {logInfo} from '../../../utils';
+import {BOTTLE_ITEM_TYPE, SharedQuery} from '../../../app/state/shared.state';
+import {Subscription} from 'rxjs/Subscription';
 
 function sliceAround(currentBottles: Bottle[], bottle: Bottle, slice: number) {
   const ix = currentBottles.findIndex(btl => btl.id === bottle.id);
@@ -36,22 +38,26 @@ function sliceAround(currentBottles: Bottle[], bottle: Bottle, slice: number) {
              changeDetection: ChangeDetectionStrategy.OnPush
            })
 export class BrowsePage implements OnInit, OnDestroy {
-  nbOfLots = 0;
-  nbSelected = 0;
-
   bottleStates$: Observable<BottleState[]>;
   filterSet$: Observable<FilterSet>;
+  standardListItem: boolean;
+  nbOfLots = 0;
+  nbSelected = 0;
   @ViewChild(FabButton) ionFAB: FabButton;
 
   private nbOfBottles: number = 0;
   private searchBarVisible: boolean = false;
   private sortOption: SortOption;
   private currentBottles: Bottle[];
+  private storeSub: Subscription;
 
   constructor(public navCtrl: NavController,
               private menuController: MenuController,
               private store: Store<ApplicationState>,
               private notificationService: NotificationService) {
+    this.storeSub = this.store.select(SharedQuery.getSharedState).subscribe(
+      state => this.standardListItem = (state.bottleItemType === BOTTLE_ITEM_TYPE.STANDARD)
+    );
   }
 
   ngOnInit() {
@@ -89,6 +95,9 @@ export class BrowsePage implements OnInit, OnDestroy {
     if (this.ionFAB) {
       // TODO ne permet appremment pas de refermer les FAB boutons...
       //this.ionFAB.setActiveClose(true);
+    }
+    if (this.storeSub) {
+      this.storeSub.unsubscribe();
     }
   }
 

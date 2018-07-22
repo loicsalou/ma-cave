@@ -25,8 +25,8 @@ export class BottleItemComponent implements OnInit {
   @Output()
   onSelected: EventEmitter<{ bottle: Bottle, selected: boolean }> = new EventEmitter();
 
-  constructor(private store: Store<ApplicationState>,
-              private navCtrl: NavController) {
+  constructor(protected store: Store<ApplicationState>,
+              protected navCtrl: NavController) {
   }
 
   ngOnInit() {

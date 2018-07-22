@@ -19,9 +19,16 @@
     <ion-list sliding="true" class="bottle-page" #bottleList>
       <ng-container *ngIf="bottleStates$ | async as bottleStates">
         <div *ngFor="let bottleState of bottleStates" style="width: 100%">
-          <bottle-item [bottle]="bottleState.bottle" (onShowDetail)="triggerDetail($event)"
+          <bottle-item *ngIf="standardListItem; else largeItem"
+                       [bottle]="bottleState.bottle" (onShowDetail)="triggerDetail($event)"
                        [selected]="bottleState.selected"
                        (onSelected)="switchSelected($event)"></bottle-item>
+          <ng-template #largeItem>
+            <bottle-item-large
+              [bottle]="bottleState.bottle" (onShowDetail)="triggerDetail($event)"
+              [selected]="bottleState.selected"
+              (onSelected)="switchSelected($event)"></bottle-item-large>
+          </ng-template>
         </div>
       </ng-container>
     </ion-list>
