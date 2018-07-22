@@ -39,6 +39,8 @@
     "email-sent": "Un e-mail vous a été envoyé",
     "email-failed": "L'e-mail n'a pas pu être envoyé",
     "deleting-account": "Suppression du compte en cours...",
+    "demo-short": "Démo",
+    "demo": "Démonstration",
     "data-deletion-failed": "La suppression des données du compte a échoué",
     "deleting-account-failed": "La suppression du compte a échoué !",
     "deleting-account-succeeded": "La suppression du compte a été effectuée, nous espérons vous revoir bientôt !",
@@ -54,12 +56,14 @@
     "importation-successful": "L'importation est terminée en {{time}} ms",
     "error": "Erreur !",
     "failed": "Echec !",
+    "stock": "En stock",
     "unavailable-function": "Fonction indisponible - êtes vous offline ?",
     "warning": "Attention",
     "withdrawn": "La bouteille a été retirée du casier",
     "loading": "Chargement en cours...",
     "no-bottles-placed": "Ces bouteilles sont en attente de rangement",
-    "no-bottles-to-place": "Ces bouteilles sont déjà placées"
+    "no-bottles-to-place": "Ces bouteilles sont déjà placées",
+    "no-bottles-to-place-short": "à placer"
   },
   "bottle": {
     "area_label": "Appellation",

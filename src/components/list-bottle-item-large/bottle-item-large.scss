@@ -1,0 +1,25 @@
+bottle-item-large {
+  ion-col.icons {
+    display: flex;
+  }
+
+  label {
+    margin-right: 7px;
+  }
+
+  .bottle-pix {
+    display: flex;
+    flex-direction: column;
+
+    & > div.icon {
+      background-size: cover;
+      background-position-x: center;
+      flex-grow: 1;
+      margin: 0 12px 0 12px;
+
+      &>img {
+        margin: 0 -10px 0 -10px
+      }
+    }
+  }
+}

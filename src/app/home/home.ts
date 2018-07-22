@@ -12,7 +12,7 @@ import {SharedQuery} from '../state/shared.state';
 import {filter, map, take, tap} from 'rxjs/operators';
 import {isMobileDevice, logInfo} from '../../utils';
 import {traced} from '../../utils/decorators';
-import {Subscription} from 'rxjs/Subscription';
+import {Subscription} from 'rxjs';
 import {AngularFireAuth} from 'angularfire2/auth';
 import {LoginSuccessAction} from '../state/shared.actions';
 import * as firebase from 'firebase';
@@ -72,9 +72,6 @@ export class HomePage implements OnInit {
             state.theme ? state.theme : 'cavus-theme')
     );
     this.loginSub = this.angularFireAuth.authState
-    //.pipe(
-    //  take(1)
-    //)
       .subscribe((firebaseUser: firebase.User) => {
         if (firebaseUser != null) {
           if (firebaseUser.email != null) {

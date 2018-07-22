@@ -1,6 +1,6 @@
 <ion-header class="mod-header flex-container">
   <span class="flex-container flex-grow">
-    <button ion-button icon-only (click)="cancel()">
+    <button ion-button icon-only (click)="cancel()" class="ripple">
       <cav-icon name="cancel-circled"></cav-icon>
     </button>
     <ion-title>{{bottle.nomCru}}</ion-title>
@@ -11,14 +11,14 @@
 <ion-content class="page-update page" padding-horizontal>
   <responsive-wrapper>
     <ion-fab bottom right *ngIf="bottleForm.dirty">
-      <button ion-fab>
+      <button ion-fab class="ripple">
         <cav-icon name="menu"></cav-icon>
       </button>
       <ion-fab-list side="top">
-        <button ion-fab (click)="save()" [disabled]="bottleForm.invalid" class="item">
+        <button ion-fab (click)="save()" [disabled]="bottleForm.invalid" class="item ripple">
           <cav-icon name="ok"></cav-icon>
         </button>
-        <button ion-fab (click)="cancel()" class="item">
+        <button ion-fab (click)="cancel()" class="item ripple">
           <cav-icon name="cancel"></cav-icon>
         </button>
       </ion-fab-list>

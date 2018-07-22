@@ -5,8 +5,8 @@ import * as VERSION from '../../app/version';
 import {SharedPersistenceService} from '../../service/shared-persistence.service';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../../app/state/app.state';
-import {LogoutAction, UpdateThemeAction} from '../../app/state/shared.actions';
-import {SharedQuery} from '../../app/state/shared.state';
+import {LogoutAction, UpdatePrefsAction} from '../../app/state/shared.actions';
+import {BOTTLE_ITEM_TYPE, SharedQuery} from '../../app/state/shared.state';
 import {Observable, Subscription} from 'rxjs';
 import {filter, tap} from 'rxjs/operators';
 import {IonicPage, NavController} from 'ionic-angular';
@@ -21,6 +21,7 @@ export class ProfilePage implements OnInit, OnDestroy {
   version: any;
   userData: any;
   _currentTheme: string;
+  private _currentItemType: BOTTLE_ITEM_TYPE;
   prefsSub: Subscription;
   user$: Observable<User>;
 
@@ -31,7 +32,10 @@ export class ProfilePage implements OnInit, OnDestroy {
               private sharedServices: SharedPersistenceService, @Inject('GLOBAL_CONFIG') private config,
               private store: Store<ApplicationState>, private navCtrl: NavController) {
     this.prefsSub = store.select(SharedQuery.getSharedState).subscribe(
-      prefs => this._currentTheme = prefs.theme
+      prefs => {
+        this._currentTheme = prefs.theme;
+        this._currentItemType = prefs.bottleItemType;
+      }
     );
   }
 
@@ -45,6 +49,15 @@ export class ProfilePage implements OnInit, OnDestroy {
 
   set currentTheme(theme: string) {
     this._currentTheme = theme;
+    this.updateProfile();
+  }
+
+  get currentItemType(): BOTTLE_ITEM_TYPE {
+    return this._currentItemType;
+  }
+
+  set currentItemType(value: BOTTLE_ITEM_TYPE) {
+    this._currentItemType = value;
     this.updateProfile();
   }
 
@@ -86,7 +99,7 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   private updateProfile() {
-    this.store.dispatch(new UpdateThemeAction(this.currentTheme));
+    this.store.dispatch(new UpdatePrefsAction(this.currentTheme, this.currentItemType));
   }
 }
 

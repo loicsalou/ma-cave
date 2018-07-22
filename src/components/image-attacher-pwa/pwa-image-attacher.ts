@@ -3,14 +3,7 @@ import {BottleMetadata} from '../../model/bottle';
 import {ImagePersistenceService, UploadMetadata} from '../../service/image-persistence.service';
 import {NotificationService} from '../../service/notification.service';
 import {Subscription} from 'rxjs';
-import {logInfo} from '../../utils';
 
-/**
- * Generated class for the CordovaImageAttacherComponent component.
- *
- * See https://angular.io/docs/ts/latest/api/core/index/ComponentMetadata-class.html
- * for more info on Angular Components.
- */
 @Component({
              selector: 'pwa-image-attacher',
              templateUrl: 'pwa-image-attacher.html'
@@ -47,7 +40,7 @@ export class PwaImageAttacherComponent implements OnInit {
   ngOnInit() {
     this.video.nativeElement.height = '300';
     this.video.nativeElement.width = '200';
-    this.canvas.nativeElement['max-height'] = '300';
+    this.canvas.nativeElement[ 'max-height' ] = '300';
   }
 
   toggleCapture() {

@@ -1,15 +1,22 @@
 @import "./variables";
 
+.fab-close-active span.button-inner {
+  opacity: .85;
+  color: map-get($colors,"favorite");
+  transform: scale(1.5) rotateZ(45deg);
+}
+
 .default-theme {
 
   button[ion-fab],
   button[menuToggle],
   ion-item-sliding button[ion-button] cav-icon {
-    font-size: 27px;
+    font-size: $icon-font-size;
   }
 
   ion-item-sliding button[ion-button] cav-icon.favorite {
     color: map-get($colors, favorite);
-    font-size: 27px;
+    font-size: $icon-font-size;
   }
+
 }

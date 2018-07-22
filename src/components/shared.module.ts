@@ -9,7 +9,7 @@ import {RatingComponent} from './rating/rating';
 import {FormsModule} from '@angular/forms';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {BottleNotingComponent} from './bottle-noting/bottle-noting.component';
-import {BottleItemComponent} from './list/bottle-item.component';
+import {BottleItemComponent} from './list-bottle-item/bottle-item.component';
 import {WithdrawalItemComponent} from './withdrawal-item/withdrawal-item.component';
 import {DistributionComponent} from './distribution/distribution';
 import {SimpleLockerComponent} from './locker/simple-locker.component';
@@ -25,14 +25,9 @@ import {RackDirective} from './rack.directive';
 import {DimensionOfDirective} from './dimension-of.directive';
 import {ZoomableDirective} from './zoomable.directive';
 import {SharedCoreModule} from './shared-core.module';
-import {AndroidPermissions} from '@ionic-native/android-permissions';
-import {SplashScreen} from '@ionic-native/splash-screen';
-import {DeviceFeedback} from '@ionic-native/device-feedback';
-import {StatusBar} from '@ionic-native/status-bar';
-import {Network} from '@ionic-native/network';
-import {NativeProvider} from '../providers/native/native';
 import {NotificationService} from '../service/notification.service';
 import {IconComponent} from './icon/icon.component';
+import {BottleItemLargeComponent} from './list-bottle-item-large/bottle-item-large';
 
 @NgModule({
             imports: [
@@ -47,6 +42,7 @@ import {IconComponent} from './icon/icon.component';
               BottleIconPipe,
               BottleClassPipe,
               BottleItemComponent,
+              BottleItemLargeComponent,
               BottleNotingComponent,
               DimensionOfDirective,
               CurrentFiltersComponent,
@@ -68,6 +64,7 @@ import {IconComponent} from './icon/icon.component';
               BottleIconPipe,
               BottleClassPipe,
               BottleItemComponent,
+              BottleItemLargeComponent,
               BottleNotingComponent,
               DimensionOfDirective,
               CurrentFiltersComponent,
@@ -84,12 +81,6 @@ import {IconComponent} from './icon/icon.component';
               ZoomableDirective
             ],
             providers: [
-              NativeProvider,
-              AndroidPermissions,
-              DeviceFeedback,
-              Network,
-              SplashScreen,
-              StatusBar,
               {provide: ErrorHandler, deps: [ FirebaseAdminService ], useClass: CaveErrorHandler}
             ],
             schemas: [

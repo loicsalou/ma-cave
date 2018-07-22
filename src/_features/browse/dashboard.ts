@@ -3,11 +3,10 @@ import {IonicPage, ModalController, NavController, Platform, PopoverController, 
 import {BrowsePage} from './browse/browse-page';
 import {Bottle} from '../../model/bottle';
 import {FilterSet} from '../../components/distribution/filterset';
-import {NativeProvider} from '../../providers/native/native';
 import {NotificationService} from '../../service/notification.service';
 import {PopoverPage} from './popover/popover-page';
 import {Action} from '../../model/action';
-import {BottleItemComponent} from '../../components/list/bottle-item.component';
+import {BottleItemComponent} from '../../components/list-bottle-item/bottle-item.component';
 import {Withdrawal} from '../../model/withdrawal';
 import {RecordOutputPage} from './record-output/record-output';
 import {SearchCriteria} from '../../model/search-criteria';
@@ -28,7 +27,6 @@ import {LoadWithdrawalsAction} from '../../app/state/withdrawals.actions';
 import {SharedQuery, SharedState} from '../../app/state/shared.state';
 import {LoadSharedAction, LogoutAction} from '../../app/state/shared.actions';
 import {logInfo} from '../../utils/index';
-import {HomePage} from '../../app/home/home';
 
 @IonicPage()
 @Component({
@@ -51,7 +49,6 @@ export class DashboardPage implements OnInit, OnDestroy {
   private _withdrawalCardStyle: { 'min-height': string; 'height': string };
 
   constructor(public navCtrl: NavController, private notificationService: NotificationService,
-              private nativeProvider: NativeProvider,
               private platform: Platform,
               private popoverCtrl: PopoverController, private modalCtrl: ModalController,
               private store: Store<ApplicationState>) {
@@ -71,20 +68,7 @@ export class DashboardPage implements OnInit, OnDestroy {
     return this._withdrawalCardStyle;
   }
 
-  ionViewCanEnter() {
-    //if (!HomePage.loggedIn) {
-    //  this.navCtrl.setRoot(HomePage);
-    //  this.navCtrl.popToRoot();
-    //  setTimeout(() => {
-    //               window.history.pushState({}, '', '/');
-    //               //window.location.reload();
-    //             }
-    //    , 100);
-    //}
-  }
-
   ngOnInit(): void {
-    this.nativeProvider.feedBack();
     this.version = VERSION;
     this.bottles$ = this.store.select(BottlesQuery.getBottles).pipe(
       tap((bottles: Bottle[]) => {

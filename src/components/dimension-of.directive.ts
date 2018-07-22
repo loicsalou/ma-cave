@@ -14,10 +14,10 @@ export class DimensionOfDirective<T> implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    const native = this.ref.nativeElement;
-    if (native) {
-      this.width = native[ 'clientWidth' ];
-      this.height = native[ 'clientHeight' ];
+    const nativeElement = this.ref.nativeElement;
+    if (nativeElement) {
+      this.width = nativeElement[ 'clientWidth' ];
+      this.height = nativeElement[ 'clientHeight' ];
     }
   }
 

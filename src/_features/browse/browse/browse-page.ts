@@ -3,16 +3,17 @@ import {FabButton, IonicPage, MenuController, NavController} from 'ionic-angular
 import {Bottle, BottleState} from '../../../model/bottle';
 import {BottleDetailPage} from '../bottle-detail/bottle-detail-page';
 import {FilterSet} from '../../../components/distribution/filterset';
-import {NativeProvider} from '../../../providers/native/native';
 import {combineLatest, Observable} from 'rxjs';
 import {ApplicationState} from '../../../app/state/app.state';
 import {Store} from '@ngrx/store';
 import {BottlesQuery} from '../../../app/state/bottles.state';
 import {
   HightlightBottleSelectionAction,
-  PlaceBottleSelectionAction, ResetBottleSelectionAction,
+  PlaceBottleSelectionAction,
+  ResetBottleSelectionAction,
   ResetFilterAction,
-  SetSelectedBottleAction, UpdateBottlesAction,
+  SetSelectedBottleAction,
+  UpdateBottlesAction,
   UpdateFilterAction
 } from '../../../app/state/bottles.actions';
 import {map, shareReplay, take, tap} from 'rxjs/operators';
@@ -20,6 +21,8 @@ import {SortOption} from '../../../components/distribution/distribution';
 import {NotificationService} from '../../../service/notification.service';
 import * as _ from 'lodash';
 import {logInfo} from '../../../utils';
+import {BOTTLE_ITEM_TYPE, SharedQuery} from '../../../app/state/shared.state';
+import {Subscription} from 'rxjs/Subscription';
 
 function sliceAround(currentBottles: Bottle[], bottle: Bottle, slice: number) {
   const ix = currentBottles.findIndex(btl => btl.id === bottle.id);
@@ -27,6 +30,7 @@ function sliceAround(currentBottles: Bottle[], bottle: Bottle, slice: number) {
   const to = ix + slice + 1;
   return currentBottles.slice(from < 0 ? 0 : from, to > currentBottles.length ? currentBottles.length : to);
 }
+
 @IonicPage()
 @Component({
              selector: 'page-browse',
@@ -34,27 +38,29 @@ function sliceAround(currentBottles: Bottle[], bottle: Bottle, slice: number) {
              changeDetection: ChangeDetectionStrategy.OnPush
            })
 export class BrowsePage implements OnInit, OnDestroy {
-  nbOfLots = 0;
-  nbSelected = 0;
-
   bottleStates$: Observable<BottleState[]>;
   filterSet$: Observable<FilterSet>;
+  standardListItem: boolean;
+  nbOfLots = 0;
+  nbSelected = 0;
   @ViewChild(FabButton) ionFAB: FabButton;
 
   private nbOfBottles: number = 0;
   private searchBarVisible: boolean = false;
   private sortOption: SortOption;
   private currentBottles: Bottle[];
+  private storeSub: Subscription;
 
   constructor(public navCtrl: NavController,
               private menuController: MenuController,
-              private nativeProvider: NativeProvider,
               private store: Store<ApplicationState>,
               private notificationService: NotificationService) {
+    this.storeSub = this.store.select(SharedQuery.getSharedState).subscribe(
+      state => this.standardListItem = (state.bottleItemType === BOTTLE_ITEM_TYPE.STANDARD)
+    );
   }
 
   ngOnInit() {
-    this.nativeProvider.feedBack();
     this.filterSet$ = this.store.select(BottlesQuery.getFilter).pipe(
       tap((filterSet: FilterSet) => this.sortOption = filterSet.sortOption),
       tap(filterSet => logInfo('[browse-page.ts] received filterSet' + JSON.stringify(filterSet)))
@@ -89,6 +95,9 @@ export class BrowsePage implements OnInit, OnDestroy {
     if (this.ionFAB) {
       // TODO ne permet appremment pas de refermer les FAB boutons...
       //this.ionFAB.setActiveClose(true);
+    }
+    if (this.storeSub) {
+      this.storeSub.unsubscribe();
     }
   }
 

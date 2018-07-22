@@ -104,14 +104,7 @@
         <label>Vidage de la base avant importation</label>
         <ion-checkbox id="deleteBefore" [(ngModel)]="deleteBefore"></ion-checkbox>
         
-        <div *ngIf="platformIsCordova()">
-          <button ion-button align-items-start round icon-only block (click)="chooseFile()">
-            <cav-icon name="upload"></cav-icon>
-            Importer...
-          </button>
-        </div>
-        
-        <div *ngIf="! platformIsCordova()">
+        <div>
           <input type="file" id="input" (change)="readBrowserFile($event)">
         </div>
         <ng-container *ngIf="user$ | async as user">
@@ -121,15 +114,15 @@
     </div>
     
     <ion-card class="actions">
-      <button ion-button align-items-start icon-only block (click)="emptyLockers()">
+      <button ion-button align-items-start icon-only block (click)="emptyLockers()" class="ripple">
         <cav-icon name="trash-empty"></cav-icon>
         Vider les casiers
       </button>
-      <button ion-button align-items-start icon-only block (click)="emptyLogs()">
+      <button ion-button align-items-start icon-only block (click)="emptyLogs()" class="ripple">
         <cav-icon name="trash"></cav-icon>
         Vider les logs
       </button>
-      <button ion-button align-items-start icon-only block (click)="deleteAccount()">
+      <button ion-button align-items-start icon-only block (click)="deleteAccount()" class="ripple">
         <cav-icon name="trash"></cav-icon>
         Supprimer l'utilisateur
       </button>

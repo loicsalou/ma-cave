@@ -1,12 +1,4 @@
-import {
-  AfterViewChecked,
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  QueryList,
-  ViewChild,
-  ViewChildren
-} from '@angular/core';
+import {AfterViewChecked, Component, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {Content, IonicPage, ModalController, NavController, NavParams} from 'ionic-angular';
 import {CellarPersistenceService} from '../../service/cellar-persistence.service';
 import {Bottle, Position} from '../../model/bottle';
@@ -16,7 +8,6 @@ import {SimpleLocker} from '../../model/simple-locker';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {Cell} from '../../components/locker/cell';
 import * as _ from 'lodash';
-import {NativeProvider} from '../../providers/native/native';
 import {BottleDetailPage} from '../browse/bottle-detail/bottle-detail-page';
 import {UpdateLockerPage} from './update-locker/update-locker-page';
 import {CreateLockerPage} from './create-locker/create-locker-page';
@@ -31,13 +22,12 @@ import {
   UpdateBottlesAction,
   WithdrawBottleAction
 } from '../../app/state/bottles.actions';
-import {Observable, of, Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {ScrollAnchorDirective} from '../../components/scroll-anchor.directive';
 import {filter, map, shareReplay, tap} from 'rxjs/operators';
 import {DimensionOfDirective} from '../../components/dimension-of.directive';
 import {SimpleLockerComponent} from '../../components/locker/simple-locker.component';
 import {logDebug, logInfo} from '../../utils/index';
-import {HomePage} from '../../app/home/home';
 
 function shortenBottle(btl: Bottle) {
   return {
@@ -89,7 +79,6 @@ export class CellarPage implements OnInit, AfterViewChecked {
               private cellarService: CellarPersistenceService,
               private bottleService: BottlePersistenceService,
               private notificationService: NotificationService,
-              private nativeProvider: NativeProvider,
               private modalCtrl: ModalController,
               private params: NavParams,
               private store: Store<ApplicationState>) {
@@ -105,7 +94,6 @@ export class CellarPage implements OnInit, AfterViewChecked {
   }
 
   ngOnInit(): void {
-    this.nativeProvider.feedBack();
     this.doWithAction = this.params.data[ 'action' ] ? this.params.data[ 'action' ].type : undefined;
     // si une action est demandée on récupère la sélection et on crée le nécessaire
     if (this.doWithAction == BottlesActionTypes.HighlightBottleSelectionActionType) {
@@ -249,7 +237,6 @@ export class CellarPage implements OnInit, AfterViewChecked {
   }
 
   updateLocker(locker) {
-    this.nativeProvider.feedBack();
     this.store.dispatch(new EditLockerAction(locker));
     let editorModal = this.modalCtrl.create('UpdateLockerPage', {}, {showBackdrop: true});
     editorModal.present();
@@ -268,7 +255,6 @@ export class CellarPage implements OnInit, AfterViewChecked {
   }
 
   showTip() {
-    this.nativeProvider.feedBack();
     this.pendingBottleTipVisible = true;
     setTimeout(() => {
       this.pendingBottleTipVisible = false;
@@ -276,7 +262,6 @@ export class CellarPage implements OnInit, AfterViewChecked {
   }
 
   cellSelected(cell: Cell) {
-    this.nativeProvider.feedBack();
 
     if (cell) {
       if (this.pendingCell) {
@@ -350,7 +335,7 @@ export class CellarPage implements OnInit, AfterViewChecked {
   }
 
   private isBottleToHighlight(bottle: Bottle) {
-    return (this.selectedBottles && this.selectedBottles.find(btl => btl.id === bottle.id) !== undefined)
+    return (this.selectedBottles && this.selectedBottles.find(btl => btl.id === bottle.id) !== undefined);
   }
 
   /**

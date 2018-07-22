@@ -22,12 +22,12 @@
   ion-item-sliding button[ion-button] cav-icon {
     background-color: map-get($colors-cavus, primary);
     color: map-get($colors-cavus, light);
-    font-size: 27px;
+    font-size: $icon-font-size;
   }
 
   ion-item-sliding button[ion-button] cav-icon.favorite {
     color: map-get($colors-cavus, favorite);
-    font-size: 27px;
+    font-size: $icon-font-size;
   }
 
   ion-item-sliding button[ion-button] {

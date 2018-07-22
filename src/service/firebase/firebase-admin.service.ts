@@ -16,7 +16,7 @@ import {UserPreferences} from '../../model/user-preferences';
 import {filter, map, take} from 'rxjs/operators';
 import {ApplicationState} from '../../app/state/app.state';
 import {Store} from '@ngrx/store';
-import {SharedQuery} from '../../app/state/shared.state';
+import {BOTTLE_ITEM_TYPE, SharedQuery} from '../../app/state/shared.state';
 import Reference = firebase.database.Reference;
 
 /**
@@ -100,13 +100,22 @@ export class FirebaseAdminService implements AdminService {
     );
   }
 
-  updateTheme(theme: string) {
+  updatePrefs(theme: string, itemType: BOTTLE_ITEM_TYPE) {
     this.profileRootRef.child('theme').once('value').then(
       snapshot => {
         if (snapshot.val()) {
           this.profileRootRef.update({theme: theme});
         } else {
           this.profileRootRef.child('theme').set(theme);
+        }
+      }
+    );
+    this.profileRootRef.child('itemType').once('value').then(
+      snapshot => {
+        if (snapshot.val()) {
+          this.profileRootRef.update({itemType: itemType});
+        } else {
+          this.profileRootRef.child('itemType').set(itemType);
         }
       }
     );

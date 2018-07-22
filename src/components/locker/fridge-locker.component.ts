@@ -5,7 +5,6 @@ import {NotificationService} from '../../service/notification.service';
 import {Dimension, Locker, LockerType} from '../../model/locker';
 import {SimpleLockerComponent} from './simple-locker.component';
 import {SimpleLocker} from '../../model/simple-locker';
-import {NativeProvider} from '../../providers/native/native';
 import {Position} from '../../model/bottle';
 import {Gesture} from 'ionic-angular';
 import {Cell} from './cell';
@@ -36,8 +35,8 @@ export class FridgeLockerComponent extends LockerComponent implements OnDestroy 
 
   private gesture: Gesture;
 
-  constructor(private notificationService: NotificationService, nativeProvider: NativeProvider) {
-    super(nativeProvider);
+  constructor(private notificationService: NotificationService) {
+    super();
   }
 
   get dimension(): Dimension {
@@ -70,7 +69,7 @@ export class FridgeLockerComponent extends LockerComponent implements OnDestroy 
     }
   }
 
-  rackSelected(event: {rack:Locker, selected:boolean}) {
+  rackSelected(event: { rack: Locker, selected: boolean }) {
     this.onRacksSelected.emit(
       this.rackComponents
         .map((rack: SimpleLockerComponent, ix: number) => {

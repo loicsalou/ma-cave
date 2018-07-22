@@ -1,5 +1,4 @@
-import {SearchCriteria} from '../model/search-criteria';
-import {Observable} from 'rxjs/Rx';
+import {Observable} from 'rxjs';
 import {User} from '../model/user';
 import {Injectable} from '@angular/core';
 
