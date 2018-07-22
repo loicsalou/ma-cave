@@ -1,10 +1,12 @@
 <ion-card>
-  <ion-row>
+  <ion-row (click)="triggerDetail(bottle)">
     
     <ion-col col-3 class="icons" style="padding-right:7px;">
       <div class="bottle-pix" (click)="switchSelected($event, bottle)">
         <cav-icon *ngIf="selected" name="ok" style="font-size: 2em;"></cav-icon>
-        <div class="icon" [ngClass]="(bottle | bottleClass)">
+        <img *ngIf="bottle.profile_image_url" [src]="bottle.profile_image_url" [defaultImage]="bottle"
+             class="profile-image">
+        <div class="icon" [ngClass]="(bottle | bottleClass)" *ngIf="!bottle.profile_image_url">
           <img src="assets/icon/starred.png" *ngIf="isBottleFavorite(bottle) && !selected">
           <img src="assets/icon/alert-status.png" *ngIf="bottle.overdue && !selected">
         </div>
