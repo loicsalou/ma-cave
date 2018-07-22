@@ -1,40 +1,51 @@
 <ion-card>
   <ion-row>
+    
     <ion-col col-3 class="icons" style="padding-right:7px;">
-      <ion-avatar item-start (click)="switchSelected($event, bottle)">
+      <div class="bottle-pix" (click)="switchSelected($event, bottle)">
         <cav-icon *ngIf="selected" name="ok" style="font-size: 2em;"></cav-icon>
-        <div class="icon" *ngIf="!selected" [ngClass]="(bottle | bottleClass)">
+        <div class="icon" [ngClass]="(bottle | bottleClass)">
           <img src="assets/icon/starred.png" *ngIf="isBottleFavorite(bottle) && !selected">
           <img src="assets/icon/alert-status.png" *ngIf="bottle.overdue && !selected">
         </div>
-      </ion-avatar>
+      </div>
     </ion-col>
+    
     <ion-col col-9>
       <ion-row>
-        <ion-col col-8 text-wrap>
+        <ion-col col-12 text-wrap>
           <h2 class="label">{{ bottle.nomCru }}</h2>
           <ion-note>{{bottle.area_label}} ({{bottle.millesime}})</ion-note>
         </ion-col>
       </ion-row>
       <ion-row>
+        <ion-col col-12 text-wrap>
+          <label for="lieu">{{'bottle.lieu_achat' | translate}}</label>
+          <em id="lieu">{{bottle.lieu_achat}}, {{bottle.prix}}</em>
+        </ion-col>
+      </ion-row>
+      <ion-row>
         <ion-col col-sm-5 col-lg-2 text-wrap>
-            <label>En stock</label>
+            <label>{{'app.stock' | translate}}</label>
         </ion-col>
         <ion-col col-sm-1 col-lg-1 text-wrap>
           <ion-badge item-right>
             {{bottle.quantite_courante}}
           </ion-badge>
         </ion-col>
-        <ion-col col-sm-5 col-lg-2 text-wrap>
-            <label *ngIf="numberNotPlaced(bottle) > 0">{{numberNotPlaced(bottle)}} à placer</label>
+        <ion-col col-sm-6 col-lg-3 text-wrap>
+            <label *ngIf="numberNotPlaced(bottle) > 0">({{numberNotPlaced(bottle)}} {{'app.no-bottles-to-place-short'
+             | translate }})</label>
         </ion-col>
       </ion-row>
+      <ion-row>
+        <ion-col col-sm-6 col-lg-8></ion-col>
+        <bottle-action  col-sm-6 col-lg-4 [bottle]="bottle" (locate)="locateBottle($event, item, bottle)"
+                       (favorite)="addToFavorite($event, item, bottle)" [isFavorite]="isBottleFavorite(bottle)">
+        </bottle-action>
+      </ion-row>
     </ion-col>
-    <ion-row>
-      <bottle-action [bottle]="bottle" (locate)="locateBottle($event, item, bottle)"
-                     (favorite)="addToFavorite($event, item, bottle)" [isFavorite]="isBottleFavorite(bottle)">
-      </bottle-action>
-    </ion-row>
+    
   </ion-row>
 </ion-card>
 

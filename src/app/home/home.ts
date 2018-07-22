@@ -72,9 +72,6 @@ export class HomePage implements OnInit {
             state.theme ? state.theme : 'cavus-theme')
     );
     this.loginSub = this.angularFireAuth.authState
-    //.pipe(
-    //  take(1)
-    //)
       .subscribe((firebaseUser: firebase.User) => {
         if (firebaseUser != null) {
           if (firebaseUser.email != null) {

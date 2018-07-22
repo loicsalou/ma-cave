@@ -20,7 +20,7 @@ const INITIAL_STATE: SharedState = {
   mostUsedQueries: [],
   theme: 'default',
   bottleItemType: BOTTLE_ITEM_TYPE.STANDARD,
-  user: undefined
+  user: undefined,
 };
 
 export namespace SharedQuery {
