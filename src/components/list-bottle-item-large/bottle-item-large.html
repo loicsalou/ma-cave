@@ -1,4 +1,4 @@
-<ion-item>
+<ion-card>
   <ion-row>
     <ion-col col-3 class="icons" style="padding-right:7px;">
       <ion-avatar item-start (click)="switchSelected($event, bottle)">
@@ -17,13 +17,16 @@
         </ion-col>
       </ion-row>
       <ion-row>
-        <ion-col col-1 text-wrap>
+        <ion-col col-sm-5 col-lg-2 text-wrap>
+            <label>En stock</label>
+        </ion-col>
+        <ion-col col-sm-1 col-lg-1 text-wrap>
           <ion-badge item-right>
             {{bottle.quantite_courante}}
           </ion-badge>
-          <ion-badge item-right class="not-placed" *ngIf="numberNotPlaced(bottle) > 0">
-            {{numberNotPlaced(bottle)}}
-          </ion-badge>
+        </ion-col>
+        <ion-col col-sm-5 col-lg-2 text-wrap>
+            <label *ngIf="numberNotPlaced(bottle) > 0">{{numberNotPlaced(bottle)}} à placer</label>
         </ion-col>
       </ion-row>
     </ion-col>
@@ -33,6 +36,6 @@
       </bottle-action>
     </ion-row>
   </ion-row>
-</ion-item>
+</ion-card>
 
 

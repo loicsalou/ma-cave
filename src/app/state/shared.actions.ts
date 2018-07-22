@@ -13,7 +13,7 @@ export enum SharedActionTypes {
   LoginActionSuccessType = '[shared] - login success',
   LogoutActionType = '[shared] - logout',
   DeleteAccountActionType = '[shared] - delete account',
-  UpdateThemeActionType = '[shared] - update theme',
+  UpdatePrefsActionType = '[shared] - update preferences',
   UpdateMostUsedQueriesActionType = '[shared] - update most used queries',
 }
 
@@ -25,7 +25,7 @@ export type SharedActions = LoadSharedAction
   | LoginFailAction
   | LogoutAction
   | DeleteAccountAction
-  | UpdateThemeAction
+  | UpdatePrefsAction
   | UpdateMostUsedQueriesAction;
 
 /**
@@ -49,8 +49,8 @@ export class LoadSharedFailedAction implements Action {
   }
 }
 
-export class UpdateThemeAction implements Action {
-  readonly type = SharedActionTypes.UpdateThemeActionType;
+export class UpdatePrefsAction implements Action {
+  readonly type = SharedActionTypes.UpdatePrefsActionType;
 
   constructor(public theme: string, public itemType: BOTTLE_ITEM_TYPE) {
   }

@@ -35,6 +35,7 @@ export function sharedStateReducer(state: SharedState = INITIAL_STATE, action: S
         return {
           ...state,
           mostUsedQueries: action.prefs.mostUsedQueries,
+          bottleItemType: action.prefs.itemType,
           theme: action.prefs.theme
         };
       } else {
@@ -53,7 +54,7 @@ export function sharedStateReducer(state: SharedState = INITIAL_STATE, action: S
       return INITIAL_STATE;
     }
 
-    case SharedActionTypes.UpdateThemeActionType: {
+    case SharedActionTypes.UpdatePrefsActionType: {
       return {
         ...state,
         theme: action.theme,

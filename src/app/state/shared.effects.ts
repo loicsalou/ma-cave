@@ -11,7 +11,7 @@ import {
   LogoutAction,
   SharedActionTypes,
   UpdateMostUsedQueriesAction,
-  UpdateThemeAction
+  UpdatePrefsAction
 } from './shared.actions';
 import {SharedPersistenceService} from '../../service/shared-persistence.service';
 import {UserPreferences} from '../../model/user-preferences';
@@ -65,9 +65,9 @@ export class SharedEffectsService {
             new LoadSharedSuccessAction(prefs))
     );
 
-  @Effect() updateTheme$ = this.actions$
-    .ofType(SharedActionTypes.UpdateThemeActionType).pipe(
-      tap((action: UpdateThemeAction) => this.sharedServices.updateTheme(action.theme)),
+  @Effect() updatePrefs$ = this.actions$
+    .ofType(SharedActionTypes.UpdatePrefsActionType).pipe(
+      tap((action: UpdatePrefsAction) => this.sharedServices.updatePrefs(action.theme, action.itemType)),
       map(() => new LoadSharedAction())
     );
 

@@ -13,6 +13,7 @@ import {FilterSet} from '../components/distribution/filterset';
 import {map} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../app/state/app.state';
+import {BOTTLE_ITEM_TYPE} from '../app/state/shared.state';
 
 /**
  * Services related to the bottles in the cellar.
@@ -59,8 +60,8 @@ export class SharedPersistenceService extends AbstractPersistenceService {
     this.dataConnection.updateQueryStats(keywords);
   }
 
-  updateTheme(theme: string) {
-    this.dataConnection.updateTheme(theme);
+  updatePrefs(theme: string, itemType: BOTTLE_ITEM_TYPE) {
+    this.dataConnection.updatePrefs(theme, itemType);
   }
 
   /**

@@ -5,7 +5,7 @@ import * as VERSION from '../../app/version';
 import {SharedPersistenceService} from '../../service/shared-persistence.service';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../../app/state/app.state';
-import {LogoutAction, UpdateThemeAction} from '../../app/state/shared.actions';
+import {LogoutAction, UpdatePrefsAction} from '../../app/state/shared.actions';
 import {BOTTLE_ITEM_TYPE, SharedQuery} from '../../app/state/shared.state';
 import {Observable, Subscription} from 'rxjs';
 import {filter, tap} from 'rxjs/operators';
@@ -99,7 +99,7 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   private updateProfile() {
-    this.store.dispatch(new UpdateThemeAction(this.currentTheme, this.currentItemType));
+    this.store.dispatch(new UpdatePrefsAction(this.currentTheme, this.currentItemType));
   }
 }
 
