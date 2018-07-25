@@ -169,7 +169,7 @@ export class BrowsePage implements OnInit, OnDestroy {
    * prend en compte le nouvel état sélectionnée ou pas pour une bouteille
    * @param {bottle: Bottle; selected: boolean} event bouteille sélectionnée ou désélectionnée
    */
-  switchSelected(event: { bottle: Bottle, selected: boolean }) {
+  toggleSelected(event: { bottle: Bottle, selected: boolean }) {
     this.store.dispatch(new SetSelectedBottleAction(event.bottle, event.selected));
   }
 

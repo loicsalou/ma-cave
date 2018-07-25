@@ -1,9 +1,8 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {BottleItemComponent} from '../list-bottle-item/bottle-item.component';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../../app/state/app.state';
 import {NavController} from 'ionic-angular';
-import {LoadBottleImagesAction} from '../../app/state/bottles.actions';
 
 /**
  * Generated class for the BottleItemLargeComponent component.
@@ -12,9 +11,9 @@ import {LoadBottleImagesAction} from '../../app/state/bottles.actions';
  * Components.
  */
 @Component({
-  selector: 'bottle-item-large',
-  templateUrl: 'bottle-item-large.html'
-})
+             selector: 'bottle-item-large',
+             templateUrl: 'bottle-item-large.html'
+           })
 export class BottleItemLargeComponent extends BottleItemComponent {
 
   constructor(store: Store<ApplicationState>,
@@ -24,6 +23,10 @@ export class BottleItemLargeComponent extends BottleItemComponent {
 
   ngOnInit() {
     super.ngOnInit();
+  }
+
+  locateBottle(event: Event) {
+    super.locateBottle(event, undefined, this.bottle);
   }
 
 }

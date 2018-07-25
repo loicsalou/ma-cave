@@ -40,11 +40,14 @@ export class BottleItemComponent implements OnInit {
     this.onShowDetail.emit(bottle);
   }
 
-  switchSelected() {
+  toggleSelected() {
     event.stopPropagation();
     this.selected = !this.selected;
-    setTimeout(() => this.onSelected.emit({bottle: this.bottle, selected: this.selected})
-    );
+    this.notifySelected(this.selected);
+  }
+
+  notifySelected(selectedState: boolean) {
+    setTimeout(() => this.onSelected.emit({bottle: this.bottle, selected: selectedState}));
   }
 
   numberNotPlaced(bottle: Bottle): number {

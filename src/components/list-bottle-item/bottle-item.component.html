@@ -2,7 +2,7 @@
   <ion-item>
     <ion-row>
       <ion-col col-2 class="icons" style="padding-right:7px;">
-        <ion-avatar item-start (click)="switchSelected($event, bottle)">
+        <ion-avatar item-start (click)="toggleSelected($event, bottle)">
           <cav-icon *ngIf="selected" name="ok" style="font-size: 2em;"></cav-icon>
           <div class="icon" *ngIf="!selected" [ngClass]="(bottle | bottleClass)">
             <img src="assets/icon/starred.png" *ngIf="isBottleFavorite(bottle) && !selected">

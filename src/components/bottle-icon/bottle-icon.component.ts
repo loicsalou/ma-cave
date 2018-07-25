@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Bottle} from '../../model/bottle';
 
 @Component({
@@ -10,6 +10,8 @@ export class BottleIconComponent {
   @Input()
   selected = false;
   @Input()
+  selectable = false;
+  @Input()
   favorite = false;
   @Input()
   bottle: Bottle;
@@ -17,4 +19,12 @@ export class BottleIconComponent {
   maxWidth: number;
   @Input()
   maxHeight: number;
+
+  @Output()
+  onSelect: EventEmitter<boolean> = new EventEmitter<boolean>();
+
+  setSelected(event) {
+    this.selected = event.checked;
+    this.onSelect.emit(this.selected);
+  }
 }

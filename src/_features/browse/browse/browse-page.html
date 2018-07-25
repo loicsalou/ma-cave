@@ -22,12 +22,12 @@
           <bottle-item *ngIf="standardListItem; else largeItem"
                        [bottle]="bottleState.bottle" (onShowDetail)="triggerDetail($event)"
                        [selected]="bottleState.selected"
-                       (onSelected)="switchSelected($event)"></bottle-item>
+                       (onSelected)="toggleSelected($event)"></bottle-item>
           <ng-template #largeItem>
             <bottle-item-large
               [bottle]="bottleState.bottle" (onShowDetail)="triggerDetail($event)"
               [selected]="bottleState.selected"
-              (onSelected)="switchSelected($event)"></bottle-item-large>
+              (onSelected)="toggleSelected($event)"></bottle-item-large>
           </ng-template>
         </div>
       </ng-container>
