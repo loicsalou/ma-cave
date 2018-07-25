@@ -1,34 +1,27 @@
 <ion-card>
   <ion-row (click)="triggerDetail(bottle)">
-    
-    <ion-col col-3 class="icons" style="padding-right:7px;">
-      <div class="bottle-pix" (click)="switchSelected($event, bottle)">
-        <cav-icon *ngIf="selected" name="ok" style="font-size: 2em;"></cav-icon>
-        <img *ngIf="bottle.profile_image_url" [src]="bottle.profile_image_url" [defaultImage]="bottle"
-             class="profile-image">
-        <div class="icon" [ngClass]="(bottle | bottleClass)" *ngIf="!bottle.profile_image_url">
-          <img src="assets/icon/starred.png" *ngIf="isBottleFavorite(bottle) && !selected">
-          <img src="assets/icon/alert-status.png" *ngIf="bottle.overdue && !selected">
-        </div>
-      </div>
+    <ion-col col-4 class="icons" style="padding-right:7px;">
+      <bottle-icon [selected]="selected" [favorite]="isBottleFavorite(bottle)" [bottle]="bottle"></bottle-icon>
     </ion-col>
     
-    <ion-col col-9>
+    <ion-col col-8>
       <ion-row>
         <ion-col col-12 text-wrap>
           <h2 class="label">{{ bottle.nomCru }}</h2>
           <ion-note>{{bottle.area_label}} ({{bottle.millesime}})</ion-note>
         </ion-col>
       </ion-row>
+      
       <ion-row>
         <ion-col col-12 text-wrap>
           <label for="lieu">{{'bottle.lieu_achat' | translate}}</label>
           <em id="lieu">{{bottle.lieu_achat}}, {{bottle.prix}}</em>
         </ion-col>
       </ion-row>
+      
       <ion-row>
         <ion-col col-sm-5 col-lg-2 text-wrap>
-            <label>{{'app.stock' | translate}}</label>
+          <label>{{'app.stock' | translate}}</label>
         </ion-col>
         <ion-col col-sm-1 col-lg-1 text-wrap>
           <ion-badge item-right>
@@ -36,18 +29,26 @@
           </ion-badge>
         </ion-col>
         <ion-col col-sm-6 col-lg-3 text-wrap>
-            <label *ngIf="numberNotPlaced(bottle) > 0">({{numberNotPlaced(bottle)}} {{'app.no-bottles-to-place-short'
-             | translate }})</label>
+          <label *ngIf="numberNotPlaced(bottle) > 0">({{numberNotPlaced(bottle)}} {{'app.no-bottles-to-place-short'
+            | translate }})</label>
         </ion-col>
       </ion-row>
+      
       <ion-row>
         <ion-col col-sm-6 col-lg-8></ion-col>
-        <bottle-action  col-sm-6 col-lg-4 [bottle]="bottle" (locate)="locateBottle($event, item, bottle)"
-                       (favorite)="addToFavorite($event, item, bottle)" [isFavorite]="isBottleFavorite(bottle)">
-        </bottle-action>
+        <ion-col col-sm-6 col-lg-4>
+          <button ion-button (click)="locateBottle($event)" *ngIf="bottle.positions.length > 0" class="ripple">
+            Trouver
+            <cav-icon name="location"></cav-icon>
+          </button>
+          
+          <button ion-button (click)="addToFavorite($event,item,bottle)" class="ripple">
+            Ajouter
+            <cav-icon name="star" [ngClass]="bottle.favorite ? 'favorite' : ''"></cav-icon>
+          </button>
+        </ion-col>
       </ion-row>
     </ion-col>
-    
   </ion-row>
 </ion-card>
 

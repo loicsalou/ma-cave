@@ -1,0 +1,14 @@
+<div class="bottle-icon">
+  <div class="bottle-markers">
+    <cav-icon *ngIf="selected" name="ok" style="font-size: 2em;"></cav-icon>
+    <cav-icon *ngIf="favorite" name="star" style="font-size: 1.5em;" class="favorite"></cav-icon>
+    <cav-icon *ngIf="bottle.overdue" name="attention" style="font-size: 1.4em;" style="color: red"></cav-icon>
+  </div>
+  <div class="bottle-image">
+    <div class="icon" *ngIf="bottle.profile_image_url"
+         [ngStyle]="{'background-image': 'url('+bottle.profile_image_url+')'}">
+    </div>
+    <div class="icon" [ngClass]="(bottle | bottleClass)" *ngIf="!bottle.profile_image_url">
+    </div>
+  </div>
+</div>

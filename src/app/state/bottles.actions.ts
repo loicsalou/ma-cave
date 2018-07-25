@@ -3,12 +3,16 @@ import {Bottle, Position} from '../../model/bottle';
 import {FilterSet} from '../../components/distribution/filterset';
 import {Locker} from '../../model/locker';
 import {Withdrawal} from '../../model/withdrawal';
+import {Image} from '../../model/image';
 
 export enum BottlesActionTypes {
   CreateBottleActionType = '[bottles] - create bottle',
   LoadBottlesActionType = '[bottles] - loading',
   LoadBottlesSuccessActionType = '[bottles] - loading success',
   LoadBottlesFailedActionType = '[bottles] - loading failed',
+  LoadBottleImagesActionType = '[bottles] - loading images',
+  LoadBottleImagesSuccessActionType = '[bottles] - loading images success',
+  LoadBottleImagesFailedActionType = '[bottles] - loading images failed',
   PlaceBottleSelectionActionType = '[bottles] - place selection',
   HighlightBottleSelectionActionType = '[bottles] - highlight selection',
   ResetBottleSelectionActionType = '[bottles] - reset selection',
@@ -35,6 +39,9 @@ export type BottlesActions =
   CreateBottleAction
   | EditLockerAction
   | FixBottlesAction
+  | LoadBottleImagesAction
+  | LoadBottleImagesSuccessAction
+  | LoadBottleImagesFailedAction
   | LoadBottlesAction
   | LoadBottlesSuccessAction
   | LoadBottlesFailedAction
@@ -97,6 +104,30 @@ export class LoadBottlesFailedAction implements Action {
   readonly type = BottlesActionTypes.LoadBottlesFailedActionType;
 
   constructor(public error: any) {
+  }
+}
+
+/**
+ * Chargement des images d'une bouteille
+ */
+export class LoadBottleImagesAction implements Action {
+  readonly type = BottlesActionTypes.LoadBottleImagesActionType;
+
+  constructor(public bottle: Bottle) {
+  }
+}
+
+export class LoadBottleImagesSuccessAction implements Action {
+  readonly type = BottlesActionTypes.LoadBottleImagesSuccessActionType;
+
+  constructor(public bottle: Bottle, public images: Image[]) {
+  }
+}
+
+export class LoadBottleImagesFailedAction implements Action {
+  readonly type = BottlesActionTypes.LoadBottleImagesFailedActionType;
+
+  constructor(public bottle: Bottle, public error: any) {
   }
 }
 

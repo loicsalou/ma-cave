@@ -3,6 +3,7 @@ import {BottleItemComponent} from '../list-bottle-item/bottle-item.component';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../../app/state/app.state';
 import {NavController} from 'ionic-angular';
+import {LoadBottleImagesAction} from '../../app/state/bottles.actions';
 
 /**
  * Generated class for the BottleItemLargeComponent component.
@@ -19,6 +20,10 @@ export class BottleItemLargeComponent extends BottleItemComponent {
   constructor(store: Store<ApplicationState>,
               navCtrl: NavController) {
     super(store, navCtrl);
+  }
+
+  ngOnInit() {
+    super.ngOnInit();
   }
 
 }

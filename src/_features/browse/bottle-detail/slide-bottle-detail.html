@@ -1,12 +1,11 @@
 <div class="slide-bottle-detail page">
   
-  <section class="head">
-      <div>
+  <ion-card class="head">
+      <ion-col col-3 class="bottle-image">
         <img *ngIf="!bottle.profile_image_url" src="{{ bottle | bottleIcon }}" class="profile-image">
-        <img *ngIf="bottle.profile_image_url" [src]="bottle.profile_image_url" [defaultImage]="bottle"
-             class="profile-image">
-      </div>
-      <div class="description">
+        <img *ngIf="bottle.profile_image_url" [src]="bottle.profile_image_url" [defaultImage]="bottle">
+      </ion-col>
+      <ion-col col-9 class="description">
         <ul>
           <li>{{bottle.label}}</li>
           <li>{{bottle.country_label}}, {{bottle.subregion_label}}, {{bottle.area_label}}</li>
@@ -14,10 +13,10 @@
           <li>{{ "bottle.quantite_courante" | translate }}: {{ bottle.quantite_courante }} sur {{bottle.quantite_achat}}
           </li>
         </ul>
-      </div>
-  </section>
+      </ion-col>
+  </ion-card>
   
-  <section class="detail">
+  <ion-card class="detail">
     <h4>{{"bottle-detail" | translate}}</h4>
     <div>
       <ul>
@@ -29,14 +28,14 @@
         <li>{{ "bottle.garde_optimum" | translate }} {{ bottle.garde_min }} {{ "ans" | translate }}</li>
       </ul>
     </div>
-  </section>
+  </ion-card>
   
-  <section class="infos">
+  <ion-card class="infos">
     <h4>{{"infos" | translate}}</h4>
     <div>
       <p *ngIf="!bottle.suggestion && ! bottle.comment">Aucune information complémentaire</p>
       <p *ngIf="bottle.suggestion">{{ "bottle.suggestion" | translate }}: {{bottle.suggestion}}</p>
       <p *ngIf="bottle.comment">{{ "bottle.comment" | translate }}: {{bottle.comment}}</p>
     </div>
-  </section>
+  </ion-card>
 </div>

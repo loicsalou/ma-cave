@@ -1,4 +1,9 @@
 bottle-item-large {
+
+  bottle-icon {
+    width: 100%;
+  }
+
   ion-col.icons {
     display: flex;
   }
@@ -10,14 +15,17 @@ bottle-item-large {
   .bottle-pix {
     display: flex;
     flex-direction: column;
+    width: 100%;
 
     & > div.icon {
+      align-self: center;
       background-size: cover;
       background-position-x: center;
       flex-grow: 1;
       margin: 0 12px 0 12px;
+      width: 80%;
 
-      &>img {
+      & > img {
         margin: 0 -10px 0 -10px
       }
     }
