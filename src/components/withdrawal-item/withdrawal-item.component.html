@@ -3,10 +3,19 @@
     <ion-row>
       <ion-col bottle col-2>
         <ion-avatar item-start>
-          <img src="{{ withdrawal | bottleIcon }}" class="overridable logo">
-          <img src="assets/icon/starred.png" *ngIf="isBottleFavorite(withdrawal)"
-               class="overridable logo">
-          <img src="assets/icon/alert-status.png" *ngIf="withdrawal.overdue" class="overridable logo">
+          <div class="">
+            <div class="bottle-image">
+              <div class="icon" *ngIf="withdrawal.profile_image_url"
+                   [ngStyle]="{'background-image': 'url('+withdrawal.profile_image_url+')'}">
+              </div>
+              <div class="icon" [ngClass]="(withdrawal | bottleClass)" *ngIf="!withdrawal.profile_image_url">
+              </div>
+            </div>
+            <!--<img src="{{ withdrawal | bottleIcon }}" class="overridable logo">-->
+            <img src="assets/icon/starred.png" *ngIf="isBottleFavorite(withdrawal)"
+                 class="overridable logo">
+            <img src="assets/icon/alert-status.png" *ngIf="withdrawal.overdue" class="overridable logo">
+          </div>
         </ion-avatar>
         <span>{{fromNow}}</span>
       </ion-col>

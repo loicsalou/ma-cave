@@ -8,6 +8,12 @@
     margin: 3px 0 3px 0;
   }
 
+  div.icon {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
   ion-label {
     margin-bottom: 0;
     margin-top: 0;
