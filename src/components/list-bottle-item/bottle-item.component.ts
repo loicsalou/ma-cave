@@ -40,11 +40,14 @@ export class BottleItemComponent implements OnInit {
     this.onShowDetail.emit(bottle);
   }
 
-  switchSelected() {
+  toggleSelected() {
     event.stopPropagation();
     this.selected = !this.selected;
-    setTimeout(() => this.onSelected.emit({bottle: this.bottle, selected: this.selected})
-    );
+    this.notifySelected(this.selected);
+  }
+
+  notifySelected(selectedState: boolean) {
+    setTimeout(() => this.onSelected.emit({bottle: this.bottle, selected: selectedState}));
   }
 
   numberNotPlaced(bottle: Bottle): number {
@@ -69,6 +72,12 @@ export class BottleItemComponent implements OnInit {
     let updatedBottle = new Bottle(bottle);
     updatedBottle.favorite = !bottle.favorite;
     this.store.dispatch(new UpdateBottlesAction([ updatedBottle ]));
-    slidingItem.close();
+    try {
+      slidingItem.close();
+    } catch (error) {
+      // Ne rien faire c'est normal si large item car non sliding
+      // Todo rendre cette classe abstraite et déporter la partie sliding item dans une nouvelle sous-classe de
+      // composant
+    }
   }
 }

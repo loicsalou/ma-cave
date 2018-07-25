@@ -7,6 +7,7 @@ import {createSelector} from '@ngrx/store';
 import {match} from '../../components/distribution/filter-matcher';
 import {Locker} from '../../model/locker';
 import {LogoutAction, SharedActionTypes} from './shared.actions';
+import {Image} from '../../model/image';
 
 export interface BottlesState {
   allBottles: {
@@ -95,6 +96,14 @@ export namespace BottlesQuery {
   );
 }
 
+function extractUrls(images: Image[]) {
+  if (images && images.length > 0) {
+    return images.map(image => image.URL);
+  } else {
+    return [];
+  }
+}
+
 export function bottlesStateReducer(state: BottlesState = INITIAL_STATE, action: BottlesActions | LogoutAction): BottlesState {
   switch (action.type) {
 
@@ -134,6 +143,30 @@ export function bottlesStateReducer(state: BottlesState = INITIAL_STATE, action:
           entities: entities,
           loading: false,
           loaded: true
+        }
+      };
+    }
+
+    case BottlesActionTypes.LoadBottleImagesSuccessActionType: {
+      let newEntities = state.allBottles.entities;
+      newEntities[ action.bottle.id ].image_urls = extractUrls(action.images);
+      return {
+        ...state,
+        allBottles: {
+          ...state.allBottles,
+          entities: newEntities
+        }
+      };
+    }
+
+    case BottlesActionTypes.LoadBottleImagesFailedActionType: {
+      let newEntities = state.allBottles.entities;
+      newEntities[ action.bottle.id ].image_urls = [];
+      return {
+        ...state,
+        allBottles: {
+          ...state.allBottles,
+          entities: newEntities
         }
       };
     }

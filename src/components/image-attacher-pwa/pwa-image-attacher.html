@@ -31,7 +31,7 @@
   </ion-col>
 </ion-row>
 
-<ion-row [ngStyle]="capturing ? {} : {'display': 'none'}">
+<ion-row [ngStyle]="capturing ? {'height': '800px', 'width': '250px'} : {'display': 'none'}">
   <video #video autoplay (click)="snapshot()"></video>
   <canvas #canvas></canvas>
 </ion-row>

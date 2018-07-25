@@ -3,6 +3,8 @@ import {Actions, Effect} from '@ngrx/effects';
 import {
   BottlesActionTypes,
   FixBottlesAction,
+  LoadBottleImagesAction,
+  LoadBottleImagesSuccessAction,
   LoadBottlesSuccessAction,
   LoadCellarSuccessAction,
   LockerWasUpdatedAction,
@@ -21,6 +23,8 @@ import {Locker} from '../../model/locker';
 import {CellarPersistenceService} from '../../service/cellar-persistence.service';
 import {BottleFactory} from '../../model/bottle.factory';
 import {CreateOrUpdateWithdrawalAction} from './withdrawals.actions';
+import {ImagePersistenceService} from '../../service/image-persistence.service';
+import {Image} from '../../model/image';
 
 @Injectable()
 export class BottlesEffectsService {
@@ -37,6 +41,20 @@ export class BottlesEffectsService {
           return new FixBottlesAction(invalidBottles);
         }
       })
+    );
+
+  @Effect() getBottleImages$ = this.actions$
+    .ofType(BottlesActionTypes.LoadBottleImagesActionType).pipe(
+      switchMap((action: LoadBottleImagesAction) => {
+                  return this.imageServices.getList(action.bottle).pipe(
+                    map((images: Image[]) => {
+                          const ret = new LoadBottleImagesSuccessAction(action.bottle, images);
+                          return ret;
+                        }
+                    )
+                  );
+                }
+      )
     );
 
   @Effect() FixBottles$ = this.actions$
@@ -110,6 +128,7 @@ export class BottlesEffectsService {
               private bottlesService: BottlePersistenceService,
               private cellarService: CellarPersistenceService,
               private sharedServices: SharedPersistenceService,
+              private imageServices: ImagePersistenceService,
               private bottleFactory: BottleFactory) {
   }
 

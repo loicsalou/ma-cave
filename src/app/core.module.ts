@@ -33,6 +33,7 @@ import {FirebaseWithdrawalsService} from '../service/firebase/firebase-withdrawa
 import {AngularFireStorageModule} from 'angularfire2/storage';
 import {LoginService} from '../service/login/login.service';
 import {AngularFirestoreModule} from 'angularfire2/firestore';
+import {ImagePersistenceService} from '../service/image-persistence.service';
 
 export const fireConfig = {
   apiKey: 'AIzaSyBhSvUzx7FAk1pkTDH3TpxRVzsNwkkqo7w',
@@ -78,6 +79,7 @@ export const fireConfig = {
               BottleFactory,
               WithdrawalFactory,
               BottlePersistenceService,
+              ImagePersistenceService,
               CellarPersistenceService,
               DistributeService,
               SharedPersistenceService,

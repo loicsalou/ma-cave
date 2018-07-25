@@ -9,27 +9,29 @@
 
 
 <ion-content class="page-update page" padding-horizontal>
-  <responsive-wrapper>
-    <ion-fab bottom right *ngIf="bottleForm.dirty">
-      <button ion-fab class="ripple">
-        <cav-icon name="menu"></cav-icon>
+  <ion-fab bottom right *ngIf="bottleForm.dirty">
+    <button ion-fab class="ripple">
+      <cav-icon name="menu"></cav-icon>
+    </button>
+    <ion-fab-list side="top">
+      <button ion-fab (click)="save()" [disabled]="bottleForm.invalid" class="item ripple">
+        <cav-icon name="ok"></cav-icon>
       </button>
-      <ion-fab-list side="top">
-        <button ion-fab (click)="save()" [disabled]="bottleForm.invalid" class="item ripple">
-          <cav-icon name="ok"></cav-icon>
-        </button>
-        <button ion-fab (click)="cancel()" class="item ripple">
-          <cav-icon name="cancel"></cav-icon>
-        </button>
-      </ion-fab-list>
-    </ion-fab>
-    
+      <button ion-fab (click)="cancel()" class="item ripple">
+        <cav-icon name="cancel"></cav-icon>
+      </button>
+    </ion-fab-list>
+  </ion-fab>
+  
+  <responsive-wrapper>
     <!--<ion-scroll scrollY="true">-->
     <form #bottleForm="ngForm">
       <ion-row d-flex class="form-group">
         <ion-col style="text-align: center;">
-          <img src="{{ bottle | bottleIcon }}" *ngIf="! getProfileImage()">
-          <img [src]="getProfileImage()" [defaultImage]="'/assets/img/missing-image.jpg'" *ngIf="getProfileImage()">
+          <div class="profile-image" style="text-align: center">>
+            <img src="{{ bottle | bottleIcon }}" *ngIf="! getProfileImage()">
+            <img [src]="getProfileImage()" [defaultImage]="'/assets/img/missing-image.jpg'" *ngIf="getProfileImage()">
+          </div>
         </ion-col>
         <ion-col style="margin-top: auto; margin-bottom: auto">
           <ion-item>

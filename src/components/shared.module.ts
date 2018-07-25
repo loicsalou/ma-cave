@@ -28,6 +28,7 @@ import {SharedCoreModule} from './shared-core.module';
 import {NotificationService} from '../service/notification.service';
 import {IconComponent} from './icon/icon.component';
 import {BottleItemLargeComponent} from './list-bottle-item-large/bottle-item-large';
+import {BottleIconComponent} from './bottle-icon/bottle-icon.component';
 
 @NgModule({
             imports: [
@@ -39,6 +40,7 @@ import {BottleItemLargeComponent} from './list-bottle-item-large/bottle-item-lar
             ],
             declarations: [
               BottleActionComponent,
+              BottleIconComponent,
               BottleIconPipe,
               BottleClassPipe,
               BottleItemComponent,
@@ -61,6 +63,7 @@ import {BottleItemLargeComponent} from './list-bottle-item-large/bottle-item-lar
             exports: [
               ResponsiveWrapperComponent,
               BottleActionComponent,
+              BottleIconComponent,
               BottleIconPipe,
               BottleClassPipe,
               BottleItemComponent,

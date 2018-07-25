@@ -184,7 +184,8 @@ export class UpdatePage implements OnInit {
     if (!this.bottle.image_urls) {
       this.bottle.image_urls = [];
     }
-    this.bottle.image_urls.push(downloadURL);
+    this.bottle.image_urls=[...this.bottle.image_urls, downloadURL];
+    this.store.dispatch(new UpdateBottlesAction([ this.bottle ]));
   }
 
   // private

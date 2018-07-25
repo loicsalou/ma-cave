@@ -3,6 +3,7 @@ import {BottleMetadata} from '../../model/bottle';
 import {ImagePersistenceService, UploadMetadata} from '../../service/image-persistence.service';
 import {NotificationService} from '../../service/notification.service';
 import {Subscription} from 'rxjs';
+import {logInfo} from '../../utils';
 
 @Component({
              selector: 'pwa-image-attacher',
@@ -24,9 +25,19 @@ export class PwaImageAttacherComponent implements OnInit {
   @ViewChild('fileSelector') fileSelector: ElementRef;
 
   private loadingInProgress: boolean = false;
+  // max height: 720 cf
   private constraints: MediaStreamConstraints = {
     audio: false,
-    video: true
+    video: {
+      advanced: [
+        {
+          aspectRatio: 180 / 300,
+          width: 180,
+          height: 300
+        }
+      ]
+    }
+
   };
 
   constructor(private imageService: ImagePersistenceService, private notificationService: NotificationService) {
@@ -39,7 +50,7 @@ export class PwaImageAttacherComponent implements OnInit {
 
   ngOnInit() {
     this.video.nativeElement.height = '300';
-    this.video.nativeElement.width = '200';
+    this.video.nativeElement.width = '180';
     this.canvas.nativeElement[ 'max-height' ] = '300';
   }
 
@@ -54,16 +65,19 @@ export class PwaImageAttacherComponent implements OnInit {
 
   snapshot() {
     this.capturing = false;
-    this.canvas.nativeElement.width = this.video.nativeElement.videoWidth;
-    this.canvas.nativeElement.height = this.video.nativeElement.videoHeight;
-    this.canvas.nativeElement.getContext('2d').drawImage(this.video.nativeElement, 0, 0,
-                                                         this.canvas.nativeElement.width,
-                                                         this.canvas.nativeElement.height);
-    let canvasElement: HTMLCanvasElement = this.canvas.nativeElement;
-    canvasElement.toBlob(blob => {
-      this.saveSnapshot(blob);
-    });
-    this.stopVideo();
+    try {
+      this.canvas.nativeElement.width = this.video.nativeElement.videoWidth;
+      this.canvas.nativeElement.height = this.video.nativeElement.videoHeight;
+      this.canvas.nativeElement.getContext('2d').drawImage(this.video.nativeElement, 0, 0,
+                                                           this.canvas.nativeElement.width,
+                                                           this.canvas.nativeElement.height);
+      let canvasElement: HTMLCanvasElement = this.canvas.nativeElement;
+      canvasElement.toBlob(blob => {
+        this.saveSnapshot(blob);
+      });
+    } finally {
+      this.stopVideo();
+    }
   }
 
   removeProfileImage(): void {
@@ -103,8 +117,12 @@ export class PwaImageAttacherComponent implements OnInit {
   }
 
   private startVideo(constraints: MediaStreamConstraints) {
+    logInfo('supporté:' + JSON.stringify(navigator.mediaDevices.getSupportedConstraints()));
+    logInfo('demandé:' + JSON.stringify(constraints));
     navigator.mediaDevices.getUserMedia(constraints)
       .then(stream => {
+        logInfo('capacités:' + stream.getVideoTracks() ? JSON.stringify(stream.getVideoTracks()[ 0 ].getCapabilities()) : '');
+        logInfo('obtenu:' + stream.getVideoTracks() ? JSON.stringify(stream.getVideoTracks()[ 0 ].getSettings()) : '');
         this.video.nativeElement.srcObject = stream;
       })
       .catch(err => this.notificationService.error('problème au démarrage de la vidéo', err));
