@@ -1,5 +1,5 @@
 import {AfterViewChecked, Component, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
-import {Content, IonicPage, ModalController, NavController, NavParams} from 'ionic-angular';
+import {Content, ModalController, NavController, NavParams} from '@ionic/angular';
 import {CellarPersistenceService} from '../../service/cellar-persistence.service';
 import {Bottle, Position} from '../../model/bottle';
 import {Dimension, Locker, LockerType} from '../../model/locker';
@@ -28,6 +28,7 @@ import {filter, map, shareReplay, tap} from 'rxjs/operators';
 import {DimensionOfDirective} from '../../components/dimension-of.directive';
 import {SimpleLockerComponent} from '../../components/locker/simple-locker.component';
 import {logDebug, logInfo} from '../../utils/index';
+import {Modal} from 'ionic-angular';
 
 function shortenBottle(btl: Bottle) {
   return {
@@ -43,7 +44,6 @@ function shortenBottle(btl: Bottle) {
  * See http://ionicframework.com/docs/components/#navigation for more info
  * on Ionic pages and navigation.
  */
-@IonicPage()
 // TODO strategy onpush ne fonctionne pas pour le moment voir pouquoi
 @Component({
              templateUrl: './cellar-page.html'
@@ -231,15 +231,17 @@ export class CellarPage implements OnInit, AfterViewChecked {
   }
 
   createLocker() {
-    let editorModal = this.modalCtrl.create('CreateLockerPage', {}, {showBackdrop: false});
-    editorModal.present();
+    this.modalCtrl.create('CreateLockerPage', {}, {showBackdrop: false})
+      .then(
+        (editorModal: Modal) => editorModal.present()
+      );
     this.somethingWasUpdated = true;
   }
 
   updateLocker(locker) {
     this.store.dispatch(new EditLockerAction(locker));
-    let editorModal = this.modalCtrl.create('UpdateLockerPage', {}, {showBackdrop: true});
-    editorModal.present();
+    this.modalCtrl.create('UpdateLockerPage', {}, {showBackdrop: true})
+      .then((editorModal: Modal) => editorModal.present());
     this.somethingWasUpdated = true;
   }
 

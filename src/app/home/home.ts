@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {NavController, Platform} from 'ionic-angular';
+import {NavController, Platform} from '@ionic/angular';
 import {FirebaseUser} from '../../model/user';
 import {TabsPage} from '../tabs/tabs';
 import {Observable} from 'rxjs';

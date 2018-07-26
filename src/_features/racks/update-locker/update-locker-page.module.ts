@@ -1,5 +1,5 @@
 import {CUSTOM_ELEMENTS_SCHEMA, NgModule} from '@angular/core';
-import {IonicModule, IonicPageModule} from 'ionic-angular';
+import {IonicModule} from '@ionic/angular';
 import {CellarPage} from './cellar-page';
 import {FormsModule} from '@angular/forms';
 import {TranslateModule} from '@ngx-translate/core';
@@ -12,7 +12,6 @@ import {UpdateLockerPage} from './update-locker-page';
               CommonModule,
               FormsModule,
               IonicModule,
-              IonicPageModule.forChild(UpdateLockerPage),
               SharedModule,
               TranslateModule.forChild()
             ],

@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {IonicPage, NavController, NavParams} from 'ionic-angular';
+import {NavController, NavParams} from '@ionic/angular';
 import {BottleSize, Locker} from '../../../model/locker';
 import {Bottle} from '../../../model/bottle';
 import {NotificationService} from '../../../service/notification.service';
@@ -20,7 +20,6 @@ import {Observable} from 'rxjs';
  * See https://angular.io/docs/ts/latest/api/core/index/ComponentMetadata-class.html
  * for more info on Angular Components.
  */
-@IonicPage()
 @Component({
              templateUrl: 'update-locker-page.html'
              // styleUrls:[ 'update-locker-page.scss' ]

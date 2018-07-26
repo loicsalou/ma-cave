@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {NavController} from 'ionic-angular';
+import {NavController} from '@ionic/angular';
 import {Bottle} from '../../../model/bottle';
 
 @Component({

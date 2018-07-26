@@ -9,10 +9,8 @@ import {LogoutAction, UpdatePrefsAction} from '../../app/state/shared.actions';
 import {BOTTLE_ITEM_TYPE, SharedQuery} from '../../app/state/shared.state';
 import {Observable, Subscription} from 'rxjs';
 import {filter, tap} from 'rxjs/operators';
-import {IonicPage, NavController} from 'ionic-angular';
-import {HomePage} from '../../app/home/home';
+import {NavController} from '@ionic/angular';
 
-@IonicPage()
 @Component({
              selector: 'page-profile',
              templateUrl: './profile.html'
@@ -21,10 +19,9 @@ export class ProfilePage implements OnInit, OnDestroy {
   version: any;
   userData: any;
   _currentTheme: string;
-  private _currentItemType: BOTTLE_ITEM_TYPE;
   prefsSub: Subscription;
   user$: Observable<User>;
-
+  private _currentItemType: BOTTLE_ITEM_TYPE;
   private userDataKeys: string[];
   private userDataValues: any[];
 

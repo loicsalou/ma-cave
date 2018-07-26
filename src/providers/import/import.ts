@@ -47,7 +47,7 @@ export class ImportProvider {
 
   private parseContentCSV(fileContent): Bottle[] {
     let from = 0, nbRead = 999;
-    let csvarray = fileContent.split('\n');
+    let csvarray: string[] = fileContent.split('\n');
     let keys = _.first(csvarray).split(';');
     let values = _.drop(csvarray, 1 + from);
     values = _.take(values, nbRead);
@@ -76,12 +76,12 @@ export class ImportProvider {
   private parseContentXLS(fileContent) {
     let from = 0, nbRead = 9999;
     let csvarray = fileContent.split(/\r\n|\n/);
-    let keys = _.first(csvarray).replace(/['"]+/g, '').split(/\t/);
+    let keys = (_.first(csvarray) as string).replace(/['"]+/g, '').split(/\t/);
     let values = _.drop(csvarray, 1 + from);
     values = _.take(values, nbRead);
     let bottles = [];
     try {
-      _.filter(values, row => row.trim().length > 1)
+      _.filter(values, (row: string) => row.trim().length > 1)
         .map(
           (row, ix) => {
             try {

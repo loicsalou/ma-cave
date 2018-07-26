@@ -1,5 +1,5 @@
 import {ErrorHandler, NgModule, NO_ERRORS_SCHEMA} from '@angular/core';
-import {AlertController, IonicModule, LoadingController, ToastController} from 'ionic-angular';
+import {AlertController, IonicModule, LoadingController, ToastController} from '@ionic/angular';
 import {DefaultImageDirective} from '../directives/default-image/default-image';
 import {BottleIconPipe} from './list/bottle-icon.pipe';
 import {ProgressBarComponent} from './progress-bar/progress-bar';

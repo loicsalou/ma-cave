@@ -158,7 +158,8 @@ export class StatisticsComponent implements OnInit {
 
     _.orderBy(significantData, [ 'value' ], [ 'desc' ]);
     let tailToConsolidate = significantData.length > onlyTop ? _.slice(significantData, onlyTop) : [];
-    let tot = tailToConsolidate.reduce((kv1: KeyValue, kv2: KeyValue) => kv1.value + kv2.value, 0) | 0;
+    //let tot = tailToConsolidate.reduce((kv1: KeyValue, kv2: KeyValue) => kv1.value + kv2.value, 0) | 0;
+    let tot = _.reduce(tailToConsolidate, (sum: number, kv: KeyValue) => sum + kv.value, 0) | 0;
     nonSignificantNumber += tot;
     significantData = _.slice(significantData, 0, onlyTop);
 

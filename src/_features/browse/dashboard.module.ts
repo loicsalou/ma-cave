@@ -1,5 +1,5 @@
 import {CUSTOM_ELEMENTS_SCHEMA, NgModule} from '@angular/core';
-import {IonicModule, IonicPageModule} from 'ionic-angular';
+import {IonicModule} from '@ionic/angular';
 import {SharedModule} from '../../components/shared.module';
 import {TranslateModule} from '@ngx-translate/core';
 import {DashboardPage} from './dashboard';
@@ -18,7 +18,6 @@ const pages = [
 @NgModule({
             imports: [
               IonicModule,
-              IonicPageModule.forChild(DashboardPage),
               CommonModule,
               ChartsModule,
               PopoverPageModule,

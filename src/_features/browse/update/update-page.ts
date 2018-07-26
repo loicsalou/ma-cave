@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {Bottle, BottleMetadata} from '../../../model/bottle';
-import {IonicPage, NavController, NavParams} from 'ionic-angular';
+import {NavController, NavParams} from '@ionic/angular';
 import {ImagePersistenceService} from '../../../service/image-persistence.service';
 import {NotificationService} from '../../../service/notification.service';
 import * as _ from 'lodash';
@@ -20,7 +20,6 @@ import {isMobileDevice} from '../../../utils';
  See https://angular.io/docs/ts/latest/api/core/index/ComponentMetadata-class.html
  for more info on Angular 2 Components.
  */
-@IonicPage()
 @Component({
              selector: 'update',
              templateUrl: 'update-page.html',

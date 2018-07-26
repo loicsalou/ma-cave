@@ -1,5 +1,5 @@
 import {NgModule} from '@angular/core';
-import {IonicApp, IonicModule} from 'ionic-angular';
+import {IonicModule} from '@ionic/angular';
 import {MyCaveApp} from './app.component';
 import {HomePage} from './home/home';
 import {TabsPage} from './tabs/tabs';
@@ -55,7 +55,7 @@ const firebaseUiAuthConfig: FirebaseUIAuthConfig = {
 
 @NgModule({
             imports: [
-              IonicModule.forRoot(MyCaveApp, {
+              IonicModule.forRoot({
                                     mode: 'md'
                                   }
               ),
@@ -85,8 +85,7 @@ const firebaseUiAuthConfig: FirebaseUIAuthConfig = {
               BottlesEffectsService,
               SharedEffectsService,
               WithdrawalsEffectsService
-            ],
-            bootstrap: [ IonicApp ]
+            ]
           })
 export class AppModule {
 }

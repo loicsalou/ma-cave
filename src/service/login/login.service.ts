@@ -3,11 +3,11 @@ import {User} from '../../model/user';
 import {AnonymousLoginService} from './anonymous-login.service';
 import {AbstractLoginService} from './abstract-login.service';
 import {TranslateService} from '@ngx-translate/core';
-import {AlertController} from 'ionic-angular';
 import {OnDestroy} from '@angular/core';
 import * as firebase from 'firebase/app';
 import {Observable} from 'rxjs';
 import {traced} from '../../utils/decorators';
+import {Alert, AlertController} from 'ionic-angular';
 
 export type LOGINTYPE = 'FIREBASE' | 'ANONYMOUS';
 
@@ -64,11 +64,11 @@ export class LoginService implements OnDestroy {
   private failed(message: string, error?: any) {
     let msg = this.translateService.instant(message);
     this.alertController.create({
-                                  title: this.translateService.instant('app.failed'),
-                                  subTitle: msg + (error ? error : ''),
+                                  header: this.translateService.instant('app.failed'),
+                                  subHeader: msg + (error ? error : ''),
                                   buttons: [ 'Ok' ]
                                 })
-      .present();
+      .then((alt: Alert) => alt.present())
   }
 
 }

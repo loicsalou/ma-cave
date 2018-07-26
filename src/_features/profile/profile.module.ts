@@ -1,5 +1,4 @@
 import {NgModule} from '@angular/core';
-import {IonicPageModule} from 'ionic-angular';
 import {FormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {ProfilePage} from './profile';
@@ -11,8 +10,7 @@ import {TranslateModule} from '@ngx-translate/core';
               CommonModule,
               FormsModule,
               SharedModule,
-              TranslateModule.forChild(),
-              IonicPageModule.forChild(ProfilePage)
+              TranslateModule.forChild()
             ],
             declarations: [
               ProfilePage

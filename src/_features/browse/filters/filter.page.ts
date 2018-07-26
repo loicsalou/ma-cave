@@ -1,7 +1,7 @@
 import {Bottle, BottleState} from '../../../model/bottle';
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import {SortOption} from '../../../components/distribution/distribution';
-import {MenuController} from 'ionic-angular';
+import {MenuController} from '@ionic/angular';
 import {Subscription, Observable} from 'rxjs';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../../../app/state/app.state';

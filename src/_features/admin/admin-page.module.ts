@@ -1,5 +1,4 @@
 import {NgModule} from '@angular/core';
-import {IonicPageModule} from 'ionic-angular';
 import {FormsModule} from '@angular/forms';
 import {SharedModule} from '../../components/shared.module';
 import {AdminPage} from './admin-page';
@@ -12,7 +11,6 @@ import {ImportProvider} from '../../providers/import/import';
               CommonModule,
               FormsModule,
               SharedModule,
-              IonicPageModule.forChild(AdminPage),
               TranslateModule.forChild()
             ],
             declarations: [

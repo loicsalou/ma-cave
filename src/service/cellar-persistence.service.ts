@@ -12,9 +12,10 @@ import {TranslateService} from '@ngx-translate/core';
 import {FirebaseLockersService} from './firebase/firebase-lockers.service';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../app/state/app.state';
-import {catchError, map, tap} from 'rxjs/operators';
+import {catchError, map, take, tap} from 'rxjs/operators';
 import {Bottle} from '../model/bottle';
 import {of} from 'rxjs';
+import {Loading} from 'ionic-angular';
 
 /**
  * Services related to the cellar itself, locker and place of the lockers.
@@ -58,23 +59,27 @@ export class CellarPersistenceService extends AbstractPersistenceService {
           this.notificationService.information('Le casier "' + locker.name + '" a bien été supprimé');
         } else {
           this.notificationService.warning('Le casier "' + locker.name + '" n\'est pas vide et ne peut donc pas' +
-            ' être supprimé');
+                                             ' être supprimé');
         }
       }
     );
   }
 
   loadAllLockers() {
-    let popup = this.notificationService.createLoadingPopup('app.loading');
-    return this.firebaseLockersService.fetchAllLockers().pipe(
-      map((lockers: Locker[]) => lockers.map((locker: Locker) => this.lockerFactory.create(locker))),
-      tap(() => popup.dismiss()),
-      catchError(err => {
-        popup.dismiss();
-        this.notificationService.error('app.failed');
-        return of([]);
-      })
-    );
+    const sub = this.notificationService.createLoadingPopup('app.loading').pipe(take(1))
+      .subscribe((popup: Loading) => {
+                   sub.unsubscribe();
+                   return this.firebaseLockersService.fetchAllLockers().pipe(
+                     map((lockers: Locker[]) => lockers.map((locker: Locker) => this.lockerFactory.create(locker))),
+                     tap(() => popup.dismiss()),
+                     catchError(err => {
+                       popup.dismiss();
+                       this.notificationService.error('app.failed');
+                       return of([]);
+                     })
+                   );
+                 }
+      );
   }
 
   protected initialize(user) {

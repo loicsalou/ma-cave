@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {IonicPage, ModalController, NavController, Platform, PopoverController, VirtualScroll} from 'ionic-angular';
+import {ModalController, NavController, Platform, PopoverController, VirtualScroll} from '@ionic/angular';
 import {BrowsePage} from './browse/browse-page';
 import {Bottle} from '../../model/bottle';
 import {FilterSet} from '../../components/distribution/filterset';
@@ -27,8 +27,8 @@ import {LoadWithdrawalsAction} from '../../app/state/withdrawals.actions';
 import {SharedQuery, SharedState} from '../../app/state/shared.state';
 import {LoadSharedAction, LogoutAction} from '../../app/state/shared.actions';
 import {logInfo} from '../../utils/index';
+import {Modal} from 'ionic-angular';
 
-@IonicPage()
 @Component({
              templateUrl: 'dashboard.html',
              changeDetection: ChangeDetectionStrategy.OnPush
@@ -127,8 +127,8 @@ export class DashboardPage implements OnInit, OnDestroy {
   }
 
   triggerNotation(bottle) {
-    let modal = this.modalCtrl.create('RecordOutputPage', {bottle: bottle});
-    modal.present();
+    this.modalCtrl.create('RecordOutputPage', {bottle: bottle})
+      .then((modal: Modal) => modal.present());
   }
 
   showPopover(myEvent) {

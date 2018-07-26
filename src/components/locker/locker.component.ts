@@ -1,6 +1,6 @@
 import {EventEmitter, Input, OnChanges, Output, ViewChild} from '@angular/core';
 import {Bottle} from '../../model/bottle';
-import {Gesture} from 'ionic-angular';
+import {Gesture} from '@ionic/angular';
 import {Dimension} from '../../model/locker';
 import {SimpleLocker} from '../../model/simple-locker';
 import {ZoomableDirective} from '../zoomable.directive';

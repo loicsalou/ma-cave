@@ -1,5 +1,5 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import {IonicPage, NavController, NavParams, Slides} from 'ionic-angular';
+import {NavController, NavParams, Slides} from '@ionic/angular';
 import {Bottle} from '../../../model/bottle';
 import {BottleEvent} from '../../../components/list/bottle-event';
 import {UpdatePage} from '../update/update-page';
@@ -12,7 +12,6 @@ import {logInfo} from '../../../utils';
  See http://ionicframework.com/docs/v2/components/#navigation for more info on
  Ionic pages and navigation.
  */
-@IonicPage()
 @Component({
              templateUrl: 'bottle-detail-page.html',
              // styleUrls:[ 'bottle-detail-page.scss' ]

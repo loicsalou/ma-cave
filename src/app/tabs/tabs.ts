@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {NavController, Platform} from 'ionic-angular';
+import {NavController, Platform} from '@ionic/angular';
 import {ApplicationState} from '../state/app.state';
 import {Store} from '@ngrx/store';
 import {SharedQuery, SharedState} from '../state/shared.state';

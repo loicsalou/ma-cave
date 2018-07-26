@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {Platform} from 'ionic-angular';
+import {Platform} from '@ionic/angular';
 import {TranslateService} from '@ngx-translate/core';
 import {HomePage} from './home/home';
 

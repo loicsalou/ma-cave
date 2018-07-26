@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import {BottleItemComponent} from '../list-bottle-item/bottle-item.component';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../../app/state/app.state';
-import {NavController} from 'ionic-angular';
+import {NavController} from '@ionic/angular';
 
 /**
  * Generated class for the BottleItemLargeComponent component.

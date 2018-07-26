@@ -188,7 +188,7 @@ export class FirebaseBottlesService {
   //============== NO CACHE AVAILABLE
   public fetchAllBottlesFromDB(): Observable<Bottle[]> {
     this.notificationService.debugAlert('fetchAllBottlesFromDB()');
-    let popup = this.notificationService.createLoadingPopup('app.loading');
+    this.notificationService.createLoadingPopup('app.loading');
     popup.onDidDismiss(() =>
                          popup = undefined
     );

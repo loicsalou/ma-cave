@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {FabButton, IonicPage, MenuController, NavController} from 'ionic-angular';
+import {FabButton, MenuController, NavController} from '@ionic/angular';
 import {Bottle, BottleState} from '../../../model/bottle';
 import {BottleDetailPage} from '../bottle-detail/bottle-detail-page';
 import {FilterSet} from '../../../components/distribution/filterset';
@@ -31,7 +31,6 @@ function sliceAround(currentBottles: Bottle[], bottle: Bottle, slice: number) {
   return currentBottles.slice(from < 0 ? 0 : from, to > currentBottles.length ? currentBottles.length : to);
 }
 
-@IonicPage()
 @Component({
              selector: 'page-browse',
              templateUrl: 'browse-page.html',

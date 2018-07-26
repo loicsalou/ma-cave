@@ -1,5 +1,5 @@
 import {NgModule, Optional, SkipSelf} from '@angular/core';
-import {AlertController, LoadingController, ToastController} from 'ionic-angular';
+import {AlertController, LoadingController, ToastController} from '@ionic/angular';
 import {TranslateService} from '@ngx-translate/core';
 import {AngularFireModule} from 'angularfire2';
 import {AngularFireAuthModule} from 'angularfire2/auth';

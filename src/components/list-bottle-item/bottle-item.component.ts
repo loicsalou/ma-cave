@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Bottle} from '../../model/bottle';
-import {ItemSliding, NavController} from 'ionic-angular';
+import {ItemSliding, NavController} from '@ionic/angular';
 import {ApplicationState} from '../../app/state/app.state';
 import {Store} from '@ngrx/store';
 import {

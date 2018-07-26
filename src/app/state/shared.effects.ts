@@ -19,7 +19,7 @@ import {LoginService} from '../../service/login/login.service';
 import {User} from '../../model/user';
 import {logInfo} from '../../utils';
 import {throwError} from 'rxjs';
-import {NavController} from 'ionic-angular';
+import {NavController} from '@ionic/angular';
 
 @Injectable()
 export class SharedEffectsService {

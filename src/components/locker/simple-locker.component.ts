@@ -15,7 +15,7 @@ import {Dimension, Locker, LockerType} from '../../model/locker';
 import {Bottle, Position} from '../../model/bottle';
 import {NotificationService} from '../../service/notification.service';
 import {LockerComponent} from './locker.component';
-import {Gesture} from 'ionic-angular';
+import {Gesture} from '@ionic/angular';
 import {RackDirective} from '../rack.directive';
 import {DimensionOfDirective} from '../dimension-of.directive';
 import {Observable, Subscription} from 'rxjs';

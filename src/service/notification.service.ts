@@ -1,6 +1,6 @@
-import {AlertController, Loading, LoadingController, ToastController} from 'ionic-angular';
+import {AlertController, Loading, LoadingController, ToastController} from '@ionic/angular';
 import {TranslateService} from '@ngx-translate/core';
-import {Observable, Subject} from 'rxjs';
+import {from, Observable, Subject} from 'rxjs';
 import {logDebug} from '../utils';
 
 /**
@@ -25,37 +25,37 @@ export class NotificationService {
                                   position: position ? position : 'top',
                                   showCloseButton: showCloseButton ? showCloseButton : false
                                 })
-      .present();
+      .then(toast => toast.present());
   }
 
   error(message: string, error?: any) {
     let msg = this.translateService.instant(message);
     this.alertController.create({
-                                  title: this.translateService.instant('app.error'),
-                                  subTitle: msg + (error ? error : ''),
+                                  header: this.translateService.instant('app.error'),
+                                  subHeader: msg + (error ? error : ''),
                                   buttons: [ 'Ok' ]
                                 })
-      .present();
+      .then(alt => alt.present());
   }
 
   failed(message: string, error?: any) {
     let msg = this.translateService.instant(message);
     this.alertController.create({
-                                  title: this.translateService.instant('app.failed'),
-                                  subTitle: msg + (error ? error : ''),
+                                  header: this.translateService.instant('app.failed'),
+                                  subHeader: msg + (error ? error : ''),
                                   buttons: [ 'Ok' ]
                                 })
-      .present();
+      .then(alt => alt.present());
   }
 
   warning(message: string, error?: any) {
     let msg = this.translateService.instant(message);
     this.alertController.create({
-                                  title: this.translateService.instant('app.warning'),
-                                  subTitle: msg + (error ? error : ''),
+                                  header: this.translateService.instant('app.warning'),
+                                  subHeader: msg + (error ? error : ''),
                                   buttons: [ 'Ok' ]
                                 })
-      .present();
+      .then(alt => alt.present());
   }
 
   debugAlert(message: string, obj?: any) {
@@ -71,22 +71,22 @@ export class NotificationService {
     message = this.translateService.instant(message);
 
     let response: Subject<boolean> = new Subject();
-    let alert = this.alertController.create({
-                                              title: title,
-                                              message: message,
-                                              buttons: [
-                                                {
-                                                  text: 'Non',
-                                                  role: 'cancel',
-                                                  handler: () => response.next(false)
-                                                },
-                                                {
-                                                  text: 'Oui',
-                                                  handler: () => response.next(true)
-                                                }
-                                              ]
-                                            });
-    alert.present();
+    this.alertController.create({
+                                  header: title,
+                                  message: message,
+                                  buttons: [
+                                    {
+                                      text: 'Non',
+                                      role: 'cancel',
+                                      handler: () => response.next(false)
+                                    },
+                                    {
+                                      text: 'Oui',
+                                      handler: () => response.next(true)
+                                    }
+                                  ]
+                                })
+      .then(alt => alt.present());
     return response.asObservable();
   }
 
@@ -96,7 +96,7 @@ export class NotificationService {
 
     let response: Subject<boolean> = new Subject();
     let alert = this.alertController.create({
-                                              title: title,
+                                              header: title,
                                               message: message,
                                               buttons: [
                                                 {
@@ -109,13 +109,11 @@ export class NotificationService {
     return response.asObservable();
   }
 
-  createLoadingPopup(messageKey: string): Loading {
-    let popup: Loading = this.loadingCtrl.create({
-                                                   content: this.translateService.instant(messageKey),
-                                                   dismissOnPageChange: false
-                                                 });
-    popup.present();
-    return popup;
+  createLoadingPopup(messageKey: string): Observable<Loading> {
+    return from(this.loadingCtrl.create({
+                                          content: this.translateService.instant(messageKey),
+                                          dismissOnPageChange: false
+                                        }));
   }
 
   receiving(s: string) {

@@ -1,5 +1,4 @@
 import {NgModule} from '@angular/core';
-import {IonicPageModule} from 'ionic-angular';
 import {FormsModule} from '@angular/forms';
 import {AdminPage} from './admin-page';
 import {CommonModule} from '@angular/common';
@@ -14,7 +13,6 @@ import {FilterPage} from '../filters/filter.page';
               CommonModule,
               FormsModule,
               SharedModule,
-              IonicPageModule.forChild(BrowsePage),
               TranslateModule.forChild()
             ],
             declarations: [

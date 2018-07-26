@@ -3,8 +3,8 @@
 
 module.exports = {
   includePaths: [
-    'node_modules/ionic-angular/themes',
-    'node_modules/ionic-angular/fonts',
+    'node_modules/@ionic-angular/themes',
+    'node_modules/@ionic-angular/fonts',
     'src/app/scss/icons/css',
     'src/app/scss/icons/fonts'
   ],

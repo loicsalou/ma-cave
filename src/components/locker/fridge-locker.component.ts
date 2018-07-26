@@ -6,7 +6,7 @@ import {Dimension, Locker, LockerType} from '../../model/locker';
 import {SimpleLockerComponent} from './simple-locker.component';
 import {SimpleLocker} from '../../model/simple-locker';
 import {Position} from '../../model/bottle';
-import {Gesture} from 'ionic-angular';
+import {Gesture} from '@ionic/angular';
 import {Cell} from './cell';
 
 /**

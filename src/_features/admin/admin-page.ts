@@ -1,5 +1,4 @@
 import {Component} from '@angular/core';
-import {IonicPage, Loading, LoadingController, NavController, Platform} from 'ionic-angular';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
 import {NotificationService} from '../../service/notification.service';
 import {ImportProvider} from '../../providers/import/import';
@@ -11,6 +10,7 @@ import {SharedQuery} from '../../app/state/shared.state';
 import {Observable} from 'rxjs';
 import {User} from '../../model/user';
 import {take} from 'rxjs/operators';
+import {Loading, LoadingController, NavController, Platform} from '@ionic-angular';
 
 /**
  * Generated class for the UploadBottles page.
@@ -18,7 +18,6 @@ import {take} from 'rxjs/operators';
  * See http://ionicframework.com/docs/components/#navigation for more info
  * on Ionic pages and navigation.
  */
-@IonicPage()
 @Component({
              templateUrl: 'admin-page.html'
            })
@@ -97,65 +96,70 @@ export class AdminPage {
       this.bottleService.deleteBottles();
     }
     this.bottleService.disconnectListeners();
-    let loading = this.loadingController.create({
-                                                  spinner: 'bubbles',
-                                                  content: 'Importation en cours...'
-                                                });
-    loading.present().then(
-      () => {
-        this.processParsing(loading, file);
-      }
-    ).catch(
-      err => {
-        this.notificationService.error('Erreur durant le process d\'importation !' + err);
-        this.dismissLoading(loading);
-      }
-    );
+    this.loadingController.create({
+                                    spinner: 'bubbles',
+                                    content: 'Importation en cours...'
+                                  })
+      .then((loading: Loading) => {
+        loading.present().then(
+          () => {
+            try {
+              this.processParsing(loading, file);
+            } catch (err) {
+              this.notificationService.error('Erreur durant le process d\'importation !' + err);
+              this.dismissLoading(loading);
+            }
+          }
+        );
+      });
   }
 
   private processParsing(loading: Loading, file: File) {
     let parsedBottles = [];
     let startTimestamp = new Date().getTime();
-    this.importProvider.parseFile(file)
-      .subscribe(bottle => {
-                   parsedBottles.push(bottle);
-                   //ralentit très fortement le device (android en tout cas)
-                   //loading.setContent('Analyse du lot ' + nbBottles++);
-                 },
-                 err => {
-                   this.notificationService.error('Erreur de parsing: ' + err);
-                   this.dismissLoading(loading);
-                 },
-                 () => {
-                   this.dismissLoading(loading);
-                   loading = this.loadingController.create({
-                                                             spinner: 'bubbles',
-                                                             content: 'Sauvegarde de ' + parsedBottles.length + ' lots : '
-                                                           });
-                   loading.present().then(
-                     () => {
-                       this.bottleService.save(parsedBottles).pipe(take(1)).subscribe(
-                         () => {
-                           this.dismissLoading(loading);
-                           let endTimestamp = new Date().getTime();
-                           this.notificationService.askNoChoice('app.information', 'app.importation-successful',
-                                                                {time: (endTimestamp - startTimestamp)})
-                             .subscribe(
-                               () => {
-                                 this.bottleService.reconnectListeners();
-                               }
-                             );
-                         }
-                       );
-                     }
-                   ).catch(
-                     err => {
-                       this.notificationService.error('Erreur durant le process d\'importation !' + err);
-                       this.dismissLoading(loading);
-                     }
-                   );
-                 }
-      );
+    this.importProvider.parseFile(file).pipe(
+      take(1)
+    ).subscribe(
+      bottle => {
+        parsedBottles.push(bottle);
+        //ralentit très fortement le device (android en tout cas)
+        //loading.setContent('Analyse du lot ' + nbBottles++);
+      },
+      err => {
+        this.notificationService.error('Erreur de parsing: ' + err);
+        this.dismissLoading(loading);
+      },
+      () => {
+        this.dismissLoading(loading);
+        this.loadingController.create({
+                                        spinner: 'bubbles',
+                                        content: 'Sauvegarde de ' + parsedBottles.length + ' lots : '
+                                      })
+          .then(loading => {
+            loading.present().then(
+              () => {
+                this.bottleService.save(parsedBottles).pipe(take(1)).subscribe(
+                  () => {
+                    this.dismissLoading(loading);
+                    let endTimestamp = new Date().getTime();
+                    this.notificationService.askNoChoice('app.information', 'app.importation-successful',
+                                                         {time: (endTimestamp - startTimestamp)})
+                      .subscribe(
+                        () => {
+                          this.bottleService.reconnectListeners();
+                        }
+                      );
+                  }
+                );
+              }
+            ).catch(
+              err => {
+                this.notificationService.error('Erreur durant le process d\'importation !' + err);
+                this.dismissLoading(loading);
+              }
+            );
+          });
+      });
   }
 
   private dismissLoading(loading: Loading) {

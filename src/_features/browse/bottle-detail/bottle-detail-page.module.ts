@@ -1,5 +1,4 @@
 import {NgModule} from '@angular/core';
-import {IonicPageModule} from 'ionic-angular';
 import {FormsModule} from '@angular/forms';
 import {AdminPage} from './admin-page';
 import {CommonModule} from '@angular/common';
@@ -15,7 +14,6 @@ import {SharedModule} from '../../../components/shared.module';
               CommonModule,
               FormsModule,
               SharedModule,
-              IonicPageModule.forChild(BottleDetailPage),
               TranslateModule.forChild()
             ],
             declarations: [
