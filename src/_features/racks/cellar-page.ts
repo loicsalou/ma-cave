@@ -28,7 +28,7 @@ import {filter, map, shareReplay, tap} from 'rxjs/operators';
 import {DimensionOfDirective} from '../../components/dimension-of.directive';
 import {SimpleLockerComponent} from '../../components/locker/simple-locker.component';
 import {logDebug, logInfo} from '../../utils/index';
-import {Modal} from 'ionic-angular';
+import {Modal} from '@ionic-angular';
 
 function shortenBottle(btl: Bottle) {
   return {

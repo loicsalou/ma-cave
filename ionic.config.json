@@ -1,8 +1,6 @@
 {
-  "name": "ma-cave",
-  "integrations": {
-    "cordova": {}
-  },
-  "type": "ionic-angular",
+  "name": "cavus2",
+  "integrations": {},
+  "type": "angular",
   "pro_id": "e54fea8c"
 }

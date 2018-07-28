@@ -7,7 +7,7 @@ import {OnDestroy} from '@angular/core';
 import * as firebase from 'firebase/app';
 import {Observable} from 'rxjs';
 import {traced} from '../../utils/decorators';
-import {Alert, AlertController} from 'ionic-angular';
+import {Alert, AlertController} from '@ionic-angular';
 
 export type LOGINTYPE = 'FIREBASE' | 'ANONYMOUS';
 

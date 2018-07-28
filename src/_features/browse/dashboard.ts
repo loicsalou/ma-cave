@@ -27,7 +27,7 @@ import {LoadWithdrawalsAction} from '../../app/state/withdrawals.actions';
 import {SharedQuery, SharedState} from '../../app/state/shared.state';
 import {LoadSharedAction, LogoutAction} from '../../app/state/shared.actions';
 import {logInfo} from '../../utils/index';
-import {Modal} from 'ionic-angular';
+import {Modal} from '@ionic-angular';
 
 @Component({
              templateUrl: 'dashboard.html',

@@ -1,5 +1,6 @@
 // http://ionicframework.com/docs/v2/theming/
 //@import "../theme/variables.scss";
+@import "~@ionic/angular/dist/themes/ionic.globals";
 @import "scss/base";
 @import "scss/layout";
 @import "scss/module";
@@ -21,6 +22,7 @@
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
 
+$toolbar-background: #f8f8f8 !default;
 $pad-size: 5px;
 $gray: #808080;
 $odd-row: #ebeced;

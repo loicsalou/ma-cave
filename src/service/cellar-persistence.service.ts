@@ -15,7 +15,7 @@ import {ApplicationState} from '../app/state/app.state';
 import {catchError, map, take, tap} from 'rxjs/operators';
 import {Bottle} from '../model/bottle';
 import {of} from 'rxjs';
-import {Loading} from 'ionic-angular';
+import {Loading} from '@ionic-angular';
 
 /**
  * Services related to the cellar itself, locker and place of the lockers.
