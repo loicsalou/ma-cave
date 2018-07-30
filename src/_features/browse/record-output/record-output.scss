@@ -1,5 +1,17 @@
-page-record-output {
+.page-record-output {
   ion-item ion-label {
     display: flex;
+  }
+
+  h3 {
+    text-align: center;
+  }
+
+  ion-row.head > ion-col {
+    margin-top: auto;
+  }
+
+  ion-avatar > img {
+    max-height: 20vh;
   }
 }

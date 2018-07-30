@@ -46,7 +46,7 @@ export class DashboardPage implements OnInit, OnDestroy {
   @ViewChild('withdrawals') listComponent: BottleItemComponent;
   @ViewChild(VirtualScroll) vs: VirtualScroll;
 
-  private _withdrawalCardStyle: { 'min-height': string; 'height': string };
+  private _withdrawalCardStyle: { 'min-height': string; 'height': string, 'margin-top': string };
 
   constructor(public navCtrl: NavController, private notificationService: NotificationService,
               private platform: Platform,
@@ -95,7 +95,7 @@ export class DashboardPage implements OnInit, OnDestroy {
       ),
       tap((withdrawals: Withdrawal[]) => {
         let height = 30 + Math.min(3, withdrawals.length) * 92;
-        this._withdrawalCardStyle = {'min-height': '120px', 'height': height + 'px'};
+        this._withdrawalCardStyle = {'min-height': '120px', 'height': height + 'px', 'margin-top': '-36px'};
       }),
       tap(withdrawals => logInfo('[dashboard.ts] received withdrawals: ' + withdrawals.length)),
       catchError((err) => {

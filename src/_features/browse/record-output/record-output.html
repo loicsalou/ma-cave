@@ -5,25 +5,25 @@
 </ion-header>
 
 <ion-content padding class="page-record-output page">
-  <ion-title>{{bottle.nomCru}}</ion-title>
+  <ion-title><h3>{{bottle.nomCru}}</h3></ion-title>
 
-  <ion-item>
-    <ion-col col-9>
-      <h3>{{bottle.label}} - {{bottle.millesime}}</h3>
-      <h3>{{bottle.country_label}} - {{bottle.subregion_label}}</h3>
-      <h3>{{bottle.area_label}}</h3>
-    </ion-col>
-
+  <ion-row class="head">
     <ion-col col-3>
       <ion-avatar item-end>
         <img src="{{ bottle | bottleIcon }}">
       </ion-avatar>
     </ion-col>
-  </ion-item>
 
-  <ion-item>
+    <ion-col col-9>
+      <h5>{{bottle.label}} - {{bottle.millesime}}</h5>
+      <h5>{{bottle.country_label}} - {{bottle.subregion_label}}</h5>
+      <h5>{{bottle.area_label}}</h5>
+    </ion-col>
+  </ion-row>
+
+  <ion-row>
     <bottle-noting [bottle]="bottle" (noted)="bottleNoted(bottle, $event)"></bottle-noting>
-  </ion-item>
+  </ion-row>
 
 </ion-content>
 

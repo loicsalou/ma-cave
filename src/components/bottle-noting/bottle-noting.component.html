@@ -10,8 +10,8 @@
   </div>
   
   <div class="bottle-noting maturity form-group">
-    <h4>{{ 'record-output.maturity' | translate }}:<span *ngIf="maturityNote">{{maturityTexts[maturityNote]}}</span>
-    </h4>
+    <h5>{{ 'record-output.maturity' | translate }}:<span *ngIf="maturityNote">{{maturityTexts[maturityNote]}}</span>
+    </h5>
     <ion-segment [(ngModel)]="maturityNote" name="maturityNote" color="secondary" required>
       <ion-segment-button *ngFor="let maturityLevel of maturityLabels;let ix=index" [value]="ix" class="ripple">
         {{maturityLabels[ix]}},{{ix}}-{{maturityNote}}
