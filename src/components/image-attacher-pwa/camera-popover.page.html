@@ -1,0 +1,12 @@
+<div class="camera-popover" [ngStyle]="{'max-height': '800px', 'width': '250px'}">
+  <video #video autoplay></video>
+  <canvas #canvas style="display: none"></canvas>
+  <span>
+    <button ion-button icon-only round (click)="snapshot()" class="ripple" padding-horizontal>
+      {{'app.capture' | translate}}<cav-icon name="camera"></cav-icon>
+    </button>
+    <button ion-button icon-only round (click)="cancelSnapshot()" class="ripple" padding-horizontal>
+      {{'cancel' | translate}}<cav-icon name="cancel"></cav-icon>
+    </button>
+  </span>
+</div>

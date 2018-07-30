@@ -10,6 +10,6 @@ module.exports = {
   ],
   excludeFiles: [
     /\.(wp|ios).(scss)$/i,
-    /(action-sheet|chip|img|picker|range|refresher|show-hide-when|split-pane)/i
+    /(action-sheet|chip|img|range|refresher|show-hide-when|split-pane)/i
   ]
 };

@@ -16,11 +16,9 @@ import {Observable} from 'rxjs';
                        <span class="flex-grow">{{present(item.keywords)}}</span>
                      </button>
                      <cav-icon name="trash" (click)="removeSearch($event, item)"></cav-icon>
-                     <!--<ion-icon name="trash" (click)="removeSearch($event, item)" style="padding:5px"></ion-icon>-->
                    </div>
                  </ion-list>
                </div>`
-             // styleUrls:[ 'popover-page.scss' ]
            })
 export class PopoverPage {
 

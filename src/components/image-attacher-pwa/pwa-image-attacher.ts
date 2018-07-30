@@ -3,7 +3,9 @@ import {BottleMetadata} from '../../model/bottle';
 import {ImagePersistenceService, UploadMetadata} from '../../service/image-persistence.service';
 import {NotificationService} from '../../service/notification.service';
 import {Subscription} from 'rxjs';
-import {logInfo} from '../../utils';
+import {take} from 'rxjs/operators';
+import {Action} from '../../model/action';
+import {PopoverController} from 'ionic-angular';
 
 @Component({
              selector: 'pwa-image-attacher',
@@ -19,28 +21,14 @@ export class PwaImageAttacherComponent implements OnInit {
   @Output()
   error: EventEmitter<any> = new EventEmitter<any>();
   capturing = false;
+  captured = false;
 
-  @ViewChild('canvas') canvas: ElementRef;
-  @ViewChild('video') video: ElementRef;
   @ViewChild('fileSelector') fileSelector: ElementRef;
 
   private loadingInProgress: boolean = false;
-  // max height: 720 cf
-  private constraints: MediaStreamConstraints = {
-    audio: false,
-    video: {
-      advanced: [
-        {
-          aspectRatio: 180 / 300,
-          width: 180,
-          height: 300
-        }
-      ]
-    }
 
-  };
-
-  constructor(private imageService: ImagePersistenceService, private notificationService: NotificationService) {
+  constructor(private imageService: ImagePersistenceService, private notificationService: NotificationService,
+              private popoverCtrl: PopoverController) {
     this.progressSubscription = this.imageService.progressEvent.subscribe(
       value => this.progress = value,
       error => this.notificationService.error('Erreur d\'upload de l\'image', error),
@@ -49,35 +37,10 @@ export class PwaImageAttacherComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.video.nativeElement.height = '300';
-    this.video.nativeElement.width = '180';
-    this.canvas.nativeElement[ 'max-height' ] = '300';
   }
 
-  toggleCapture() {
-    this.capturing = !this.capturing;
-    if (this.capturing) {
-      this.startVideo(this.constraints);
-    } else {
-      this.stopVideo();
-    }
-  }
-
-  snapshot() {
-    this.capturing = false;
-    try {
-      this.canvas.nativeElement.width = this.video.nativeElement.videoWidth;
-      this.canvas.nativeElement.height = this.video.nativeElement.videoHeight;
-      this.canvas.nativeElement.getContext('2d').drawImage(this.video.nativeElement, 0, 0,
-                                                           this.canvas.nativeElement.width,
-                                                           this.canvas.nativeElement.height);
-      let canvasElement: HTMLCanvasElement = this.canvas.nativeElement;
-      canvasElement.toBlob(blob => {
-        this.saveSnapshot(blob);
-      });
-    } finally {
-      this.stopVideo();
-    }
+  toggleCapture(ev: Event) {
+    this.showCameraPopover(ev);
   }
 
   removeProfileImage(): void {
@@ -101,9 +64,38 @@ export class PwaImageAttacherComponent implements OnInit {
       );
   }
 
+  showCameraPopover(myEvent) {
+    let popover = this.popoverCtrl.create('CameraPopoverPage', {}, {cssClass: 'shadowed-grey'});
+    popover.onDidDismiss((action: {captured: boolean, file?: Blob}) => {
+      if (action != null) {
+        let {captured, file} = action;
+        if (captured) {
+          this.saveSnapshot(file);
+        }
+      }
+    });
+    popover.present({
+                      ev: myEvent
+                    });
+  }
+
   private saveSnapshot(file: Blob) {
+    this.capturing = false;
     this.loadingInProgress = true;
-    this.imageService.uploadImage(file, this.metadata)
+    this.captured = true;
+    this.notificationService.ask('question', 'app.keep-image-confirm')
+      .pipe(take(1)).subscribe(
+      resp => {
+        if (resp) {
+          this.uploadImage(file, this.metadata);
+        }
+        this.captured = false;
+      }
+    );
+  }
+
+  private uploadImage(file: Blob, metadata: BottleMetadata) {
+    this.imageService.uploadImage(file, metadata)
       .then((meta: UploadMetadata) => {
         this.notificationService.information('L\'image ' + meta.imageName + ' a été correctement enregistrée');
         this.loadingInProgress = false;
@@ -115,28 +107,4 @@ export class PwaImageAttacherComponent implements OnInit {
              }
       );
   }
-
-  private startVideo(constraints: MediaStreamConstraints) {
-    logInfo('supporté:' + JSON.stringify(navigator.mediaDevices.getSupportedConstraints()));
-    logInfo('demandé:' + JSON.stringify(constraints));
-    navigator.mediaDevices.getUserMedia(constraints)
-      .then(stream => {
-        logInfo('capacités:' + stream.getVideoTracks() ? JSON.stringify(stream.getVideoTracks()[ 0 ].getCapabilities()) : '');
-        logInfo('obtenu:' + stream.getVideoTracks() ? JSON.stringify(stream.getVideoTracks()[ 0 ].getSettings()) : '');
-        this.video.nativeElement.srcObject = stream;
-      })
-      .catch(err => this.notificationService.error('problème au démarrage de la vidéo', err));
-  }
-
-  private stopVideo() {
-    let stream: MediaStream = this.video.nativeElement.srcObject;
-    let tracks = stream.getTracks();
-
-    tracks.forEach(function (track) {
-      track.stop();
-    });
-
-    this.video.nativeElement.srcObject = null;
-  }
-
 }

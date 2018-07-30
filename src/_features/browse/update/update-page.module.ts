@@ -9,12 +9,14 @@ import {SharedModule} from '../../../components/shared.module';
 import {TranslateModule} from '@ngx-translate/core';
 import {ImagePersistenceService} from '../../../service/image-persistence.service';
 import {PwaImageAttacherComponent} from '../../../components/image-attacher-pwa/pwa-image-attacher';
+import {CameraPopoverPageModule} from '../../../components/image-attacher-pwa/camera-popover.page.module';
 
 @NgModule({
             imports: [
               CommonModule,
               FormsModule,
               SharedModule,
+              CameraPopoverPageModule,
               IonicPageModule.forChild(UpdatePage),
               TranslateModule.forChild()
             ],

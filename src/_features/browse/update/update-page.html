@@ -8,7 +8,7 @@
 </ion-header>
 
 
-<ion-content class="page-update page" padding-horizontal>
+<ion-content align-items-center class="page-update page" padding-horizontal>
   <ion-fab bottom right *ngIf="bottleForm.dirty">
     <button ion-fab class="ripple">
       <cav-icon name="menu"></cav-icon>
@@ -26,14 +26,21 @@
   <responsive-wrapper>
     <!--<ion-scroll scrollY="true">-->
     <form #bottleForm="ngForm">
+      <ion-row>
+        <ion-col col-5>
+          <pwa-image-attacher (imageUrl)="setProfileImage($event)" (error)="error($event)"
+                              [metadata]="metadata"></pwa-image-attacher>
+        </ion-col>
+      </ion-row>
+      
       <ion-row d-flex class="form-group">
-        <ion-col style="text-align: center;">
-          <div class="profile-image" style="text-align: center">>
+        <ion-col col-5 style="text-align: center;">
+          <div class="profile-image" style="text-align: center">
             <img src="{{ bottle | bottleIcon }}" *ngIf="! getProfileImage()">
             <img [src]="getProfileImage()" [defaultImage]="'/assets/img/missing-image.jpg'" *ngIf="getProfileImage()">
           </div>
         </ion-col>
-        <ion-col style="margin-top: auto; margin-bottom: auto">
+        <ion-col col-7>
           <ion-item>
             <ion-label>{{'bottle.millesime' | translate}}</ion-label>
             <ion-datetime displayFormat="YYYY" [(ngModel)]="bottle.millesime" name="millesime" float-right
@@ -45,24 +52,16 @@
                        class="form-control"
                        required></ion-input>
           </ion-item>
+          <ion-item>
+            <ion-label float-left>{{'bottle.label' | translate}}</ion-label>
+            <ion-select [(ngModel)]="bottle.label" name="label" interface="popover">
+              <ion-option *ngFor="let colorPair of colorsData" [value]="colorPair.value"
+                          required>
+                {{colorPair.value}}
+              </ion-option>
+            </ion-select>
+          </ion-item>
         </ion-col>
-      </ion-row>
-      
-      <!--<cordova-image-attacher (imageUrl)="setProfileImage($event)" (error)="error($event)" *ngIf="mobile"-->
-      <!--[metadata]="metadata"></cordova-image-attacher>-->
-      <pwa-image-attacher (imageUrl)="setProfileImage($event)" (error)="error($event)"
-                          [metadata]="metadata"></pwa-image-attacher>
-      
-      <ion-row class="form-group">
-        <ion-item>
-          <ion-label float-left>{{'bottle.label' | translate}}</ion-label>
-          <ion-select [(ngModel)]="bottle.label" name="label" interface="popover">
-            <ion-option *ngFor="let colorPair of colorsData" [value]="colorPair.value"
-                        required>
-              {{colorPair.value}}
-            </ion-option>
-          </ion-select>
-        </ion-item>
       </ion-row>
       
       <ion-row class="form-group">

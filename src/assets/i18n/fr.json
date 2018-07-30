@@ -25,9 +25,11 @@
   "welcome": "Bienvenue",
   "young": "Jeune",
   "app": {
+    "capture": "Capturer",
     "all-bottles": "Votre cave",
     "delete-locker": "Confirmez-vous la suppression du casier ? le bouteilles seront mises en attente de rangement",
     "keep-or-delete-data": "Confirmez-vous la suppression de vos données ? opération non réversible",
+    "keep-image-confirm": "Valider l'image ?",
     "confirm": "Etes-vous sûr ?",
     "please-login": "Authentification",
     "must-logout": "Vous devez vous reconnecter",
