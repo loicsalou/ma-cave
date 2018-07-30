@@ -1,5 +1,5 @@
 <div class="rating input" *ngIf="labels">
-  <h4>{{ title | translate }}:<span *ngIf="note!==undefined">{{labels[note]}}</span></h4>
+  <h5>{{ title | translate }}:<span *ngIf="note!==undefined">{{labels[note]}}</span></h5>
   
   <div class="stars form-group">
     <span *ngFor="let x of labels;let ix=index" [class.lighten]="ix <= note" (click)="rate(ix)">
