@@ -60,6 +60,10 @@ export class CameraPopoverPage implements OnInit {
   }
 
   private startVideo(constraints: MediaStreamConstraints) {
+    const supportedConstraints = navigator.mediaDevices.getSupportedConstraints();
+    if (supportedConstraints[ 'facingMode' ]) {
+      this.constraints[ 'facingMode' ] = {exact: 'environment'};
+    }
     logInfo('supporté:' + JSON.stringify(navigator.mediaDevices.getSupportedConstraints()));
     logInfo('demandé:' + JSON.stringify(constraints));
     navigator.mediaDevices.getUserMedia(constraints)
