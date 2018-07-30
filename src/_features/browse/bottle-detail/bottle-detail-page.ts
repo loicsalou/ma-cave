@@ -1,10 +1,9 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {NavController, NavParams, Slides} from '@ionic/angular';
 import {Bottle} from '../../../model/bottle';
 import {BottleEvent} from '../../../components/list/bottle-event';
 import {UpdatePage} from '../update/update-page';
 import * as _ from 'lodash';
-import {logInfo} from '../../../utils';
 
 /*
  Generated class for the BottleDetail page.
@@ -13,7 +12,7 @@ import {logInfo} from '../../../utils';
  Ionic pages and navigation.
  */
 @Component({
-             templateUrl: 'bottle-detail-page.html',
+             templateUrl: 'bottle-detail-page.html'
              // styleUrls:[ 'bottle-detail-page.scss' ]
            })
 export class BottleDetailPage implements OnInit {
@@ -47,7 +46,7 @@ export class BottleDetailPage implements OnInit {
   }
 
   update() {
-    this.navCtrl.push('UpdatePage', {bottle: this.bottle});
+    this.navCtrl.goForward('UpdatePage', true, {queryParams: {bottle: this.bottle}});
   }
 
   ionViewDidEnter(): void {

@@ -1,9 +1,10 @@
 import {Action} from '@ngrx/store';
-import {Bottle, Position} from '../../model/bottle';
+import {Bottle} from '../../model/bottle';
 import {FilterSet} from '../../components/distribution/filterset';
 import {Locker} from '../../model/locker';
 import {Withdrawal} from '../../model/withdrawal';
 import {Image} from '../../model/image';
+import {BottlePosition} from '../../model/bottle-position';
 
 export enum BottlesActionTypes {
   CreateBottleActionType = '[bottles] - create bottle',
@@ -201,7 +202,7 @@ export class HightlightBottleSelectionAction implements Action {
 export class WithdrawBottleAction implements Action {
   readonly type = BottlesActionTypes.WithdrawBottleActionType;
 
-  constructor(public bottle: Bottle, public position: Position) {
+  constructor(public bottle: Bottle, public position: BottlePosition) {
   }
 }
 

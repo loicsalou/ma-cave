@@ -52,16 +52,6 @@ export class DashboardPage implements OnInit, OnDestroy {
               private platform: Platform,
               private popoverCtrl: PopoverController, private modalCtrl: ModalController,
               private store: Store<ApplicationState>) {
-
-    platform.ready().then(() => {
-      platform.registerBackButtonAction(() => {
-        if (navCtrl.canGoBack()) {
-          navCtrl.pop();
-        } else {
-          //don't do anything
-        }
-      });
-    });
   }
 
   get withdrawalCardStyle() {
@@ -126,13 +116,21 @@ export class DashboardPage implements OnInit, OnDestroy {
   ngOnDestroy() {
   }
 
-  triggerNotation(bottle) {
-    this.modalCtrl.create('RecordOutputPage', {bottle: bottle})
-      .then((modal: Modal) => modal.present());
+  async triggerNotation(bottle) {
+    const modal = await this.modalCtrl.create({
+                                                component: RecordOutputPage
+                                              });
+    return await modal.present();
   }
 
-  showPopover(myEvent) {
-    let popover = this.popoverCtrl.create('PopoverPage', this.mostUsedQueries$, {cssClass: 'shadowed-grey'});
+  async showPopover(myEvent) {
+    const popover = this.popoverCtrl.create({
+                                              component: PopoverPage,
+                                              ev: {
+                                                queries: this.mostUsedQueries$,
+                                                cssClass: 'shadowed-grey'
+                                              }
+                                            });
     popover.onDidDismiss((action: Action) => {
       if (action != null) {
         let keywords = action.param;

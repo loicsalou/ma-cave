@@ -1,7 +1,7 @@
 import {EventEmitter, Input, OnChanges, Output, ViewChild} from '@angular/core';
 import {Bottle} from '../../model/bottle';
 import {Gesture} from '@ionic/angular';
-import {Dimension} from '../../model/locker';
+import {LockerDimension} from '../../model/locker-dimension';
 import {SimpleLocker} from '../../model/simple-locker';
 import {ZoomableDirective} from '../zoomable.directive';
 import {Cell} from './cell';
@@ -31,7 +31,7 @@ export abstract class LockerComponent implements OnChanges {
   constructor() {
   }
 
-  abstract get dimension(): Dimension;
+  abstract get dimension(): LockerDimension;
 
   ngOnChanges(changeEvent) {
     if (changeEvent[ 'content' ] || changeEvent[ 'locker' ]) {

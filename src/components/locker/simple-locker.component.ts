@@ -11,8 +11,8 @@ import {
   ViewChild
 } from '@angular/core';
 import {SimpleLocker} from '../../model/simple-locker';
-import {Dimension, Locker, LockerType} from '../../model/locker';
-import {Bottle, Position} from '../../model/bottle';
+import {Locker} from '../../model/locker';
+import {Bottle} from '../../model/bottle';
 import {NotificationService} from '../../service/notification.service';
 import {LockerComponent} from './locker.component';
 import {Gesture} from '@ionic/angular';
@@ -22,6 +22,9 @@ import {Observable, Subscription} from 'rxjs';
 import {filter} from 'rxjs/operators';
 import {Row} from './row';
 import {Cell} from './cell';
+import {BottlePosition} from '../../model/bottle-position';
+import {LockerType} from '../../model/locker-type';
+import {LockerDimension} from '../../model/locker-dimension';
 
 /**
  * Generated class for the SimpleLockerComponent component.
@@ -47,7 +50,7 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   rack: number = 0;
 
   @Input()
-  containerDimension$: Observable<Dimension>;
+  containerDimension$: Observable<LockerDimension>;
 
   @Input()
   editing: boolean = false;
@@ -56,10 +59,10 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   onRackSelected: EventEmitter<{ rack: Locker, selected: boolean }> = new EventEmitter<{ rack: Locker, selected: boolean }>();
 
   rows: Row[];
-  containerDimension: Dimension;
+  containerDimension: LockerDimension;
   @ViewChild(DimensionOfDirective) private dimensionOfDirective: DimensionOfDirective<Locker>;
 
-  private bogusBottles: { bottle: Bottle, position: Position }[] = [];
+  private bogusBottles: { bottle: Bottle, position: BottlePosition }[] = [];
   private gesture: Gesture;
   private pressGesture: Gesture;
   private initialScale: number;
@@ -71,7 +74,7 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
     super();
   }
 
-  get dimension(): Dimension {
+  get dimension(): LockerDimension {
     return this.locker.dimension;
   }
 
@@ -167,9 +170,9 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
    * placement d'une bouteille à une position donnée. Cela ne modifie en rien la bouteille ni le locker, c'est juste
    * de la présentation.
    * @param {Bottle} bottle
-   * @param {Position} position
+   * @param {BottlePosition} position
    */
-  placeBottle(bottle: Bottle, position: Position) {
+  placeBottle(bottle: Bottle, position: BottlePosition) {
     if (this.rows.length <= position.y || !this.rows[ position.y ] || this.rows[ position.y ].cells.length <= position.x) {
       // TODO avons-nous besoin de gérer les bogus bottles ?
       this.bogusBottles.push({bottle: bottle, position: position});
@@ -350,7 +353,7 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
 
   private handleBogusBottles() {
     const bugs = JSON.stringify(this.bogusBottles.map(
-      (data: { bottle: Bottle, position: Position }) =>
+      (data: { bottle: Bottle, position: BottlePosition }) =>
         data.bottle.nomCru + ':' + data.position.x + ',' + data.position.y
                                 )
     );
@@ -361,7 +364,7 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
     let cells: Cell[] = [];
     //let rowId = this.locker.name + '-' + rowIndex;
     for (let i = 0; i < nbcells; i++) {
-      let position = new Position(this.locker.id, i, rowIndex, this.rack);
+      let position = new BottlePosition(this.locker.id, i, rowIndex, this.rack);
       cells[ i ] = new Cell(position, this.config);
     }
     return new Row(cells, rowIndex);
@@ -407,10 +410,10 @@ export class SimpleLockerComponent extends LockerComponent implements OnInit, Af
   private shiftBottles(shiftX: number, shiftY: number) {
     this.content.forEach((bottle: Bottle) => {
       bottle.positions = bottle.positions.map(
-        (position: Position) => {
+        (position: BottlePosition) => {
           if (position.inRack(this.locker.id, this.rack)) {
-            return new Position(position.lockerId, position.x + shiftX,
-              position.y + shiftY, position.rack);
+            return new BottlePosition(position.lockerId, position.x + shiftX,
+                                      position.y + shiftY, position.rack);
           }
         }
       ).filter(pos => pos !== undefined);

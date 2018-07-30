@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {NavController, NavParams} from '@ionic/angular';
-import {BottleSize, Locker} from '../../../model/locker';
+import {Locker} from '../../../model/locker';
 import {Bottle} from '../../../model/bottle';
 import {NotificationService} from '../../../service/notification.service';
 import {LockerComponent} from '../../../components/locker/locker.component';
@@ -13,6 +13,7 @@ import {Store} from '@ngrx/store';
 import {BottlesQuery} from '../../../app/state/bottles.state';
 import {map, tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
+import {BottleSize} from '../../../model/bottle-size';
 
 /**
  * Generated class for the LockerEditorComponent component.

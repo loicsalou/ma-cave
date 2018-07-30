@@ -1,5 +1,5 @@
 import {AfterViewInit, Directive, ElementRef, Host, Input, Self} from '@angular/core';
-import {Dimension} from '../model/locker';
+import {LockerDimension} from '../model/locker-dimension';
 
 @Directive({
              selector: '[zoomable]'

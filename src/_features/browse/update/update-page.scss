@@ -1,10 +1,10 @@
 .page-update {
 
   button.item {
-    color: map-get($colors, primary);
+    color: map-get($cav-colors, primary);
     &:disabled {
       font-style: italic;
-      color: map-get($colors, danger);
+      color: map-get($cav-colors, danger);
     }
   }
 

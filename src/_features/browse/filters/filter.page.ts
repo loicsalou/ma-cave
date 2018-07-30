@@ -1,4 +1,4 @@
-import {Bottle, BottleState} from '../../../model/bottle';
+import {Bottle} from '../../../model/bottle';
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import {SortOption} from '../../../components/distribution/distribution';
 import {MenuController} from '@ionic/angular';
@@ -9,6 +9,7 @@ import {ResetFilterAction, UpdateFilterAction} from '../../../app/state/bottles.
 import {BottlesQuery} from '../../../app/state/bottles.state';
 import {FilterSet} from '../../../components/distribution/filterset';
 import {map, tap} from 'rxjs/operators';
+import {BottleState} from '../../../model/bottle-state';
 
 @Component({
              selector: 'page-filter',

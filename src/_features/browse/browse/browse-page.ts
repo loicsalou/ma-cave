@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FabButton, MenuController, NavController} from '@ionic/angular';
-import {Bottle, BottleState} from '../../../model/bottle';
+import {Bottle} from '../../../model/bottle';
 import {BottleDetailPage} from '../bottle-detail/bottle-detail-page';
 import {FilterSet} from '../../../components/distribution/filterset';
 import {combineLatest, Observable} from 'rxjs';
@@ -23,6 +23,7 @@ import * as _ from 'lodash';
 import {logInfo} from '../../../utils';
 import {BOTTLE_ITEM_TYPE, SharedQuery} from '../../../app/state/shared.state';
 import {Subscription} from 'rxjs/Subscription';
+import {BottleState} from '../../../model/bottle-state';
 
 function sliceAround(currentBottles: Bottle[], bottle: Bottle, slice: number) {
   const ix = currentBottles.findIndex(btl => btl.id === bottle.id);
@@ -115,7 +116,7 @@ export class BrowsePage implements OnInit, OnDestroy {
     ).subscribe(
       (bottles: Bottle[]) => {
         if (bottles.length > 0) {
-          this.navCtrl.push('CellarPage', {action: new PlaceBottleSelectionAction()});
+          this.navCtrl.goForward('CellarPage', true, {queryParams: {action: new PlaceBottleSelectionAction()}});
         }
         else {
           this.notificationService.information('app.no-bottles-to-place');
@@ -133,7 +134,7 @@ export class BrowsePage implements OnInit, OnDestroy {
     ).subscribe(
       (bottles: Bottle[]) => {
         if (bottles.length > 0) {
-          this.navCtrl.push('CellarPage', {action: new HightlightBottleSelectionAction()});
+          this.navCtrl.goForward('CellarPage', true, {queryParams: {action: new HightlightBottleSelectionAction()}});
         }
         else {
           this.notificationService.information('app.no-bottles-placed');
@@ -190,13 +191,15 @@ export class BrowsePage implements OnInit, OnDestroy {
   }
 
   triggerDetail(bottle: Bottle) {
-    this.navCtrl.push('BottleDetailPage',
-                      {
-                        bottleEvent: {
-                          bottles: sliceAround(this.currentBottles, bottle, 10),
-                          bottle: bottle
-                        }
-                      });
+    this.navCtrl.goForward('BottleDetailPage', true, {
+      queryParams:
+        {
+          bottleEvent: {
+            bottles: sliceAround(this.currentBottles, bottle, 10),
+            bottle: bottle
+          }
+        }
+    });
   }
 
   private getPrepareDisplayedList(received: Bottle[]): Bottle[] {

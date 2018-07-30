@@ -2,9 +2,11 @@
  * Created by loicsalou on 08.07.2017.
  */
 import {Injectable} from '@angular/core';
-import {Dimension, Locker, LockerType} from './locker';
+import {Locker} from './locker';
 import {FridgeLocker} from './fridge-locker';
 import {SimpleLocker} from './simple-locker';
+import {LockerType} from './locker-type';
+import {LockerDimension} from './locker-dimension';
 
 /**
  * Instanciation des casiers.
@@ -20,11 +22,11 @@ export class LockerFactory {
   public create(json): Locker {
     let locker: Locker;
     if (json[ 'type' ] === LockerType.fridge) {
-      let dim: Dimension[] = json.dimensions.map(dim => <Dimension> {x: +dim.x, y: +dim.y});
+      let dim: LockerDimension[] = json.dimensions.map(dim => <LockerDimension> {x: +dim.x, y: +dim.y});
       locker = new FridgeLocker(json[ 'id' ], json[ 'name' ], json[ 'type' ], dim, json[ 'comment' ], json[ 'supportedFormats' ],
                                 json[ 'defaultImage' ], json[ 'imageUrl' ]);
     } else {
-      let dim: Dimension = <Dimension> {x: +json.dimension.x, y: +json.dimension.y};
+      let dim: LockerDimension = <LockerDimension> {x: +json.dimension.x, y: +json.dimension.y};
       locker = new SimpleLocker(json[ 'id' ], json[ 'name' ], json[ 'type' ], dim, false, json[ 'comment' ],
                                 json[ 'supportedFormats' ], json[ 'defaultImage' ], json[ 'imageUrl' ]);
     }

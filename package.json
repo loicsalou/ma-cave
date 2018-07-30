@@ -5,13 +5,12 @@
   "homepage": "http://ionicframework.com/",
   "private": true,
   "scripts": {
-    "clean": "ionic-app-scripts clean",
-    "lint": "ionic-app-scripts lint",
-    "build": "ionic-app-scripts build",
-    "start": "ionic-app-scripts serve",
-    "serve": "ionic-app-scripts serve",
-    "build:aot": "ionic-app-scripts build --aot --minifyjs --minifycss --release --env=prod",
-    "serve:prod": "ionic-app-scripts serve --prod",
+    "clean": "ng clean",
+    "lint": "ng lint",
+    "build": "ng build",
+    "start": "ng serve",
+    "build:aot": "ng build --aot --minifyjs --minifycss --release --env=prod",
+    "serve:prod": "ng serve --prod",
     "run:android": "ionic cordova run android --device",
     "apk": "ionic cordova build android",
     "apk:prod": "ionic cordova build android --aot --minifyjs --minifycss --release",
@@ -21,7 +20,7 @@
     "postbuild": "workbox injectManifest ./config/workbox-config.js",
     "compress": "bread-compressor -a gzip www",
     "build:prod": "npm run build:aot && node ./cache-busting.js && npm run postbuild && npm run compress",
-    "build:prod2": "ionic-app-scripts build --prod && node ./cache-busting.js && npm run postbuild && npm run compress",
+    "build:prod2": "ng build --prod && node ./cache-busting.js && npm run postbuild && npm run compress",
     "deploy": "firebase deploy --project ma-cave-15a66"
   },
   "dependencies": {

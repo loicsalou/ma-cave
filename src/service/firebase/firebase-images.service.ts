@@ -6,7 +6,7 @@ import * as moment from 'moment';
 import * as schema from './firebase-schema';
 
 import {Injectable} from '@angular/core';
-import {Bottle, BottleMetadata} from '../../model/bottle';
+import {Bottle} from '../../model/bottle';
 import {Observable, Subject} from 'rxjs';
 import {AngularFireDatabase} from 'angularfire2/database';
 import {Image} from '../../model/image';
@@ -21,6 +21,7 @@ import {filter, take} from 'rxjs/operators';
 import {SharedQuery} from '../../app/state/shared.state';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../../app/state/app.state';
+import {BottleMetadata} from '../../model/bottle-metadata';
 
 /**
  * Services related to the images in the cellar.

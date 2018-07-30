@@ -1,5 +1,5 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {BottleMetadata} from '../../model/bottle';
+import {BottleMetadata} from '../../model/bottle-metadata';
 import {ImagePersistenceService, UploadMetadata} from '../../service/image-persistence.service';
 import {NotificationService} from '../../service/notification.service';
 import {Subscription} from 'rxjs';

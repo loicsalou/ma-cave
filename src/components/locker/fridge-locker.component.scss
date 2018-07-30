@@ -25,7 +25,7 @@
     flex-direction: column;
 
     locker .container {
-      border-bottom: 3px solid map-get($colors, brown);
+      border-bottom: 3px solid map-get($cav-colors, brown);
     }
   }
 }

@@ -5,34 +5,34 @@
   @import "./md";
 
   .checkbox-checked {
-    border-color: map-get($colors-cavus, primary);
-    background-color: map-get($colors-cavus, primary);
+    border-color: map-get($cav-colors-cavus, primary);
+    background-color: map-get($cav-colors-cavus, primary);
   }
 
   ion-avatar ion-icon {
-    color: map-get($colors-cavus, primary);
+    color: map-get($cav-colors-cavus, primary);
   }
 
   bottle-action {
-    background-color: map-get($colors-cavus, primary);
+    background-color: map-get($cav-colors-cavus, primary);
   }
 
   button[ion-fab],
   button[menuToggle],
   ion-item-sliding button[ion-button] cav-icon {
-    background-color: map-get($colors-cavus, primary);
-    color: map-get($colors-cavus, light);
+    background-color: map-get($cav-colors-cavus, primary);
+    color: map-get($cav-colors-cavus, light);
     font-size: $icon-font-size;
   }
 
   ion-item-sliding button[ion-button] cav-icon.favorite {
-    color: map-get($colors-cavus, favorite);
+    color: map-get($cav-colors-cavus, favorite);
     font-size: $icon-font-size;
   }
 
   ion-item-sliding button[ion-button] {
     background-color: transparent;
-    color: map-get($colors-cavus, light);
+    color: map-get($cav-colors-cavus, light);
   }
 
   .mod-navbar {
@@ -49,7 +49,7 @@
   }
 
   .mod-header {
-    background-color: map-get($colors-cavus, primary);
+    background-color: map-get($cav-colors-cavus, primary);
 
     ion-header {
       border-bottom: medium solid #fff;
@@ -81,13 +81,13 @@
 
     ion-tabs {
       ion-icon.tab-button-icon {
-        color: map-get($colors-cavus, primary);
+        color: map-get($cav-colors-cavus, primary);
       }
     }
   }
 
   .page {
-    //background: map-get($colors-cavus, primary);
+    //background: map-get($cav-colors-cavus, primary);
     background: linear-gradient(to bottom, $cavus-gradient);
 
     .card-background {
@@ -97,7 +97,7 @@
 
   .button,
   ion-badge {
-    background-color: map-get($colors-cavus, primary);
+    background-color: map-get($cav-colors-cavus, primary);
     border: thin solid #fff;
     color: #fff;
   }

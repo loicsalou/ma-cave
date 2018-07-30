@@ -16,7 +16,7 @@
             "progress": false,
             "outputPath": "www",
             "index": "src/index.html",
-            "main": "src/main.ts",
+            "main": "src/app/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
@@ -33,7 +33,13 @@
             ],
             "styles": [
               {
-                "input": "src/theme/variables.scss"
+                "input": "node_modules/@ionic/angular/dist/css/ionic.scss"
+              },
+              {
+                "input": "node_modules/@ionic/angular/dist/themes/ionic.globals.scss"
+              },
+              {
+                "input": "src/theme/_variables.scss"
               },
               {
                 "input": "src/app/app.scss"

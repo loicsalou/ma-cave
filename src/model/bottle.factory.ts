@@ -2,9 +2,10 @@
  * Created by loicsalou on 25.05.17.
  */
 import {Inject, Injectable} from '@angular/core';
-import {Bottle, Position} from './bottle';
+import {Bottle} from './bottle';
 import {TranslateService} from '@ngx-translate/core';
 import {logInfo} from '../utils';
+import {BottlePosition} from './bottle-position';
 
 /**
  * Instanciation des bouteilles.
@@ -120,7 +121,7 @@ export class BottleFactory {
   }
 
   private mapPositions(bottle: Bottle): BottleFactory {
-    bottle.positions = bottle.positions.map(pos => new Position(pos.lockerId, pos.x, pos.y, pos.rack));
+    bottle.positions = bottle.positions.map(pos => new BottlePosition(pos.lockerId, pos.x, pos.y, pos.rack));
     return this;
   }
 

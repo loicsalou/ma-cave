@@ -1,12 +1,13 @@
-import {Bottle, Position} from '../../model/bottle';
+import {Bottle} from '../../model/bottle';
+import {BottlePosition} from '../../model/bottle-position';
 
 export class Cell {
   bottle: Bottle;
   cellClass: string;
   selected = false;
-  position: Position;
+  position: BottlePosition;
 
-  constructor(position: Position, private config: any) {
+  constructor(position: BottlePosition, private config: any) {
     this.position = position;
   }
 

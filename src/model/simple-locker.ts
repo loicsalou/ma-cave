@@ -1,7 +1,10 @@
 /**
  * Created by loicsalou on 01.03.17.
  */
-import {BottleSize, Dimension, Locker, LockerType} from './locker';
+import {Locker} from './locker';
+import {LockerType} from './locker-type';
+import {LockerDimension} from './locker-dimension';
+import {BottleSize} from './bottle-size';
 
 /**
  * un SimpleLocker est un casier à bouteilles "simple", ce qui signifie qu'il se définit seulement grâce à sa
@@ -11,7 +14,7 @@ import {BottleSize, Dimension, Locker, LockerType} from './locker';
  */
 export class SimpleLocker extends Locker {
 
-  constructor(id: string, name: string, type: LockerType, dimension: Dimension, inFridge ?: boolean, comment?: string, supportedFormats?: BottleSize[],
+  constructor(id: string, name: string, type: LockerType, dimension: LockerDimension, inFridge ?: boolean, comment?: string, supportedFormats?: BottleSize[],
               defaultImage?: string, imageUrl?: string) {
     super(id, name, type, comment, defaultImage, imageUrl, supportedFormats, dimension, inFridge);
   }

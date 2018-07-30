@@ -10,7 +10,9 @@ import {SharedQuery} from '../../app/state/shared.state';
 import {Observable} from 'rxjs';
 import {User} from '../../model/user';
 import {take} from 'rxjs/operators';
-import {Loading, LoadingController, NavController, Platform} from '@ionic-angular';
+import {LoadingController, Platform} from '@ionic/angular';
+
+
 
 /**
  * Generated class for the UploadBottles page.
@@ -31,8 +33,7 @@ export class AdminPage {
   tempValue: any;
   private user$: Observable<User>;
 
-  constructor(private navCtrl: NavController,
-              private notificationService: NotificationService,
+  constructor(private notificationService: NotificationService,
               private bottleService: BottlePersistenceService,
               private platform: Platform,
               private loadingController: LoadingController,
@@ -100,7 +101,7 @@ export class AdminPage {
                                     spinner: 'bubbles',
                                     content: 'Importation en cours...'
                                   })
-      .then((loading: Loading) => {
+      .then((loading: HTMLIonLoadingElement) => {
         loading.present().then(
           () => {
             try {
@@ -114,7 +115,7 @@ export class AdminPage {
       });
   }
 
-  private processParsing(loading: Loading, file: File) {
+  private processParsing(loading: HTMLIonLoadingElement, file: File) {
     let parsedBottles = [];
     let startTimestamp = new Date().getTime();
     this.importProvider.parseFile(file).pipe(
@@ -162,7 +163,7 @@ export class AdminPage {
       });
   }
 
-  private dismissLoading(loading: Loading) {
+  private dismissLoading(loading: HTMLIonLoadingElement) {
     if (loading) {
       loading.dismiss();
     }

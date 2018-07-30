@@ -1,12 +1,12 @@
 // http://ionicframework.com/docs/v2/theming/
-//@import "../theme/variables.scss";
-@import "~@ionic/angular/dist/themes/ionic.globals";
+@import "../../node_modules/@ionic/angular/dist/css/ionic";
 @import "scss/base";
 @import "scss/layout";
 @import "scss/module";
 @import "scss/state";
 @import "scss/themes/index";
 @import "scss/cav-icons";
+
 
 // App Global Sass
 // --------------------------------------------------
@@ -200,8 +200,8 @@ div.icon {
 }
 
 .checkbox-checked {
-  border-color: map-get($colors, primary);
-  background-color: map-get($colors, primary);
+  border-color: map-get($cav-colors, primary);
+  background-color: map-get($cav-colors, primary);
 }
 
 // Selon le vin de la bouteille on a les couleurs (classe color) ou l'icône (classe icon)

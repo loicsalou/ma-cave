@@ -2,7 +2,7 @@
  * Created by loicsalou on 28.02.17.
  */
 import {Injectable, OnDestroy} from '@angular/core';
-import {Bottle, Position} from '../model/bottle';
+import {Bottle} from '../model/bottle';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {FilterSet} from '../components/distribution/filterset';
 import {AbstractPersistenceService} from './abstract-persistence.service';
@@ -24,6 +24,7 @@ import {ApplicationState} from '../app/state/app.state';
 import {LockerFactory} from '../model/locker.factory';
 import * as _ from 'lodash';
 import {BottlesQuery} from '../app/state/bottles.state';
+import {BottlePosition} from '../model/bottle-position';
 
 /**
  * Services related to the bottles in the cellar.
@@ -133,7 +134,7 @@ export class BottlePersistenceService extends AbstractPersistenceService impleme
     return new Withdrawal(bottle);
   }
 
-  removeBottleFrom(bottle: Bottle, position: Position): Bottle {
+  removeBottleFrom(bottle: Bottle, position: BottlePosition): Bottle {
     let updatedBottle = new Bottle(bottle);
     updatedBottle.positions = bottle.positions.filter(pos => !pos.equals(position));
     updatedBottle.quantite_courante--;

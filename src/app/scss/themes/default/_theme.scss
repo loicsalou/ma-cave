@@ -2,7 +2,7 @@
 
 .fab-close-active span.button-inner {
   opacity: .85;
-  color: map-get($colors,"favorite");
+  color: map-get($cav-colors,"favorite");
   transform: scale(1.5) rotateZ(45deg);
 }
 
@@ -15,7 +15,7 @@
   }
 
   ion-item-sliding button[ion-button] cav-icon.favorite {
-    color: map-get($colors, favorite);
+    color: map-get($cav-colors, favorite);
     font-size: $icon-font-size;
   }
 

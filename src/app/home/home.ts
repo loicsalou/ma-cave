@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {NavController, Platform} from '@ionic/angular';
-import {FirebaseUser} from '../../model/user';
+import {FirebaseUser} from '../../model/firebase-user';
 import {TabsPage} from '../tabs/tabs';
 import {Observable} from 'rxjs';
 import {NotificationService} from '../../service/notification.service';

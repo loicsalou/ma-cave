@@ -1,8 +1,8 @@
 import {AfterViewChecked, Component, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {Content, ModalController, NavController, NavParams} from '@ionic/angular';
 import {CellarPersistenceService} from '../../service/cellar-persistence.service';
-import {Bottle, Position} from '../../model/bottle';
-import {Dimension, Locker, LockerType} from '../../model/locker';
+import {Bottle} from '../../model/bottle';
+import {Locker} from '../../model/locker';
 import {NotificationService} from '../../service/notification.service';
 import {SimpleLocker} from '../../model/simple-locker';
 import {BottlePersistenceService} from '../../service/bottle-persistence.service';
@@ -29,6 +29,9 @@ import {DimensionOfDirective} from '../../components/dimension-of.directive';
 import {SimpleLockerComponent} from '../../components/locker/simple-locker.component';
 import {logDebug, logInfo} from '../../utils/index';
 import {Modal} from '@ionic-angular';
+import {BottlePosition} from '../../model/bottle-position';
+import {LockerType} from '../../model/locker-type';
+import {LockerDimension} from '../../model/locker-dimension';
 
 function shortenBottle(btl: Bottle) {
   return {
@@ -61,7 +64,7 @@ export class CellarPage implements OnInit, AfterViewChecked {
   bottlesToPlaceLocker: SimpleLocker;
   selectedBottles: Bottle[];
   pendingCell: Cell;
-  dimensionsSubjects: { [ lockerId: string ]: Subject<Dimension> } = {};
+  dimensionsSubjects: { [ lockerId: string ]: Subject<LockerDimension> } = {};
   lockers$: Observable<Locker[]>;
   bottlesPerRack$: Observable<{ [ lockerId: string ]: Bottle[] }>;
   showPlaceLocker = false;
@@ -84,7 +87,7 @@ export class CellarPage implements OnInit, AfterViewChecked {
               private store: Store<ApplicationState>) {
   }
 
-  getContainerDimension$(locker: Locker): Observable<Dimension> {
+  getContainerDimension$(locker: Locker): Observable<LockerDimension> {
     let subject = this.dimensionsSubjects[ locker.id ];
     if (!subject) {
       subject = new Subject();
@@ -116,7 +119,7 @@ export class CellarPage implements OnInit, AfterViewChecked {
             bottle.positions = [ ...btl.positions ];
             let nbBottles = bottle.quantite_courante - bottle.positions.length;
             for (let i = 0; i < nbBottles; i++) {
-              let pos = new Position(this.bottlesToPlaceLocker.id, ix++, 0);
+              let pos = new BottlePosition(this.bottlesToPlaceLocker.id, ix++, 0);
               bottle.positions.push(pos);
             }
             return bottle;

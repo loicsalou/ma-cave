@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
-import {Bottle, BottleMetadata} from '../../../model/bottle';
+import {Bottle} from '../../../model/bottle';
 import {NavController, NavParams} from '@ionic/angular';
 import {ImagePersistenceService} from '../../../service/image-persistence.service';
 import {NotificationService} from '../../../service/notification.service';
@@ -13,6 +13,7 @@ import {ApplicationState} from '../../../app/state/app.state';
 import {Store} from '@ngrx/store';
 import {UpdateBottlesAction} from '../../../app/state/bottles.actions';
 import {isMobileDevice} from '../../../utils';
+import {BottleMetadata} from '../../../model/bottle-metadata';
 
 /*
  Generated class for the Update component.

@@ -2,6 +2,9 @@
  * Created by loicsalou on 11.07.17.
  */
 
+import {LockerType} from './locker-type';
+import {LockerDimension} from './locker-dimension';
+import {BottleSize} from './bottle-size';
 
 /**
  * Définit ce qu'est un casier à bouteilles et quel est son contrat de base
@@ -18,7 +21,7 @@ export abstract class Locker {
   inFridge = false;
 
   constructor(id: string, name: string, type: LockerType, comment: string = '', defaultImage: string = '',
-              imageUrl: string = '', supportedFormats: BottleSize[], public dimension: Dimension, inFridge: boolean) {
+              imageUrl: string = '', supportedFormats: BottleSize[], public dimension: LockerDimension, inFridge: boolean) {
     this.id = id;
     this.name = name;
     this.type = type;
@@ -38,33 +41,3 @@ export abstract class Locker {
   abstract isFridge(): boolean;
 }
 
-export enum LockerType {
-  diamond,
-  fridge,
-  shifted,
-  simple
-
-}
-
-export interface Dimension {
-  x: number;
-  y: number;
-}
-
-export enum BottleSize {
-  piccolo,
-  chopine,
-  fillette,
-  demie,
-  clavelin,
-  bouteille,
-  litre,
-  magnum,
-  jeroboham,
-  rehoboram,
-  mathusalem,
-  salmanazar,
-  balthazar,
-  nabuchodonozor,
-  melchior
-}

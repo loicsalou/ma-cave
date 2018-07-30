@@ -68,7 +68,7 @@
   }
 
   ion-fab > button.pending-bottle {
-    background-color: map-get($colors, light);
+    background-color: map-get($cav-colors, light);
     border: thin solid black;
     margin-left: auto;
 
@@ -79,7 +79,7 @@
   }
 
   p.tip {
-    background-color: map-get($colors, light);
+    background-color: map-get($cav-colors, light);
     border: thin solid black;
     font-size: small;
     font-variant: all-small-caps;

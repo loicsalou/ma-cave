@@ -1,5 +1,5 @@
 import {AfterViewInit, Directive, ElementRef, Input} from '@angular/core';
-import {Dimension} from '../model/locker';
+import {LockerDimension} from '../model/locker-dimension';
 
 @Directive({
              selector: '[dimensionOf]'
@@ -21,7 +21,7 @@ export class DimensionOfDirective<T> implements AfterViewInit {
     }
   }
 
-  getContainerSize(): Dimension {
+  getContainerSize(): LockerDimension {
     return {
       x: this.width,
       y: this.height

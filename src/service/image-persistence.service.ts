@@ -3,7 +3,7 @@
  */
 import {Injectable} from '@angular/core';
 import 'firebase/storage';
-import {Bottle, BottleMetadata} from '../model/bottle';
+import {Bottle} from '../model/bottle';
 import {AbstractPersistenceService} from './abstract-persistence.service';
 import {Observable, Subject, of} from 'rxjs';
 import {Image} from '../model/image';
@@ -12,6 +12,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {FirebaseImagesService} from './firebase/firebase-images.service';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../app/state/app.state';
+import {BottleMetadata} from '../model/bottle-metadata';
 
 /**
  * Services related to the bottles in the cellar.

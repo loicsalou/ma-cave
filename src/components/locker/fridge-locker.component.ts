@@ -2,12 +2,14 @@ import {Component, EventEmitter, Input, OnDestroy, Output, QueryList, ViewChildr
 import {FridgeLocker} from '../../model/fridge-locker';
 import {LockerComponent} from './locker.component';
 import {NotificationService} from '../../service/notification.service';
-import {Dimension, Locker, LockerType} from '../../model/locker';
+import {Locker} from '../../model/locker';
 import {SimpleLockerComponent} from './simple-locker.component';
 import {SimpleLocker} from '../../model/simple-locker';
-import {Position} from '../../model/bottle';
+import {BottlePosition} from '../../model/bottle-position';
 import {Gesture} from '@ionic/angular';
 import {Cell} from './cell';
+import {LockerType} from '../../model/locker-type';
+import {LockerDimension} from '../../model/locker-dimension';
 
 /**
  * Generated class for the CompositeLockerComponent component.
@@ -39,7 +41,7 @@ export class FridgeLockerComponent extends LockerComponent implements OnDestroy 
     super();
   }
 
-  get dimension(): Dimension {
+  get dimension(): LockerDimension {
     return this.fridge.dimension;
   }
 
@@ -103,7 +105,7 @@ export class FridgeLockerComponent extends LockerComponent implements OnDestroy 
           pos => {
             let newPos = pos;
             if (pos.inLocker(this.fridge.id)) {
-              newPos = new Position(pos.lockerId, pos.x, pos.y, pos.rack + 1);
+              newPos = new BottlePosition(pos.lockerId, pos.x, pos.y, pos.rack + 1);
             }
             return newPos;
           }
@@ -151,7 +153,7 @@ export class FridgeLockerComponent extends LockerComponent implements OnDestroy 
             pos => {
               let newPos = pos;
               if (pos.inLocker(this.fridge.id)) {
-                newPos = new Position(pos.lockerId, pos.x, pos.y, pos.rack - 1);
+                newPos = new BottlePosition(pos.lockerId, pos.x, pos.y, pos.rack - 1);
               }
               return newPos;
             }
@@ -468,7 +470,7 @@ export class FridgeLockerComponent extends LockerComponent implements OnDestroy 
         bottle.positions = bottle.positions.map(
           pos => {
             if (pos.inRack(this.fridge.id, rack)) {
-              return new Position(pos.lockerId, pos.x + shiftX, pos.y + shiftY, pos.rack);
+              return new BottlePosition(pos.lockerId, pos.x + shiftX, pos.y + shiftY, pos.rack);
             } else {
               return pos;
             }
