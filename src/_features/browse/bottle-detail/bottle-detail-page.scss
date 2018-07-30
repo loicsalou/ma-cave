@@ -1,5 +1,9 @@
 .page-bottle-detail {
 
+  ion-fab[bottom] {
+    bottom: 50px;
+  }
+
   div.slide-content {
     background: darken(#fff, 12%);
     overflow-y: scroll;
