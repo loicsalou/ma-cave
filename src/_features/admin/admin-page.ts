@@ -31,6 +31,7 @@ export class AdminPage {
   localStorageKeys: any;
   tempValue: any;
   private user$: Observable<User>;
+  private filteredDevices: MediaDeviceInfo[];
 
   constructor(private navCtrl: NavController,
               private notificationService: NotificationService,
@@ -90,6 +91,14 @@ export class AdminPage {
 
   public emptyLogs() {
     this.bottleService.deleteLogs();
+  }
+
+  listDevices() {
+    navigator.mediaDevices.enumerateDevices().then((devices) => {
+      //this.filteredDevices = devices.filter(dev => dev.kind === 'videoinput');
+      this.filteredDevices = devices;
+      alert(this.filteredDevices.length+' devices found');
+    });
   }
 
   private setupUpload(file: any) {

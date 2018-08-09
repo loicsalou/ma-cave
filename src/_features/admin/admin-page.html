@@ -126,6 +126,18 @@
         <cav-icon name="trash"></cav-icon>
         Supprimer l'utilisateur
       </button>
+      <button ion-button align-items-start icon-only block (click)="listDevices()" class="ripple">
+        <cav-icon name="camera"></cav-icon>
+        tests
+      </button>
+    </ion-card>
+    <ion-card *ngIf="filteredDevices">
+      <ion-item *ngFor="let device of filteredDevices">
+        <span><h5>deviceId:</h5>{{device.deviceId}}</span>
+        <span><h5>groupId:</h5>{{device.groupId}}</span>
+        <span><h5>device:</h5>{{device.kind}}</span>
+        <span><h5>kind:</h5>{{device.label}}</span>
+      </ion-item>
     </ion-card>
   </responsive-wrapper>
 </ion-content>
